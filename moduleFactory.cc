@@ -2,9 +2,12 @@
 #include "util/seq_map.hh"
 #include <list>
 
-#ifdef TESTPROJECT
+#if defined(TESTPROJECT)
 #define pr_dbg(...)
 #define pr_err(...)
+#elif defined(VCVRACK)
+#define pr_dbg printf
+#define pr_err printf
 #else
 #include "console/pr_dbg.hh"
 #endif

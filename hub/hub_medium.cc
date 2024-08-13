@@ -2,12 +2,6 @@
 #include "CoreModules/moduleFactory.hh"
 #include "HubMedium_info.hh"
 
-#ifdef VCVRACK
-#define printf_(...)
-#else
-#include "pr_dbg.hh"
-#endif
-
 namespace MetaModule
 {
 
@@ -19,7 +13,6 @@ public:
 	HubMedium() = default;
 
 	void update() final {
-		pr_err("Error! Hub should not be run\n");
 	}
 
 	void set_samplerate(float sr) final {
