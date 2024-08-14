@@ -1,7 +1,6 @@
 #pragma once
 #include "CoreModules/elements/element_counter.hh"
 #include "CoreModules/moduleFactory.hh"
-#include "CoreModules/module_type_slug.hh"
 #include <cstdio>
 
 namespace MetaModule
@@ -9,7 +8,7 @@ namespace MetaModule
 
 struct DumpModuleInfo {
 
-	static void print(BrandModuleSlug slug) {
+	static void print(std::string_view slug) {
 
 		auto info = ModuleFactory::getModuleInfo(slug);
 

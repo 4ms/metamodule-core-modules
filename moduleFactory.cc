@@ -28,9 +28,9 @@ struct ModuleRegistry {
 
 static constexpr int MAX_MODULE_TYPES = 512;
 struct BrandRegistry {
-	BrandTypeSlug brand_name;
+	std::string brand_name;
 	std::string display_name;
-	SeqMap<ModuleTypeSlug, ModuleRegistry, MAX_MODULE_TYPES> modules;
+	SeqMap<std::string, ModuleRegistry, MAX_MODULE_TYPES> modules;
 
 	BrandRegistry(std::string_view brand)
 		: brand_name{brand} {
@@ -51,14 +51,15 @@ static auto brand_registry(std::string_view brand) {
 }
 
 bool ModuleFactory::registerModuleType(std::string_view brand_name,
-									   const ModuleTypeSlug &module_slug,
+									   std::string_view module_slug,
 									   CreateModuleFunc funcCreate,
 									   const ModuleInfoView &info,
 									   std::string_view faceplate_filename) {
 
 	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
 		// Brand exists: insert or overwrite existing entry
-		if (brand_reg->modules.overwrite(module_slug, {funcCreate, info, std::string{faceplate_filename}, module_slug}))
+		if (brand_reg->modules.overwrite(std::string(module_slug),
+										 {funcCreate, info, std::string{faceplate_filename}, std::string(module_slug)}))
 		{
 			brand_reg->display_name = brand_name;
 			return true;
@@ -69,11 +70,12 @@ bool ModuleFactory::registerModuleType(std::string_view brand_name,
 		// Brand does not exist, create it and insert entry
 		auto &brand = registry().emplace_back(brand_name);
 		brand.display_name = brand_name;
-		return brand.modules.insert(module_slug, {funcCreate, info, std::string{faceplate_filename}, module_slug});
+		return brand.modules.insert(std::string(module_slug),
+									{funcCreate, info, std::string{faceplate_filename}, std::string(module_slug)});
 	}
 }
 
-bool ModuleFactory::registerModuleType(const ModuleTypeSlug &typeslug,
+bool ModuleFactory::registerModuleType(std::string_view typeslug,
 									   CreateModuleFunc funcCreate,
 									   const ModuleInfoView &info,
 									   std::string_view faceplate_filename) {
@@ -86,7 +88,7 @@ static std::pair<std::string_view, std::string_view> brand_module(std::string_vi
 		return {combined_slug.substr(0, colon), combined_slug.substr(colon + 1)};
 
 	} else {
-		auto module_slug = combined_slug;
+		auto module_slug = std::string(combined_slug);
 		//search all brands for module slug
 		for (auto &brand : registry()) {
 			if (brand.modules.get(module_slug)) {
@@ -101,7 +103,7 @@ static std::pair<std::string_view, std::string_view> brand_module(std::string_vi
 static ModuleRegistry *find_module(std::string_view combined_slug) {
 	auto [brand, module_name] = brand_module(combined_slug);
 	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
-		return brand_reg->modules.get(module_name);
+		return brand_reg->modules.get(std::string(module_name));
 	} else
 		return nullptr;
 }
@@ -191,7 +193,7 @@ bool ModuleFactory::isValidSlug(std::string_view combined_slug) {
 
 bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view module_name) {
 	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
-		if (auto module = brand_reg->modules.get(module_name)) {
+		if (auto module = brand_reg->modules.get(std::string(module_name))) {
 			return bool(module->creation_func);
 		}
 	}
@@ -199,8 +201,8 @@ bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view 
 	return false;
 }
 
-std::vector<ModuleTypeSlug> ModuleFactory::getAllSlugs(std::string_view brand) {
-	std::vector<ModuleTypeSlug> slugs;
+std::vector<std::string> ModuleFactory::getAllSlugs(std::string_view brand) {
+	std::vector<std::string> slugs;
 	auto modules = brand_registry(brand)->modules;
 	slugs.assign(modules.keys.begin(), std::next(modules.keys.begin(), modules.size()));
 	return slugs;
@@ -225,8 +227,8 @@ std::vector<std::string_view> ModuleFactory::getAllBrandDisplayNames() {
 	return brands;
 }
 
-std::vector<BrandTypeSlug> ModuleFactory::getAllBrands() {
-	std::vector<BrandTypeSlug> brands;
+std::vector<std::string> ModuleFactory::getAllBrands() {
+	std::vector<std::string> brands;
 	brands.resize(registry().size());
 	for (auto &brand : registry()) {
 		brands.push_back(brand.brand_name.c_str());

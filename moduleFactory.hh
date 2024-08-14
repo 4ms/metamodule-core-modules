@@ -1,7 +1,6 @@
 #pragma once
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/elements/element_info_view.hh"
-#include "CoreModules/module_type_slug.hh"
 #include <functional>
 #include <memory>
 #include <string_view>
@@ -17,13 +16,13 @@ public:
 	ModuleFactory() = delete;
 
 	static bool registerModuleType(std::string_view brand_name,
-								   const ModuleTypeSlug &typeslug,
+								   std::string_view typeslug,
 								   CreateModuleFunc funcCreate,
 								   const ModuleInfoView &info,
 								   std::string_view faceplate_filename);
 
 	// defaults to brand = "4ms"
-	static bool registerModuleType(const ModuleTypeSlug &typeslug,
+	static bool registerModuleType(std::string_view typeslug,
 								   CreateModuleFunc funcCreate,
 								   const ModuleInfoView &info,
 								   std::string_view faceplate_filename);
@@ -37,8 +36,8 @@ public:
 	static bool isValidSlug(std::string_view combined_slug);
 	static bool isValidBrandModule(std::string_view brand, std::string_view module_name);
 
-	static std::vector<ModuleTypeSlug> getAllSlugs(std::string_view brand);
-	static std::vector<ModuleTypeSlug> getAllBrands();
+	static std::vector<std::string> getAllSlugs(std::string_view brand);
+	static std::vector<std::string> getAllBrands();
 	static std::vector<std::string> getAllModuleDisplayNames(std::string_view brand);
 	static std::vector<std::string_view> getAllBrandDisplayNames();
 
