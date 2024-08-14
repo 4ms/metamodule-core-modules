@@ -1,3 +1,4 @@
+#include "patch-serial/base64.hh"
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/PEG_info.hh"
@@ -183,7 +184,7 @@ private:
 
 	void load_state(std::string_view state_data) override 
 	{
-		auto raw_data = decode(state_data);
+		auto raw_data = Base64::decode(state_data);
 
 		std::error_code ec;
 		auto newSaveState = alpaca::deserialize<alpaca::options::with_version, SaveState_t>(raw_data, ec);
@@ -211,7 +212,7 @@ private:
 
 		std::vector<uint8_t> bytes;
 		alpaca::serialize<alpaca::options::with_version>(saveState, bytes);
-		return encode({bytes.data(), bytes.size()});
+		return Base64::encode({bytes.data(), bytes.size()});
 	}
 
 private:
