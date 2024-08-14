@@ -3,7 +3,7 @@
 
 TEST_DIR ?= tests
 DOCTESTHEADER_DIR = $(TEST_DIR)
-RYMLDIR = ../../shared/patch-serial/ryml
+RYMLDIR = ../patch-serial/ryml
 TEST_SOURCES = $(TEST_DIR)/doctest.cc
 TEST_SOURCES += moduleFactory.cc
 TEST_SOURCES += $(wildcard ../cpputil/util/*.cc)
@@ -25,9 +25,11 @@ CXXFLAGS = 	-Wall \
 		 	-std=gnu++20 \
 			-I. \
 			-I.. \
-			-I../../firmware/metamodule-plugin-sdk/metamodule-core-interface \
-			-I../../shared/cpputil \
-			-I../../shared/patch-serial \
+			-I../.. \
+			-I4ms/core \
+			-I../metamodule-core-interface \
+			-I../cpputil \
+			-I../patch-serial \
 			-I$(RYMLDIR) \
 			-I$(RYMLDIR)/rapidyaml/src \
 			-I$(RYMLDIR)/rapidyaml/ext/c4core/src \
@@ -56,7 +58,7 @@ $(BUILDDIR)/%.o: %.c
 $(BUILDDIR)/%.o: %.cc
 	@mkdir -p $(dir $@)
 	$(info Building $<)
-	@$(CXX) -c $(DEPFLAGS) $(CXXFLAGS) $< -o $@
+	$(CXX) -c $(DEPFLAGS) $(CXXFLAGS) $< -o $@
 
 #FixMe: This kludge lets us build util/%.o, but it's not pretty or general
 $(BUILDDIR)/%.o: ../%.cc
