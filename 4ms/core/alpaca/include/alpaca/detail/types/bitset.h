@@ -98,8 +98,8 @@ bool from_bytes_to_bitset(std::bitset<N> &value, Container &bytes,
       return false;
     }
     // loop over the bits
-    for (int j=0; j<8; ++j) {
-      int bit_index = i * 8 + j;
+    for (std::size_t j=0; j<8; ++j) {
+		std::size_t bit_index = i * 8 + j;
       if (bit_index > size) break;
       bool bit = static_cast<bool>(byte & (1 << j));
       value[bit_index] = bit;
