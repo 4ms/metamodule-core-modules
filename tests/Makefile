@@ -58,7 +58,7 @@ $(BUILDDIR)/%.o: %.c
 $(BUILDDIR)/%.o: %.cc
 	@mkdir -p $(dir $@)
 	$(info Building $<)
-	$(CXX) -c $(DEPFLAGS) $(CXXFLAGS) $< -o $@
+	@$(CXX) -c $(DEPFLAGS) $(CXXFLAGS) $< -o $@
 
 #FixMe: This kludge lets us build util/%.o, but it's not pretty or general
 $(BUILDDIR)/%.o: ../%.cc
