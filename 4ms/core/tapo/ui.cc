@@ -73,7 +73,7 @@ void Ui::Init(MultitapDelay* delay, Parameters* parameters) {
   ParseSettings();
 
   // load current slot or first slot of current bank on startup
-  if (persistent_.current_slot() >= 0) {
+  if (persistent_.current_slot() < kNumSlots) {
     LoadSlot(persistent_.current_slot());
   } else {
     LoadSlot(bank_ * 6);
