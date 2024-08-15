@@ -62,7 +62,10 @@ target_compile_options(CoreModules-4ms PRIVATE
     -Wno-double-promotion #silence warnings in gcem
 )
 
-set_property(TARGET CoreModules-4ms PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+if (NOT DEFINED VCVRACK)
+    message("Enabling LTO for CoreModules/4ms")
+    set_property(TARGET CoreModules-4ms PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 
 if (NOT DEFINED alpaca)
   add_subdirectory(core/alpaca)
