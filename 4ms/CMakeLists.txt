@@ -62,7 +62,7 @@ target_compile_options(CoreModules-4ms PRIVATE
     -Wno-double-promotion #silence warnings in gcem
 )
 
-if (NOT DEFINED VCVRACK)
+if (NOT DEFINED VCVRACK AND NOT DEFINED SIMULATOR)
     message("Enabling LTO for CoreModules/4ms")
     set_property(TARGET CoreModules-4ms PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
