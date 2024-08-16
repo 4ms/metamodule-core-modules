@@ -1,5 +1,5 @@
-#include "CoreModules/4ms/info/EnOsc_info.hh"
-#include "CoreModules/moduleFactory.hh"
+#include "../4ms/info/EnOsc_info.hh"
+#include "../moduleFactory.hh"
 #include "doctest.h"
 #include <cstdint>
 #include <span>
