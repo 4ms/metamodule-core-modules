@@ -72,7 +72,7 @@ if (NOT DEFINED alpaca)
   target_compile_definitions(alpaca INTERFACE ALPACA_NO_PREFETCH)
 endif()
 
-target_link_libraries(CoreModules-4ms PUBLIC 
+target_link_libraries(CoreModules-4ms PRIVATE 
 	cpputil 
 	ryml 
 	alpaca
