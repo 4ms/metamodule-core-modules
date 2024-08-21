@@ -49,7 +49,7 @@ struct TapoInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(130.256), to_mm<72>(48.37), Center, "Velocity", ""}, 5, 3}, {"Min", "Low", "Med", "High", "Max"}},
 		AltParamChoiceLabeled{{{to_mm<72>(148.011), to_mm<72>(40.89), Center, "Bank", ""}, 4, 1}, {"A", "B", "C", "D"}},
 		AltParamChoiceLabeled{{{to_mm<72>(166.263), to_mm<72>(33.409), Center, "Pan", ""}, 3, 3}, {"SUM/R", "RND", "ALT"}},
-		AltParamChoiceLabeled{{{to_mm<72>(184.402), to_mm<72>(25.929), Center, "Mode", ""}, 2, 1}, {"Edit", "Seq"}},
+		AltParamChoiceLabeled{{{to_mm<72>(184.402), to_mm<72>(25.929), Center, "Mode", ""}, 2, 0}, {"Edit", "Seq"}},
 }};
 
     enum class Elem {
