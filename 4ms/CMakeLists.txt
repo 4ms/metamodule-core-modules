@@ -39,6 +39,8 @@ target_sources(CoreModules-4ms PRIVATE
 	core/peg-common/pwm.cc
 	core/mpeg/envelope_calcs.cc
 	core/peg/envelope_calcs.cc
+    #FIXME: linker skips this if in CoreModules, and can't use WHOLE_ARCHIVE
+    ../hub/hub_medium.cc
 )
 
 target_include_directories(CoreModules-4ms PUBLIC 

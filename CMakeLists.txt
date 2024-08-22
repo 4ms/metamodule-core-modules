@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 
 add_library(CoreModules STATIC
-  hub/hub_medium.cc
+   # FIXME: hub_medium is removed by linker
+  # hub/hub_medium.cc
   moduleFactory.cc
 )
 
