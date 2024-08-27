@@ -1,4 +1,5 @@
 #include "qplfo.hh"
+#include <algorithm>
 
 namespace MetaModule::QPLFO
 {
