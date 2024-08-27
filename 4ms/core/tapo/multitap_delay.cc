@@ -37,7 +37,9 @@ using namespace stmlib;
 
 
 
-void MultitapDelay::Init(short* buffer, int32_t buffer_size, const uint32_t sample_rate) {
+void MultitapDelay::Init(short* buffer, int32_t buffer_size, uint32_t sample_rate) {
+
+  if (sample_rate == 0) sample_rate = 48000;
 
   const int32_t kClockDefaultPeriod = 1 * sample_rate;
   kMaxQuantizeClock = 2 * sample_rate;
@@ -134,10 +136,14 @@ void MultitapDelay::AddTap(Parameters *params) {
 
   if (quantize_) {
     float period = static_cast<float>(clock_period_.value());
-    counter = floorf(counter / period + 0.5f) * period;
+	if (period == 0.f)
+		counter = 0;
+	else
+		counter = floorf(counter / period + 0.5f) * period;
   }
 
-  float time = counter / prev_params_.scale;
+  float scale = prev_params_.scale == 0.f ? 1.f : prev_params_.scale;
+  float time = counter / scale;
   float pan = ComputePanning(params->panning_mode);
 
   TapType type =
@@ -204,8 +210,9 @@ void MultitapDelay::Process(Parameters *params, ShortFrame* input, ShortFrame* o
   // compute IR scale to fit into clock period
   if (sync_ && tap_allocator_.max_time() > 0.0f) {
     ONE_POLE(clock_period_smoothed_, clock_period_.value(), 0.002f);
+	float max_time = tap_allocator_.max_time() == 0.f ? 1.f : tap_allocator_.max_time();
     params->scale = clock_period_smoothed_
-      / tap_allocator_.max_time()
+      / max_time
       * params->sync_ratio; // warning: overwriting a parameter
   }
 

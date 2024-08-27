@@ -6,14 +6,8 @@
 
 class Envelope {
 public:
-	enum stage_t {
-		ATTACK,
-		HOLD,
-		DECAY,
-		SUSTAIN,
-		RELEASE,
-		IDLE
-	};
+	enum stage_t { ATTACK, HOLD, DECAY, SUSTAIN, RELEASE, IDLE };
+
 private:
 	stage_t stage = ATTACK;
 	float sampleRate = 48000;
@@ -68,8 +62,6 @@ private:
 		return fall;
 	}
 
-
-
 public:
 	bool sustainEnable = true;
 
@@ -102,23 +94,22 @@ public:
 
 		} else {
 
-			switch (stage)
-			{
-			case ATTACK:
-				increment = 1000.0f / attackTime / sampleRate;
-				break;
-			case HOLD:
-				increment = 1000.0f / holdTime / sampleRate;
-				break;
-			case DECAY:
-				increment = 1000.0f / decayTime / sampleRate;
-				break;
-			case RELEASE:
-				increment = 1000.0f / releaseTime / sampleRate;
-				break;
-			default:
-				break;
-			}		
+			switch (stage) {
+				case ATTACK:
+					increment = 1000.0f / attackTime / sampleRate;
+					break;
+				case HOLD:
+					increment = 1000.0f / holdTime / sampleRate;
+					break;
+				case DECAY:
+					increment = 1000.0f / decayTime / sampleRate;
+					break;
+				case RELEASE:
+					increment = 1000.0f / releaseTime / sampleRate;
+					break;
+				default:
+					break;
+			}
 
 			phaccu += increment;
 			if (phaccu >= 1.0f) {
@@ -156,57 +147,36 @@ public:
 	}
 
 	void set_envelope_time(stage_t _envStage, float milliseconds) {
-		switch (_envStage)
-		{
-		case ATTACK:
-			attackTime = milliseconds;
-			break;
-		case HOLD:
-			holdTime = milliseconds;
-			if (holdTime < 0.1f) {
-				holdEnable = false;
-			} else {
-				holdEnable = true;
-			}
-			break;
-		case DECAY:
-			decayTime = milliseconds;
-			break;
-		case RELEASE:
-			releaseTime = milliseconds;
-			break;
-		default:
-			break;
+		switch (_envStage) {
+			case ATTACK:
+				attackTime = std::max(milliseconds, 1.f / 48000.f);
+				break;
+			case HOLD:
+				holdTime = std::max(milliseconds, 1.f / 48000.f);
+				if (holdTime < 0.1f) {
+					holdEnable = false;
+				} else {
+					holdEnable = true;
+				}
+				break;
+			case DECAY:
+				decayTime = std::max(milliseconds, 1.f / 48000.f);
+				break;
+			case RELEASE:
+				releaseTime = std::max(milliseconds, 1.f / 48000.f);
+				break;
+			default:
+				break;
 		}
 	}
 
 	void set_envelope_time(int _envStage, float milliseconds) {
-		switch (_envStage)
-		{
-		case 0:
-			attackTime = milliseconds;
-			break;
-		case 1:
-			holdTime = milliseconds;
-			if (holdTime < 0.1f) {
-				holdEnable = false;
-			} else {
-				holdEnable = true;
-			}
-			break;
-		case 2:
-			decayTime = milliseconds;
-			break;
-		case 3:
-			releaseTime = milliseconds;
-			break;
-		default:
-			break;
-		}
+		set_envelope_time(static_cast<stage_t>(_envStage), milliseconds);
 	}
 
 	void set_samplerate(float sr) {
-		sampleRate = sr;
+		if (sr > 0.f)
+			sampleRate = sr;
 	}
 
 	void set_sustain(float _sustainLevel) {

@@ -87,6 +87,8 @@ private:
 	}
 
 	static std::optional<uint32_t> ignore_percent_deviation(uint32_t oldtime, uint32_t newtime) {
+		if (oldtime == 0) return newtime;
+
 		float dev = (float)newtime / (float)oldtime;
 		if (dev > 1.01f || dev < 0.99f)
 			return newtime;

@@ -25,6 +25,7 @@ public:
     }
 
     void setSamplerate(float sr) {
+		if (sr > 0)
         samplingRate = sr;
     }
 

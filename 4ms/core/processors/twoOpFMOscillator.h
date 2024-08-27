@@ -12,7 +12,7 @@ private:
 	float sinOut[2];
 	uint32_t increment0;
 	uint32_t increment1;
-	float inv_samplerate=max_ / sampleRate;
+	float inv_samplerate = max_ / sampleRate;
 
 public:
 	float modAmount = 0;
@@ -21,10 +21,10 @@ public:
 	float priFreq = 1;
 	float secFreq = 1;
 
-	TwoOpFM() {}
+	TwoOpFM() {
+	}
 
-	void set_frequency(int channel, float inputFreq)
-	{
+	void set_frequency(int channel, float inputFreq) {
 		if (channel == 0) {
 			auto freqCalc = (inputFreq + (sinOut[1] * modAmount * 4000.0f));
 			increment0 = freqCalc * inv_samplerate;
@@ -34,8 +34,7 @@ public:
 	}
 
 	// Todo: store inv_samplerate, not sampleRate
-	float update(void)
-	{
+	float update(void) {
 		phaccu[1] += increment1;
 		sinOut[1] = sinTable[((phaccu[1] + max_ / 2) & max_) >> 21];
 
@@ -50,9 +49,10 @@ public:
 		return (MathTools::interpolate(finalWav1, finalWav2, mix));
 	}
 
-	void set_samplerate(float sr)
-	{
-		sampleRate = sr;
-		inv_samplerate = max_ / sampleRate;
+	void set_samplerate(float sr) {
+		if (sr > 0.f) {
+			sampleRate = sr;
+			inv_samplerate = max_ / sampleRate;
+		}
 	}
 };

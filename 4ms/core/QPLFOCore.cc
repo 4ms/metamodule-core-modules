@@ -2,8 +2,8 @@
 #include "CoreModules/moduleFactory.hh"
 #include "info/QPLFO_info.hh"
 
-#include "qplfo/qplfo.hh"
 #include "helpers/EdgeDetector.h"
+#include "qplfo/qplfo.hh"
 
 #include <algorithm>
 
@@ -16,30 +16,26 @@ class QPLFOCore : public SmartCoreProcessor<QPLFOInfo> {
 	using enum Info::Elem;
 
 public:
-	QPLFOCore() : tickCounter(0)
-	{
+	QPLFOCore()
+		: tickCounter(0) {
 		set_samplerate(48000.0f);
 	}
 
-	void update() override
-	{
+	void update() override {
 		tickCounter += ticksPerSample;
-		while (tickCounter >= 1.0f)
-		{
+		while (tickCounter >= 1.0f) {
 			mod.doTick();
 			tickCounter -= 1.0f;
 		}
 
 		sideloadDrivers();
 
-		for (std::size_t i=0; i<4; i++)
-		{
+		for (std::size_t i = 0; i < 4; i++) {
 			mod.updateNextChannel();
 		}
 	}
 
-	void sideloadDrivers()
-	{
+	void sideloadDrivers() {
 		channelOn[0] = getState<On1Button>() == LatchingButton::State_t::DOWN;
 		channelOn[1] = getState<On2Button>() == LatchingButton::State_t::DOWN;
 		channelOn[2] = getState<On3Button>() == LatchingButton::State_t::DOWN;
@@ -60,10 +56,14 @@ public:
 		mod.resetInputs[2] = getInput<Reset3In>().value_or(0);
 		mod.resetInputs[3] = getInput<Reset4In>().value_or(0);
 
-		if (onEdgeDetectors[0](channelOn[0]) and getState<FireOnUnmuteCh1AltParam>() == 1) mod.resetInputs[0] = true;
-		if (onEdgeDetectors[1](channelOn[1]) and getState<FireOnUnmuteCh2AltParam>() == 1) mod.resetInputs[1] = true;
-		if (onEdgeDetectors[2](channelOn[2]) and getState<FireOnUnmuteCh3AltParam>() == 1) mod.resetInputs[2] = true;
-		if (onEdgeDetectors[3](channelOn[3]) and getState<FireOnUnmuteCh4AltParam>() == 1) mod.resetInputs[3] = true;
+		if (onEdgeDetectors[0](channelOn[0]) and getState<FireOnUnmuteCh1AltParam>() == 1)
+			mod.resetInputs[0] = true;
+		if (onEdgeDetectors[1](channelOn[1]) and getState<FireOnUnmuteCh2AltParam>() == 1)
+			mod.resetInputs[1] = true;
+		if (onEdgeDetectors[2](channelOn[2]) and getState<FireOnUnmuteCh3AltParam>() == 1)
+			mod.resetInputs[2] = true;
+		if (onEdgeDetectors[3](channelOn[3]) and getState<FireOnUnmuteCh4AltParam>() == 1)
+			mod.resetInputs[3] = true;
 
 		setLED<Led1Light>(mod.outputs[0]);
 		setLED<Led2Light>(mod.outputs[1]);
@@ -80,12 +80,10 @@ public:
 		setLED<Ping3Button>(mod.tapLEDs[2]);
 		setLED<Ping4Button>(mod.tapLEDs[3]);
 
-		auto OutputFunc = [this](auto val)
-		{
+		auto OutputFunc = [this](auto val) {
 			auto result = val * OutputFullScaleInV;
 
-			if (getState<Info::Elem::OutputRangeAltParam>() == 1)
-			{
+			if (getState<Info::Elem::OutputRangeAltParam>() == 1) {
 				result -= OutputFullScaleInV / 2.0f;
 			}
 
@@ -97,16 +95,22 @@ public:
 		setOutput<Out3Out>(channelOn[2] ? OutputFunc(mod.outputs[2]) : 0.0f);
 		setOutput<Out4Out>(channelOn[3] ? OutputFunc(mod.outputs[3]) : 0.0f);
 
-		mod.setADCChannel(0, std::clamp(getState<Skew1Knob>() + getInput<Skew1CvIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
-		mod.setADCChannel(1, std::clamp(getState<Skew2Knob>() + getInput<Skew2JackIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
-		mod.setADCChannel(2, std::clamp(getState<Skew3Knob>() + getInput<Skew3JackIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
-		mod.setADCChannel(3, std::clamp(getState<Skew4Knob>() + getInput<Skew4JackIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
-
-		
+		mod.setADCChannel(
+			0, std::clamp(getState<Skew1Knob>() + getInput<Skew1CvIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
+		mod.setADCChannel(
+			1,
+			std::clamp(getState<Skew2Knob>() + getInput<Skew2JackIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
+		mod.setADCChannel(
+			2,
+			std::clamp(getState<Skew3Knob>() + getInput<Skew3JackIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
+		mod.setADCChannel(
+			3,
+			std::clamp(getState<Skew4Knob>() + getInput<Skew4JackIn>().value_or(0) / CVInputFullScaleInV, 0.0f, 1.0f));
 	}
 
 	void set_samplerate(float sr) override {
-		ticksPerSample = SystickFrequencyInHz / sr;
+		if (sr > 0)
+			ticksPerSample = SystickFrequencyInHz / sr;
 	}
 
 	// Boilerplate to auto-register in ModuleFactory
@@ -123,8 +127,8 @@ private:
 	float ticksPerSample;
 	float tickCounter;
 
-	std::array<bool,4> channelOn;
-	std::array<EdgeDetector,4> onEdgeDetectors;
+	std::array<bool, 4> channelOn;
+	std::array<EdgeDetector, 4> onEdgeDetectors;
 
 	QPLFO::Module mod;
 };
