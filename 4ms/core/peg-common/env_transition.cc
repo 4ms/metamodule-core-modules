@@ -1,6 +1,6 @@
-#include "peg_base.hh"
 #include "dig_inout_pins.hh"
 #include "envelope_calcs.h"
+#include "peg_base.hh"
 #include "util/math.hh"
 
 namespace MetaModule::PEG
@@ -90,7 +90,7 @@ void PEGBase::start_transition(PingableEnvelope *e, uint32_t elapsed_time) {
 	uint16_t dacval_endpoint;
 	if (elapsed_time <= e->rise_time) {
 		uint64_t time_tmp = ((uint64_t)elapsed_time) << 12; //Fixed-point U12.0
-		uint16_t segphase_endpoint = time_tmp / e->rise_time;
+		uint16_t segphase_endpoint = time_tmp / std::max(e->rise_time, 1u);
 		if (segphase_endpoint > 4095)
 			segphase_endpoint = 4095;
 		dacval_endpoint = calc_curve(segphase_endpoint, e->next_curve_rise);
@@ -99,7 +99,7 @@ void PEGBase::start_transition(PingableEnvelope *e, uint32_t elapsed_time) {
 	} else {
 		elapsed_time -= e->rise_time;
 		uint64_t time_tmp = ((uint64_t)elapsed_time) << 12; //Fixed-point U12.0
-		uint16_t segphase_endpoint = time_tmp / e->fall_time;
+		uint16_t segphase_endpoint = time_tmp / std::max(e->fall_time, 1u);
 		if (segphase_endpoint >= 4095) {
 			segphase_endpoint = 0;
 			dacval_endpoint = 0;
@@ -172,4 +172,4 @@ int8_t PEGBase::calc_divided_ping_div_ctr(struct PingableEnvelope *e, enum envel
 	return pdc;
 }
 
-}
+} // namespace MetaModule::PEG
