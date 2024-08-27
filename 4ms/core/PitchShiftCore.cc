@@ -75,7 +75,7 @@ public:
 	// clang-format on
 
 private:
-	const static inline long maxWindowSize = 9600;
+	constexpr static int maxWindowSize = 9600;
 	PitchShift<maxWindowSize> p;
 
 	float signalInput = 0;

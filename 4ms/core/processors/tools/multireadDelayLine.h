@@ -2,7 +2,7 @@
 #include "util/interp_array.hh"
 #include "util/math.hh"
 
-template<long maxSamples>
+template<int maxSamples>
 class MultireadDelayLine {
 public:
 	MultireadDelayLine() {
@@ -11,13 +11,12 @@ public:
 		}
 	}
 
-	virtual void set_samplerate(float sr) {
+	void set_samplerate(float sr) {
 	}
 
-	// calling 6 updates in a loop is 6.7us using float readIndex and interpolating
-	// with int readIndex (just checking it's not negative), it's 5.6us
 	void updateSample(float input) {
-		delayBuffer[writeIndex] = input;
+		if (writeIndex < maxSamples)
+			delayBuffer[writeIndex] = input;
 	}
 
 	void incrementWriteHead() {
@@ -28,8 +27,11 @@ public:
 
 	float readSample(float delaySamples) {
 		float readIndex = writeIndex - delaySamples;
-		if (readIndex < 0)
+		while (readIndex < 0)
 			readIndex += maxSamples;
+
+		while (readIndex >= maxSamples)
+			readIndex -= maxSamples;
 
 		return delayBuffer.interp_by_index(readIndex);
 	}
