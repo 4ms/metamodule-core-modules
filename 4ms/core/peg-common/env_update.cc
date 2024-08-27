@@ -3,6 +3,7 @@
 #include "envelope_calcs.h"
 #include "leds.h"
 #include "settings.h"
+#include <algorithm>
 
 namespace MetaModule::PEG
 {
@@ -377,14 +378,14 @@ void PEGBase::start_envelope_in_sync(struct PingableEnvelope *e) {
 
 	if (elapsed_time <= e->rise_time) {
 		time_tmp = ((uint64_t)elapsed_time) << 12;
-		e->accum = time_tmp / e->rise_time;
+		e->accum = time_tmp / std::max(e->rise_time, 1u);
 		e->accum <<= 19;
 		e->env_state = RISE;
 		e->curve_rise = e->next_curve_rise;
 	} else {
 		elapsed_time = elapsed_time - e->rise_time;
 		time_tmp = ((uint64_t)elapsed_time) << 12;
-		e->accum = 4096 - (time_tmp / e->fall_time);
+		e->accum = 4096 - (time_tmp / std::max(e->fall_time, 1u));
 		e->accum <<= 19;
 		e->env_state = FALL;
 		e->curve_fall = e->next_curve_fall;
@@ -407,4 +408,4 @@ void PEGBase::stop_envelope(struct PingableEnvelope *e) {
 	e->fall_inc = 0;
 }
 
-}
+} // namespace MetaModule::PEG
