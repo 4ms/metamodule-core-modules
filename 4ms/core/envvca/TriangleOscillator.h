@@ -16,11 +16,15 @@ public:
 
     void setRiseTimeInS(float val)
     {
+		if (val == 0.f) 
+			val = 0.0001f; //arbitrary small value;
         slopeRising = (MaxValInV - MinValInV) / val;
     }
 
     void setFallTimeInS(float val)
     {
+		if (val == 0.f) 
+			val = 0.0001f; //arbitrary small value;
         slopeFalling = (MinValInV - MaxValInV) / val;
     }
 

@@ -45,19 +45,15 @@ private:
 	float fSlow0, fSlow1, fSlow2, fSlow3, fSlow4, fSlow5, fSlow6, fSlow7, fSlow8;
 	float fConst0 = 1;
 
-	static float mydsp_faustpower2_f(float value) {
-		return (value * value);
-	}
-
 	void calcFilterVariables() {
-		fSlow0 = std::tan((fConst0 * float(cutoff.getValue())));
-		fSlow1 = (1.0f / float(q.getValue()));
-		fSlow2 = (1.0f / fSlow0);
-		fSlow3 = (((fSlow1 + fSlow2) / fSlow0) + 1.0f);
-		fSlow4 = (1.0f / (fSlow0 * fSlow3));
-		fSlow5 = (1.0f / fSlow3);
-		fSlow6 = (((fSlow2 - fSlow1) / fSlow0) + 1.0f);
-		fSlow7 = (2.0f * (1.0f - (1.0f / mydsp_faustpower2_f(fSlow0))));
-		fSlow8 = (0.0f - fSlow4);
+		fSlow0 = std::tan(fConst0 * std::max(float(cutoff.getValue()), 0.00001f));
+		fSlow1 = 1.0f / std::max(float(q.getValue()), 0.0001f);
+		fSlow2 = 1.0f / fSlow0;
+		fSlow3 = ((fSlow1 + fSlow2) / fSlow0) + 1.0f;
+		fSlow4 = 1.0f / (fSlow0 * fSlow3);
+		fSlow5 = 1.0f / fSlow3;
+		fSlow6 = ((fSlow2 - fSlow1) / fSlow0) + 1.0f;
+		fSlow7 = 2.0f * (1.0f - (1.0f / (fSlow0 * fSlow0)));
+		fSlow8 = 0.0f - fSlow4;
 	}
 };

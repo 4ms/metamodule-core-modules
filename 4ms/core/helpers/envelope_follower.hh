@@ -25,6 +25,9 @@ public:
 	}
 
 	void setSamplerate(float sr) {
+		if (sr==0)
+			return;
+
 		auto decayInSeconds = decaySlew / samplingRate;
 		auto attackInSeconds = attackSlew / samplingRate;
 

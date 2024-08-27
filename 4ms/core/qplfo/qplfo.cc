@@ -1,4 +1,5 @@
 #include "qplfo.hh"
+#include <algorithm>
 
 namespace MetaModule::QPLFO
 {
@@ -251,8 +252,8 @@ void Module::updateNextChannel()
         rise_time[chan] = calc_rise_time(skew_adc[chan], clk_time[chan]);
         fall_time[chan] = clk_time[chan] - rise_time[chan];
 
-        rise_inc[chan] = (1<<28)/(rise_time[chan]);
-        fall_inc[chan] = (1<<28)/(fall_time[chan]);
+        rise_inc[chan] = (1<<28)/(std::max(rise_time[chan], 1u));
+        fall_inc[chan] = (1<<28)/(std::max(fall_time[chan], 1u));
 
     }
 
@@ -330,8 +331,8 @@ void Module::updateNextChannel()
         rise_time[chan] = calc_rise_time(skew_adc[chan], clk_time[chan]);
         fall_time[chan]=clk_time[chan]-rise_time[chan];
 
-        rise_inc[chan]=(1<<28)/(rise_time[chan]);
-        fall_inc[chan]=(1<<28)/(fall_time[chan]);
+        rise_inc[chan]=(1<<28)/(std::max(rise_time[chan], 0u));
+        fall_inc[chan]=(1<<28)/(std::max(fall_time[chan], 0u));
 
     }
     else

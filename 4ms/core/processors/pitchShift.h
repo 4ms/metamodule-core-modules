@@ -28,15 +28,15 @@ public:
 		float window1 = 0;
 		float window2 = 0;
 
-		window1 = sinTable.interp(phaccu * 0.5f);		 // return sin(pi*x)
-		window2 = sinTable.interp(adjustedPhase * 0.5f); // return sin(pi*x)
-		float pitchToFreq = 0;
-		// pitchToFreq = ((expf(shiftAmount * 0.05776f) - 1.0f) * -1.0f) / (windowSize * 0.001f);
+		window1 = sinTable.interp(std::clamp(phaccu * 0.5f, 0.f, 1.f));
+		window2 = sinTable.interp(std::clamp(adjustedPhase * 0.5f, 0.f, 1.f));
 
-		if (shiftAmount >= 0)
-			pitchToFreq = ((exp5Table.interp(shiftAmount / 60.0f) - 1.0f) * -1.0f) / (windowSize);
+		float pitchToFreq = 0;
+		float pitchShift = std::clamp(shiftAmount / 60.0f, -1.f, 1.f);
+		if (pitchShift >= 0)
+			pitchToFreq = ((exp5Table.interp(pitchShift) - 1.0f) * -1.0f) / windowSize;
 		else {
-			pitchToFreq = ((1.0f / exp5Table.interp(-shiftAmount / 60.0f) - 1.0f) * -1.0f) / (windowSize);
+			pitchToFreq = ((1.0f / exp5Table.interp(-pitchShift) - 1.0f) * -1.0f) / windowSize;
 		}
 
 		phaccu += pitchToFreq;
@@ -46,12 +46,13 @@ public:
 			phaccu += 1.0f;
 		pitchDelay.updateSample(input);
 		pitchDelay.incrementWriteHead();
-		float wet = (output1 * window1 + output2 * window2);
-		return (MathTools::interpolate(input, wet, mix));
+		float wet = output1 * window1 + output2 * window2;
+		return MathTools::interpolate(input, wet, mix);
 	}
 
 	void setSampleRate(float sr) {
-		sampleRate = sr;
+		if (sr > 0.f)
+			sampleRate = sr;
 	}
 
 	float shiftAmount = 1;

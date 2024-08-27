@@ -46,11 +46,13 @@ class Fader {
   inline bool active() { return volume_ > 0.0f || volume_increment_ > 0.0f; }
 
   inline void fade_in(float length) {
+	if (length == 0.f) length = 1.f;
     volume_increment_ = 1.0f / length;
     if (volume_ < 0.0f) volume_ = 0.0f;
   }
 
   inline void fade_out(float length) {
+	if (length == 0.f) length = 1.f;
     volume_increment_ = -1.0f / length;
     if (volume_ > 1.0f) volume_ = 1.0f;
   }

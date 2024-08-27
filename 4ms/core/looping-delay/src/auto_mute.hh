@@ -16,11 +16,15 @@ struct AutoMute {
 
 	void setAttackPeriod(uint32_t val)
 	{
+		if (val == 0)
+			val = 1;
 		AttackRate = 1.f / val;
 	}
 
 	void setDecayPeriod(uint32_t val)
 	{
+		if (val == 0)
+			val = 1;
 		DecayRate = 1.f / val;
 	}
 

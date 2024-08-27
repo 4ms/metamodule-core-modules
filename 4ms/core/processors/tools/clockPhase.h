@@ -1,6 +1,7 @@
 #pragma once
 
 #include "schmittTrigger.h"
+#include <algorithm>
 
 class ClockPhase {
 public:
@@ -25,6 +26,9 @@ public:
 	}
 
 	void update() {
+		if (duration == 0)
+			return;
+
 		tempPhase = (float)sinceClock / (float)duration;
 		if (tempPhase < 1.0f) {
 			auto ratio = multiply / divide;
@@ -50,7 +54,7 @@ public:
 	}
 
 	void setDivide(int val) {
-		queueDivide = static_cast<float>(val);
+		queueDivide = std::max(static_cast<float>(val), 1.0f);
 	}
 
 private:

@@ -34,6 +34,9 @@ namespace TapoDelay {
 
 template<int SIZE>
 class Average {
+
+ static_assert(SIZE > 1);
+
  public:
 
   void Init(int32_t x) {
