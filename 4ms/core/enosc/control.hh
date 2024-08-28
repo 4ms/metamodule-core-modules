@@ -328,6 +328,8 @@ class Control : public EventSource<Event> {
 	ExtCVConditioner<CV_ROOT, Average<2, 2>> root_cv_{
 		calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_};
 
+	HysteresisFilter<2, 10> root_post_filter_;
+
 	Parameters &params_;
 	PolypticOscillator<block_size> &osc_;
 
@@ -523,7 +525,7 @@ public:
 			// TODO: handle manually dialing in notes?
 
 			root *= kRootPotRange;
-			root += root_cv_.last();
+			root += root_post_filter_.Process(root_cv_.last());
 
 			params_.root = root.max(0_f);
 
