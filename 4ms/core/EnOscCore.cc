@@ -15,6 +15,7 @@ class EnOscCore : public CoreProcessor {
 
 	enum { kUiUpdateRate = 60 };
 	enum { kUiProcessRate = 20 };
+	enum { kUiPollRate = 6000 };
 
 public:
 	EnOscCore() = default;
@@ -32,10 +33,14 @@ public:
 			enosc.Update(); //LED update
 		}
 
+		if (ui_poll_ctr++ > ui_poll_throttle) {
+			ui_poll_ctr = 0;
+			enosc.Poll();
+		}
+
 		// SampleRate / BlockRate (6kHz for 48k)
 		if (++block_ctr >= EnOsc::kBlockSize) {
 			block_ctr = 0;
-			enosc.Poll();
 			enosc.osc().Process(out_block_);
 		}
 	}
@@ -181,6 +186,7 @@ public:
 			sample_rate_ = sr;
 			ui_process_throttle = (unsigned)sample_rate_ / kUiProcessRate;
 			ui_update_throttle = (unsigned)sample_rate_ / kUiUpdateRate;
+			ui_poll_throttle = (unsigned)sample_rate_ / kUiPollRate;
 
 			enosc.set_samplerate(sr);
 		}
@@ -231,6 +237,9 @@ private:
 
 	unsigned ui_update_throttle = (unsigned)sample_rate_ / kUiUpdateRate;
 	unsigned ui_update_ctr = ui_update_throttle;
+
+	unsigned ui_poll_throttle = (unsigned)sample_rate_ / kUiPollRate;
+	unsigned ui_poll_ctr = ui_poll_throttle;
 
 	unsigned block_ctr = EnOsc::kBlockSize;
 };
