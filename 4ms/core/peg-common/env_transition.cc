@@ -90,7 +90,7 @@ void PEGBase::start_transition(PingableEnvelope *e, uint32_t elapsed_time) {
 	uint16_t dacval_endpoint;
 	if (elapsed_time <= e->rise_time) {
 		uint64_t time_tmp = ((uint64_t)elapsed_time) << 12; //Fixed-point U12.0
-		uint16_t segphase_endpoint = time_tmp / std::max(e->rise_time, 1u);
+		uint16_t segphase_endpoint = time_tmp / std::max<uint32_t>(e->rise_time, 1u);
 		if (segphase_endpoint > 4095)
 			segphase_endpoint = 4095;
 		dacval_endpoint = calc_curve(segphase_endpoint, e->next_curve_rise);
@@ -99,7 +99,7 @@ void PEGBase::start_transition(PingableEnvelope *e, uint32_t elapsed_time) {
 	} else {
 		elapsed_time -= e->rise_time;
 		uint64_t time_tmp = ((uint64_t)elapsed_time) << 12; //Fixed-point U12.0
-		uint16_t segphase_endpoint = time_tmp / std::max(e->fall_time, 1u);
+		uint16_t segphase_endpoint = time_tmp / std::max<uint32_t>(e->fall_time, 1u);
 		if (segphase_endpoint >= 4095) {
 			segphase_endpoint = 0;
 			dacval_endpoint = 0;

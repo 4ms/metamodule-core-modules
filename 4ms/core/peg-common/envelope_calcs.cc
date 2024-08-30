@@ -29,8 +29,8 @@ uint32_t PEGBase::get_clk_div_time(int8_t clock_divide_amount, uint32_t clk_time
 void PEGBase::calc_rise_fall_incs(struct PingableEnvelope *e) {
 	e->fall_time = get_fall_time(e->skew, e->div_clk_time);
 	e->rise_time = e->div_clk_time - e->fall_time;
-	e->rise_inc = (1UL << 31) / std::max(e->rise_time, 1u);
-	e->fall_inc = (1UL << 31) / std::max(e->fall_time, 1u);
+	e->rise_inc = (1UL << 31) / std::max<uint32_t>(e->rise_time, 1u);
+	e->fall_inc = (1UL << 31) / std::max<uint32_t>(e->fall_time, 1u);
 }
 
 //skew: 0..255, 0 means fall=min
