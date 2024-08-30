@@ -8,7 +8,8 @@
 #include "easiglib/event_handler.hh"
 #include "polyptic_oscillator.hh"
 
-namespace EnOsc {
+namespace EnOsc
+{
 
 const f kPotDeadZone = 0.01_f;
 const f kPitchPotRange = 6_f * 12_f;
@@ -322,11 +323,13 @@ class Control : public EventSource<Event> {
 
 	PotCVCombiner<PotConditioner<POT_DETUNE, Law::LINEAR, NoFilter>, NoCVInput, QuadraticOnePoleLp<1>> detune_{adc_};
 
-	ExtCVConditioner<CV_PITCH, Average<2, 2>> pitch_cv_{
+	ExtCVConditioner<CV_PITCH, Average<4, 4>> pitch_cv_{
 		calibration_data_.pitch_offset, calibration_data_.pitch_slope, spi_adc_};
 
-	ExtCVConditioner<CV_ROOT, Average<2, 2>> root_cv_{
+	ExtCVConditioner<CV_ROOT, Average<4, 2>> root_cv_{
 		calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_};
+
+	HysteresisFilter<1, 10> root_post_filter_;
 
 	Parameters &params_;
 	PolypticOscillator<block_size> &osc_;
@@ -523,7 +526,7 @@ public:
 			// TODO: handle manually dialing in notes?
 
 			root *= kRootPotRange;
-			root += root_cv_.last();
+			root += root_post_filter_.Process(root_cv_.last());
 
 			params_.root = root.max(0_f);
 
@@ -678,4 +681,4 @@ public:
 	}
 };
 
-}
+} // namespace EnOsc

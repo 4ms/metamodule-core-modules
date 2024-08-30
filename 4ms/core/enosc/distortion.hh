@@ -39,6 +39,8 @@ inline u0_32 twist<CRUSH>(u0_32 phase, f amount) {
 
 template<>
 inline f warp<FOLD>(s1_15 x, f amount) {
+	if (amount <= 0.005_f)
+		return(f::inclusive(x));
 	s1_31 sample = x * s1_15(amount);
 	u0_32 phase = sample.to_unsigned_scale();
 	f res = DynamicData::fold.interpolateDiff<f>(phase);
