@@ -67,7 +67,7 @@ public:
 			set_samplerate(48000.f);
 	}
 
-	void update(auto clockInput) {
+	void update(float clockInput) {
 		auto now = ++ticks;
 
 		if (auto newFactor = readFactorCV(); newFactor != factor) {
@@ -79,21 +79,17 @@ public:
 		triggerLengthInTicks = calculateTriggerlength(pulsewidth);
 		invMode = readInvMode();
 
-		if (clockInput) {
-			if (triggerEdgeDetectorClock(triggerDetectorClock(*clockInput))) {
-				calculateClockInPeriod(now);
-				calculateClockOutPeriod(now, factor);
-			}
-		} else {
-			resetClocks(now);
-		}		
+		if (triggerEdgeDetectorClock(triggerDetectorClock(clockInput))) {
+			calculateClockInPeriod(now);
+			calculateClockOutPeriod(now, factor);
+		}
 
 		if(clockIn.lastEventInTicks && clockIn.periodInTicks) {
 			if(auto newPhase = processResetIn(now); newPhase) {
 				phase = *newPhase;
 			}
 
-			uint32_t phaseOffset = uint32_t(std::round(*clockIn.periodInTicks * phase));
+			uint32_t phaseOffset = std::round(*clockIn.periodInTicks * phase);
 
 			if (now == *clockIn.lastEventInTicks + phaseOffset) {
 
@@ -330,14 +326,13 @@ private:
 	}
 
 	std::optional<float> processResetIn(uint32_t timestamp) {
-		if (auto input = getInput<Mapping::ResetIn>(); input) {
-			if (triggerEdgeDetectorReset(triggerDetectorReset(*input))) {
-				if(clockIn.periodInTicks) {
-					uint32_t ticksSinceLastEvent = timestamp - *clockIn.lastEventInTicks;
-					float phase = float(ticksSinceLastEvent) / float(*clockIn.periodInTicks);
+		auto input = getInput<Mapping::ResetIn>().value_or(0);
+		if (triggerEdgeDetectorReset(triggerDetectorReset(input))) {
+			if(clockIn.periodInTicks) {
+				uint32_t ticksSinceLastEvent = timestamp - *clockIn.lastEventInTicks;
+				float phase = float(ticksSinceLastEvent) / float(*clockIn.periodInTicks);
 
-					return phase;
-				}
+				return phase;
 			}
 		}
 
@@ -534,31 +529,31 @@ public:
 		auto clockInC = getInput<MappingC::ClkInIn>();
 		auto clockInD = getInput<MappingD::ClkInIn>();
 
-		std::optional<float> clockToA = tapClock;
-		std::optional<float> clockToB = tapClock;
-		std::optional<float> clockToC = tapClock;
-		std::optional<float> clockToD = tapClock;
+		float clockToA = tapClock;
+		float clockToB = tapClock;
+		float clockToC = tapClock;
+		float clockToD = tapClock;
 
 		if(clockInA) {
-			clockToA = clockInA;
-			clockToB = clockInA;
-			clockToC = clockInA;
-			clockToD = clockInA;
+			clockToA = *clockInA;
+			clockToB = *clockInA;
+			clockToC = *clockInA;
+			clockToD = *clockInA;
 		}
 
 		if(clockInB) {
-			clockToB = clockInB;
-			clockToC = clockInB;
-			clockToD = clockInB;
+			clockToB = *clockInB;
+			clockToC = *clockInB;
+			clockToD = *clockInB;
 		}
 
 		if(clockInC) {
-			clockToC = clockInC;
-			clockToD = clockInC;
+			clockToC = *clockInC;
+			clockToD = *clockInC;
 		}
 
 		if(clockInD) {
-			clockToD = clockInD;
+			clockToD = *clockInD;
 		}
 		
 		channelA.update(clockToA);

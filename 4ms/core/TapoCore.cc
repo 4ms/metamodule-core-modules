@@ -252,10 +252,10 @@ private:
 		{
 			return std::clamp(voltage / (2 * BiploarCVInputFullScaleInVolt) + 0.5f, 0.0f, 1.0f);
 		};
-		if (auto val=getInput<TimeJackIn>(); val)       adc.set(ADC_SCALE_CV,      BipolarCVInputFunc(*val));
-		if (auto val=getInput<FeedbackJackIn>(); val)   adc.set(ADC_FEEDBACK_CV,   BipolarCVInputFunc(*val));
-		if (auto val=getInput<ModulationJackIn>(); val) adc.set(ADC_MODULATION_CV, BipolarCVInputFunc(*val));
-		if (auto val=getInput<DryWetJackIn>(); val)     adc.set(ADC_DRYWET_CV,     BipolarCVInputFunc(*val));
+		{auto val=getInput<TimeJackIn>().value_or(0);       adc.set(ADC_SCALE_CV,      BipolarCVInputFunc(val));}
+		{auto val=getInput<FeedbackJackIn>().value_or(0);   adc.set(ADC_FEEDBACK_CV,   BipolarCVInputFunc(val));}
+		{auto val=getInput<ModulationJackIn>().value_or(0); adc.set(ADC_MODULATION_CV, BipolarCVInputFunc(val));}
+		{auto val=getInput<DryWetJackIn>().value_or(0);     adc.set(ADC_DRYWET_CV,     BipolarCVInputFunc(val));}
 
 		//
 		// Velocity CV
@@ -264,14 +264,14 @@ private:
 		{
 			return std::clamp(voltage / VelocityCVInputFullScaleInVolt, 0.0f, 1.0f);
 		};
-		if (auto val=getInput<VelocityIn>(); val)       adc.set(ADC_VEL_CV, VelocityCVInputFunc(*val));
+		{auto val=getInput<VelocityIn>().value_or(0.f);    adc.set(ADC_VEL_CV, VelocityCVInputFunc(val));}
 
 		//
 		// Gate and trigger inputs
 		//
-		if (auto val=getInput<RepeatJackIn>(); val)  gate.set(GATE_INPUT_REPEAT, *val > GateInputThresholdInVolt);
-		if (auto val=getInput<TapIn>(); val)         adc.set(ADC_TAPTRIG_CV,     *val > GateInputThresholdInVolt);		
-		if (auto val=getInput<ExtClockIn>(); val)    adc.set(ADC_CLOCK_CV,       *val > GateInputThresholdInVolt);		
+		{auto val=getInput<RepeatJackIn>().value_or(0.f);  gate.set(GATE_INPUT_REPEAT, val > GateInputThresholdInVolt);}
+		{auto val=getInput<TapIn>().value_or(0.f);         adc.set(ADC_TAPTRIG_CV,     val > GateInputThresholdInVolt);}
+		{auto val=getInput<ExtClockIn>().value_or(0.f);    adc.set(ADC_CLOCK_CV,       val > GateInputThresholdInVolt);}
 
 		//
 		// Tap Button

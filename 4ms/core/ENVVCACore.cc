@@ -112,10 +112,9 @@ public:
 			osc.setTargetVoltage(followInput.process(*inputFollowValue));
 		}
 
-		if (auto triggerInputValue = getInput<TriggerIn>(); triggerInputValue) {
-			if (triggerEdgeDetector(triggerDetector(*triggerInputValue))) {
-				osc.doRetrigger();
-			}
+		auto triggerInputValue = getInput<TriggerIn>().value_or(0.f);
+		if (triggerEdgeDetector(triggerDetector(triggerInputValue))) {
+			osc.doRetrigger();
 		}
 
 		osc.proceed(timeStepInS);
@@ -145,14 +144,13 @@ public:
 			return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
 		};
 
-		if (auto timeCVValue = getInput<TimeCvIn>(); timeCVValue) {
-			// scale down cv input
-			const auto scaledTimeCV = *timeCVValue * -100e3f / 137e3f;
+		auto timeCVValue = getInput<TimeCvIn>().value_or(0.f);
+		// scale down cv input
+		const auto scaledTimeCV = timeCVValue * -100e3f / 137e3f;
 
-			// apply attenuverter knobs
-			rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<RiseCvKnob>() * scaledTimeCV);
-			fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<FallCvKnob>() * scaledTimeCV);
-		}
+		// apply attenuverter knobs
+		rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<RiseCvKnob>() * scaledTimeCV);
+		fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<FallCvKnob>() * scaledTimeCV);
 
 		// sum with static value from fader + range switch
 		auto riseRange = getState<RiseSwitch>();

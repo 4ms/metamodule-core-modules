@@ -202,12 +202,12 @@ private:
 				triggerMode = TriggerMode_t::AR;
 			}
 
-			auto triggerInputValue = parent->getInput<Mapping::TrigIn>();
+			auto triggerInputValue = parent->getInput<Mapping::TrigIn>().value_or(0.f);
 
 			bool isCycling;
 
 			if(triggerMode == TriggerMode_t::CYCLE) {
-				isCycling = (parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN) ^ CVToBool(triggerInputValue.value_or(0.0f));
+				isCycling = (parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN) ^ CVToBool(triggerInputValue);
 			} else {
 				isCycling = (parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN);
 			};
@@ -219,13 +219,11 @@ private:
 				parent->setLED<Mapping::CycleButton>(cycleLED);
 			}
 
-			if(triggerInputValue) {
-				if (triggerEdgeDetector(triggerDetector(*triggerInputValue))) {
-					osc.doRetrigger();
-				}
+			if (triggerEdgeDetector(triggerDetector(triggerInputValue))) {
+				osc.doRetrigger();
 			}
 
-			if(triggerMode == TriggerMode_t::ASR && triggerDetector(*triggerInputValue)) {
+			if(triggerMode == TriggerMode_t::ASR && triggerDetector(triggerInputValue)) {
 				osc.holdMax(true);
 			} else {
 				osc.holdMax(false);
@@ -262,14 +260,13 @@ private:
 				return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
 			};
 
-			if (auto timeCVValue = parent->getInput<Mapping::TimeCvIn>(); timeCVValue) {
-				// scale down cv input
-				const auto scaledTimeCV = *timeCVValue * -100e3f / 137e3f;
+			auto timeCVValue = parent->getInput<Mapping::TimeCvIn>().value_or(0.f);
+			// scale down cv input
+			const auto scaledTimeCV = timeCVValue * -100e3f / 137e3f;
 
-				// apply attenuverter knobs
-				rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::RiseKnob>() * scaledTimeCV);
-				fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::FallKnob>() * scaledTimeCV);
-			}
+			// apply attenuverter knobs
+			rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::RiseKnob>() * scaledTimeCV);
+			fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::FallKnob>() * scaledTimeCV);
 
 			// sum with static value from fader + range switch
 			auto riseRange = parent->getState<Mapping::SlowMedFastRiseSwitch>();
