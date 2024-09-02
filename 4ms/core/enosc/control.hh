@@ -289,10 +289,11 @@ class Control : public EventSource<Event> {
 	};
 	CalibrationData calibration_data_;
 	CalibrationData default_calibration_data_ = {
-		.pitch_offset = 0.5_f,
-		.pitch_slope = -120._f,
+		// EnOscCore::set_input: -8V .. +8V => +1 .. 0
+		.pitch_offset = 0.5_f,	//          => +0.5 .. -0.5
+		.pitch_slope = -192._f, //          => -96 .. +96 (semitones) = -8oct .. +8oct
 		.root_offset = 0.5_f,
-		.root_slope = -120._f,
+		.root_slope = -192._f,
 		.warp_offset = 0._f,
 		.balance_offset = 0._f,
 		.twist_offset = 0._f,
