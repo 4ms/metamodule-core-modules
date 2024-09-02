@@ -131,44 +131,57 @@ public:
 		}
 	}
 
-	void set_input(int input_id, float val) override {
+	void set_input(int input_id, float cv) override {
 		using AdcInput = EnOsc::AdcInput;
 		using SpiAdcInput = EnOsc::SpiAdcInput;
 
-		val /= 5.f;	  //-5V to +5V => -1..1
-		val *= -0.5f; //-1..1 => 0.5..-0.5
-		val += 0.5f;  // => 1..0
-					  // Ui::set_potcv will clamp
+		auto cv_to_val = [](float cv) {
+			float val = cv / 5.f; // -5V to +5V => -1..1
+			val *= -0.5f;	// -1..1 => 0.5..-0.5
+			val += 0.5f;	// => 1..0
+			return val;
+		};
+
+		auto pitchcv_to_val = [](float cv) {
+			float val = cv / 8.f; // -8V to +8V => -1..1
+			val *= -0.5f;	// -1..1 => 0.5..-0.5
+			val += 0.5f;	// => 1..0
+			return val;
+		};
+
+		constexpr float gate_threshold = 1.5f;
+
+		// Ui::set_potcv will clamp
 		switch (input_id) {
 			case Info::InputBalance_Jack:
-				enosc.set_potcv(AdcInput::CV_BALANCE, val);
+				enosc.set_potcv(AdcInput::CV_BALANCE, cv_to_val(cv));
 				break;
 			case Info::InputCross_Fm_Jack:
-				enosc.set_potcv(AdcInput::CV_MOD, val);
+				enosc.set_potcv(AdcInput::CV_MOD, cv_to_val(cv));
 				break;
 			case Info::InputPitch_Jack:
-				enosc.set_pitchroot_cv(SpiAdcInput::CV_PITCH, val);
+				enosc.set_pitchroot_cv(SpiAdcInput::CV_PITCH, pitchcv_to_val(cv));
 				break;
 			case Info::InputRoot_Jack:
-				enosc.set_pitchroot_cv(SpiAdcInput::CV_ROOT, val);
+				enosc.set_pitchroot_cv(SpiAdcInput::CV_ROOT, pitchcv_to_val(cv));
 				break;
 			case Info::InputScale_Jack:
-				enosc.set_potcv(AdcInput::CV_SCALE, val);
+				enosc.set_potcv(AdcInput::CV_SCALE, cv_to_val(cv));
 				break;
 			case Info::InputSpread_Jack:
-				enosc.set_potcv(AdcInput::CV_SPREAD, val);
+				enosc.set_potcv(AdcInput::CV_SPREAD, cv_to_val(cv));
 				break;
 			case Info::InputTwist_Jack:
-				enosc.set_potcv(AdcInput::CV_TWIST, val);
+				enosc.set_potcv(AdcInput::CV_TWIST, cv_to_val(cv));
 				break;
 			case Info::InputWarp_Jack:
-				enosc.set_potcv(AdcInput::CV_WARP, val);
+				enosc.set_potcv(AdcInput::CV_WARP, cv_to_val(cv));
 				break;
 			case Info::InputFreeze_Jack:
-				enosc.set_freeze_gate(val > 0.5f);
+				enosc.set_freeze_gate(cv > gate_threshold);
 				break;
 			case Info::InputLearn_Jack:
-				enosc.set_learn_gate(val > 0.5f);
+				enosc.set_learn_gate(cv > gate_threshold);
 				break;
 		}
 	}
