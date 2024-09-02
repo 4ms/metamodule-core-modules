@@ -263,7 +263,7 @@ public:
 
 private:
 	// Controls/Outs
-	std::array<bool, Info::NumOutJacks> outs;
+	std::array<bool, Info::NumOutJacks> outs{};
 
 	static constexpr bool DoFreeRun = true; //TODO: make this a switch?
 
@@ -280,17 +280,17 @@ private:
 	uint8_t slip_howmany = 0;
 
 	// Params (states)
-	bool clkin;
-	bool mute;
-	bool is_running;
-	bool resync;
+	bool clkin{};
+	bool mute{};
+	bool is_running{};
+	bool resync{};
 
 	// Flags
-	bool update_pulse_params;
-	bool update_slip_params;
+	bool update_pulse_params{};
+	bool update_slip_params{};
 
 	// Multiply-by for each jack
-	std::array<uint32_t, 8> d;
+	std::array<uint32_t, 8> d{};
 
 	// Phase counters
 	uint32_t tmr_int = 0;
@@ -298,20 +298,20 @@ private:
 
 	std::array<uint32_t, 8> tmr{};
 	uint32_t period = 84000;
-	std::array<uint32_t, 8> per;
+	std::array<uint32_t, 8> per{};
 
 	// Pulse-width
 	std::array<uint32_t, 8> pw{8400, 4200, 2800, 2200, 1680, 1400, 1050, 1050};
 	static constexpr uint32_t MIN_PW = 50;
 
 	// Beat counters for Skip feature
-	std::array<uint32_t, 8> p;
+	std::array<uint32_t, 8> p{};
 
 	// Counters for slip
-	std::array<uint32_t, 8> s;
-	std::array<uint32_t, 8> dd;
-	std::array<int32_t, 8> slipamt;
-	std::array<int32_t, 8> slip;
+	std::array<uint32_t, 8> s{};
+	std::array<uint32_t, 8> dd{};
+	std::array<int32_t, 8> slipamt{};
+	std::array<int32_t, 8> slip{};
 };
 
 } // namespace MetaModule

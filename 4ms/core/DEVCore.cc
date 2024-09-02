@@ -1,17 +1,16 @@
-#include "info/DEV_info.hh"
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "info/DEV_info.hh"
 
-#include "CoreModules/4ms/core/envvca/SSI2162.h"
-#include "CoreModules/4ms/core/envvca/TriangleOscillator.h"
-#include "CoreModules/4ms/core/envvca/Tables.h"
 #include "CoreModules/4ms/core/envvca/FollowInput.h"
+#include "CoreModules/4ms/core/envvca/SSI2162.h"
+#include "CoreModules/4ms/core/envvca/Tables.h"
+#include "CoreModules/4ms/core/envvca/TriangleOscillator.h"
 #include "CoreModules/4ms/core/helpers/EdgeDetector.h"
-#include "CoreModules/4ms/core/helpers/circuit_elements.h"
 #include "CoreModules/4ms/core/helpers/FlipFlop.h"
+#include "CoreModules/4ms/core/helpers/circuit_elements.h"
 #include "CoreModules/4ms/core/helpers/mapping.h"
 #include "CoreModules/4ms/core/helpers/quantization.h"
-
 
 namespace MetaModule
 {
@@ -23,33 +22,28 @@ class DEVCore : public SmartCoreProcessor<DEVInfo> {
 
 public:
 	template<Info::Elem EL>
-	void setOutput(auto val)
-	{
+	void setOutput(auto val) {
 		return SmartCoreProcessor<Info>::setOutput<EL>(val);
 	}
 
 	template<Info::Elem EL>
-	auto getInput()
-	{
+	auto getInput() {
 		return SmartCoreProcessor<Info>::getInput<EL>();
 	}
 
 	template<Info::Elem EL, typename VAL>
-	void setLED(const VAL &value)
-	{
+	void setLED(const VAL &value) {
 		return SmartCoreProcessor<Info>::setLED<EL>(value);
 	}
 
 	template<Info::Elem EL>
-	auto getState()
-	{
+	auto getState() {
 		return SmartCoreProcessor<Info>::getState<EL>();
 	}
 
 private:
-	template <class Mapping>
-	class Channel
-	{
+	template<class Mapping>
+	class Channel {
 	private:
 		SSI2162 vca;
 		TriangleOscillator osc;
@@ -71,11 +65,12 @@ private:
 		float timeStepInS = 1.f / 48000.f;
 
 	private:
-		DEVCore* parent;
-	
+		DEVCore *parent;
+
 	public:
-		Channel(DEVCore* parent_)
-			: triggerDetector(1.0f, 2.0f), parent(parent_){
+		Channel(DEVCore *parent_)
+			: triggerDetector(1.0f, 2.0f)
+			, parent(parent_) {
 		}
 
 		void update(bool cycleTriggerIn, auto input) {
@@ -88,12 +83,8 @@ private:
 
 			displayEnvelope(osc.getOutput(), osc.getSlopeState());
 
-			if(auto vcaCV = parent->getInput<Mapping::VcaCvIn>(); vcaCV) {
-				runAudioPath(*vcaCV, input);
-			} else {
-				runAudioPath(osc.getOutput(), input);
-			}		
-			
+			auto vcaCV = parent->getInput<Mapping::VcaCvIn>().value_or(osc.getOutput());
+			runAudioPath(vcaCV, input);
 		}
 
 		void runAudioPath(float triangleWave, auto input) {
@@ -122,7 +113,8 @@ private:
 
 		void displayEnvelope(float val, TriangleOscillator::SlopeState_t slopeState) {
 			parent->setLED<Mapping::RiseSlider>(slopeState == TriangleOscillator::SlopeState_t::RISING ? val / 8.f : 0);
-			parent->setLED<Mapping::FallSlider>(slopeState == TriangleOscillator::SlopeState_t::FALLING ? val / 8.f : 0);
+			parent->setLED<Mapping::FallSlider>(slopeState == TriangleOscillator::SlopeState_t::FALLING ? val / 8.f :
+																										  0);
 
 			envOut = val / VoltageDivider(100e3f, 100e3f);
 			envOut *= parent->getState<Mapping::LevelKnob>() * 2.0f - 1.0f;
@@ -147,16 +139,13 @@ private:
 
 			if (auto inputFollowValue = parent->getInput<Mapping::FollowIn>(); inputFollowValue) {
 				osc.setTargetVoltage(followInput.process(*inputFollowValue));
-			}
-			else
-			{
+			} else {
 				osc.setTargetVoltage(0.0f);
 			}
 
-			if (auto triggerInputValue = parent->getInput<Mapping::TrigIn>(); triggerInputValue) {
-				if (triggerEdgeDetector(triggerDetector(*triggerInputValue))) {
-					osc.doRetrigger();
-				}
+			auto triggerInputValue = parent->getInput<Mapping::TrigIn>().value_or(0.f);
+			if (triggerEdgeDetector(triggerDetector(triggerInputValue))) {
+				osc.doRetrigger();
 			}
 
 			osc.proceed(timeStepInS);
@@ -186,14 +175,15 @@ private:
 				return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
 			};
 
-			if (auto timeCVValue = parent->getInput<Mapping::TimeCvIn>(); timeCVValue) {
-				// scale down cv input
-				const auto scaledTimeCV = *timeCVValue * -100e3f / 137e3f;
+			auto timeCVValue = parent->getInput<Mapping::TimeCvIn>().value_or(0.f);
+			// scale down cv input
+			const auto scaledTimeCV = timeCVValue * -100e3f / 137e3f;
 
-				// apply attenuverter knobs
-				rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::RiseKnob>() * scaledTimeCV);
-				fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::FallKnob>() * scaledTimeCV);
-			}
+			// apply attenuverter knobs
+			rScaleLEDs = InvertingAmpWithBias(
+				scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::RiseKnob>() * scaledTimeCV);
+			fScaleLEDs = InvertingAmpWithBias(
+				scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::FallKnob>() * scaledTimeCV);
 
 			// sum with static value from fader + range switch
 			auto riseRange = parent->getState<Mapping::SlowMedFastRiseSwitch>();
@@ -220,20 +210,17 @@ private:
 			return {riseCV, fallCV};
 		}
 
-		TriangleOscillator::SlopeState_t getOscillatorSlopeState()
-		{
+		TriangleOscillator::SlopeState_t getOscillatorSlopeState() {
 			return osc.getSlopeState();
 		}
 
 		void set_samplerate(float sr) {
 			timeStepInS = 1.0f / sr;
 		}
-
 	};
 
 private:
-	struct MappingA
-	{
+	struct MappingA {
 		const static Info::Elem AudioIn = AudioAIn;
 		const static Info::Elem AudioOut = AudioAOut;
 		const static Info::Elem RiseSlider = RiseASlider;
@@ -256,8 +243,7 @@ private:
 		const static Info::Elem VcaCvIn = VcaCvAIn;
 	};
 
-	struct MappingB
-	{
+	struct MappingB {
 		const static Info::Elem AudioIn = AudioBIn;
 		const static Info::Elem AudioOut = AudioBOut;
 		const static Info::Elem RiseSlider = RiseBSlider;
@@ -283,12 +269,13 @@ private:
 	Channel<MappingA> channelA;
 	Channel<MappingB> channelB;
 
-friend Channel<MappingA>;
-friend Channel<MappingB>;
+	friend Channel<MappingA>;
+	friend Channel<MappingB>;
 
 public:
 	DEVCore()
-		: channelA(this), channelB(this){
+		: channelA(this)
+		, channelB(this) {
 	}
 
 	void update() override {
@@ -296,21 +283,22 @@ public:
 
 		auto inputA = getInput<MappingA::AudioIn>();
 		channelA.update(cycleTriggerIn, inputA);
-		
-		if(auto inputB = getInput<MappingB::AudioIn>(); inputB) {
+
+		if (auto inputB = getInput<MappingB::AudioIn>(); inputB) {
 			channelB.update(cycleTriggerIn, inputB);
 		} else {
 			channelB.update(cycleTriggerIn, inputA);
 		}
-		
+
 		displayOscillatorState();
 
 		setOutput<OrOut>(std::max(channelA.getEnvOut(), channelB.getEnvOut()));
 	}
 
-	void displayOscillatorState()
-	{
-		if(auto slopeStateA = channelA.getOscillatorSlopeState(); slopeStateA == TriangleOscillator::SlopeState_t::FALLING) {
+	void displayOscillatorState() {
+		if (auto slopeStateA = channelA.getOscillatorSlopeState();
+			slopeStateA == TriangleOscillator::SlopeState_t::FALLING)
+		{
 			setOutput<EorAOut>(8.f);
 			setLED<EorLight>(true);
 		} else {
@@ -318,7 +306,9 @@ public:
 			setLED<EorLight>(false);
 		}
 
-		if(auto slopeStateB = channelB.getOscillatorSlopeState(); slopeStateB != TriangleOscillator::SlopeState_t::FALLING) {
+		if (auto slopeStateB = channelB.getOscillatorSlopeState();
+			slopeStateB != TriangleOscillator::SlopeState_t::FALLING)
+		{
 			setOutput<EofBOut>(8.f);
 			setLED<EofLight>(true);
 		} else {
@@ -339,8 +329,6 @@ public:
 	// clang-format on
 
 private:
-	
-
 };
 
 } // namespace MetaModule

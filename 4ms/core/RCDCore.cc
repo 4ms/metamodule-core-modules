@@ -22,21 +22,19 @@ public:
 		readSwitches();
 		readRotate();
 
-		if (auto resetInputValue = getInput<ResetIn>(); resetInputValue) {
-			if (resetTriggerEdgeDetector(resetTriggerDetector(*resetInputValue))) {
-				reset();
-			}
+		auto resetInputValue = getInput<ResetIn>().value_or(0);
+		if (resetTriggerEdgeDetector(resetTriggerDetector(resetInputValue))) {
+			reset();
 		}
 
 		recalculateDivisions();
 
-		if (auto clockInputValue = getInput<ClkIn>(); clockInputValue) {
-			const auto clockTrigger = clockTriggerDetector(*clockInputValue);
-			if (clockTriggerRisingEdgeDetector(clockTrigger)) {
-				processRisingClockEdge();
-			} else if (clockTriggerFallingEdgeDetector(clockTrigger)) {
-				processFallingClockEdge();
-			}
+		const auto clockInputValue = getInput<ClkIn>().value_or(0);
+		const auto clockTrigger = clockTriggerDetector(clockInputValue);
+		if (clockTriggerRisingEdgeDetector(clockTrigger)) {
+			processRisingClockEdge();
+		} else if (clockTriggerFallingEdgeDetector(clockTrigger)) {
+			processFallingClockEdge();
 		}
 	}
 
@@ -124,18 +122,15 @@ private:
 	}
 
 	void readRotate() {
-		if(auto rotateValue = getInput<RotateIn>(); rotateValue) {
-			adc = uint32_t(std::clamp(*rotateValue, 0.f, 5.f) / 5.f * 255.f);
-		} else {
-			adc = 0;
-		}
+		auto rotateValue = getInput<RotateIn>().value_or(0);
+		adc = uint32_t(std::clamp(rotateValue, 0.f, 5.f) / 5.f * 255.f);
 	}
 
-	void reset(void) {
+	void reset() {
 		counters.fill(0);
 	}
 
-	void recalculateDivisions(void) {
+	void recalculateDivisions() {
 		uint32_t rotationAmount = 0;
 
 		if (spreadMode == Spread_t::SPREAD_ON){

@@ -35,89 +35,25 @@ public:
 		channelD3.pot(getState<D3LevelKnob>());
 		channelD4.pot(getState<D4LevelKnob>());
 
-		if (auto control = getInput<A1JackIn>(); control) {
-			channelA1.control(*control);
-		} else {
-			channelA1.control(5.f);
-		}
-		if (auto control = getInput<A2JackIn>(); control) {
-			channelA2.control(*control);
-		} else {
-			channelA2.control(5.f);
-		}
-		if (auto control = getInput<A3JackIn>(); control) {
-			channelA3.control(*control);
-		} else {
-			channelA3.control(5.f);
-		}
-		if (auto control = getInput<A4JackIn>(); control) {
-			channelA4.control(*control);
-		} else {
-			channelA4.control(5.f);
-		}
+		channelA1.control(getInput<A1JackIn>().value_or(5.f));
+		channelA2.control(getInput<A2JackIn>().value_or(5.f));
+		channelA3.control(getInput<A3JackIn>().value_or(5.f));
+		channelA4.control(getInput<A4JackIn>().value_or(5.f));
 
-		if (auto control = getInput<B1JackIn>(); control) {
-			channelB1.control(*control);
-		} else {
-			channelB1.control(5.f);
-		}
-		if (auto control = getInput<B2JackIn>(); control) {
-			channelB2.control(*control);
-		} else {
-			channelB2.control(5.f);
-		}
-		if (auto control = getInput<B3JackIn>(); control) {
-			channelB3.control(*control);
-		} else {
-			channelB3.control(5.f);
-		}
-		if (auto control = getInput<B4JackIn>(); control) {
-			channelB4.control(*control);
-		} else {
-			channelB4.control(5.f);
-		}
+		channelB1.control(getInput<B1JackIn>().value_or(5.f));
+		channelB2.control(getInput<B2JackIn>().value_or(5.f));
+		channelB3.control(getInput<B3JackIn>().value_or(5.f));
+		channelB4.control(getInput<B4JackIn>().value_or(5.f));
 
-		if (auto control = getInput<C1JackIn>(); control) {
-			channelC1.control(*control);
-		} else {
-			channelC1.control(5.f);
-		}
-		if (auto control = getInput<C2JackIn>(); control) {
-			channelC2.control(*control);
-		} else {
-			channelC2.control(5.f);
-		}
-		if (auto control = getInput<C3JackIn>(); control) {
-			channelC3.control(*control);
-		} else {
-			channelC3.control(5.f);
-		}
-		if (auto control = getInput<C4JackIn>(); control) {
-			channelC4.control(*control);
-		} else {
-			channelC4.control(5.f);
-		}
+		channelC1.control(getInput<C1JackIn>().value_or(5.f));
+		channelC2.control(getInput<C2JackIn>().value_or(5.f));
+		channelC3.control(getInput<C3JackIn>().value_or(5.f));
+		channelC4.control(getInput<C4JackIn>().value_or(5.f));
 
-		if (auto control = getInput<D1JackIn>(); control) {
-			channelD1.control(*control);
-		} else {
-			channelD1.control(5.f);
-		}
-		if (auto control = getInput<D2JackIn>(); control) {
-			channelD2.control(*control);
-		} else {
-			channelD2.control(5.f);
-		}
-		if (auto control = getInput<D3JackIn>(); control) {
-			channelD3.control(*control);
-		} else {
-			channelD3.control(5.f);
-		}
-		if (auto control = getInput<D4JackIn>(); control) {
-			channelD4.control(*control);
-		} else {
-			channelD4.control(5.f);
-		}
+		channelD1.control(getInput<D1JackIn>().value_or(5.f));
+		channelD2.control(getInput<D2JackIn>().value_or(5.f));
+		channelD3.control(getInput<D3JackIn>().value_or(5.f));
+		channelD4.control(getInput<D4JackIn>().value_or(5.f));
 
 		channelA1.mute(getState<A1Button>() == LatchingButton::State_t::UP);
 		channelA2.mute(getState<A2Button>() == LatchingButton::State_t::UP);
