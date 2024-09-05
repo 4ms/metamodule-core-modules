@@ -15,7 +15,7 @@ struct VerbInfo : ModuleInfoBase {
 
     using enum Coords;
 
-    static constexpr std::array<Element, 15> Elements{{
+    static constexpr std::array<Element, 14> Elements{{
 		Davies1900hBlackKnob{{to_mm<72>(37.73), to_mm<72>(46.3), Center, "Size", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(106.27), to_mm<72>(46.3), Center, "Time", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(37.73), to_mm<72>(104.5), Center, "Damp", ""}, 0.25f},
@@ -29,7 +29,6 @@ struct VerbInfo : ModuleInfoBase {
 		AnalogJackInput4ms{{to_mm<72>(72.0), to_mm<72>(272.11), Center, "Ratio CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(115.04), to_mm<72>(272.11), Center, "Comb CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(29.82), to_mm<72>(313.71), Center, "Mix CV", ""}},
-		GateJackInput4ms{{to_mm<72>(72.0), to_mm<72>(313.71), Center, "Hold Gate", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(115.04), to_mm<72>(313.71), Center, "Out", ""}},
 }};
 
@@ -47,7 +46,6 @@ struct VerbInfo : ModuleInfoBase {
         RatioCvIn,
         CombCvIn,
         MixCvIn,
-        HoldGateIn,
         Out,
     };
 
@@ -72,7 +70,6 @@ struct VerbInfo : ModuleInfoBase {
         InputRatio_Cv, 
         InputComb_Cv, 
         InputMix_Cv, 
-        InputHold_Gate, 
         NumInJacks,
     };
     
