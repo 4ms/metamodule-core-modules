@@ -1,6 +1,7 @@
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/Verb_info.hh"
+#include "l4/DCBlock.h"
 #include "processors/allpass.h"
 #include "processors/comb.h"
 #include "util/math.hh"
@@ -48,8 +49,7 @@ public:
 			wetSignal = apFilter[i].process(wetSignal);
 		}
 
-		signalOut = MathTools::interpolate(signalIn, wetSignal, mix);
-		// signalOut = signalIn * inv_mix + wetSignal * mix;
+		signalOut = dc_blocker(MathTools::interpolate(signalIn, wetSignal, mix));
 	}
 
 	void set_param(int param_id, float val) override {
@@ -187,13 +187,35 @@ public:
 		}
 	}
 	void set_input(int input_id, float val) override {
-		if (input_id == 0) //FIXME: Input jacks
-			signalIn = val;
+		switch (input_id) {
+			case VerbInfo::InputInput:
+				signalIn = val;
+				break;
+
+			case VerbInfo::InputSize_Cv:
+				break;
+
+			case VerbInfo::InputDamp_Cv:
+				break;
+
+			case VerbInfo::InputMix_Cv:
+				break;
+
+			case VerbInfo::InputTime_Cv:
+				break;
+
+			case VerbInfo::InputRatio_Cv:
+				break;
+
+			case VerbInfo::InputComb_Cv:
+				break;
+		}
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputOut) {
 			return signalOut;
+		}
 		return 0.f;
 	}
 
@@ -213,6 +235,8 @@ public:
 private:
 	float signalIn = 0;
 	float signalOut = 0;
+
+	DCBlock dc_blocker{0.9995f};
 
 	static constexpr int numAllpass = 4;
 	static constexpr int numComb = 8;
