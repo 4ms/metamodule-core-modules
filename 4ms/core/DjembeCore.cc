@@ -113,11 +113,9 @@ public:
 			update_params();
 		paramsNeedUpdating = false;
 
-		// if (++freq_recalc_ctr > freq_recalc_throttle) {
-		// 	if (freq_needs_recalc)
-		// 		calc_freq();
-		// 	freq_needs_recalc = false;
-		// }
+		if (freq_needs_recalc)
+			calc_freq();
+		freq_needs_recalc = false;
 
 		// StrikeModel:
 		noise[0] = (1103515245 * noise[1]) + 12345;
@@ -131,11 +129,6 @@ public:
 		float fTemp0 = adEnvRate * float(iRec4[0]);
 		auto adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
 		float noiseBurst = fSlow4 * (noise_hp_lp[2] + (noise_hp_lp[0] + (2.0f * noise_hp_lp[1]))) * adEnv;
-		if (!MathTools::is_finite_fastmath(noiseBurst)) {
-#ifdef CORE_CA7
-			asm volatile("bkpt 1");
-#endif
-		}
 
 		noise[1] = noise[0];
 		noise_hp[2] = noise_hp[1];
@@ -146,11 +139,6 @@ public:
 		iRec4[1] = iRec4[0];
 
 		fRec0[0] = (noiseBurst - ((fSlow19 * fRec0[1]) + (fConst6 * fRec0[2])));
-		if (!MathTools::is_finite_fastmath(fRec0[0])) {
-#ifdef CORE_CA7
-			asm volatile("bkpt 2");
-#endif
-		}
 		fRec5[0] = (noiseBurst - ((fSlow20 * fRec5[1]) + (fConst9 * fRec5[2])));
 		fRec6[0] = (noiseBurst - ((fSlow21 * fRec6[1]) + (fConst12 * fRec6[2])));
 		fRec7[0] = (noiseBurst - ((fSlow22 * fRec7[1]) + (fConst15 * fRec7[2])));
@@ -255,13 +243,11 @@ public:
 		adEnvRate =
 			(1.0f / MathTools::max<float>(1.0f, (fConst2 * MathTools::min<float>(sharpCV + sharpnessKnob, 1.0f))));
 		slowTrig = trigIn > 0.f ? 1.f : 0.f;
-
-		calc_freq();
 	}
 
 	void calc_freq() {
 		float freq = freqCV * freqKnob * samplerateAdjust;
-		slowFreq = 0.005f * freq + 0.995f * slowFreq;
+		slowFreq = 0.01f * freq + 0.99f * slowFreq;
 
 		// Coef: a1
 		fSlow19 = (fConst4 * MathTools::cos_close((fConst5 * slowFreq)));
@@ -359,8 +345,6 @@ public:
 
 private:
 	bool freq_needs_recalc = false;
-	constexpr static uint32_t freq_recalc_throttle = 240;
-	uint32_t freq_recalc_ctr = freq_recalc_throttle;
 
 	bool paramsNeedUpdating = false;
 	float signalOut = 0;
