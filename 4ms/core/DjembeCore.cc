@@ -113,11 +113,11 @@ public:
 			update_params();
 		paramsNeedUpdating = false;
 
-		if (++freq_recalc_ctr > freq_recalc_throttle) {
-			if (freq_needs_recalc)
-				calc_freq();
-			freq_needs_recalc = false;
-		}
+		// if (++freq_recalc_ctr > freq_recalc_throttle) {
+		// 	if (freq_needs_recalc)
+		// 		calc_freq();
+		// 	freq_needs_recalc = false;
+		// }
 
 		// StrikeModel:
 		noise[0] = (1103515245 * noise[1]) + 12345;
@@ -255,10 +255,13 @@ public:
 		adEnvRate =
 			(1.0f / MathTools::max<float>(1.0f, (fConst2 * MathTools::min<float>(sharpCV + sharpnessKnob, 1.0f))));
 		slowTrig = trigIn > 0.f ? 1.f : 0.f;
+
+		calc_freq();
 	}
 
 	void calc_freq() {
-		slowFreq = freqCV * freqKnob * samplerateAdjust;
+		float freq = freqCV * freqKnob * samplerateAdjust;
+		slowFreq = 0.005f * freq + 0.995f * slowFreq;
 
 		// Coef: a1
 		fSlow19 = (fConst4 * MathTools::cos_close((fConst5 * slowFreq)));
