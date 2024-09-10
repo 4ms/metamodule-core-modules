@@ -18,7 +18,6 @@ class DjembeCore : public CoreProcessor {
 
 public:
 	DjembeCore() {
-		IOTA = 0;
 
 		// Todo: Combine these loops
 		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
@@ -106,12 +105,19 @@ public:
 		freqCV = float(1.0f);
 		freqKnob = float(60.0f);
 		paramsNeedUpdating = true;
+		freq_needs_recalc = true;
 	}
 
 	void update() override {
 		if (paramsNeedUpdating)
 			update_params();
 		paramsNeedUpdating = false;
+
+		if (++freq_recalc_ctr > freq_recalc_throttle) {
+			if (freq_needs_recalc)
+				calc_freq();
+			freq_needs_recalc = false;
+		}
 
 		// StrikeModel:
 		noise[0] = (1103515245 * noise[1]) + 12345;
@@ -121,10 +127,15 @@ public:
 		noise_hp_lp[0] = (fSlow7 * (((fSlow9 * noise_hp[0]) + (fSlow12 * noise_hp[1])) + (fSlow9 * noise_hp[2]))) -
 						 (fSlow13 * ((fSlow14 * noise_hp_lp[2]) + (fSlow15 * noise_hp_lp[1])));
 		fVecTrig[0] = slowTrig;
-		iRec4[0] = (((iRec4[1] + (iRec4[1] > 0)) * (slowTrig <= fVecTrig[1])) + (slowTrig > fVecTrig[1]));
-		float fTemp0 = (adEnvRate * float(iRec4[0]));
-		float adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
+		iRec4[0] = ((iRec4[1] + (iRec4[1] > 0)) * (slowTrig <= fVecTrig[1])) + (slowTrig > fVecTrig[1]);
+		float fTemp0 = adEnvRate * float(iRec4[0]);
+		auto adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
 		float noiseBurst = fSlow4 * (noise_hp_lp[2] + (noise_hp_lp[0] + (2.0f * noise_hp_lp[1]))) * adEnv;
+		if (!MathTools::is_finite_fastmath(noiseBurst)) {
+#ifdef CORE_CA7
+			asm volatile("bkpt 1");
+#endif
+		}
 
 		noise[1] = noise[0];
 		noise_hp[2] = noise_hp[1];
@@ -135,6 +146,11 @@ public:
 		iRec4[1] = iRec4[0];
 
 		fRec0[0] = (noiseBurst - ((fSlow19 * fRec0[1]) + (fConst6 * fRec0[2])));
+		if (!MathTools::is_finite_fastmath(fRec0[0])) {
+#ifdef CORE_CA7
+			asm volatile("bkpt 2");
+#endif
+		}
 		fRec5[0] = (noiseBurst - ((fSlow20 * fRec5[1]) + (fConst9 * fRec5[2])));
 		fRec6[0] = (noiseBurst - ((fSlow21 * fRec6[1]) + (fConst12 * fRec6[2])));
 		fRec7[0] = (noiseBurst - ((fSlow22 * fRec7[1]) + (fConst15 * fRec7[2])));
@@ -239,7 +255,10 @@ public:
 		adEnvRate =
 			(1.0f / MathTools::max<float>(1.0f, (fConst2 * MathTools::min<float>(sharpCV + sharpnessKnob, 1.0f))));
 		slowTrig = trigIn > 0.f ? 1.f : 0.f;
-		slowFreq = freqCV * freqKnob;
+	}
+
+	void calc_freq() {
+		slowFreq = freqCV * freqKnob * samplerateAdjust;
 
 		// Coef: a1
 		fSlow19 = (fConst4 * MathTools::cos_close((fConst5 * slowFreq)));
@@ -268,7 +287,7 @@ public:
 		switch (param_id) {
 			case 0:
 				freqKnob = MathTools::map_value(val, 0.f, 1.f, 20.f, 500.f);
-				paramsNeedUpdating = true;
+				freq_needs_recalc = true;
 				break;
 
 			case 1:
@@ -289,7 +308,14 @@ public:
 	}
 
 	void set_samplerate(const float sr) override {
-		// Todo!
+		if (sr > 0.f) {
+			float t = 48000.f / sr;
+			if (t != samplerateAdjust) {
+				samplerateAdjust = t;
+				paramsNeedUpdating = true;
+				freq_needs_recalc = true;
+			}
+		}
 	}
 
 	void set_input(int input_id, float v) override {
@@ -297,8 +323,8 @@ public:
 
 		switch (input_id) {
 			case 0:
-				freqCV = exp5Table.interp(MathTools::constrain(val, 0.f, 1.0f));
-				paramsNeedUpdating = true;
+				freqCV = exp5Table.interp(MathTools::constrain(val, 0.f, 1.0f)); //1..32
+				freq_needs_recalc = true;
 				break;
 
 			case 1:
@@ -329,127 +355,130 @@ public:
 	}
 
 private:
+	bool freq_needs_recalc = false;
+	constexpr static uint32_t freq_recalc_throttle = 240;
+	uint32_t freq_recalc_ctr = freq_recalc_throttle;
+
 	bool paramsNeedUpdating = false;
 	float signalOut = 0;
-
-	float IOTA;
+	float samplerateAdjust = 1.f;
 
 	float gainCV;
 	float gainKnob;
 	// float fConst1;
 	float strikeCV;
 	float strikeKnob;
-	int noise[2];
-	float noise_hp[3];
-	float noise_hp_lp[3];
+	int noise[2]{};
+	float noise_hp[3]{};
+	float noise_hp_lp[3]{};
 	// float fConst2;
 	float sharpCV;
 	float sharpnessKnob;
 	float trigIn;
-	float fVecTrig[2];
-	int iRec4[2];
+	float fVecTrig[2]{};
+	int iRec4[2]{};
 	// float fConst4;
 	// float fConst5;
 	float freqCV;
 	float freqKnob;
 	// float fConst6;
-	float fRec0[3];
+	float fRec0[3]{};
 	// float fConst8;
 	// float fConst9;
-	float fRec5[3];
+	float fRec5[3]{};
 	// float fConst11;
 	// float fConst12;
-	float fRec6[3];
+	float fRec6[3]{};
 	// float fConst14;
 	// float fConst15;
-	float fRec7[3];
+	float fRec7[3]{};
 	// float fConst17;
 	// float fConst18;
-	float fRec8[3];
+	float fRec8[3]{};
 	// float fConst20;
 	// float fConst21;
-	float fRec9[3];
+	float fRec9[3]{};
 	// float fConst23;
 	// float fConst24;
-	float fRec10[3];
+	float fRec10[3]{};
 	// float fConst26;
 	// float fConst27;
-	float fRec11[3];
+	float fRec11[3]{};
 	// float fConst29;
 	// float fConst30;
-	float fRec12[3];
+	float fRec12[3]{};
 	// float fConst32;
 	// float fConst33;
-	float fRec13[3];
+	float fRec13[3]{};
 	// float fConst35;
 	// float fConst36;
-	float fRec14[3];
+	float fRec14[3]{};
 	// float fConst38;
 	// float fConst39;
-	float fRec15[3];
+	float fRec15[3]{};
 	// float fConst41;
 	// float fConst42;
-	float fRec16[3];
+	float fRec16[3]{};
 	// float fConst44;
 	// float fConst45;
-	float fRec17[3];
+	float fRec17[3]{};
 	// float fConst47;
 	// float fConst48;
-	float fRec18[3];
+	float fRec18[3]{};
 	// float fConst50;
 	// float fConst51;
-	float fRec19[3];
+	float fRec19[3]{};
 	// float fConst53;
 	// float fConst54;
-	float fRec20[3];
+	float fRec20[3]{};
 	// float fConst56;
 	// float fConst57;
-	float fRec21[3];
+	float fRec21[3]{};
 	// float fConst59;
 	// float fConst60;
-	float fRec22[3];
+	float fRec22[3]{};
 	// float fConst62;
 	// float fConst63;
-	float fRec23[3];
-	float strike0;
-	float strike1;
-	float strike2;
-	float strike3;
-	float fSlow4;
-	float fSlow5;
-	float fSlow6;
-	float fSlow7;
-	float fSlow8;
-	float fSlow9;
-	float fSlow10;
-	float fSlow11;
-	float fSlow12;
-	float fSlow13;
-	float fSlow14;
-	float fSlow15;
-	float adEnvRate;
-	float slowTrig;
-	float slowFreq;
-	float fSlow19;
-	float fSlow20;
-	float fSlow21;
-	float fSlow22;
-	float fSlow23;
-	float fSlow24;
-	float fSlow25;
-	float fSlow26;
-	float fSlow27;
-	float fSlow28;
-	float fSlow29;
-	float fSlow30;
-	float fSlow31;
-	float fSlow32;
-	float fSlow33;
-	float fSlow34;
-	float fSlow35;
-	float fSlow36;
-	float fSlow37;
-	float fSlow38;
+	float fRec23[3]{};
+	float strike0{};
+	float strike1{};
+	float strike2{};
+	float strike3{};
+	float fSlow4{};
+	float fSlow5{};
+	float fSlow6{};
+	float fSlow7{};
+	float fSlow8{};
+	float fSlow9{};
+	float fSlow10{};
+	float fSlow11{};
+	float fSlow12{};
+	float fSlow13{};
+	float fSlow14{};
+	float fSlow15{};
+	float adEnvRate{};
+	float slowTrig{};
+	float slowFreq{};
+	float fSlow19{};
+	float fSlow20{};
+	float fSlow21{};
+	float fSlow22{};
+	float fSlow23{};
+	float fSlow24{};
+	float fSlow25{};
+	float fSlow26{};
+	float fSlow27{};
+	float fSlow28{};
+	float fSlow29{};
+	float fSlow30{};
+	float fSlow31{};
+	float fSlow32{};
+	float fSlow33{};
+	float fSlow34{};
+	float fSlow35{};
+	float fSlow36{};
+	float fSlow37{};
+	float fSlow38{};
 	static constexpr float fConst1 = (3.14159274f / SAMPLERATE);
 	static constexpr float fConst2 = (0.00200000009f * SAMPLERATE);
 	static constexpr float fConst3 = gcem::pow(0.00100000005f, (1.66666663f / SAMPLERATE));
