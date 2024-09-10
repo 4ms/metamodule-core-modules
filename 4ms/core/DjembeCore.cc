@@ -104,18 +104,21 @@ public:
 		trigIn = float(0.0f);
 		freqCV = float(1.0f);
 		freqKnob = float(60.0f);
+
 		paramsNeedUpdating = true;
-		freq_needs_recalc = true;
+		freqNeedUpdating = true;
 	}
 
 	void update() override {
-		if (paramsNeedUpdating)
+		if (paramsNeedUpdating) {
 			update_params();
-		paramsNeedUpdating = false;
+			paramsNeedUpdating = false;
+		}
 
-		if (freq_needs_recalc)
+		if (freqNeedUpdating) {
 			calc_freq();
-		freq_needs_recalc = false;
+			freqNeedUpdating = false;
+		}
 
 		// StrikeModel:
 		noise[0] = (1103515245 * noise[1]) + 12345;
@@ -276,7 +279,7 @@ public:
 		switch (param_id) {
 			case 0:
 				freqKnob = MathTools::map_value(val, 0.f, 1.f, 20.f, 500.f);
-				freq_needs_recalc = true;
+				freqNeedUpdating = true;
 				break;
 
 			case 1:
@@ -302,7 +305,7 @@ public:
 			if (t != samplerateAdjust) {
 				samplerateAdjust = t;
 				paramsNeedUpdating = true;
-				freq_needs_recalc = true;
+				freqNeedUpdating = true;
 			}
 		}
 	}
@@ -313,7 +316,7 @@ public:
 		switch (input_id) {
 			case 0:
 				freqCV = exp5Table.interp(MathTools::constrain(val, 0.f, 1.0f)); //1..32
-				freq_needs_recalc = true;
+				freqNeedUpdating = true;
 				break;
 
 			case 1:
@@ -344,9 +347,8 @@ public:
 	}
 
 private:
-	bool freq_needs_recalc = false;
-
 	bool paramsNeedUpdating = false;
+	bool freqNeedUpdating = false;
 	float signalOut = 0;
 	float samplerateAdjust = 1.f;
 
@@ -445,7 +447,7 @@ private:
 	float fSlow15{};
 	float adEnvRate{};
 	float slowTrig{};
-	float slowFreq{};
+	float slowFreq{500.f};
 	float fSlow19{};
 	float fSlow20{};
 	float fSlow21{};
