@@ -19,7 +19,6 @@ class DjembeCoreNeon : public CoreProcessor {
 
 public:
 	DjembeCoreNeon() {
-		IOTA = 0;
 
 		for (int i = 0; i < 2; i++) {
 			noise[i] = 0;
@@ -60,21 +59,20 @@ public:
 		freqCV = 1.0f;
 		freqKnob = float(60.0f);
 
-		set_freq_coef(freqKnob * freqCV);
-
 		paramsNeedUpdating = true;
+		freqNeedsUpdating = true;
 	}
 
 	void update() override {
 		//1038us
-		if (freqNeedsUpdating || paramsNeedUpdating) {
+		if (paramsNeedUpdating) {
 			update_params();
 			paramsNeedUpdating = false;
 		}
-		// if (freqNeedsUpdating) {
-		// 	update_freq();
-		// 	freqNeedsUpdating = false;
-		// }
+		if (freqNeedsUpdating) {
+			calc_freq();
+			freqNeedsUpdating = false;
+		}
 
 		// 90ns:
 		// StrikeModel:
@@ -144,11 +142,14 @@ public:
 
 		//640ns
 		// if freq
-		set_freq_coef(freqCV * freqKnob);
+		// set_freq_coef(freqCV * freqKnob);
 	}
 
-	void update_freq() {
-		set_freq_coef(freqCV * freqKnob);
+	void calc_freq() {
+		float freq = freqCV * freqKnob * samplerateAdjust;
+		slowFreq = 0.01f * freq + 0.99f * slowFreq;
+
+		set_freq_coef(slowFreq);
 	}
 
 	void set_freq_coef(float freq) {
@@ -188,7 +189,14 @@ public:
 	}
 
 	void set_samplerate(const float sr) override {
-		// Todo!
+		if (sr > 0.f) {
+			float t = 48000.f / sr;
+			if (t != samplerateAdjust) {
+				samplerateAdjust = t;
+				paramsNeedUpdating = true;
+				freqNeedsUpdating = true;
+			}
+		}
 	}
 
 	void set_input(const int input_id, const float v) override {
@@ -231,8 +239,8 @@ private:
 	bool paramsNeedUpdating = false;
 	bool freqNeedsUpdating = false;
 	float signalOut = 0;
-
-	float IOTA;
+	float samplerateAdjust = 1.f;
+	float slowFreq = 500.f;
 
 	ParallelBPIIR iirs[5];
 
@@ -240,26 +248,26 @@ private:
 	float gainKnob;
 	float strikeCV;
 	float strikeKnob;
-	int noise[2];
-	float noise_hp[3];
-	float noise_hp_lp[3];
+	int noise[2]{};
+	float noise_hp[3]{};
+	float noise_hp_lp[3]{};
 	float sharpCV;
 	float sharpnessKnob;
 	float trigIn;
-	float fVecTrig[2];
-	int iRec4[2];
+	float fVecTrig[2]{};
+	int iRec4[2]{};
 	float freqCV;
 	float freqKnob;
-	float fSlowGainStrike;
-	float fSlowStrike1;
-	float fSlowStrike2;
-	float fSlowStrike3;
-	float fSlowStrike4;
-	float fSlowStrike5;
-	float fSlowStrike6;
-	float fSlowStrike7;
-	float fSlowStrike8;
-	float adEnvRate;
+	float fSlowGainStrike{};
+	float fSlowStrike1{};
+	float fSlowStrike2{};
+	float fSlowStrike3{};
+	float fSlowStrike4{};
+	float fSlowStrike5{};
+	float fSlowStrike6{};
+	float fSlowStrike7{};
+	float fSlowStrike8{};
+	float adEnvRate{};
 	static constexpr float fConst1 = (3.14159274f / SAMPLERATE);
 	static constexpr float fConst2 = (0.00200000009f * SAMPLERATE);
 	static constexpr float fConst3 = gcem::pow(0.00100000005f, (1.66666663f / SAMPLERATE));
