@@ -1,56 +1,194 @@
 {
 	"MetaModuleBrandName": "4ms",
 	"MetaModulePluginMaintainer": "4ms Company",
-	"MetaModulePluginMaintainerEmail": "4ms@4mscompany.com",
-	"MetaModulePluginMaintainerUrl": "https://metamodule.4ms.info",
+	"MetaModulePluginMaintainerEmail": "",
+	"MetaModulePluginMaintainerUrl": "https://4mscompany.com",
 	"MetaModuleDescription": "",
 	"MetaModuleIncludedModules": [
-		"Atvert2",
-		"BPF",
-		"CLKD",
-		"CLKM",
-		"ComplexEG",
-		"DEV",
-		"DLD",
-		"Detune",
-		"Djembe",
-		"Drum",
-		"ENVVCA",
-		"EnOsc",
-		"FM",
-		"Follow",
-		"Freeverb",
-		"Gate",
-		"HPF",
-		"KPLS",
-		"L4",
-		"LPG",
-		"MNMX",
-		"MPEG",
-		"MultiLFO",
-		"Noise",
-		"Octave",
-		"PEG",
-		"PI",
-		"Pan",
-		"PitchShift",
-		"Prob8",
-		"QCD",
-		"QPLFO",
-		"RCD",
-		"SCM",
-		"SHEV",
-		"SH",
-		"SISM",
-		"Seq8",
-		"Slew",
-		"Source",
-		"StMix",
-		"Switch14",
-		"Switch41",
-		"Tapo",
-		"VCAM",
-		"Verb",
+	{
+		"slug": "Atvert2",
+		"name": "Atvert2"
+	},
+	{
+		"slug": "BPF",
+		"name": "BPF"
+	},
+	{
+		"slug": "CLKD",
+		"name": "CLKD"
+	},
+	{
+		"slug": "CLKM",
+		"name": "CLKM"
+	},
+	{
+		"slug": "ComplexEG",
+		"name": "ComplexEG"
+	},
+	{
+		"slug": "DEV",
+		"name": "DEV"
+	},
+	{
+		"slug": "DLD",
+		"name": "DLD"
+	},
+	{
+		"slug": "Detune",
+		"name": "Detune"
+	},
+	{
+		"slug": "Djembe",
+		"name": "Djembe"
+	},
+	{
+		"slug": "Drum",
+		"name": "Drum"
+	},
+	{
+		"slug": "ENVVCA",
+		"name": "ENVVCA"
+	},
+	{
+		"slug": "EnOsc",
+		"name": "EnOsc"
+	},
+	{
+		"slug": "FM",
+		"name": "FM"
+	},
+	{
+		"slug": "Follow",
+		"name": "Follow"
+	},
+	{
+		"slug": "Freeverb",
+		"name": "Freeverb"
+	},
+	{
+		"slug": "Gate",
+		"name": "Gate"
+	},
+	{
+		"slug": "HPF",
+		"name": "HPF"
+	},
+	{
+		"slug": "KPLS",
+		"name": "KPLS"
+	},
+	{
+		"slug": "L4",
+		"name": "L4"
+	},
+	{
+		"slug": "LPG",
+		"name": "LPG"
+	},
+	{
+		"slug": "MNMX",
+		"name": "MNMX"
+	},
+	{
+		"slug": "MPEG",
+		"name": "MPEG"
+	},
+	{
+		"slug": "MultiLFO",
+		"name": "MultiLFO"
+	},
+	{
+		"slug": "Noise",
+		"name": "Noise"
+	},
+	{
+		"slug": "Octave",
+		"name": "Octave"
+	},
+	{
+		"slug": "PEG",
+		"name": "PEG"
+	},
+	{
+		"slug": "PI",
+		"name": "PI"
+	},
+	{
+		"slug": "Pan",
+		"name": "Pan"
+	},
+	{
+		"slug": "PitchShift",
+		"name": "PitchShift"
+	},
+	{
+		"slug": "Prob8",
+		"name": "Prob8"
+	},
+	{
+		"slug": "QCD",
+		"name": "QCD"
+	},
+	{
+		"slug": "QPLFO",
+		"name": "QPLFO"
+	},
+	{
+		"slug": "RCD",
+		"name": "RCD"
+	},
+	{
+		"slug": "SCM",
+		"name": "SCM"
+	},
+	{
+		"slug": "SHEV",
+		"name": "SHEV"
+	},
+	{
+		"slug": "SH",
+		"name": "SH"
+	},
+	{
+		"slug": "SISM",
+		"name": "SISM"
+	},
+	{
+		"slug": "Seq8",
+		"name": "Seq8"
+	},
+	{
+		"slug": "Slew",
+		"name": "Slew"
+	},
+	{
+		"slug": "Source",
+		"name": "Source"
+	},
+	{
+		"slug": "StMix",
+		"name": "StMix"
+	},
+	{
+		"slug": "Switch14",
+		"name": "Switch14"
+	},
+	{
+		"slug": "Switch41",
+		"name": "Switch41"
+	},
+	{
+		"slug": "Tapo",
+		"name": "Tapo"
+	},
+	{
+		"slug": "VCAM",
+		"name": "VCAM"
+	},
+	{
+		"slug": "Verb",
+		"name": "Verb"
+	},
 	]
 }
 
