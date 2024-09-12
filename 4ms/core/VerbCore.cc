@@ -49,7 +49,7 @@ public:
 			wetSignal = apFilter[i].process(wetSignal);
 		}
 
-		signalOut = dc_blocker(MathTools::interpolate(signalIn, wetSignal, mix));
+		signalOut = std::clamp(dc_blocker(MathTools::interpolate(signalIn, wetSignal, mix)), -10.f, 10.f);
 	}
 
 	void set_param(int param_id, float val) override {
