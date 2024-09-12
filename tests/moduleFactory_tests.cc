@@ -20,8 +20,8 @@ struct TestCoreMod : public CoreProcessor {
 		return 0.f;
 	}
 
-	static std::unique_ptr<CoreProcessor> create() {
-		return std::make_unique<TestCoreMod>();
+	static CoreProcessor *create() {
+		return new TestCoreMod;
 	}
 };
 

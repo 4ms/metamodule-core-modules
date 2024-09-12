@@ -108,7 +108,7 @@ static ModuleRegistry *find_module(std::string_view combined_slug) {
 		return nullptr;
 }
 
-std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_slug) {
+CoreProcessor *ModuleFactory::create(std::string_view combined_slug) {
 	if (auto module = find_module(combined_slug)) {
 		if (auto f_create = module->creation_func)
 			return f_create();

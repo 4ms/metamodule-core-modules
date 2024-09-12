@@ -11,7 +11,7 @@ namespace MetaModule
 
 class ModuleFactory {
 public:
-	using CreateModuleFunc = std::function<std::unique_ptr<CoreProcessor>()>;
+	using CreateModuleFunc = std::function<CoreProcessor *()>;
 
 	ModuleFactory() = delete;
 
@@ -27,7 +27,7 @@ public:
 								   const ModuleInfoView &info,
 								   std::string_view faceplate_filename);
 
-	static std::unique_ptr<CoreProcessor> create(std::string_view combined_slug);
+	static CoreProcessor *create(std::string_view combined_slug);
 
 	static ModuleInfoView &getModuleInfo(std::string_view combined_slug);
 	static std::string_view getModuleFaceplate(std::string_view combined_slug);

@@ -13,7 +13,7 @@ class Atvert2Core : public CoreProcessor {
 public:
 	Atvert2Core() = default;
 
-	void update(void) override {
+	void update() override {
 		out1 = (in1Connected ? in1 : defaultVoltage) * level1;
 		out2 = (in2Connected ? in2 : defaultVoltage) * level2;
 	}
@@ -73,10 +73,9 @@ public:
 	}
 
 	// Boilerplate to auto-register in ModuleFactory
-	// clang-format off
-	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
-	static inline bool s_registered = ModuleFactory::registerModuleType(Info::slug, create, ModuleInfoView::makeView<Info>(), Info::png_filename);
-	// clang-format on
+	static inline bool s_registered = ModuleFactory::registerModuleType(
+		Info::slug, create_module<ThisCore>, ModuleInfoView::makeView<Info>(), Info::png_filename);
+
 
 private:
 	float in1 = 0;
