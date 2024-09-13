@@ -32,6 +32,10 @@ struct VerbInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(115.04), to_mm<72>(313.71), Center, "Out", ""}},
 }};
 
+	static constexpr std::array<BypassRoute, 1> bypass_routes{{
+		{0, 0}, 
+	}};
+
     enum class Elem {
         SizeKnob,
         TimeKnob,
