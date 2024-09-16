@@ -184,22 +184,28 @@ private:
 
 	void load_state(std::string_view state_data) override 
 	{
-		auto raw_data = Base64::decode(state_data);
+		if (state_data.length() == 0) {
+			saveState = SaveState_t{};
 
-		std::error_code ec;
-		auto newSaveState = alpaca::deserialize<alpaca::options::with_version, SaveState_t>(raw_data, ec);
-		if (!ec)
-		{
+		} else {
+
+			auto raw_data = Base64::decode(state_data);
+
+			std::error_code ec;
+			auto newSaveState = alpaca::deserialize<alpaca::options::with_version, SaveState_t>(raw_data, ec);
+			if (ec)
+				return;
+
 			saveState = newSaveState;
-
-			channelA.peg.settings.start_clk_time = saveState.clk_timeA;
-			channelA.peg.settings.start_cycle_on = saveState.cyclingA;
-			channelA.peg.apply_settings();
-
-			channelB.peg.settings.start_clk_time = saveState.clk_timeB;
-			channelB.peg.settings.start_cycle_on = saveState.cyclingB;
-			channelB.peg.apply_settings();
 		}
+
+		channelA.peg.settings.start_clk_time = saveState.clk_timeA;
+		channelA.peg.settings.start_cycle_on = saveState.cyclingA;
+		channelA.peg.apply_settings();
+
+		channelB.peg.settings.start_clk_time = saveState.clk_timeB;
+		channelB.peg.settings.start_cycle_on = saveState.cyclingB;
+		channelB.peg.apply_settings();
 	}
 
 	std::string save_state() override 

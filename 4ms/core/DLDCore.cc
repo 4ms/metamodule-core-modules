@@ -144,6 +144,12 @@ public:
 	SaveState_t saveState{};
 
 	void load_state(std::string_view state_data) override {
+		if (state_data.length() == 0) {
+			saveState = SaveState_t{};
+			applySaveState();
+			return;
+		}
+
 		auto raw_data = Base64::decode(state_data);
 
 		std::error_code ec;

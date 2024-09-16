@@ -9,9 +9,9 @@
 
 #include <alpaca/alpaca.h>
 
-// #define PRINTS
+// #define TAPO_PRINTS
 
-#ifdef PRINTS
+#ifdef TAPO_PRINTS
 #include <cstdio>
 #endif
 
@@ -26,7 +26,7 @@ class TapoCore : public SmartCoreProcessor<TapoInfo> {
 public:
 	TapoCore() : audioBufferFillCount(0), gateOutCounter(0), uiSampleCounter(0)
 	{
-		#ifdef PRINTS
+		#ifdef TAPO_PRINTS
 		printf("Constructor TapoCore\n");
 		#endif
 
@@ -66,7 +66,7 @@ public:
 		{
 			populateSaveState();
 
-			#ifdef PRINTS
+			#ifdef TAPO_PRINTS
 			printf("Change sample rate %uHz -> %uHz\n", currentSampleRateInHz, new_samplerate);
 			#endif
 
@@ -122,36 +122,42 @@ public:
 
 	void load_state(std::string_view state_data) override 
 	{
-		auto raw_data = Base64::decode(state_data);
+		SaveState_t newSaveState;
 
-		std::error_code ec;
-		auto newSaveState = alpaca::deserialize<alpaca::options::with_version, SaveState_t>(raw_data, ec);
-		if (!ec)
-		{
-			// store current state so it can be applied later
-			saveState = newSaveState;
+		if (state_data.length() == 0) {
+			newSaveState = SaveState_t{}; //defaults;
+		} else {
+			std::error_code ec;
 
-			#ifdef PRINTS
-			printf("Loaded: Repeat %u, Current Slot %d, Sync %u, NumbSlots %u\n", saveState.repeat, saveState.current_slot, saveState.sync, saveState.slots.size());
-			#endif
+			auto raw_data = Base64::decode(state_data);
 
-			applySaveState();
+			newSaveState = alpaca::deserialize<alpaca::options::with_version, SaveState_t>(raw_data, ec);
+
+			if (ec) {
+				// Deserialization error
+				// just ignore
+				#ifdef TAPO_PRINTS
+				printf("Deserialization Error: %s\n", ec.message().c_str());
+				#endif
+				return;
+			}
 		}
-		else
-		{
-			// Deserialization error
-			// just ignore
-			#ifdef PRINTS
-			printf("Deserialization Error: %s\n", ec.message().c_str());
-			#endif
-		}
+
+		// store current state so it can be applied later
+		saveState = newSaveState;
+
+		#ifdef TAPO_PRINTS
+		printf("Loaded: Repeat %u, Current Slot %d, Sync %u, NumbSlots %u\n", saveState.repeat, saveState.current_slot, saveState.sync, saveState.slots.size());
+		#endif
+
+		applySaveState();
 	}
 
 	std::string save_state() override 
 	{
 		populateSaveState();
 
-		#ifdef PRINTS
+		#ifdef TAPO_PRINTS
 		printf("Save: Repeat %u, Current Slot %d, Sync %u, NumbSlots %u\n", saveState.repeat, saveState.current_slot, saveState.sync, saveState.slots.size());
 		#endif
 
@@ -163,7 +169,7 @@ public:
 
 	void applySaveState()
 	{
-		#ifdef PRINTS
+		#ifdef TAPO_PRINTS
 		printf("Apply: Repeat %u, Current Slot %d, Sync %u, NumbSlots %u\n", saveState.repeat, saveState.current_slot, saveState.sync, saveState.slots.size());
 		#endif
 
@@ -192,7 +198,7 @@ public:
 			.slots = ui.getPersistentStorage().get_custom_slots()
 		};
 
-		#ifdef PRINTS
+		#ifdef TAPO_PRINTS
 		printf("Populate: Repeat %u, Current Slot %d, Sync %u, NumbSlots %u\n", saveState.repeat, saveState.current_slot, saveState.sync, saveState.slots.size());
 		#endif
 	}
