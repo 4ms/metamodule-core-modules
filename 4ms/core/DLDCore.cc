@@ -118,7 +118,7 @@ public:
 
 		// Input normalization
 		channelA.io.audioIn = getInput<InAIn>().value_or(0);
-		channelB.io.audioIn = isPatched<InBIn>() ? getInput<InBIn>().value_or(0) : channelA.io.audioIn;
+		channelB.io.audioIn = getInput<InBIn>().value_or(channelA.io.audioIn);
 
 		channelA.update();
 		channelB.update();

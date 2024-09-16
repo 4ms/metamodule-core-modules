@@ -61,7 +61,7 @@ public:
 	}
 
 private:
-	std::array<uint16_t, NumCVs> cv_adc_buffer;
-	std::array<uint16_t, NumPots> pot_adc_buffer;
+	std::array<uint16_t, NumCVs> cv_adc_buffer{};
+	std::array<uint16_t, NumPots> pot_adc_buffer{};
 };
 } // namespace LDKit
