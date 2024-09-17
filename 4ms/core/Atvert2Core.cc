@@ -30,6 +30,18 @@ public:
 		}
 	}
 
+	float get_param(int param_id) override {
+		switch (param_id) {
+			case Info::Knob_1:
+				return level1 / 2.f + 0.5f;
+				break;
+			case Info::Knob_2:
+				return level2 / 2.f + 0.5f;
+				break;
+		}
+		return 0;
+	}
+
 	void set_samplerate(const float sr) override {
 	}
 
