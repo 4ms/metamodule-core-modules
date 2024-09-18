@@ -6,7 +6,7 @@ $(BUILDDIR):
 	cmake -S . -B $(BUILDDIR)
 
 all: $(BUILDDIR)
-	@cmake --build $(BUILDDIR) -- --no-print-directory
+	@cmake --build $(BUILDDIR)
 	@$(BUILDDIR)/runtests --out=$(TMPFILE) && echo "[√] Unit tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
 
 clean:
