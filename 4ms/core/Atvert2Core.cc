@@ -30,7 +30,7 @@ public:
 		}
 	}
 
-	float get_param(int param_id) override {
+	float get_param(int param_id) const override  {
 		switch (param_id) {
 			case Info::Knob_1:
 				return level1 / 2.f + 0.5f;
