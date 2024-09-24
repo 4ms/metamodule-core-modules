@@ -46,9 +46,9 @@ struct TapoInfo : ModuleInfoBase {
 		GateJackInput4ms{{to_mm<72>(193.9), to_mm<72>(256.58), Center, "Ext Clock", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(237.33), to_mm<72>(264.89), Center, "Audio Out 2", ""}},
 		RedLight{{to_mm<72>(129.3), to_mm<72>(268.61), Center, "Tap LED", ""}},
-		AltParamChoiceLabeled{{{to_mm<72>(130.256), to_mm<72>(48.37), Center, "Velocity", ""}, 5, 3}, {"Min", "Low", "Med", "High", "Max"}},
-		AltParamChoiceLabeled{{{to_mm<72>(148.011), to_mm<72>(40.89), Center, "Bank", ""}, 4, 1}, {"A", "B", "C", "D"}},
-		AltParamChoiceLabeled{{{to_mm<72>(166.263), to_mm<72>(33.409), Center, "Pan", ""}, 3, 3}, {"SUM/R", "RND", "ALT"}},
+		AltParamChoiceLabeled{{{to_mm<72>(130.256), to_mm<72>(48.37), Center, "Velocity", ""}, 5, 2}, {"Min", "Low", "Med", "High", "Max"}},
+		AltParamChoiceLabeled{{{to_mm<72>(148.011), to_mm<72>(40.89), Center, "Bank", ""}, 4, 0}, {"A", "B", "C", "D"}},
+		AltParamChoiceLabeled{{{to_mm<72>(166.263), to_mm<72>(33.409), Center, "Pan", ""}, 3, 2}, {"SUM/R", "RND", "ALT"}},
 		AltParamChoiceLabeled{{{to_mm<72>(184.402), to_mm<72>(25.929), Center, "Mode", ""}, 2, 0}, {"Edit", "Seq"}},
 }};
 

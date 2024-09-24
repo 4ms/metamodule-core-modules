@@ -154,7 +154,7 @@ class Ui {
 
   stmlib::EventQueue<64> queue_{system_clock_};
 
-  Persistent persistent_;
+  Persistent persistent_{};
   Control control_;
   MultitapDelay* delay_;
   Parameters* parameters_;
@@ -167,7 +167,7 @@ class Ui {
   uint32_t long_press_time_[kNumButtons]{};
   UiMode mode_{UI_MODE_NORMAL};
   int settings_page_{};           // 0..4
-  int settings_item_[4]{};
+  int settings_item_[4]{0,0,0,0};
   uint16_t animation_counter_{};
   uint16_t ignore_releases_{};
   uint8_t bank_{};
