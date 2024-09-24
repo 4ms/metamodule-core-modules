@@ -48,11 +48,11 @@ struct QPLFOInfo : ModuleInfoBase {
 		WhiteLight{{to_mm<72>(45.23), to_mm<72>(152.55), Center, "LED 2", ""}},
 		BlueLight{{to_mm<72>(45.23), to_mm<72>(228.15), Center, "LED 3", ""}},
 		GreenLight{{to_mm<72>(45.23), to_mm<72>(303.75), Center, "LED 4", ""}},
-		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(43.18), Center, "Fire On Unmute ch1", ""}, 2, 1}, {"off", "on"}},
-		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(118.78), Center, "Fire On Unmute ch2", ""}, 2, 1}, {"off", "on"}},
-		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(194.38), Center, "Fire On Unmute ch3", ""}, 2, 1}, {"off", "on"}},
-		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(269.98), Center, "Fire On Unmute ch4", ""}, 2, 1}, {"off", "on"}},
-		AltParamChoiceLabeled{{{to_mm<72>(151.258), to_mm<72>(17.009), Center, "Output Range", ""}, 2, 1}, {"0V to +10V", "-5V to +5V"}},
+		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(43.18), Center, "Fire On Unmute ch1", ""}, 2, 0}, {"off", "on"}},
+		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(118.78), Center, "Fire On Unmute ch2", ""}, 2, 0}, {"off", "on"}},
+		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(194.38), Center, "Fire On Unmute ch3", ""}, 2, 0}, {"off", "on"}},
+		AltParamChoiceLabeled{{{to_mm<72>(154.79), to_mm<72>(269.98), Center, "Fire On Unmute ch4", ""}, 2, 0}, {"off", "on"}},
+		AltParamChoiceLabeled{{{to_mm<72>(151.258), to_mm<72>(17.009), Center, "Output Range", ""}, 2, 0}, {"0V to +10V", "-5V to +5V"}},
 }};
 
     enum class Elem {

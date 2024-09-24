@@ -383,7 +383,7 @@ private:
 				// check the setting has been changed internally
 				// and alt param needs to be updated
 				auto internalValue = unsigned(ui.getSettingsItem(int(index)));
-				if (thisOldValue and internalValue != thisOldValue) {
+				if (thisOldValue && internalValue != thisOldValue) {
 					return internalValue;
 				}
 			}
