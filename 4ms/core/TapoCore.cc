@@ -256,7 +256,8 @@ private:
 		// Biploar CVs
 		//
 		auto BipolarCVInputFunc = [](float voltage) {
-			return std::clamp(voltage / (2 * BiploarCVInputFullScaleInVolt) + 0.5f, 0.0f, 1.0f);
+			// Bipolar CV inputs are inverted internally
+			return std::clamp(voltage / (-2.f * BiploarCVInputFullScaleInVolt) + 0.5f, 0.0f, 1.0f);
 		};
 		{
 			auto val = getInput<TimeJackIn>().value_or(0);
@@ -413,7 +414,6 @@ private:
 		ui.PingGateLed();
 	}
 
-private:
 	void updateGateOut() {
 		if (gateOutCounter != 0 and --gateOutCounter == 0) {
 			setOutput<GateOut>(0);
@@ -425,7 +425,6 @@ private:
 		setOutput<GateOut>(GateOutVoltageInVolt);
 	}
 
-private:
 	static constexpr uint32_t DefaultSampleRateInHz = 48000;
 
 	static constexpr uint32_t TickFreqHz = 1000;
@@ -440,10 +439,8 @@ private:
 	static constexpr float BiploarCVInputFullScaleInVolt = 5.0f;
 	static constexpr float VelocityCVInputFullScaleInVolt = 8.0f;
 
-private:
 	uint32_t currentSampleRateInHz = DefaultSampleRateInHz;
 
-private:
 	static constexpr std::size_t BufferSizeInBytes = 0x02000000;
 	using Buffer_t = std::array<uint8_t, BufferSizeInBytes>;
 
