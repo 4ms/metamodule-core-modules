@@ -40,22 +40,22 @@ const int kSlotsPerBank = 6;
 const int kNumSlots = kSlotsPerBank * kNumbBanks;    // 6 buttons, 4 banks
 
 struct CalibrationData {
-  float offset[4];
+  float offset[4]{};
 };
 
 class Persistent 
 {
 public:
   struct Data {
-    uint8_t velocity_parameter;
-    uint8_t current_bank;
-    uint8_t panning_mode;
-    uint8_t sequencer_mode;
-    uint8_t current_slot;
-    uint8_t repeat;
-    uint8_t sync;
-    uint8_t padding[1];
-    CalibrationData calibration_data;
+    uint8_t velocity_parameter{};
+    uint8_t current_bank{};
+    uint8_t panning_mode{};
+    uint8_t sequencer_mode{};
+    uint8_t current_slot{};
+    uint8_t repeat{};
+    uint8_t sync{};
+    uint8_t padding[1]{};
+    CalibrationData calibration_data{};
   };
 
   void Init(size_t buffer_size) {
