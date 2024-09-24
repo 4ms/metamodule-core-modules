@@ -441,7 +441,7 @@ private:
 
 	uint32_t currentSampleRateInHz = DefaultSampleRateInHz;
 
-	static constexpr std::size_t BufferSizeInBytes = 0x02000000;
+	static constexpr std::size_t BufferSizeInBytes = 0x00800000; //Tapo hardware is 32MB, we use 8MB
 	using Buffer_t = std::array<uint8_t, BufferSizeInBytes>;
 
 	Buffer_t buffer{};
