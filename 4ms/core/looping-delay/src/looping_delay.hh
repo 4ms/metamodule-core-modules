@@ -72,7 +72,10 @@ public:
 			aux_automute.setAttackPeriod(AttackTimeInS * float(newSampleRate));
 			aux_automute.setDecayPeriod(DecayTimeInS * float(newSampleRate));
 
+#ifdef VCVRACK
+			// On hardware this takes too long, since set_samplerate happens in audio loop:
 			delay_buffer.clear();
+#endif
 
 			params.timer.scale_periods((float)newSampleRate / params.currentSampleRate);
 			flags.set_time_changed();
@@ -87,7 +90,7 @@ public:
 	}
 
 	float get_ping_time_at_default_samplerate() {
-		uint32_t scaled_ping_time = std::round(params.ping_time * DefaultSampleRate / params.currentSampleRate );
+		uint32_t scaled_ping_time = std::round(params.ping_time * DefaultSampleRate / params.currentSampleRate);
 		return scaled_ping_time;
 	}
 
