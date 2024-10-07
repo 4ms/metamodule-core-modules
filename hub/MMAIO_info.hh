@@ -7,8 +7,8 @@
 namespace MetaModule
 {
 struct MMAIOInfo : ModuleInfoBase {
-    static constexpr std::string_view slug{"MMAIO"};
-    static constexpr std::string_view description{"MetaModule Audio Expander"};
+    static constexpr std::string_view slug{"MMAudioExpander"};
+    static constexpr std::string_view description{"MetaModule Audio Expander (MM AIO)"};
     static constexpr uint32_t width_hp = 6;
     static constexpr std::string_view svg_filename{"res/modules/MMAIO_artwork.svg"};
     static constexpr std::string_view png_filename{"4ms/fp/MMAIO.png"};
