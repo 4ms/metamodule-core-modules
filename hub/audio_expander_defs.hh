@@ -1,3 +1,4 @@
+#pragma once
 #include "panel_medium_defs.hh"
 #include <algorithm>
 #include <array>
