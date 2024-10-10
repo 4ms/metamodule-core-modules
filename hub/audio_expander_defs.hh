@@ -25,7 +25,7 @@ static constexpr std::string_view get_map_injack_name(uint32_t id) {
 }
 
 static constexpr uint32_t get_map_injack_num(uint32_t id) {
-	id = std::clamp(id, 0u, NumUserFacingInJacks);
+	id = std::clamp<uint32_t>(id, 0u, NumUserFacingInJacks);
 	return id + PanelDef::NumUserFacingInJacks;
 }
 
@@ -49,7 +49,7 @@ static constexpr std::string_view get_map_outjack_name(uint32_t id) {
 }
 
 static constexpr uint32_t get_map_outjack_num(uint32_t id) {
-	id = std::clamp(id, 0u, NumUserFacingOutJacks);
+	id = std::clamp<uint32_t>(id, 0u, NumUserFacingOutJacks);
 	return id + PanelDef::NumUserFacingOutJacks;
 }
 
