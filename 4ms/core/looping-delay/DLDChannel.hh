@@ -15,7 +15,6 @@ namespace MetaModule
 
 template<class Parent, class Mapping>
 class DLDChannel {
-private:
 	template<typename Parent::Info::Elem EL>
 	void setOutput(auto val) {
 		return parent->template setOutput<EL>(val);
@@ -36,7 +35,6 @@ private:
 		return parent->template getState<EL>();
 	}
 
-private:
 	Parent *parent;
 
 public:
@@ -99,7 +97,6 @@ public:
 		return looping_delay.get_ping_time_at_default_samplerate();
 	}
 
-public:
 	struct ModuleIO_t {
 		float audioIn;
 		float audioOut;
@@ -110,7 +107,6 @@ public:
 	};
 	ModuleIO_t io;
 
-private:
 	void sideloadDrivers() {
 		auto ConvertKnobFunc = [](float val) -> int16_t {
 			// 0..1 -> 0..4095
@@ -239,26 +235,22 @@ private:
 		setOutput<Mapping::SendOutput>(OutputConversionFunc(outBlock[audioBufferFillCount].chan[0]));
 	}
 
-private:
 	static constexpr float AudioInputFullScaleInVolt = 10.0f;
 	static constexpr float AudioOutputFullScaleInVolt = 10.0f;
 	static constexpr float TriggerThresholdInVolt = 0.1f;
 	static constexpr float TriggerOutputFullScaleInVolt = 5.0f;
 	static constexpr std::size_t uiUpdateRateHz = 3000;
 
-private:
 	LDKit::Controls controls;
 	LDKit::Flags flags;
 	LDKit::Params params;
 	LDKit::LoopingDelay looping_delay;
 
-private:
 	AudioStreamConf::AudioInBlock inBlock;
 	AudioStreamConf::AudioOutBlock outBlock;
 	std::size_t audioBufferFillCount;
 	std::size_t uiUpdateCounter;
 
-private:
 	uint32_t sampleRate;
 };
 
