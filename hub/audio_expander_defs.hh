@@ -12,7 +12,7 @@ namespace MetaModule::AudioExpander
 static constexpr uint32_t NumInJacks = 6;
 static constexpr uint32_t NumUserFacingInJacks = NumInJacks;
 
-static constexpr std::array<uint32_t, NumUserFacingInJacks> in_order{0, 1, 2, 3, 4, 5};
+static constexpr std::array<uint32_t, NumUserFacingInJacks> in_order{0, 1, 2, 3, 4, 5}; // FIXME
 
 static constexpr std::array<std::string_view, NumUserFacingInJacks> InJackNames{
 	"In9", "In10", "In11", "In12", "In13", "In14"};
@@ -54,11 +54,23 @@ static constexpr uint32_t get_map_outjack_num(uint32_t id) {
 	return id + PanelDef::NumUserFacingOutJacks;
 }
 
-// Jack sensing
-constexpr inline unsigned jacksense_pin_order[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+// Jack sensing: pins 8 and 10 are not connected (that is, bits 24 and 26 of jack_sense are not used)
+constexpr inline unsigned jacksense_pin_order[14] = {16, 21, 17, 20, 19, 23, /*out:*/ 18, 22, 31, 25, 30, 27, 29, 28};
+// 											 /*ins:*/ 0,  5,  1,  4,  3,  7, /*outs:*/ 2,  6, 15,  9, 14, 11, 13, 12};
 
-constexpr inline bool jack_is_patched(uint32_t jack_sense_reading, unsigned panel_jack_idx) {
-	return (jack_sense_reading >> jacksense_pin_order[panel_jack_idx]) & 1;
+// Given expander jack ID (0..5 = Expander Inputs, 6..13 = Expander Outputs)
+constexpr inline bool jack_is_patched(uint32_t jack_sense_reading, unsigned exp_panel_jack_idx) {
+	return (jack_sense_reading >> jacksense_pin_order[exp_panel_jack_idx]) & 1;
+}
+
+constexpr inline bool input_jack_is_patched(uint32_t jack_sense_reading, unsigned exp_panel_jack_idx) {
+	//No range checking: asset 0 <= exp_panel_jack_idx < NumInJacks
+	return (jack_sense_reading >> jacksense_pin_order[exp_panel_jack_idx]) & 1;
+}
+
+constexpr inline bool output_jack_is_patched(uint32_t jack_sense_reading, unsigned exp_panel_jack_idx) {
+	//No range checking: asset 0 <= exp_panel_jack_idx < NumOutJacks
+	return (jack_sense_reading >> jacksense_pin_order[exp_panel_jack_idx + NumInJacks]) & 1;
 }
 
 } // namespace MetaModule::AudioExpander
