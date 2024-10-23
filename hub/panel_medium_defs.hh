@@ -76,4 +76,12 @@ struct PanelDef {
 	//Value is panel jack number (Audio In 0 - 5)
 	//This is hardware-dependant
 	static constexpr std::array<uint32_t, 6> audioin_order{3, 2, 1, 0, 5, 4};
+
+	static constexpr bool is_main_panel_input(unsigned panel_jack_idx) {
+		return panel_jack_idx < PanelDef::NumUserFacingInJacks;
+	}
+
+	static constexpr bool is_main_panel_output(unsigned panel_jack_idx) {
+		return panel_jack_idx < PanelDef::NumUserFacingOutJacks;
+	}
 };
