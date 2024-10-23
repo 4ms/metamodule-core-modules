@@ -14,9 +14,10 @@ static constexpr uint32_t NumInJacks = 6;
 
 static constexpr std::array<uint32_t, NumInJacks> in_order{0, 1, 2, 3, 4, 5};
 
-static constexpr std::array<std::string_view, NumInJacks> InJackNames{"In9", "In10", "In11", "In12", "In13", "In14"};
+static constexpr std::array<std::string_view, NumInJacks> InJackNames{
+	"ExpIn7", "ExpIn8", "ExpIn9", "ExpIn10", "ExpIn11", "ExpIn12"};
 
-static constexpr std::array<std::string_view, NumInJacks> InJackAbbrevs{"9", "10", "11", "12", "13", "14"};
+static constexpr std::array<std::string_view, NumInJacks> InJackAbbrevs{"7", "8", "9", "10", "11", "12"};
 
 static constexpr std::string_view get_map_injack_name(uint32_t id) {
 	if (id < InJackNames.size())
@@ -32,7 +33,7 @@ static constexpr uint32_t NumOutJacks = 8;
 static constexpr uint32_t NumUserFacingOutJacks = NumOutJacks;
 
 static constexpr std::array<std::string_view, NumUserFacingOutJacks> OutJackNames{
-	"Out9", "Out10", "Out11", "Out12", "Out13", "Out14", "Out15", "Out16"};
+	"ExpOut9", "ExpOut10", "ExpOut11", "ExpOut12", "ExpOut13", "ExpOut14", "ExpOut15", "ExpOut16"};
 
 static constexpr std::array<std::string_view, NumUserFacingOutJacks> OutJackAbbrevs{
 	"9", "10", "11", "12", "13", "14", "15", "16"};
