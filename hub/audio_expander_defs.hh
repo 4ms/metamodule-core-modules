@@ -27,7 +27,7 @@ static constexpr std::string_view get_map_injack_name(uint32_t id) {
 
 //// Outs
 
-static constexpr std::array<uint32_t, 8> out_order{0, 4, 6, 7, 5, 3, 1, 2};
+static constexpr std::array<uint32_t, 8> out_order{2, 0, 4, 6, 7, 5, 3, 1};
 
 static constexpr uint32_t NumOutJacks = 8;
 static constexpr uint32_t NumUserFacingOutJacks = NumOutJacks;
