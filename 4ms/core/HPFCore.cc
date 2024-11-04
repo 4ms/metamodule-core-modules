@@ -38,7 +38,7 @@ public:
 				}
 				break;
 			case (Info::SwitchMode + 2): //Info::NumKnobs
-				mode = val ? 1 : 0;
+				mode = val > .5f ? 1 : 0;
 				break;
 		}
 	}
