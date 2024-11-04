@@ -23,6 +23,12 @@ public:
 			octaveOffset = (val - 0.5f) * KnobOctaveRange;
 	}
 
+	float get_param(int param_id) const override {
+		if (param_id == Info::KnobOctave)
+			return octaveOffset / KnobOctaveRange + .5f;
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		if (input_id == Info::InputInput)
 			voltInput = val;
