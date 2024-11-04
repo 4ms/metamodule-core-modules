@@ -33,6 +33,12 @@ public:
 		// 	seq.setLength(MathTools::map_value(val, 0.0f, 1.0f, 0, 8));
 	}
 
+	float get_param(int param_id) const override {
+		if (param_id >= Info::Knob_1 && param_id <= Info::Knob_8)
+			return seq.getStep(param_id);
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputClock:
