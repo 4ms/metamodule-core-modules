@@ -300,6 +300,20 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case 0:
+				return MathTools::map_value(freqKnob, 20.f, 500.f, 0.f, 1.f);
+			case 1:
+				return gainKnob;
+			case 2:
+				return sharpnessKnob;
+			case 3:
+				return strikeKnob;
+		}
+		return 0;
+	}
+
 	void set_samplerate(const float sr) override {
 		if (sr > 0.f && sr != SAMPLERATE) {
 			SAMPLERATE = sr;
