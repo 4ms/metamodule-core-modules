@@ -51,6 +51,11 @@ public:
 		return val < 0.25f ? DOWN : val < 0.75f ? MID : UP;
 	}
 
+	static float switchstate_to_float(EnOsc::Switches::State state) {
+		using enum EnOsc::Switches::State;
+		return state == DOWN ? 0.f : state == MID ? .5f : 1.f;
+	}
+
 	void set_param(int param_id, float val) override {
 		using AdcInput = EnOsc::AdcInput;
 
@@ -159,17 +164,17 @@ public:
 		} else if (param_id < ((int)Info::NumKnobs + (int)Info::NumSwitches)) {
 			switch (param_id - Info::NumKnobs) {
 				case Info::SwitchScale_Switch:
-					return enosc.switches().scale_.get();
+					return switchstate_to_float(enosc.switches().scale_.get());
 				case Info::SwitchCross_Fm_Switch:
-					return enosc.switches().mod_.get();
+					return switchstate_to_float(enosc.switches().mod_.get());
 				case Info::SwitchTwist_Switch:
-					return enosc.switches().twist_.get();
+					return switchstate_to_float(enosc.switches().twist_.get());
 				case Info::SwitchWarp_Switch:
-					return enosc.switches().warp_.get();
+					return switchstate_to_float(enosc.switches().warp_.get());
 				case Info::SwitchLearn:
-					return enosc.get_learn_button();
+					return enosc.get_learn_button() ? 0.f : 1.f;
 				case Info::SwitchFreeze:
-					return enosc.get_freeze_button();
+					return enosc.get_freeze_button() ? 0.f : 1.f;
 			}
 		}
 		return 0;

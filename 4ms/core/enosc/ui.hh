@@ -361,7 +361,7 @@ public:
 	auto &switches() {
 		return switches_;
 	}
-	const auto &switches() const {
+	auto &switches() const {
 		return switches_;
 	}
 	void set_learn_button(bool val) {
