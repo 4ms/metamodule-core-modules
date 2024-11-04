@@ -13,7 +13,7 @@ class Atvert2Core : public CoreProcessor {
 public:
 	Atvert2Core() = default;
 
-	void update(void) override {
+	void update() override {
 		out1 = (in1Connected ? in1 : defaultVoltage) * level1;
 		out2 = (in2Connected ? in2 : defaultVoltage) * level2;
 	}
