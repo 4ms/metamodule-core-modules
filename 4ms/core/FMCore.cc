@@ -69,13 +69,13 @@ public:
 		switch (param_id) {
 			case Info::KnobPitch: {
 				auto t = std::lower_bound(exp5Table.data.begin(), exp5Table.data.end(), basePitch / 20.f);
-				return std::distance(exp5Table.data.begin(), t) / static_cast<float>(exp5Table.data.size());
+				return std::distance(exp5Table.data.begin(), t) / static_cast<float>(exp5Table.data.size() - 1);
 			}
 			case Info::KnobIndex:
 				return indexKnob;
 			case Info::KnobRatio_C: {
 				auto t = std::find(ratioTable.begin(), ratioTable.end(), ratioCoarse);
-				return std::distance(ratioTable.begin(), t) / static_cast<float>(ratioTable.size());
+				return std::distance(ratioTable.begin(), t) / static_cast<float>(ratioTable.size() - 1);
 			}
 			case Info::KnobRatio_F:
 				if (ratioFine > 1.f)
