@@ -65,6 +65,35 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobPitch: {
+				auto t = std::lower_bound(exp5Table.data.begin(), exp5Table.data.end(), basePitch / 20.f);
+				return std::distance(exp5Table.data.begin(), t) / static_cast<float>(exp5Table.data.size());
+			}
+			case Info::KnobIndex:
+				return indexKnob;
+			case Info::KnobRatio_C: {
+				auto t = std::find(ratioTable.begin(), ratioTable.end(), ratioCoarse);
+				return std::distance(ratioTable.begin(), t) / static_cast<float>(ratioTable.size());
+			}
+			case Info::KnobRatio_F:
+				if (ratioFine > 1.f)
+					return MathTools::map_value(ratioFine, 1.f, 2.f, .5f, 1.f);
+				else
+					return MathTools::map_value(ratioFine, .5f, 1.f, 0.f, .5f);
+			case Info::KnobShape:
+				return shapeKnob;
+			case Info::KnobShape_Cv:
+				return shapeAmount;
+			case Info::KnobIndex_Cv:
+				return indexAmount;
+			case Info::KnobMix:
+				return mix;
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		val = val / cvRangeVolts;
 		switch (input_id) {
@@ -138,7 +167,7 @@ private:
 	static constexpr float cvRangeVolts = 5.0f;
 	static constexpr float maxOutputVolts = 8.0f;
 
-	const float ratioTable[8] = {0.125f, 0.25f, 0.5f, 1, 2, 4, 8, 16};
+	const std::array<float, 8> ratioTable = {0.125f, 0.25f, 0.5f, 1, 2, 4, 8, 16};
 };
 
 } // namespace MetaModule
