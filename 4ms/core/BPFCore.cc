@@ -15,7 +15,7 @@ class BPFCore : public CoreProcessor {
 public:
 	BPFCore() = default;
 
-	void update(void) override {
+	void update() override {
 		float filterFreq = 523.25f * setPitchMultiple(constrain(cutoffCV + cutoffOffset, -1.0f, 1.0f));
 		if (mode == 0) {
 			bpf.q = map_value(filterQ, 0.0f, 1.0f, 1.0f, 20.0f);
@@ -40,6 +40,18 @@ public:
 				mode = val > 0.5f ? 1 : 0;
 				break;
 		}
+	}
+
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobCutoff:
+				return map_value(cutoffOffset, -1.f, 1.f, 0.f, 1.f);
+			case Info::KnobQ:
+				return filterQ;
+			case (static_cast<unsigned>(Info::SwitchMode) + static_cast<unsigned>(Info::NumKnobs)):
+				return mode;
+		}
+		return 0;
 	}
 
 	void set_samplerate(const float sr) override {
