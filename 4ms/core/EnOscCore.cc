@@ -131,21 +131,65 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		using AdcInput = EnOsc::AdcInput;
+
+		if (param_id < Info::NumKnobs) {
+			switch (param_id) {
+				case Info::KnobBalance:
+					return enosc.get_potcv(AdcInput::POT_BALANCE);
+				case Info::KnobCross_Fm:
+					return enosc.get_potcv(AdcInput::POT_MOD);
+				case Info::KnobDetune:
+					return enosc.get_potcv(AdcInput::POT_DETUNE);
+				case Info::KnobPitch:
+					return enosc.get_potcv(AdcInput::POT_PITCH);
+				case Info::KnobRoot:
+					return enosc.get_potcv(AdcInput::POT_ROOT);
+				case Info::KnobScale:
+					return enosc.get_potcv(AdcInput::POT_SCALE);
+				case Info::KnobSpread:
+					return enosc.get_potcv(AdcInput::POT_SPREAD);
+				case Info::KnobTwist:
+					return enosc.get_potcv(AdcInput::POT_TWIST);
+				case Info::KnobWarp:
+					return enosc.get_potcv(AdcInput::POT_WARP);
+			}
+
+		} else if (param_id < ((int)Info::NumKnobs + (int)Info::NumSwitches)) {
+			switch (param_id - Info::NumKnobs) {
+				case Info::SwitchScale_Switch:
+					return enosc.switches().scale_.get();
+				case Info::SwitchCross_Fm_Switch:
+					return enosc.switches().mod_.get();
+				case Info::SwitchTwist_Switch:
+					return enosc.switches().twist_.get();
+				case Info::SwitchWarp_Switch:
+					return enosc.switches().warp_.get();
+				case Info::SwitchLearn:
+					return enosc.get_learn_button();
+				case Info::SwitchFreeze:
+					return enosc.get_freeze_button();
+			}
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float cv) override {
 		using AdcInput = EnOsc::AdcInput;
 		using SpiAdcInput = EnOsc::SpiAdcInput;
 
 		auto cv_to_val = [](float cv) {
 			float val = cv / 5.f; // -5V to +5V => -1..1
-			val *= -0.5f;	// -1..1 => 0.5..-0.5
-			val += 0.5f;	// => 1..0
+			val *= -0.5f;		  // -1..1 => 0.5..-0.5
+			val += 0.5f;		  // => 1..0
 			return val;
 		};
 
 		auto pitchcv_to_val = [](float cv) {
 			float val = cv / 8.f; // -8V to +8V => -1..1
-			val *= -0.5f;	// -1..1 => 0.5..-0.5
-			val += 0.5f;	// => 1..0
+			val *= -0.5f;		  // -1..1 => 0.5..-0.5
+			val += 0.5f;		  // => 1..0
 			return val;
 		};
 
