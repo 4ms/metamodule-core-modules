@@ -51,6 +51,11 @@ public:
 		return val < 0.25f ? DOWN : val < 0.75f ? MID : UP;
 	}
 
+	static float switchstate_to_float(EnOsc::Switches::State state) {
+		using enum EnOsc::Switches::State;
+		return state == DOWN ? 0.f : state == MID ? .5f : 1.f;
+	}
+
 	void set_param(int param_id, float val) override {
 		using AdcInput = EnOsc::AdcInput;
 
@@ -131,21 +136,65 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		using AdcInput = EnOsc::AdcInput;
+
+		if (param_id < Info::NumKnobs) {
+			switch (param_id) {
+				case Info::KnobBalance:
+					return enosc.get_potcv(AdcInput::POT_BALANCE);
+				case Info::KnobCross_Fm:
+					return enosc.get_potcv(AdcInput::POT_MOD);
+				case Info::KnobDetune:
+					return enosc.get_potcv(AdcInput::POT_DETUNE);
+				case Info::KnobPitch:
+					return enosc.get_potcv(AdcInput::POT_PITCH);
+				case Info::KnobRoot:
+					return enosc.get_potcv(AdcInput::POT_ROOT);
+				case Info::KnobScale:
+					return enosc.get_potcv(AdcInput::POT_SCALE);
+				case Info::KnobSpread:
+					return enosc.get_potcv(AdcInput::POT_SPREAD);
+				case Info::KnobTwist:
+					return enosc.get_potcv(AdcInput::POT_TWIST);
+				case Info::KnobWarp:
+					return enosc.get_potcv(AdcInput::POT_WARP);
+			}
+
+		} else if (param_id < ((int)Info::NumKnobs + (int)Info::NumSwitches)) {
+			switch (param_id - Info::NumKnobs) {
+				case Info::SwitchScale_Switch:
+					return switchstate_to_float(enosc.switches().scale_.get());
+				case Info::SwitchCross_Fm_Switch:
+					return switchstate_to_float(enosc.switches().mod_.get());
+				case Info::SwitchTwist_Switch:
+					return switchstate_to_float(enosc.switches().twist_.get());
+				case Info::SwitchWarp_Switch:
+					return switchstate_to_float(enosc.switches().warp_.get());
+				case Info::SwitchLearn:
+					return enosc.get_learn_button() ? 0.f : 1.f;
+				case Info::SwitchFreeze:
+					return enosc.get_freeze_button() ? 0.f : 1.f;
+			}
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float cv) override {
 		using AdcInput = EnOsc::AdcInput;
 		using SpiAdcInput = EnOsc::SpiAdcInput;
 
 		auto cv_to_val = [](float cv) {
 			float val = cv / 5.f; // -5V to +5V => -1..1
-			val *= -0.5f;	// -1..1 => 0.5..-0.5
-			val += 0.5f;	// => 1..0
+			val *= -0.5f;		  // -1..1 => 0.5..-0.5
+			val += 0.5f;		  // => 1..0
 			return val;
 		};
 
 		auto pitchcv_to_val = [](float cv) {
 			float val = cv / 8.f; // -8V to +8V => -1..1
-			val *= -0.5f;	// -1..1 => 0.5..-0.5
-			val += 0.5f;	// => 1..0
+			val *= -0.5f;		  // -1..1 => 0.5..-0.5
+			val += 0.5f;		  // => 1..0
 			return val;
 		};
 

@@ -35,6 +35,14 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobDivide:
+				return clockDivideOffset;
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputClk_In:

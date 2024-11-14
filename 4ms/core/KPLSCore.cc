@@ -49,6 +49,18 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobPitch:
+				return MathTools::map_value(basePitch, 20.f, 400.f, 0.f, 1.f);
+			case Info::KnobDecay:
+				return k.get_decay();
+			case Info::KnobSpread:
+				return k.get_spread();
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		val = val / CvRangeVolts;
 

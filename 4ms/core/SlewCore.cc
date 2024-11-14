@@ -32,6 +32,16 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobRise:
+				return MathTools::map_value(slew.attackTime, 1.f, 2000.f, .0f, CvRangeVolts);
+			case Info::KnobFall:
+				return MathTools::map_value(slew.decayTime, 1.f, 2000.f, .0f, CvRangeVolts);
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		if (input_id == Info::InputInput)
 			signalInput = val;

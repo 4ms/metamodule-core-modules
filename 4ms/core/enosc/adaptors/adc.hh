@@ -35,7 +35,7 @@ public:
 			values[i] = v;
 	}
 
-	u0_16 get(AdcInput i) {
+	u0_16 get(AdcInput i) const {
 		if (i < ADC_INPUT_MAX && i >= 0)
 			return values[i];
 

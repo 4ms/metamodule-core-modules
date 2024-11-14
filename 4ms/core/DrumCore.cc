@@ -140,6 +140,30 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobPitch:
+				return MathTools::map_value(baseFrequency, 10.0f, 1000.0f, 0.f, 1.f);
+			case Info::KnobPitch_Env: // pitch envelope
+				return basePitchEnvTime;
+			case Info::KnobPitch_Amt:
+				return pitchAmount;
+			case Info::KnobRatio:
+				return MathTools::map_value(ratio, 1.0f, 16.0f, 0.f, 1.f);
+			case Info::KnobFm_Env: // fm envelope
+				return baseFMEnvTime;
+			case Info::KnobFm_Amt:
+				return fmAmount;
+			case Info::KnobTone_Env: // tone envelope
+				return baseToneEnvTime;
+			case Info::KnobNoise_Env: // noise envelope
+				return baseNoiseEnvTime;
+			case Info::KnobNoise_Blend:
+				return noiseBlend;
+		}
+		return 0;
+	}
+
 	void setFMEnvelope() {
 		float val = MathTools::constrain(baseFMEnvTime + FMEnvCV, 0.0f, 1.0f);
 		envelopes[fmEnvelope].set_envelope_time(0, MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 100.0f));

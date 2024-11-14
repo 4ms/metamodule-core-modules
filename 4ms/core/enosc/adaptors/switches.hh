@@ -31,7 +31,7 @@ struct Switches : easiglib::Nocopy {
 			return state_ == DOWN && last_state_ != DOWN;
 		}
 
-		State get() {
+		State get() const {
 			return state_;
 		}
 

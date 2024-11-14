@@ -13,7 +13,7 @@ class Atvert2Core : public CoreProcessor {
 public:
 	Atvert2Core() = default;
 
-	void update(void) override {
+	void update() override {
 		out1 = (in1Connected ? in1 : defaultVoltage) * level1;
 		out2 = (in2Connected ? in2 : defaultVoltage) * level2;
 	}
@@ -28,6 +28,18 @@ public:
 				level2 = bipolarKnob;
 				break;
 		}
+	}
+
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::Knob_1:
+				return level1 / 2.f + 0.5f;
+				break;
+			case Info::Knob_2:
+				return level2 / 2.f + 0.5f;
+				break;
+		}
+		return 0;
 	}
 
 	void set_samplerate(const float sr) override {

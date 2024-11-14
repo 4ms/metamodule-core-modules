@@ -35,6 +35,11 @@ public:
 		values[stepToSet] = value;
 	}
 
+	float getStep(int stepToSet) const
+	{
+		return values[stepToSet];
+	}
+
 	void setLength(int _numSteps)
 	{
 		numSteps=_numSteps;

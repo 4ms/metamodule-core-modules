@@ -352,10 +352,16 @@ public:
 	void set_potcv(AdcInput chan, float val) {
 		control_.set_potcv(chan, val);
 	}
+	float get_potcv(AdcInput chan) const {
+		return control_.get_potcv(chan);
+	}
 	void set_pitchroot_cv(SpiAdcInput chan, float val) {
 		control_.set_pitchroot_cv(chan, val);
 	}
 	auto &switches() {
+		return switches_;
+	}
+	auto &switches() const {
 		return switches_;
 	}
 	void set_learn_button(bool val) {
@@ -363,6 +369,12 @@ public:
 	}
 	void set_freeze_button(bool val) {
 		buttons_.freeze_.set(val);
+	}
+	bool get_learn_button() const {
+		return buttons_.learn_.get();
+	}
+	bool get_freeze_button() const {
+		return buttons_.freeze_.get();
 	}
 	void set_freeze_gate(bool val) {
 		control_.set_gate(GATE_FREEZE, val);

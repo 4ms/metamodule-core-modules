@@ -35,6 +35,10 @@ public:
 			highThresh = lowThresh;
 	}
 
+	float getLowThreshold() const {
+		return lowThresh;
+	}
+
 private:
 	float lowThresh = 0.1f;
 	float highThresh = 0.5f;

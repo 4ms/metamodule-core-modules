@@ -33,6 +33,12 @@ public:
 			prob[param_id] = val;
 	}
 
+	float get_param(int param_id) const override {
+		if (param_id < Info::NumKnobs)
+			return prob[param_id];
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputClock:
