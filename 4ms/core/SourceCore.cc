@@ -1,4 +1,5 @@
 #include "CoreModules/CoreProcessor.hh"
+#include "CoreModules/async_thread.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/Source_info.hh"
 #include "util/math.hh"
@@ -10,8 +11,20 @@ class SourceCore : public CoreProcessor {
 	using Info = SourceInfo;
 	using ThisCore = SourceCore;
 
+	long long last_tm = 0;
+
 public:
-	SourceCore() = default;
+	AsyncThread async{[this]() {
+		auto now = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
+		if (now - last_tm > 1000) {
+			last_tm = now;
+			printf("Out 1 is at %f\n", output1);
+		}
+	}};
+
+	SourceCore() {
+		async.start(id);
+	}
 
 	void update(void) override {
 	}
