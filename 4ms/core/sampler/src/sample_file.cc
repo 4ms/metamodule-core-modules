@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 #include "sample_file.hh"
-#include "CoreModules/fs_access.hh"
 #include "bank_util.hh"
 #include "errors.hh"
 #include "sdcard.hh"
