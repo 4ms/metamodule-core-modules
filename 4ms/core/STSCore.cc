@@ -82,6 +82,23 @@ public:
 	}
 
 	float get_param(int param_id) const override {
+		if (param_id == CoreHelper<Info>::param_index<SampledirAltParam>()) {
+			if (root_dir == root_name(0))
+				return 0;
+			if (root_dir == root_name(0.25f))
+				return 0.25f;
+			if (root_dir == root_name(0.5f))
+				return 0.5f;
+			if (root_dir == root_name(0.75f))
+				return 0.75f;
+		}
+
+		else if (auto val = chanL.get_param(param_id))
+			return *val;
+
+		else if (auto val = chanR.get_param(param_id))
+			return *val;
+
 		return 0;
 	}
 
@@ -145,7 +162,7 @@ public:
 		return chars_to_copy;
 	}
 
-	std::string_view root_name(float val) {
+	std::string_view root_name(float val) const {
 		unsigned index = std::clamp<unsigned>(std::round(val * 4.f), 0, 3);
 		return sample_root_dirs[index];
 	}

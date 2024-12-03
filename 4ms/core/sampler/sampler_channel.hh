@@ -87,6 +87,32 @@ public:
 		return true; //handled
 	}
 
+	std::optional<float> get_param(unsigned param_id) const {
+		if (param_id == mapping.PitchKnob) {
+			return controls.pots[SamplerKit::PitchPot] / 4095.f;
+
+		} else if (param_id == mapping.StartPosKnob) {
+			return controls.pots[SamplerKit::StartPot] / 4095.f;
+
+		} else if (param_id == mapping.LengthKnob) {
+			return controls.pots[SamplerKit::LengthPot] / 4095.f;
+
+		} else if (param_id == mapping.SampleKnob) {
+			return controls.pots[SamplerKit::SamplePot] / 4095.f;
+
+		} else if (param_id == mapping.PlayButton) {
+			return controls.play_button.is_pressed() ? 1 : 0;
+
+		} else if (param_id == mapping.BankNextButton) {
+			return controls.bank_button.is_pressed() ? 1 : 0;
+
+		} else if (param_id == mapping.ReverseButton) {
+			return controls.rev_button.is_pressed() ? 1 : 0;
+
+		} else
+			return {}; //not handled
+	}
+
 	bool set_input(unsigned input_id, float volts) {
 		auto bipolar_cv = [](float cv) {
 			// (-5v, +5v] => [0, 4095]
