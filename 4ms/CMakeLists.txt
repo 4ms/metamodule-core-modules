@@ -39,6 +39,19 @@ target_sources(CoreModules-4ms PRIVATE
 	core/peg-common/pwm.cc
 	core/mpeg/envelope_calcs.cc
 	core/peg/envelope_calcs.cc
+
+    core/sampler/mocks/calibration_storage.cc
+    core/sampler/mocks/time.cc
+    core/sampler/src/bank.cc
+    core/sampler/src/sample_file.cc
+    core/sampler/src/sts_filesystem.cc
+    core/sampler/src/sts_sampleindex.cc
+    core/sampler/src/sample_header.cc
+    core/sampler/src/str_util.cc
+    core/sampler/src/bank.cc
+    core/sampler/src/bank_util.cc
+    core/sampler/src/wavefmt.cc
+
     #FIXME: linker skips this if in CoreModules, and can't use WHOLE_ARCHIVE
     ../hub/hub_medium.cc
 )
@@ -49,15 +62,20 @@ target_include_directories(CoreModules-4ms PUBLIC
 	core/tapo/
 	core/alpaca/include
 	core/looping-delay/src
+	core/sampler/src
+	core/sampler/mocks
 	core/
 	core/peg-common/
 	core/peg-common/mocks
+    ${FWDIR}/lib/fatfs/source
+    ${FWDIR}/src/fs/fatfs
 )
 
 
 target_compile_definitions(CoreModules-4ms PRIVATE 
 	TEST     
 	SAMPLE_RATE=48000
+    METAMODULE
 )
 
 target_compile_options(CoreModules-4ms PRIVATE
