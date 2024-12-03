@@ -12,5 +12,6 @@ target_include_directories(CoreModules
   PUBLIC
   ../ #so libs that link to this can do #include "CoreModules/moduleFactory.hh"
   ${FWDIR}/src
+  ${FWDIR}/src/fs
   ${FWDIR}/src/console
 )

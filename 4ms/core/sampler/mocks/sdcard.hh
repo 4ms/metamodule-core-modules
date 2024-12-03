@@ -1,5 +1,5 @@
 #pragma once
-#include "CoreModules/fs_access.hh"
+#include "CoreModules/fatfs_adaptor.hh"
 #include "str_util.h"
 #include <string>
 #include <string_view>
@@ -13,7 +13,7 @@ using FIL = MetaModule::File;
 using FILINFO = MetaModule::Fileinfo;
 #endif
 
-struct Sdcard : MetaModule::FS {
+struct Sdcard : MetaModule::FatFS {
 
 	constexpr static std::string_view SYS_DIR = "_STS.system";
 	constexpr static std::string_view SYS_DIR_SLASH = "_STS.system/";
@@ -23,7 +23,7 @@ struct Sdcard : MetaModule::FS {
 	enum { INVALID_FILENAME = 0xFE, NO_MORE_AVAILABLE_FILES = 0xFF };
 
 	Sdcard()
-		: FS("") {
+		: FatFS("") {
 	}
 
 	bool reload_disk(std::string_view base_dir = "") {
