@@ -404,13 +404,13 @@ bool SampleIndex::check_sampleindex_valid(const char *indexfilename) {
 // FIXME: This is illegible, rewrite
 FRESULT SampleIndex::load_sampleindex_file(SampleIndex::IndexSelection use_backup, uint8_t banks) {
 	FIL temp_file, temp_wav_file;
-	FRESULT res;
-	uint8_t head_load;
+	FRESULT res{};
+	uint8_t head_load = 0;
 	char read_buffer[FF_MAX_LFN + 1], folder_path[FF_MAX_LFN + 2], file_name[FF_MAX_LFN + 1], full_path[FF_MAX_LFN + 1];
 	uint8_t cur_bank = 0, cur_sample = 0, arm_bank = 0, load_data = 0, loaded_header = 0, read_name = 0;
 	uint32_t num_buff = UINT32_MAX;
 	char token[FF_MAX_LFN + 1];
-	uint8_t l;
+	uint8_t l = 0;
 	bool sample_was_loaded = false;
 	uint8_t skip_cur_bank = 0;
 	uint8_t separator = 0;
