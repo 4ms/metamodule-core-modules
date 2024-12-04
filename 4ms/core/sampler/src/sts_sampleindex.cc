@@ -349,7 +349,7 @@ bool SampleIndex::check_sampleindex_valid(const char *indexfilename) {
 	FRESULT res;
 	char full_path[FF_MAX_LFN + 1];
 	char readdata[FF_MAX_LFN + 1];
-	uint8_t l;
+	uint64_t l;
 	UINT br;
 
 	str_cat(full_path, Sdcard::SYS_DIR_SLASH.data(), SAMPLE_INDEX_FILE);
@@ -362,7 +362,13 @@ bool SampleIndex::check_sampleindex_valid(const char *indexfilename) {
 	// Verify it's a complete file, with EOF_TAG at the end
 	l = str_len(EOF_TAG) + EOF_PAD;
 
-	res = sd.f_lseek(&temp_file, sd.f_size(&temp_file) - l);
+	uint64_t sz = sd.f_size(&temp_file);
+	if (sz <= l) {
+		pr_err("Index file invalid: %lu bytes\n", sz);
+		sd.f_close(&temp_file);
+		return false;
+	}
+	res = sd.f_lseek(&temp_file, sz - l);
 	if (res != FR_OK) {
 		sd.f_close(&temp_file);
 		return false;
