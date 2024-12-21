@@ -21,77 +21,74 @@ public:
 		init_coef();
 
 		// Todo: Combine these loops
-		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
-			noise[l0] = 0;
-		}
-		for (int l1 = 0; (l1 < 3); l1 = (l1 + 1)) {
+		noise = 0;
+		iRec4 = 0;
+		fVecTrig = float{0};
+
+		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
 			noise_hp[l1] = 0.0f;
 		}
-		for (int l2 = 0; (l2 < 3); l2 = (l2 + 1)) {
+		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
 			noise_hp_lp[l2] = 0.0f;
 		}
-		for (int i = 0; i < 2; i++) {
-			iRec4[i] = 0;
-			fVecTrig[i] = float{0};
-		}
-		for (int l5 = 0; (l5 < 3); l5 = (l5 + 1)) {
+		for (int l5 = 0; (l5 < 2); l5 = (l5 + 1)) {
 			fRec0[l5] = 0.0f;
 		}
-		for (int l6 = 0; (l6 < 3); l6 = (l6 + 1)) {
+		for (int l6 = 0; (l6 < 2); l6 = (l6 + 1)) {
 			fRec5[l6] = 0.0f;
 		}
-		for (int l7 = 0; (l7 < 3); l7 = (l7 + 1)) {
+		for (int l7 = 0; (l7 < 2); l7 = (l7 + 1)) {
 			fRec6[l7] = 0.0f;
 		}
-		for (int l8 = 0; (l8 < 3); l8 = (l8 + 1)) {
+		for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
 			fRec7[l8] = 0.0f;
 		}
-		for (int l9 = 0; (l9 < 3); l9 = (l9 + 1)) {
+		for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
 			fRec8[l9] = 0.0f;
 		}
-		for (int l10 = 0; (l10 < 3); l10 = (l10 + 1)) {
+		for (int l10 = 0; (l10 < 2); l10 = (l10 + 1)) {
 			fRec9[l10] = 0.0f;
 		}
-		for (int l11 = 0; (l11 < 3); l11 = (l11 + 1)) {
+		for (int l11 = 0; (l11 < 2); l11 = (l11 + 1)) {
 			fRec10[l11] = 0.0f;
 		}
-		for (int l12 = 0; (l12 < 3); l12 = (l12 + 1)) {
+		for (int l12 = 0; (l12 < 2); l12 = (l12 + 1)) {
 			fRec11[l12] = 0.0f;
 		}
-		for (int l13 = 0; (l13 < 3); l13 = (l13 + 1)) {
+		for (int l13 = 0; (l13 < 2); l13 = (l13 + 1)) {
 			fRec12[l13] = 0.0f;
 		}
-		for (int l14 = 0; (l14 < 3); l14 = (l14 + 1)) {
+		for (int l14 = 0; (l14 < 2); l14 = (l14 + 1)) {
 			fRec13[l14] = 0.0f;
 		}
-		for (int l15 = 0; (l15 < 3); l15 = (l15 + 1)) {
+		for (int l15 = 0; (l15 < 2); l15 = (l15 + 1)) {
 			fRec14[l15] = 0.0f;
 		}
-		for (int l16 = 0; (l16 < 3); l16 = (l16 + 1)) {
+		for (int l16 = 0; (l16 < 2); l16 = (l16 + 1)) {
 			fRec15[l16] = 0.0f;
 		}
-		for (int l17 = 0; (l17 < 3); l17 = (l17 + 1)) {
+		for (int l17 = 0; (l17 < 2); l17 = (l17 + 1)) {
 			fRec16[l17] = 0.0f;
 		}
-		for (int l18 = 0; (l18 < 3); l18 = (l18 + 1)) {
+		for (int l18 = 0; (l18 < 2); l18 = (l18 + 1)) {
 			fRec17[l18] = 0.0f;
 		}
-		for (int l19 = 0; (l19 < 3); l19 = (l19 + 1)) {
+		for (int l19 = 0; (l19 < 2); l19 = (l19 + 1)) {
 			fRec18[l19] = 0.0f;
 		}
-		for (int l20 = 0; (l20 < 3); l20 = (l20 + 1)) {
+		for (int l20 = 0; (l20 < 2); l20 = (l20 + 1)) {
 			fRec19[l20] = 0.0f;
 		}
-		for (int l21 = 0; (l21 < 3); l21 = (l21 + 1)) {
+		for (int l21 = 0; (l21 < 2); l21 = (l21 + 1)) {
 			fRec20[l21] = 0.0f;
 		}
-		for (int l22 = 0; (l22 < 3); l22 = (l22 + 1)) {
+		for (int l22 = 0; (l22 < 2); l22 = (l22 + 1)) {
 			fRec21[l22] = 0.0f;
 		}
-		for (int l23 = 0; (l23 < 3); l23 = (l23 + 1)) {
+		for (int l23 = 0; (l23 < 2); l23 = (l23 + 1)) {
 			fRec22[l23] = 0.0f;
 		}
-		for (int l24 = 0; (l24 < 3); l24 = (l24 + 1)) {
+		for (int l24 = 0; (l24 < 2); l24 = (l24 + 1)) {
 			fRec23[l24] = 0.0f;
 		}
 
@@ -121,110 +118,93 @@ public:
 			freqNeedUpdating = false;
 		}
 
+		const auto slot = flipper;
+		flipper ^= 1;
+		const auto prev = flipper;
+
 		// StrikeModel:
-		noise[0] = (1103515245 * noise[1]) + 12345;
-		noise_hp[0] =
-			(4.65661287e-10f * float(noise[0])) - (fSlow7 * ((fSlow10 * noise_hp[2]) + (fSlow11 * noise_hp[1])));
+		const auto tnoise = (1103515245 * noise) + 12345;
+		const auto tnoise_hp =
+			(4.65661287e-10f * float(tnoise)) - (fSlow7 * ((fSlow10 * noise_hp[prev]) + (fSlow11 * noise_hp[slot])));
 
-		noise_hp_lp[0] = (fSlow7 * (((fSlow9 * noise_hp[0]) + (fSlow12 * noise_hp[1])) + (fSlow9 * noise_hp[2]))) -
-						 (fSlow13 * ((fSlow14 * noise_hp_lp[2]) + (fSlow15 * noise_hp_lp[1])));
-		fVecTrig[0] = slowTrig;
-		iRec4[0] = ((iRec4[1] + (iRec4[1] > 0)) * (slowTrig <= fVecTrig[1])) + (slowTrig > fVecTrig[1]);
-		float fTemp0 = adEnvRate * float(iRec4[0]);
+		const auto tnoise_hp_lp =
+			(fSlow7 * (((fSlow9 * tnoise_hp) + (fSlow12 * noise_hp[slot])) + (fSlow9 * noise_hp[prev]))) -
+			(fSlow13 * ((fSlow14 * noise_hp_lp[prev]) + (fSlow15 * noise_hp_lp[slot])));
+		const auto tfVecTrig = slowTrig;
+		const auto tiRec4 = ((iRec4 + (iRec4 > 0)) * (slowTrig <= fVecTrig)) + (slowTrig > fVecTrig);
+		float fTemp0 = adEnvRate * float(tiRec4);
 		auto adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
-		float noiseBurst = fSlow4 * (noise_hp_lp[2] + (noise_hp_lp[0] + (2.0f * noise_hp_lp[1]))) * adEnv;
+		float noiseBurst = fSlow4 * (noise_hp_lp[prev] + (tnoise_hp_lp + (2.0f * noise_hp_lp[slot]))) * adEnv;
 
-		noise[1] = noise[0];
-		noise_hp[2] = noise_hp[1];
-		noise_hp[1] = noise_hp[0];
-		noise_hp_lp[2] = noise_hp_lp[1];
-		noise_hp_lp[1] = noise_hp_lp[0];
-		fVecTrig[1] = fVecTrig[0];
-		iRec4[1] = iRec4[0];
+		noise = tnoise;
+		noise_hp[prev] = tnoise_hp;
+		noise_hp_lp[prev] = tnoise_hp_lp;
+		fVecTrig = tfVecTrig;
+		iRec4 = tiRec4;
 
-		fRec0[0] = (noiseBurst - ((fSlow19 * fRec0[1]) + (fConst6 * fRec0[2])));
-		fRec5[0] = (noiseBurst - ((fSlow20 * fRec5[1]) + (fConst9 * fRec5[2])));
-		fRec6[0] = (noiseBurst - ((fSlow21 * fRec6[1]) + (fConst12 * fRec6[2])));
-		fRec7[0] = (noiseBurst - ((fSlow22 * fRec7[1]) + (fConst15 * fRec7[2])));
-		fRec8[0] = (noiseBurst - ((fSlow23 * fRec8[1]) + (fConst18 * fRec8[2])));
-		fRec9[0] = (noiseBurst - ((fSlow24 * fRec9[1]) + (fConst21 * fRec9[2])));
-		fRec10[0] = (noiseBurst - ((fSlow25 * fRec10[1]) + (fConst24 * fRec10[2])));
-		fRec11[0] = (noiseBurst - ((fSlow26 * fRec11[1]) + (fConst27 * fRec11[2])));
-		fRec12[0] = (noiseBurst - ((fSlow27 * fRec12[1]) + (fConst30 * fRec12[2])));
-		fRec13[0] = (noiseBurst - ((fSlow28 * fRec13[1]) + (fConst33 * fRec13[2])));
-		fRec14[0] = (noiseBurst - ((fSlow29 * fRec14[1]) + (fConst36 * fRec14[2])));
-		fRec15[0] = (noiseBurst - ((fSlow30 * fRec15[1]) + (fConst39 * fRec15[2])));
-		fRec16[0] = (noiseBurst - ((fSlow31 * fRec16[1]) + (fConst42 * fRec16[2])));
-		fRec17[0] = (noiseBurst - ((fSlow32 * fRec17[1]) + (fConst45 * fRec17[2])));
-		fRec18[0] = (noiseBurst - ((fSlow33 * fRec18[1]) + (fConst48 * fRec18[2])));
-		fRec19[0] = (noiseBurst - ((fSlow34 * fRec19[1]) + (fConst51 * fRec19[2])));
-		fRec20[0] = (noiseBurst - ((fSlow35 * fRec20[1]) + (fConst54 * fRec20[2])));
-		fRec21[0] = (noiseBurst - ((fSlow36 * fRec21[1]) + (fConst57 * fRec21[2])));
-		fRec22[0] = (noiseBurst - ((fSlow37 * fRec22[1]) + (fConst60 * fRec22[2])));
-		fRec23[0] = (noiseBurst - ((fSlow38 * fRec23[1]) + (fConst63 * fRec23[2])));
+		const auto tf0 = (noiseBurst - ((fSlow19 * fRec0[slot]) + (fConst6 * fRec0[prev])));
+		const auto tf5 = (noiseBurst - ((fSlow20 * fRec5[slot]) + (fConst9 * fRec5[prev])));
+		const auto tf6 = (noiseBurst - ((fSlow21 * fRec6[slot]) + (fConst12 * fRec6[prev])));
+		const auto tf7 = (noiseBurst - ((fSlow22 * fRec7[slot]) + (fConst15 * fRec7[prev])));
+		const auto tf8 = (noiseBurst - ((fSlow23 * fRec8[slot]) + (fConst18 * fRec8[prev])));
+		const auto tf9 = (noiseBurst - ((fSlow24 * fRec9[slot]) + (fConst21 * fRec9[prev])));
+		const auto tf10 = (noiseBurst - ((fSlow25 * fRec10[slot]) + (fConst24 * fRec10[prev])));
+		const auto tf11 = (noiseBurst - ((fSlow26 * fRec11[slot]) + (fConst27 * fRec11[prev])));
+		const auto tf12 = (noiseBurst - ((fSlow27 * fRec12[slot]) + (fConst30 * fRec12[prev])));
+		const auto tf13 = (noiseBurst - ((fSlow28 * fRec13[slot]) + (fConst33 * fRec13[prev])));
+		const auto tf14 = (noiseBurst - ((fSlow29 * fRec14[slot]) + (fConst36 * fRec14[prev])));
+		const auto tf15 = (noiseBurst - ((fSlow30 * fRec15[slot]) + (fConst39 * fRec15[prev])));
+		const auto tf16 = (noiseBurst - ((fSlow31 * fRec16[slot]) + (fConst42 * fRec16[prev])));
+		const auto tf17 = (noiseBurst - ((fSlow32 * fRec17[slot]) + (fConst45 * fRec17[prev])));
+		const auto tf18 = (noiseBurst - ((fSlow33 * fRec18[slot]) + (fConst48 * fRec18[prev])));
+		const auto tf19 = (noiseBurst - ((fSlow34 * fRec19[slot]) + (fConst51 * fRec19[prev])));
+		const auto tf20 = (noiseBurst - ((fSlow35 * fRec20[slot]) + (fConst54 * fRec20[prev])));
+		const auto tf21 = (noiseBurst - ((fSlow36 * fRec21[slot]) + (fConst57 * fRec21[prev])));
+		const auto tf22 = (noiseBurst - ((fSlow37 * fRec22[slot]) + (fConst60 * fRec22[prev])));
+		const auto tf23 = (noiseBurst - ((fSlow38 * fRec23[slot]) + (fConst63 * fRec23[prev])));
 
 		signalOut = 0.f;
-		signalOut += 1.0f * (fRec0[0] - fRec0[2]);
-		signalOut += 0.25f * (fRec5[0] - fRec5[2]);
-		signalOut += 0.111111112f * (fRec6[0] - fRec6[2]);
-		signalOut += 0.0625f * (fRec7[0] - fRec7[2]);
-		signalOut += 0.0399999991f * (fRec8[0] - fRec8[2]);
-		signalOut += 0.027777778f * (fRec9[0] - fRec9[2]);
-		signalOut += 0.0204081628f * (fRec10[0] - fRec10[2]);
-		signalOut += 0.015625f * (fRec11[0] - fRec11[2]);
-		signalOut += 0.0123456791f * (fRec12[0] - fRec12[2]);
-		signalOut += 0.00999999978f * (fRec13[0] - fRec13[2]);
-		signalOut += 0.00826446246f * (fRec14[0] - fRec14[2]);
-		signalOut += 0.0069444445f * (fRec15[0] - fRec15[2]);
-		signalOut += 0.00591715984f * (fRec16[0] - fRec16[2]);
-		signalOut += 0.00510204071f * (fRec17[0] - fRec17[2]);
-		signalOut += 0.00444444455f * (fRec18[0] - fRec18[2]);
-		signalOut += 0.00390625f * (fRec19[0] - fRec19[2]);
-		signalOut += 0.00346020772f * (fRec20[0] - fRec20[2]);
-		signalOut += 0.00308641978f * (fRec21[0] - fRec21[2]);
-		signalOut += 0.00277008303f * (fRec22[0] - fRec22[2]);
-		signalOut += 0.00249999994f * (fRec23[0] - fRec23[2]);
+		signalOut += 1.0f * (tf0 - fRec0[prev]);
+		signalOut += 0.25f * (tf5 - fRec5[prev]);
+		signalOut += 0.111111112f * (tf6 - fRec6[prev]);
+		signalOut += 0.0625f * (tf7 - fRec7[prev]);
+		signalOut += 0.0399999991f * (tf8 - fRec8[prev]);
+		signalOut += 0.027777778f * (tf9 - fRec9[prev]);
+		signalOut += 0.0204081628f * (tf10 - fRec10[prev]);
+		signalOut += 0.015625f * (tf11 - fRec11[prev]);
+		signalOut += 0.0123456791f * (tf12 - fRec12[prev]);
+		signalOut += 0.00999999978f * (tf13 - fRec13[prev]);
+		signalOut += 0.00826446246f * (tf14 - fRec14[prev]);
+		signalOut += 0.0069444445f * (tf15 - fRec15[prev]);
+		signalOut += 0.00591715984f * (tf16 - fRec16[prev]);
+		signalOut += 0.00510204071f * (tf17 - fRec17[prev]);
+		signalOut += 0.00444444455f * (tf18 - fRec18[prev]);
+		signalOut += 0.00390625f * (tf19 - fRec19[prev]);
+		signalOut += 0.00346020772f * (tf20 - fRec20[prev]);
+		signalOut += 0.00308641978f * (tf21 - fRec21[prev]);
+		signalOut += 0.00277008303f * (tf22 - fRec22[prev]);
+		signalOut += 0.00249999994f * (tf23 - fRec23[prev]);
 
-		fRec0[2] = fRec0[1];
-		fRec0[1] = fRec0[0];
-		fRec5[2] = fRec5[1];
-		fRec5[1] = fRec5[0];
-		fRec6[2] = fRec6[1];
-		fRec6[1] = fRec6[0];
-		fRec7[2] = fRec7[1];
-		fRec7[1] = fRec7[0];
-		fRec8[2] = fRec8[1];
-		fRec8[1] = fRec8[0];
-		fRec9[2] = fRec9[1];
-		fRec9[1] = fRec9[0];
-		fRec10[2] = fRec10[1];
-		fRec10[1] = fRec10[0];
-		fRec11[2] = fRec11[1];
-		fRec11[1] = fRec11[0];
-		fRec12[2] = fRec12[1];
-		fRec12[1] = fRec12[0];
-		fRec13[2] = fRec13[1];
-		fRec13[1] = fRec13[0];
-		fRec14[2] = fRec14[1];
-		fRec14[1] = fRec14[0];
-		fRec15[2] = fRec15[1];
-		fRec15[1] = fRec15[0];
-		fRec16[2] = fRec16[1];
-		fRec16[1] = fRec16[0];
-		fRec17[2] = fRec17[1];
-		fRec17[1] = fRec17[0];
-		fRec18[2] = fRec18[1];
-		fRec18[1] = fRec18[0];
-		fRec19[2] = fRec19[1];
-		fRec19[1] = fRec19[0];
-		fRec20[2] = fRec20[1];
-		fRec20[1] = fRec20[0];
-		fRec21[2] = fRec21[1];
-		fRec21[1] = fRec21[0];
-		fRec22[2] = fRec22[1];
-		fRec22[1] = fRec22[0];
-		fRec23[2] = fRec23[1];
-		fRec23[1] = fRec23[0];
+		fRec0[prev] = tf0;
+		fRec5[prev] = tf5;
+		fRec6[prev] = tf6;
+		fRec7[prev] = tf7;
+		fRec8[prev] = tf8;
+		fRec9[prev] = tf9;
+		fRec10[prev] = tf10;
+		fRec11[prev] = tf11;
+		fRec12[prev] = tf12;
+		fRec13[prev] = tf13;
+		fRec14[prev] = tf14;
+		fRec15[prev] = tf15;
+		fRec16[prev] = tf16;
+		fRec17[prev] = tf17;
+		fRec18[prev] = tf18;
+		fRec19[prev] = tf19;
+		fRec20[prev] = tf20;
+		fRec21[prev] = tf21;
+		fRec22[prev] = tf22;
+		fRec23[prev] = tf23;
 	}
 
 	void update_params() {
@@ -370,36 +350,39 @@ private:
 	float gainKnob;
 	float strikeCV;
 	float strikeKnob;
-	int noise[2]{};
-	float noise_hp[3]{};
-	float noise_hp_lp[3]{};
 	float sharpCV;
 	float sharpnessKnob;
 	float trigIn;
-	float fVecTrig[2]{};
-	int iRec4[2]{};
 	float freqCV;
 	float freqKnob;
-	float fRec0[3]{};
-	float fRec5[3]{};
-	float fRec6[3]{};
-	float fRec7[3]{};
-	float fRec8[3]{};
-	float fRec9[3]{};
-	float fRec10[3]{};
-	float fRec11[3]{};
-	float fRec12[3]{};
-	float fRec13[3]{};
-	float fRec14[3]{};
-	float fRec15[3]{};
-	float fRec16[3]{};
-	float fRec17[3]{};
-	float fRec18[3]{};
-	float fRec19[3]{};
-	float fRec20[3]{};
-	float fRec21[3]{};
-	float fRec22[3]{};
-	float fRec23[3]{};
+	unsigned flipper{};
+
+	int noise{};
+	float noise_hp[2]{};
+	float noise_hp_lp[2]{};
+	float fVecTrig{};
+	int iRec4{};
+	float fRec0[2]{};
+	float fRec5[2]{};
+	float fRec6[2]{};
+	float fRec7[2]{};
+	float fRec8[2]{};
+	float fRec9[2]{};
+	float fRec10[2]{};
+	float fRec11[2]{};
+	float fRec12[2]{};
+	float fRec13[2]{};
+	float fRec14[2]{};
+	float fRec15[2]{};
+	float fRec16[2]{};
+	float fRec17[2]{};
+	float fRec18[2]{};
+	float fRec19[2]{};
+	float fRec20[2]{};
+	float fRec21[2]{};
+	float fRec22[2]{};
+	float fRec23[2]{};
+
 	float strike0{};
 	float strike1{};
 	float strike2{};
