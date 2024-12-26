@@ -20,17 +20,13 @@ class DjembeCoreNeon : public CoreProcessor {
 public:
 	DjembeCoreNeon() {
 
-		for (int i = 0; i < 2; i++) {
-			noise[i] = 0;
-		}
-		for (int i = 0; i < 3; i++) {
-			noise_hp[i] = 0.0f;
-			noise_hp_lp[i] = 0.0f;
-		}
+		noise = 0;
+		fVecTrig = 0;
+		iRec4 = 0;
 
 		for (int i = 0; i < 2; i++) {
-			fVecTrig[i] = 0.0f;
-			iRec4[i] = 0;
+			noise_hp[i] = 0.0f;	   //3
+			noise_hp_lp[i] = 0.0f; //3
 		}
 
 		for (int iir_group = 0; iir_group < 5; iir_group++) {
@@ -74,32 +70,31 @@ public:
 			freqNeedsUpdating = false;
 		}
 
+		const auto slot = flipper;
+		flipper = !flipper;
+		const auto prev = flipper;
+
 		// 90ns:
 		// StrikeModel:
-		// PsuedoRandom:
-		noise[0] = (1103515245 * noise[1]) + 12345;
-		noise_hp[0] = (4.65661287e-10f * (float)noise[0]) -
-					  (fSlowStrike1 * ((fSlowStrike3 * noise_hp[2]) + (fSlowStrike4 * noise_hp[1])));
+		const auto tnoise = (1103515245 * noise) + 12345;
+		const auto tnoise_hp = (4.65661287e-10f * float(tnoise)) -
+							   (fSlowStrike1 * ((fSlowStrike3 * noise_hp[prev]) + (fSlowStrike4 * noise_hp[slot])));
 
-		noise_hp_lp[0] = (fSlowStrike1 * (((fSlowStrike2 * noise_hp[0]) + (fSlowStrike5 * noise_hp[1])) +
-										  (fSlowStrike2 * noise_hp[2]))) -
-						 (fSlowStrike6 * ((fSlowStrike7 * noise_hp_lp[2]) + (fSlowStrike8 * noise_hp_lp[1])));
-		//Trigger signal
-		fVecTrig[0] = trigIn;
-		//iRec4[0] is reset 1 on a rising edge, then goes +1 until reset again
-		iRec4[0] = (((iRec4[1] + (iRec4[1] > 0)) * (fVecTrig[0] <= fVecTrig[1])) + (fVecTrig[0] > fVecTrig[1]));
-		float fTemp0 = adEnvRate * iRec4[0];
-		float adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
-		float noiseBurst = fSlowGainStrike * (noise_hp_lp[2] + (noise_hp_lp[0] + (2.0f * noise_hp_lp[1]))) * adEnv;
+		const auto tnoise_hp_lp =
+			(fSlowStrike1 *
+			 (((fSlowStrike2 * tnoise_hp) + (fSlowStrike5 * noise_hp[slot])) + (fSlowStrike2 * noise_hp[prev]))) -
+			(fSlowStrike6 * ((fSlowStrike7 * noise_hp_lp[prev]) + (fSlowStrike8 * noise_hp_lp[slot])));
+		const auto tfVecTrig = trigIn;
+		const auto tiRec4 = ((iRec4 + (iRec4 > 0)) * (trigIn <= fVecTrig)) + (trigIn > fVecTrig);
+		float fTemp0 = adEnvRate * float(tiRec4);
+		auto adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
+		float noiseBurst = fSlowGainStrike * (noise_hp_lp[prev] + (tnoise_hp_lp + (2.0f * noise_hp_lp[slot]))) * adEnv;
 
-		noise[1] = noise[0];
-		noise_hp[2] = noise_hp[1];
-		noise_hp[1] = noise_hp[0];
-		noise_hp_lp[2] = noise_hp_lp[1];
-		noise_hp_lp[1] = noise_hp_lp[0];
-		fVecTrig[1] = fVecTrig[0];
-		iRec4[1] = iRec4[0];
-
+		noise = tnoise;
+		noise_hp[prev] = tnoise_hp;
+		noise_hp_lp[prev] = tnoise_hp_lp;
+		fVecTrig = tfVecTrig;
+		iRec4 = tiRec4;
 		//IIRs:
 		//440ns vs. 500ns non-neon = 10% faster
 		// Debug::Pin1::high();
@@ -248,16 +243,18 @@ private:
 	float gainKnob;
 	float strikeCV;
 	float strikeKnob;
-	int noise[2]{};
-	float noise_hp[3]{};
-	float noise_hp_lp[3]{};
+	int noise{};
+	float noise_hp[2]{};
+	float noise_hp_lp[2]{};
 	float sharpCV;
 	float sharpnessKnob;
 	float trigIn;
-	float fVecTrig[2]{};
-	int iRec4[2]{};
+	float fVecTrig{};
+	int iRec4{};
 	float freqCV;
 	float freqKnob;
+	bool flipper{};
+
 	float fSlowGainStrike{};
 	float fSlowStrike1{};
 	float fSlowStrike2{};
