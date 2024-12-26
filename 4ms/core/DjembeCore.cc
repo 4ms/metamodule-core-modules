@@ -20,88 +20,45 @@ public:
 	DjembeCore() {
 		init_coef();
 
-		// Todo: Combine these loops
 		noise = 0;
 		iRec4 = 0;
-		fVecTrig = float{0};
+		fVecTrig = 0;
 
-		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
-			noise_hp[l1] = 0.0f;
-		}
-		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
-			noise_hp_lp[l2] = 0.0f;
-		}
-		for (int l5 = 0; (l5 < 2); l5 = (l5 + 1)) {
-			fRec0[l5] = 0.0f;
-		}
-		for (int l6 = 0; (l6 < 2); l6 = (l6 + 1)) {
-			fRec5[l6] = 0.0f;
-		}
-		for (int l7 = 0; (l7 < 2); l7 = (l7 + 1)) {
-			fRec6[l7] = 0.0f;
-		}
-		for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
-			fRec7[l8] = 0.0f;
-		}
-		for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
-			fRec8[l9] = 0.0f;
-		}
-		for (int l10 = 0; (l10 < 2); l10 = (l10 + 1)) {
-			fRec9[l10] = 0.0f;
-		}
-		for (int l11 = 0; (l11 < 2); l11 = (l11 + 1)) {
-			fRec10[l11] = 0.0f;
-		}
-		for (int l12 = 0; (l12 < 2); l12 = (l12 + 1)) {
-			fRec11[l12] = 0.0f;
-		}
-		for (int l13 = 0; (l13 < 2); l13 = (l13 + 1)) {
-			fRec12[l13] = 0.0f;
-		}
-		for (int l14 = 0; (l14 < 2); l14 = (l14 + 1)) {
-			fRec13[l14] = 0.0f;
-		}
-		for (int l15 = 0; (l15 < 2); l15 = (l15 + 1)) {
-			fRec14[l15] = 0.0f;
-		}
-		for (int l16 = 0; (l16 < 2); l16 = (l16 + 1)) {
-			fRec15[l16] = 0.0f;
-		}
-		for (int l17 = 0; (l17 < 2); l17 = (l17 + 1)) {
-			fRec16[l17] = 0.0f;
-		}
-		for (int l18 = 0; (l18 < 2); l18 = (l18 + 1)) {
-			fRec17[l18] = 0.0f;
-		}
-		for (int l19 = 0; (l19 < 2); l19 = (l19 + 1)) {
-			fRec18[l19] = 0.0f;
-		}
-		for (int l20 = 0; (l20 < 2); l20 = (l20 + 1)) {
-			fRec19[l20] = 0.0f;
-		}
-		for (int l21 = 0; (l21 < 2); l21 = (l21 + 1)) {
-			fRec20[l21] = 0.0f;
-		}
-		for (int l22 = 0; (l22 < 2); l22 = (l22 + 1)) {
-			fRec21[l22] = 0.0f;
-		}
-		for (int l23 = 0; (l23 < 2); l23 = (l23 + 1)) {
-			fRec22[l23] = 0.0f;
-		}
-		for (int l24 = 0; (l24 < 2); l24 = (l24 + 1)) {
-			fRec23[l24] = 0.0f;
+		for (int i = 0; (i < 2); i = (i + 1)) {
+			noise_hp[i] = 0.0f;
+			noise_hp_lp[i] = 0.0f;
+			fRec0[i] = 0.0f;
+			fRec5[i] = 0.0f;
+			fRec6[i] = 0.0f;
+			fRec7[i] = 0.0f;
+			fRec8[i] = 0.0f;
+			fRec9[i] = 0.0f;
+			fRec10[i] = 0.0f;
+			fRec11[i] = 0.0f;
+			fRec12[i] = 0.0f;
+			fRec13[i] = 0.0f;
+			fRec14[i] = 0.0f;
+			fRec15[i] = 0.0f;
+			fRec16[i] = 0.0f;
+			fRec17[i] = 0.0f;
+			fRec18[i] = 0.0f;
+			fRec19[i] = 0.0f;
+			fRec20[i] = 0.0f;
+			fRec21[i] = 0.0f;
+			fRec22[i] = 0.0f;
+			fRec23[i] = 0.0f;
 		}
 
 		// UI
-		gainCV = float(0.0f);
-		gainKnob = float(1.0f);
-		strikeCV = float(0.0f);
-		strikeKnob = float(0.29999999999999999f);
-		sharpCV = float(0.0f);
-		sharpnessKnob = float(0.5f);
-		trigIn = float(0.0f);
-		freqCV = float(1.0f);
-		freqKnob = float(60.0f);
+		gainCV = 0.0f;
+		gainKnob = 1.0f;
+		strikeCV = 0.0f;
+		strikeKnob = 0.29999999999999999f;
+		sharpCV = 0.0f;
+		sharpnessKnob = 0.5f;
+		trigIn = 0.0f;
+		freqCV = 1.0f;
+		freqKnob = 60.0f;
 
 		paramsNeedUpdating = true;
 		freqNeedUpdating = true;
