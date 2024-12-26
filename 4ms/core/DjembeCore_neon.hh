@@ -15,10 +15,12 @@ class DjembeCoreNeon : public CoreProcessor {
 	using Info = DjembeInfo;
 	using ThisCore = DjembeCoreNeon;
 
-	static constexpr uint32_t SAMPLERATE = 48000;
+	float SAMPLERATE = 48000;
 
 public:
 	DjembeCoreNeon() {
+
+		init_coef();
 
 		noise = 0;
 		fVecTrig = 0;
@@ -184,13 +186,12 @@ public:
 	}
 
 	void set_samplerate(const float sr) override {
-		if (sr > 0.f) {
-			float t = 48000.f / sr;
-			if (t != samplerateAdjust) {
-				samplerateAdjust = t;
-				paramsNeedUpdating = true;
-				freqNeedsUpdating = true;
-			}
+		if (sr > 0.f && sr != SAMPLERATE) {
+			SAMPLERATE = sr;
+			samplerateAdjust = 48000.f / sr;
+			init_coef();
+			paramsNeedUpdating = true;
+			freqNeedsUpdating = true;
 		}
 	}
 
@@ -265,77 +266,87 @@ private:
 	float fSlowStrike7{};
 	float fSlowStrike8{};
 	float adEnvRate{};
-	static constexpr float fConst1 = (3.14159274f / SAMPLERATE);
-	static constexpr float fConst2 = (0.00200000009f * SAMPLERATE);
-	static constexpr float fConst3 = gcem::pow(0.00100000005f, (1.66666663f / SAMPLERATE));
-	static constexpr float fConst4 = (0.0f - (2.0f * fConst3));
-	static constexpr float fConst5 = (6.28318548f / SAMPLERATE);
-	static constexpr float fConst6 = (fConst3 * fConst3);
-	static constexpr float fConst7 = gcem::pow(0.00100000005f, (1.75438595f / SAMPLERATE));
-	static constexpr float fConst8 = (0.0f - (2.0f * fConst7));
-	static constexpr float fConst9 = (fConst7 * fConst7);
-	static constexpr float fConst10 = gcem::pow(0.00100000005f, (1.85185182f / SAMPLERATE));
-	static constexpr float fConst11 = (0.0f - (2.0f * fConst10));
-	static constexpr float fConst12 = (fConst10 * fConst10);
-	static constexpr float fConst13 = gcem::pow(0.00100000005f, (1.96078432f / SAMPLERATE));
-	static constexpr float fConst14 = (0.0f - (2.0f * fConst13));
-	static constexpr float fConst15 = (fConst13 * fConst13);
-	static constexpr float fConst16 = gcem::pow(0.00100000005f, (2.08333325f / SAMPLERATE));
-	static constexpr float fConst17 = (0.0f - (2.0f * fConst16));
-	static constexpr float fConst18 = (fConst16 * fConst16);
-	static constexpr float fConst19 = gcem::pow(0.00100000005f, (2.22222233f / SAMPLERATE));
-	static constexpr float fConst20 = (0.0f - (2.0f * fConst19));
-	static constexpr float fConst21 = (fConst19 * fConst19);
-	static constexpr float fConst22 = gcem::pow(0.00100000005f, (2.38095236f / SAMPLERATE));
-	static constexpr float fConst23 = (0.0f - (2.0f * fConst22));
-	static constexpr float fConst24 = (fConst22 * fConst22);
-	static constexpr float fConst25 = gcem::pow(0.00100000005f, (2.56410265f / SAMPLERATE));
-	static constexpr float fConst26 = (0.0f - (2.0f * fConst25));
-	static constexpr float fConst27 = (fConst25 * fConst25);
-	static constexpr float fConst28 = gcem::pow(0.00100000005f, (2.77777767f / SAMPLERATE));
-	static constexpr float fConst29 = (0.0f - (2.0f * fConst28));
-	static constexpr float fConst30 = (fConst28 * fConst28);
-	static constexpr float fConst31 = gcem::pow(0.00100000005f, (3.030303f / SAMPLERATE));
-	static constexpr float fConst32 = (0.0f - (2.0f * fConst31));
-	static constexpr float fConst33 = (fConst31 * fConst31);
-	static constexpr float fConst34 = gcem::pow(0.00100000005f, (3.33333325f / SAMPLERATE));
-	static constexpr float fConst35 = (0.0f - (2.0f * fConst34));
-	static constexpr float fConst36 = (fConst34 * fConst34);
-	static constexpr float fConst37 = gcem::pow(0.00100000005f, (3.70370364f / SAMPLERATE));
-	static constexpr float fConst38 = (0.0f - (2.0f * fConst37));
-	static constexpr float fConst39 = (fConst37 * fConst37);
-	static constexpr float fConst40 = gcem::pow(0.00100000005f, (4.16666651f / SAMPLERATE));
-	static constexpr float fConst41 = (0.0f - (2.0f * fConst40));
-	static constexpr float fConst42 = (fConst40 * fConst40);
-	static constexpr float fConst43 = gcem::pow(0.00100000005f, (4.76190472f / SAMPLERATE));
-	static constexpr float fConst44 = (0.0f - (2.0f * fConst43));
-	static constexpr float fConst45 = (fConst43 * fConst43);
-	static constexpr float fConst46 = gcem::pow(0.00100000005f, (5.55555534f / SAMPLERATE));
-	static constexpr float fConst47 = (0.0f - (2.0f * fConst46));
-	static constexpr float fConst48 = (fConst46 * fConst46);
-	static constexpr float fConst49 = gcem::pow(0.00100000005f, (6.66666651f / SAMPLERATE));
-	static constexpr float fConst50 = (0.0f - (2.0f * fConst49));
-	static constexpr float fConst51 = (fConst49 * fConst49);
-	static constexpr float fConst52 = gcem::pow(0.00100000005f, (8.33333302f / SAMPLERATE));
-	static constexpr float fConst53 = (0.0f - (2.0f * fConst52));
-	static constexpr float fConst54 = (fConst52 * fConst52);
-	static constexpr float fConst55 = gcem::pow(0.00100000005f, (11.1111107f / SAMPLERATE));
-	static constexpr float fConst56 = (0.0f - (2.0f * fConst55));
-	static constexpr float fConst57 = (fConst55 * fConst55);
-	static constexpr float fConst58 = gcem::pow(0.00100000005f, (16.666666f / SAMPLERATE));
-	static constexpr float fConst59 = (0.0f - (2.0f * fConst58));
-	static constexpr float fConst60 = (fConst58 * fConst58);
-	static constexpr float fConst61 = gcem::pow(0.00100000005f, (33.3333321f / SAMPLERATE));
-	static constexpr float fConst62 = (0.0f - (2.0f * fConst61));
-	static constexpr float fConst63 = (fConst61 * fConst61);
-	static constexpr float iir_consts[20] = {
-		fConst6,  fConst9,	fConst12, fConst15, fConst18, fConst21, fConst24, fConst27, fConst30, fConst33,
-		fConst36, fConst39, fConst42, fConst45, fConst48, fConst51, fConst54, fConst57, fConst60, fConst63,
-	};
-	static constexpr float iir_slow_consts[20] = {
-		fConst4,  fConst8,	fConst11, fConst14, fConst17, fConst20, fConst23, fConst26, fConst29, fConst32,
-		fConst35, fConst38, fConst41, fConst44, fConst47, fConst50, fConst53, fConst56, fConst59, fConst62,
-	};
+
+	float fConst1{};
+	float fConst2{};
+	float fConst5{};
+
+	float __attribute__((aligned(16))) iir_slow_consts[20];
+	float __attribute__((aligned(16))) iir_consts[20];
+
+	void init_coef() {
+		fConst1 = (3.14159274f / SAMPLERATE);
+		fConst2 = (0.00200000009f * SAMPLERATE);
+		fConst5 = (6.28318548f / SAMPLERATE);
+
+		float fConst3 = gcem::pow(0.00100000005f, (1.66666663f / SAMPLERATE));
+		iir_slow_consts[0] = (0.0f - (2.0f * fConst3));
+		iir_consts[0] = (fConst3 * fConst3);
+		float fConst7 = gcem::pow(0.00100000005f, (1.75438595f / SAMPLERATE));
+		iir_slow_consts[1] = (0.0f - (2.0f * fConst7));
+		iir_consts[1] = (fConst7 * fConst7);
+		float fConst10 = gcem::pow(0.00100000005f, (1.85185182f / SAMPLERATE));
+		iir_slow_consts[2] = (0.0f - (2.0f * fConst10));
+		iir_consts[2] = (fConst10 * fConst10);
+		float fConst13 = gcem::pow(0.00100000005f, (1.96078432f / SAMPLERATE));
+		iir_slow_consts[3] = (0.0f - (2.0f * fConst13));
+		iir_consts[3] = (fConst13 * fConst13);
+		float fConst16 = gcem::pow(0.00100000005f, (2.08333325f / SAMPLERATE));
+		iir_slow_consts[4] = (0.0f - (2.0f * fConst16));
+		iir_consts[4] = (fConst16 * fConst16);
+		float fConst19 = gcem::pow(0.00100000005f, (2.22222233f / SAMPLERATE));
+		iir_slow_consts[5] = (0.0f - (2.0f * fConst19));
+		iir_consts[5] = (fConst19 * fConst19);
+		float fConst22 = gcem::pow(0.00100000005f, (2.38095236f / SAMPLERATE));
+		iir_slow_consts[6] = (0.0f - (2.0f * fConst22));
+		iir_consts[6] = (fConst22 * fConst22);
+		float fConst25 = gcem::pow(0.00100000005f, (2.56410265f / SAMPLERATE));
+		iir_slow_consts[7] = (0.0f - (2.0f * fConst25));
+		iir_consts[7] = (fConst25 * fConst25);
+		float fConst28 = gcem::pow(0.00100000005f, (2.77777767f / SAMPLERATE));
+		iir_slow_consts[8] = (0.0f - (2.0f * fConst28));
+		iir_consts[8] = (fConst28 * fConst28);
+		float fConst31 = gcem::pow(0.00100000005f, (3.030303f / SAMPLERATE));
+		iir_slow_consts[9] = (0.0f - (2.0f * fConst31));
+		iir_consts[9] = (fConst31 * fConst31);
+		float fConst34 = gcem::pow(0.00100000005f, (3.33333325f / SAMPLERATE));
+		iir_slow_consts[10] = (0.0f - (2.0f * fConst34));
+		iir_consts[10] = (fConst34 * fConst34);
+		float fConst37 = gcem::pow(0.00100000005f, (3.70370364f / SAMPLERATE));
+		iir_slow_consts[11] = (0.0f - (2.0f * fConst37));
+		iir_consts[11] = (fConst37 * fConst37);
+		float fConst40 = gcem::pow(0.00100000005f, (4.16666651f / SAMPLERATE));
+		iir_slow_consts[12] = (0.0f - (2.0f * fConst40));
+		iir_consts[12] = (fConst40 * fConst40);
+		float fConst43 = gcem::pow(0.00100000005f, (4.76190472f / SAMPLERATE));
+		iir_slow_consts[13] = (0.0f - (2.0f * fConst43));
+		iir_consts[13] = (fConst43 * fConst43);
+		float fConst46 = gcem::pow(0.00100000005f, (5.55555534f / SAMPLERATE));
+		iir_slow_consts[14] = (0.0f - (2.0f * fConst46));
+		iir_consts[14] = (fConst46 * fConst46);
+		float fConst49 = gcem::pow(0.00100000005f, (6.66666651f / SAMPLERATE));
+		iir_slow_consts[15] = (0.0f - (2.0f * fConst49));
+		iir_consts[15] = (fConst49 * fConst49);
+		float fConst52 = gcem::pow(0.00100000005f, (8.33333302f / SAMPLERATE));
+		iir_slow_consts[16] = (0.0f - (2.0f * fConst52));
+		iir_consts[16] = (fConst52 * fConst52);
+		float fConst55 = gcem::pow(0.00100000005f, (11.1111107f / SAMPLERATE));
+		iir_slow_consts[17] = (0.0f - (2.0f * fConst55));
+		iir_consts[17] = (fConst55 * fConst55);
+		float fConst58 = gcem::pow(0.00100000005f, (16.666666f / SAMPLERATE));
+		iir_slow_consts[18] = (0.0f - (2.0f * fConst58));
+		iir_consts[18] = (fConst58 * fConst58);
+		float fConst61 = gcem::pow(0.00100000005f, (33.3333321f / SAMPLERATE));
+		iir_slow_consts[19] = (0.0f - (2.0f * fConst61));
+		iir_consts[19] = (fConst61 * fConst61);
+
+		for (int iir_group = 0; iir_group < 5; iir_group++) {
+			iirs[iir_group].set_consts(&(iir_consts[iir_group * 4]));
+		}
+
+		float freq = freqCV * freqKnob * samplerateAdjust;
+		set_freq_coef(freq);
+	}
 
 	static constexpr float outputScalingVolts = 5.f;
 
