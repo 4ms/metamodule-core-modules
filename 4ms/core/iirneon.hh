@@ -1,7 +1,7 @@
 #ifdef CORE_CA7
-	#include <arm_neon.h>
+#include <arm_neon.h>
 #else
-	#include "util/soft_neon.hh"
+#include "util/soft_neon.hh"
 #endif
 
 class ParallelBPIIR {
@@ -15,8 +15,7 @@ public:
 	float32x4_t __attribute__((aligned(16))) outmixWeights;
 
 public:
-	ParallelBPIIR()
-	{
+	ParallelBPIIR() {
 		fRec0567_1 = vdupq_n_f32(0.f);
 		fRec0567_2 = vdupq_n_f32(0.f);
 	}
@@ -24,8 +23,7 @@ public:
 	// float[4]: par_weights: weighting (0..1) for each parallel IIR filter output in the mix
 	// float[4]: slows = control-dependant values (a1?)
 	// float[4]: consts = samplerate-dependant values (a2?)
-	ParallelBPIIR(const float slows[4], const float consts[4], const float par_weights[4])
-	{
+	ParallelBPIIR(const float slows[4], const float consts[4], const float par_weights[4]) {
 		fRec0567_1 = vdupq_n_f32(0.f);
 		fRec0567_2 = vdupq_n_f32(0.f);
 		set_slows(slows);
@@ -35,22 +33,18 @@ public:
 
 	~ParallelBPIIR() = default;
 
-	void set_outmix(const float par_weights[4])
-	{
+	void set_outmix(const float par_weights[4]) {
 		outmixWeights = vld1q_f32(par_weights);
 	}
-	void set_consts(const float consts[4])
-	{
+	void set_consts(const float consts[4]) {
 		fConst691215 = vld1q_f32(consts);
 	}
 
-	void set_slows(const float slows[4])
-	{
+	void set_slows(const float slows[4]) {
 		fSlow19202122 = vld1q_f32(slows);
 	}
 
-	float calc_4iir(float in)
-	{
+	float calc_4iir(float in) {
 		float32x4_t __attribute__((aligned(16))) fRec0567_0;
 		fRec0567_0 = vmulq_f32(fSlow19202122, fRec0567_1);
 		fRec0567_0 = vmlaq_f32(fRec0567_0, fConst691215, fRec0567_2);
