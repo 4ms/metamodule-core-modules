@@ -17,8 +17,6 @@ public:
 	CLKDCore() = default;
 
 	void update() override {
-		float finalDivide = constrain(clockDivideOffset + clockDivideCV, 0.0f, 1.0f);
-		cp.setDivide(map_value(finalDivide, 0.0f, 1.0f, 1.0f, 16.99f));
 		cp.update();
 		if ((cp.getWrappedPhase() < pulseWidth) && clockInit) {
 			clockOutput = gateVoltage;
@@ -31,6 +29,7 @@ public:
 		switch (param_id) {
 			case Info::KnobDivide:
 				clockDivideOffset = val;
+				update_divider();
 				break;
 		}
 	}
@@ -49,9 +48,13 @@ public:
 				cp.updateClock(val);
 				clockInit = true;
 				break;
-			case Info::InputCv:
-				clockDivideCV = val / CvRangeVolts;
-				break;
+			case Info::InputCv: {
+				float tmp = val / CvRangeVolts;
+				if (tmp != clockDivideCV) {
+					clockDivideCV = tmp;
+					update_divider();
+				}
+			} break;
 		}
 	}
 
@@ -66,6 +69,10 @@ public:
 		return 0.f;
 	}
 
+	void update_divider() {
+		float finalDivide = std::clamp(clockDivideOffset + clockDivideCV, 0.0f, 1.0f);
+		cp.setDivide(map_value(finalDivide, 0.0f, 1.0f, 1.0f, 16.99f));
+	}
 	// Boilerplate to auto-register in ModuleFactory
 	// clang-format off
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
@@ -73,7 +80,7 @@ public:
 	// clang-format on
 
 private:
-	float pulseWidth = 0.5f;
+	static constexpr float pulseWidth = 0.5f;
 	int clockOutput = 0;
 	bool clockInit = false;
 	float clockDivideOffset = 0;
