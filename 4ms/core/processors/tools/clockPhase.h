@@ -2,39 +2,36 @@
 
 #include "schmittTrigger.h"
 #include <algorithm>
+#include <cstdint>
 
 class ClockPhase {
 public:
 	void updateClock(float val) {
-		lastClock = currentClock.output();
+		auto lastClock = currentClock.output();
 		currentClock.update(val);
 
-		if (currentClock.output() > lastClock) {
-			multiply = queueMultiply;
-			divide = queueDivide;
-			duration = sinceClock;
+		// Rising edge:
+		if (currentClock.output() && !lastClock) {
+			ratio = queueMultiply / queueDivide;
+			if (sinceClock > 1)
+				duration = sinceClock;
 			sinceClock = 0;
 			wholeCount++;
 		}
 	}
 
 	void updateReset(float val) {
-		lastReset = currentReset.output();
+		auto lastReset = currentReset.output();
 		currentReset.update(val);
 		if (currentReset.output() > lastReset)
 			wholeCount = 0;
 	}
 
 	void update() {
-		if (duration == 0)
-			return;
-
-		tempPhase = (float)sinceClock / (float)duration;
-		if (tempPhase < 1.0f) {
-			auto ratio = multiply / divide;
-			phase = (wholeCount + tempPhase) * ratio;
+		if (sinceClock < duration) {
+			phase = (wholeCount + (float)sinceClock / duration) * ratio;
 		}
-		sinceClock++;
+		sinceClock++; //rolls over every 3 million years or so @96kHz
 	}
 
 	float getPhase() {
@@ -58,19 +55,15 @@ public:
 	}
 
 private:
-	SchmittTrigger currentClock;
-	int lastClock = 0;
+	SchmittTrigger currentClock{0.5f, 1.5f};
 
-	SchmittTrigger currentReset;
-	int lastReset = 0;
+	SchmittTrigger currentReset{0.5f, 1.5f};
 
-	long wholeCount = 0;
-	long sinceClock = 0;
+	unsigned wholeCount = 0;
+	int64_t sinceClock = 0;
 	float phase = 0;
-	long duration = 1000;
-	float tempPhase = 0;
-	float multiply = 1;
-	float divide = 1;
+	float duration = 1000.f;
+	float ratio = 1;
 	float queueDivide = 1;
 	float queueMultiply = 1;
 };
