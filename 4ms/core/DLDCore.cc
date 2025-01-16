@@ -139,7 +139,7 @@ public:
 	}
 
 	struct SaveState_t {
-		uint32_t ping_time{};
+		uint32_t ping_time{12000};
 	};
 	SaveState_t saveState{};
 
