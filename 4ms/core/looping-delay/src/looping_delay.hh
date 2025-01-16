@@ -172,7 +172,7 @@ public:
 			auto mainin = flags.mute_on_boot_ctr ? 0 : AudioStreamConf::AudioInFrame::sign_extend(inblock[i].chan[1]);
 
 			// Outputs
-			int16_t nul;
+			int16_t nul = 0;
 			auto &mem_wr_l = mono ? wr_buff[i] : wr_buff[i * 2];
 			auto &mem_wr_r = mono ? nul : wr_buff[i * 2 + 1];
 			auto &out = outblock[i];
@@ -183,8 +183,8 @@ public:
 			}
 
 			// Crossfade the two read head positions
-			int32_t rd_l = epp_crossfade<int32_t>(mem_rd_l, mem_rd_fade_l, read_fade_phase);
-			int32_t rd_r = epp_crossfade<int32_t>(mem_rd_r, mem_rd_fade_r, read_fade_phase);
+			auto rd_l = epp_crossfade<int32_t>(mem_rd_l, mem_rd_fade_l, read_fade_phase);
+			auto rd_r = epp_crossfade<int32_t>(mem_rd_r, mem_rd_fade_r, read_fade_phase);
 
 			increment_read_crossfading();
 

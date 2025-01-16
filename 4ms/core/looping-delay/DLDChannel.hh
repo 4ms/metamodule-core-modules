@@ -208,7 +208,8 @@ public:
 																  PingMethod::IGNORE_FLAT_DEVIATION_10,
 																  PingMethod::IGNORE_PERCENT_DEVIATION};
 
-		params.settings.ping_method = PingMethods[getState<Mapping::PingMethodAlt>()];
+		auto ping_method = std::clamp<unsigned>(getState<Mapping::PingMethodAlt>(), 0u, PingMethods.size() - 1);
+		params.settings.ping_method = PingMethods[ping_method];
 	}
 
 private:

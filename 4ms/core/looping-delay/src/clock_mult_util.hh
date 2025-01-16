@@ -1,6 +1,7 @@
 #pragma once
 #include "controls.hh"
 #include "exp_1voct_lut.hh"
+#include "util/math.hh"
 #include <cstdint>
 
 namespace LDKit
@@ -58,38 +59,38 @@ struct ClockMultUtil {
 	}
 };
 
-static_assert(ClockMultUtil::calc_quantized(0) == 1.0f, "");
-static_assert(ClockMultUtil::calc_quantized(39) == 1.0f, "");
-static_assert(ClockMultUtil::calc_quantized(40) == 1.0f, "");
-static_assert(ClockMultUtil::calc_quantized(41) == 1.5f, "");
-static_assert(ClockMultUtil::calc_quantized(4045) == 15.f, "");
-static_assert(ClockMultUtil::calc_quantized(4046) == 15.f, "");
-static_assert(ClockMultUtil::calc_quantized(4047) == 16.f, "");
-static_assert(ClockMultUtil::calc_quantized(4095) == 16.f, "");
+static_assert(ClockMultUtil::calc_quantized(0) == 1.0f);
+static_assert(ClockMultUtil::calc_quantized(39) == 1.0f);
+static_assert(ClockMultUtil::calc_quantized(40) == 1.0f);
+static_assert(ClockMultUtil::calc_quantized(41) == 1.5f);
+static_assert(ClockMultUtil::calc_quantized(4045) == 15.f);
+static_assert(ClockMultUtil::calc_quantized(4046) == 15.f);
+static_assert(ClockMultUtil::calc_quantized(4047) == 16.f);
+static_assert(ClockMultUtil::calc_quantized(4095) == 16.f);
 
-static_assert(ClockMultUtil::_find_range_idx(39) == 0, "");
-static_assert(ClockMultUtil::_find_range_idx(40) == 0, "");
-static_assert(ClockMultUtil::_find_range_idx(41) == 1, "");
+static_assert(ClockMultUtil::_find_range_idx(39) == 0);
+static_assert(ClockMultUtil::_find_range_idx(40) == 0);
+static_assert(ClockMultUtil::_find_range_idx(41) == 1);
 
-static_assert(ClockMultUtil::calc_unquant(39) == 1.0f, "");
-static_assert(ClockMultUtil::calc_unquant(40) == 1.000f, "");
-static_assert(ClockMultUtil::calc_unquant(41) >= 1.003f, "");
-static_assert(ClockMultUtil::calc_unquant(41) <= 1.004f, "");
-static_assert(ClockMultUtil::calc_unquant(42) >= 1.007f, "");
-static_assert(ClockMultUtil::calc_unquant(42) <= 1.008f, "");
-static_assert(ClockMultUtil::calc_unquant(780) == 3.0f, "");
-static_assert(ClockMultUtil::calc_unquant(928) == 3.5f, "");
+static_assert(ClockMultUtil::calc_unquant(39) == 1.0f);
+static_assert(ClockMultUtil::calc_unquant(40) == 1.000f);
+static_assert(ClockMultUtil::calc_unquant(41) >= 1.003f);
+static_assert(ClockMultUtil::calc_unquant(41) <= 1.004f);
+static_assert(ClockMultUtil::calc_unquant(42) >= 1.007f);
+static_assert(ClockMultUtil::calc_unquant(42) <= 1.008f);
+static_assert(ClockMultUtil::calc_unquant(780) == 3.0f);
+static_assert(ClockMultUtil::calc_unquant(928) == 3.5f);
 
-static_assert(ClockMultUtil::calc_unquant(4046) == 15.000f, "");
+static_assert(ClockMultUtil::calc_unquant(4046) == 15.000f);
 
-static_assert(ClockMultUtil::calc_unquant(4047) >= 15.020f, "");
-static_assert(ClockMultUtil::calc_unquant(4047) <= 15.021f, "");
+static_assert(ClockMultUtil::calc_unquant(4047) >= 15.020f);
+static_assert(ClockMultUtil::calc_unquant(4047) <= 15.021f);
 
-static_assert(ClockMultUtil::calc_unquant(4048) >= 15.040f, "");
-static_assert(ClockMultUtil::calc_unquant(4048) <= 15.041f, "");
+static_assert(ClockMultUtil::calc_unquant(4048) >= 15.040f);
+static_assert(ClockMultUtil::calc_unquant(4048) <= 15.041f);
 
-static_assert(ClockMultUtil::calc_unquant(4094) >= 15.979f, "");
-static_assert(ClockMultUtil::calc_unquant(4094) <= 15.980f, "");
+static_assert(ClockMultUtil::calc_unquant(4094) >= 15.979f);
+static_assert(ClockMultUtil::calc_unquant(4094) <= 15.980f);
 
-static_assert(ClockMultUtil::calc_unquant(4095) == 16.f, "");
+static_assert(ClockMultUtil::calc_unquant(4095) == 16.f);
 } // namespace LDKit
