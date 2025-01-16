@@ -36,7 +36,6 @@ public:
 		// do nothing
 	}
 
-	// TODO: call this with every sample/block
 	void inc() {
 		if (_ping_tmr_needs_reset) {
 			_ping_tmr_needs_reset = false;
@@ -56,8 +55,11 @@ public:
 			if (newtime.has_value()) {
 				_ping_time = newtime.value();
 				_pingled_tmr = 0;
+				_ping_led_high = true;
 
+				_ping_cycled = true; //???? added in MM
 				_ping_changed = true;
+
 				clk_out.high();
 				bus_clk_out.high();
 			}
