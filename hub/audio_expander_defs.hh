@@ -72,9 +72,12 @@ static constexpr bool is_expander_output(unsigned panel_outjack_idx) {
 		   panel_outjack_idx >= PanelDef::NumUserFacingOutJacks;
 }
 
+static constexpr auto NumJacks = NumInJacks + NumOutJacks;
+
 // Jack sensing:
 // Note: pins 8 and 10 are not connected (that is, bits 24 and 26 of jack_sense are not used)
-constexpr unsigned jacksense_pin_order[14] = {/*in:*/ 16, 21, 17, 20, 19, 23, /*out:*/ 18, 22, 31, 25, 30, 27, 29, 28};
+constexpr unsigned jacksense_pin_order[NumJacks] = {
+	/*in:*/ 16, 21, 17, 20, 19, 23, /*out:*/ 18, 22, 31, 25, 30, 27, 29, 28};
 
 constexpr inline std::optional<unsigned> jacksense_output_bit(unsigned panel_outjack_idx) {
 	if (is_expander_output(panel_outjack_idx))
@@ -84,7 +87,7 @@ constexpr inline std::optional<unsigned> jacksense_output_bit(unsigned panel_out
 }
 
 constexpr inline std::optional<unsigned> jacksense_input_bit(unsigned panel_injack_idx) {
-	if (is_expander_output(panel_injack_idx))
+	if (is_expander_input(panel_injack_idx))
 		return jacksense_pin_order[panel_to_exp_input(panel_injack_idx)];
 	else
 		return {};
