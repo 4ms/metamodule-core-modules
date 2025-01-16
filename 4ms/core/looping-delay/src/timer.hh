@@ -134,9 +134,14 @@ public:
 	}
 
 	void set_ping_time(uint32_t time) {
-		_ping_tmr = time;
+		_ping_time = time;
+		_ping_tmr = 0;
+		_ping_tmr_needs_reset = true;
+
 		_pingled_tmr = 0;
-		reset_ping_tmr();
+
+		_loop_time = time;
+
 		reset_loop_tmr();
 		_ping_changed = true;
 	}

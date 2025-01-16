@@ -172,7 +172,7 @@ public:
 			auto mainin = flags.mute_on_boot_ctr ? 0 : AudioStreamConf::AudioInFrame::sign_extend(inblock[i].chan[1]);
 
 			// Outputs
-			int16_t nul;
+			int16_t nul = 0;
 			auto &mem_wr_l = mono ? wr_buff[i] : wr_buff[i * 2];
 			auto &mem_wr_r = mono ? nul : wr_buff[i * 2 + 1];
 			auto &out = outblock[i];

@@ -176,7 +176,8 @@ public:
 	}
 
 	void populateSaveState() {
-		saveState.ping_time = channelA.get_ping_time();
+		auto ping_tm = channelA.get_ping_time();
+		saveState.ping_time = ping_tm ? ping_tm : 12000;
 	}
 
 	// Boilerplate to auto-register in ModuleFactory
