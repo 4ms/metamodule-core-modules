@@ -23,7 +23,7 @@ enum class PingMethod : uint8_t {
 struct PingMethodAlgorithm {
 
 	// Returns nullopt if time should not be updated (TODO: is this the best approach? Taken from DLD)
-	static std::optional<uint32_t> filter(uint32_t oldtime, uint32_t newtime, PingMethod method) {
+	std::optional<uint32_t> filter(uint32_t oldtime, uint32_t newtime, PingMethod method) {
 		using enum PingMethod;
 		switch (method) {
 			case ONE_TO_ONE:
@@ -78,7 +78,7 @@ struct PingMethodAlgorithm {
 
 private:
 	template<uint32_t MaxDiff>
-	static std::optional<uint32_t> ignore_flat_deviation(uint32_t oldtime, uint32_t newtime) {
+	std::optional<uint32_t> ignore_flat_deviation(uint32_t oldtime, uint32_t newtime) {
 		uint32_t diff = std::abs((int32_t)oldtime - (int32_t)newtime);
 		if (diff > MaxDiff)
 			return newtime;
@@ -86,8 +86,9 @@ private:
 			return std::nullopt;
 	}
 
-	static std::optional<uint32_t> ignore_percent_deviation(uint32_t oldtime, uint32_t newtime) {
-		if (oldtime == 0) return newtime;
+	std::optional<uint32_t> ignore_percent_deviation(uint32_t oldtime, uint32_t newtime) {
+		if (oldtime == 0)
+			return newtime;
 
 		float dev = (float)newtime / (float)oldtime;
 		if (dev > 1.01f || dev < 0.99f)
@@ -97,7 +98,7 @@ private:
 	}
 
 	template<uint32_t MaxDiff>
-	static uint32_t average_2_ignore_deviation(uint32_t oldtime, uint32_t newtime) {
+	uint32_t average_2_ignore_deviation(uint32_t oldtime, uint32_t newtime) {
 		uint32_t diff = std::abs((int32_t)oldtime - (int32_t)newtime);
 		if (diff > MaxDiff)
 			return (oldtime + newtime) / 2;
@@ -105,7 +106,7 @@ private:
 			return oldtime;
 	}
 
-	static uint32_t moving_average_4(uint32_t newtime) {
+	uint32_t moving_average_4(uint32_t newtime) {
 		ringbuff[ringbuff_pos] = newtime;
 
 		// Use the clock period the first four times we receive ping after boot
@@ -119,11 +120,11 @@ private:
 		return ping_time;
 	}
 
-	static uint32_t moving_average_2(uint32_t oldtime, uint32_t newtime) {
+	uint32_t moving_average_2(uint32_t oldtime, uint32_t newtime) {
 		return (oldtime + newtime) / 2;
 	}
 
-	static uint32_t boxcar_average_4(uint32_t oldtime, uint32_t newtime) {
+	uint32_t boxcar_average_4(uint32_t oldtime, uint32_t newtime) {
 		ringbuff[ringbuff_pos] = newtime;
 
 		if (++ringbuff_pos >= 4) {
@@ -133,7 +134,7 @@ private:
 		return oldtime;
 	}
 
-	static uint32_t boxcar_average_8(uint32_t oldtime, uint32_t newtime) {
+	uint32_t boxcar_average_8(uint32_t oldtime, uint32_t newtime) {
 		ringbuff[ringbuff_pos] = newtime;
 
 		if (++ringbuff_pos >= 8) {
@@ -145,17 +146,17 @@ private:
 		return oldtime;
 	}
 
-	static uint32_t expo_average_4(uint32_t oldtime, uint32_t newtime) {
+	uint32_t expo_average_4(uint32_t oldtime, uint32_t newtime) {
 		uint32_t t = (float)oldtime * 0.75f + (float)newtime * 0.25f;
 		return t & 0xFFFFFFF8;
 	}
 
-	static uint32_t expo_average_8(uint32_t oldtime, uint32_t newtime) {
+	uint32_t expo_average_8(uint32_t oldtime, uint32_t newtime) {
 		uint32_t t = (float)oldtime * 0.875f + (float)newtime * 0.125f;
 		return t & 0xFFFFFFF8;
 	}
 
-	static inline uint32_t ringbuff[8]{};
-	static inline uint32_t ringbuff_pos = 0;
-	static inline bool ringbuff_filled = false;
+	uint32_t ringbuff[8]{};
+	uint32_t ringbuff_pos = 0;
+	bool ringbuff_filled = false;
 };

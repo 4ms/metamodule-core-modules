@@ -9,11 +9,11 @@ namespace LDKit
 class Timer {
 public:
 	Mocks::MockedTrigger ping_jack;
-	Mocks::OutputPin clk_out;
-	Mocks::OutputPin bus_clk_out;
-	Mocks::MockedLED loop_led;
+	Mocks::OutputPin clk_out{};
+	Mocks::OutputPin bus_clk_out{};
+	Mocks::MockedLED loop_led{};
 
-	Mocks::OutputPin loop_out;
+	Mocks::OutputPin loop_out{};
 
 private:
 	uint32_t _ping_tmr = 0;
@@ -26,6 +26,7 @@ private:
 	bool _ping_cycled = false;
 	bool _ping_tmr_needs_reset = false;
 	PingMethod &_ping_method;
+	PingMethodAlgorithm ping_filter{};
 
 public:
 	Timer(PingMethod &ping_method)
@@ -51,7 +52,7 @@ public:
 		ping_jack.update();
 		if (ping_jack.just_went_high()) {
 			// TODO: if ping_method != last_ping_method PingMethodAlgorithm::reset();
-			auto newtime = PingMethodAlgorithm::filter(_ping_time, _ping_tmr, _ping_method);
+			auto newtime = ping_filter.filter(_ping_time, _ping_tmr, _ping_method);
 			if (newtime.has_value()) {
 				_ping_time = newtime.value();
 				_pingled_tmr = 0;
