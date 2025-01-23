@@ -25,6 +25,12 @@ static constexpr std::string_view get_map_injack_name(uint32_t id) {
 	return "?";
 }
 
+// 0..5 => 8..13
+static constexpr uint32_t get_map_injack_num(uint32_t id) {
+	id = std::clamp<uint32_t>(id, 0u, NumInJacks - 1);
+	return id + PanelDef::NumUserFacingInJacks;
+}
+
 //// Outs
 
 static constexpr std::array<uint32_t, 8> out_order{2, 0, 4, 6, 7, 5, 3, 1};
@@ -42,6 +48,11 @@ static constexpr std::string_view get_map_outjack_name(uint32_t id) {
 	if (id < OutJackNames.size())
 		return OutJackNames[id];
 	return "?";
+}
+
+static constexpr uint32_t get_map_outjack_num(uint32_t id) {
+	id = std::clamp<uint32_t>(id, 0u, NumUserFacingOutJacks);
+	return id + PanelDef::NumUserFacingOutJacks;
 }
 
 //////////
