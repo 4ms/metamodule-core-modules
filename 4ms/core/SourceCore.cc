@@ -3,6 +3,7 @@
 #include "CoreModules/moduleFactory.hh"
 #include "info/Source_info.hh"
 #include "util/math.hh"
+#include <chrono>
 
 namespace MetaModule
 {
@@ -13,20 +14,37 @@ class SourceCore : public CoreProcessor {
 
 	long long last_tm = 0;
 
-public:
-	AsyncThread async{[this]() {
-		auto now = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
-		if (now - last_tm > 1000) {
-			last_tm = now;
-			printf("Out 1 is at %f\n", output1);
-		}
-	}};
+	AsyncThread async{this, [this]() {
+						  auto now = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
 
+						  if (now - last_tm >= 1000) {
+							  last_tm = now;
+							  printf("m:%u, Out 1 is at %f\n", (unsigned)this->id, output1);
+						  }
+					  }};
+
+	AsyncThread oneshot{this, []() {
+							printf("One shot\n");
+						}};
+
+public:
 	SourceCore() {
-		async.start(id);
+		last_tm = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
+		async.start();
+		oneshot.run_once();
 	}
 
-	void update(void) override {
+	void update() override {
+		if (output1 > 0.5f && async.is_enabled()) {
+			printf("Out 1 is > 50%%, stopping\n");
+			async.stop();
+			oneshot.run_once();
+		}
+
+		if (output1 < -0.5f && !async.is_enabled()) {
+			printf("Out 1 is < -50%%, starting\n");
+			async.start();
+		}
 	}
 
 	void set_param(int const param_id, const float val) override {
