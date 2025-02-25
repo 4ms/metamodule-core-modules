@@ -16,6 +16,15 @@ class CLKDCore : public CoreProcessor {
 public:
 	CLKDCore() = default;
 
+	bool get_canvas_pixels(int display_id, Pixel *pix, uint16_t width, uint16_t height) override {
+		for (uint16_t x = 0; x < width; x++) {
+			for (uint16_t y = 0; y < height; y++) {
+				pix[x + y * width] = Pixel{0x80, 0xA0, 0xC0, 0xF0};
+			}
+		}
+		return true;
+	}
+
 	void update() override {
 		cp.update();
 		if ((cp.getWrappedPhase() < pulseWidth) && clockInit) {
