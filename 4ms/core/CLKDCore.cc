@@ -31,9 +31,18 @@ public:
 		canvas->clear(true);
 	}
 
-	bool get_canvas_pixels(int display_id, Pixel *pix, uint16_t width, uint16_t height) override {
+	bool get_canvas_pixels(int display_id) override {
 
 		canvas->clear(true);
+
+		for (auto i = 0u; i < 2; i++) {
+			for (auto j = 0u; j < 4; j++) {
+				auto sq = tvg::Shape::gen();
+				sq->appendRect(i * 10, j * 10, 7, 7);
+				sq->fill(i * 0x60, j * 0x30, 0, 0xFF);
+				canvas->push(std::move(sq));
+			}
+		}
 
 		auto circle = tvg::Shape::gen();
 		circle->appendCircle(15, 25, 15, 25);
