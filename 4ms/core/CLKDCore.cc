@@ -19,46 +19,48 @@ public:
 	CLKDCore() {
 	}
 
-	std::array<std::unique_ptr<tvg::SwCanvas>, 1> canvas = {tvg::SwCanvas::gen()};
-	float scaling = 1;
+	std::array<tvg::SwCanvas *, 1> canvas = {tvg::SwCanvas::gen()};
+	std::array<float, 1> scaling = {1};
 
 	~CLKDCore() = default;
 
 	void show_graphic_display(int display_id, Pixel *pix, uint16_t width, uint16_t height) override {
-		canvas[0]->target(reinterpret_cast<uint32_t *>(pix), width, width, height, tvg::SwCanvas::Colorspace::ARGB8888);
-		scaling = float(width) / base_element(Info::Elements[4]).width_mm;
+		canvas[0]->target(reinterpret_cast<uint32_t *>(pix), width, width, height, tvg::ColorSpace::ARGB8888);
+		scaling[0] = float(width) / base_element(Info::Elements[4]).width_mm;
 	}
 
 	void hide_graphic_display(int display_id) override {
-		canvas[0]->clear(true);
+		// scene->remove();
+		canvas[0]->remove();
 	}
 
 	bool get_canvas_pixels(int display_id) override {
-		canvas[0]->clear();
-
-		auto scene = tvg::Scene::gen();
+		tvg::Scene *scene = tvg::Scene::gen();
+		// scene->remove();
 
 		for (auto i = 0u; i < 2; i++) {
 			for (auto j = 0u; j < 4; j++) {
 				auto sq = tvg::Shape::gen();
 				sq->appendRect(i * 10, j * 10, 7, 7);
 				sq->fill(i * 0x60, j * 0x30, 0xFF, 0xFF);
-				scene->push(std::move(sq));
+				scene->push(sq);
 			}
 		}
 
 		auto circle = tvg::Shape::gen();
 		circle->appendCircle(15, 25, 15, 25);
 		circle->fill(0x00, 0x80, 0xFF, 0xCC);
-		scene->push(std::move(circle));
+		scene->push(circle);
 
 		auto circle2 = tvg::Shape::gen();
 		circle2->appendCircle(5, 45, 10, clockDivideOffset * 25);
 		circle2->fill(0xFF, 0x00, 0x00, 0xFF);
-		scene->push(std::move(circle2));
+		scene->push(circle2);
 
-		scene->scale(scaling);
-		canvas[0]->push(std::move(scene));
+		scene->scale(scaling[0]);
+
+		canvas[0]->remove();
+		canvas[0]->push(scene);
 		canvas[0]->draw();
 		canvas[0]->sync();
 
