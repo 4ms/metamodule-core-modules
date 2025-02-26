@@ -19,63 +19,35 @@ public:
 	CLKDCore() {
 	}
 
-	// tvg::SwCanvas canvas;
-
 	std::unique_ptr<tvg::SwCanvas> canvas = tvg::SwCanvas::gen();
-	// tvg::Shape *circle = tvg::Shape::gen();
-	// tvg::Shape *circle2 = tvg::Shape::gen();
 
-	~CLKDCore() {
+	~CLKDCore() = default;
+
+	void show_graphic_display(int display_id, Pixel *pix, uint16_t width, uint16_t height) override {
+		canvas->target(reinterpret_cast<uint32_t *>(pix), width, width, height, tvg::SwCanvas::Colorspace::ARGB8888);
+	}
+
+	void hide_graphic_display(int display_id) override {
+		canvas->clear(true);
 	}
 
 	bool get_canvas_pixels(int display_id, Pixel *pix, uint16_t width, uint16_t height) override {
-		// auto canvas = MetaModule::make_thorvg_canvas(pix, width, height);
 
-		static bool first = true;
-		// if (first) {
-		// 	first = false;
-		canvas->target(reinterpret_cast<uint32_t *>(pix), width, width, height, tvg::SwCanvas::Colorspace::ARGB8888);
-		// }
-		// canvas->clear();
+		canvas->clear(true);
 
-		//100us
 		auto circle = tvg::Shape::gen();
 		circle->appendCircle(15, 25, 15, 25);
 		circle->fill(0xFF, 0x80, 0x00, 0xCC);
 		canvas->push(std::move(circle));
 
-		//100us
 		auto circle2 = tvg::Shape::gen();
 		circle2->appendCircle(5, 45, 10, clockDivideOffset * 25);
 		circle2->fill(0x00, 0x80, 0xFF, 0x30);
 		canvas->push(std::move(circle2));
 
-		// canvas->draw(true);
-		// canvas->sync();
-
-		// circle2->moveTo(clockDivideOffset * 20, 45);
-		// 65ms
 		canvas->draw();
-
-		//<200ns
 		canvas->sync();
 
-		// delete circle;
-		// delete circle2;
-		// delete canvas;
-
-		// for (uint16_t y = 0; y < height; y++) {
-		// 	for (uint16_t x = 0; x < width; x++) {
-		// 		if (y < height / 2) {
-		// 			if (x < width / 2)
-		// 				pix[x + y * width] = Pixel{0xFF, 0x00, 0x00, 0xFF};
-		// 			else
-		// 				pix[x + y * width] = Pixel{0x80, 0xA0, 0xC0, 0x8F};
-		// 		} else {
-		// 			pix[x + y * width] = Pixel{0x44, (x < width / 2) ? uint8_t(0x99) : uint8_t(0xFF), 0x00, 0x7F};
-		// 		}
-		// 	}
-		// }
 		return true;
 	}
 
