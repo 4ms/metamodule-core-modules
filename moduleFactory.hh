@@ -48,6 +48,7 @@ public:
 	static std::string_view getBrandSlug(std::string_view display_name);
 	static std::string_view getModuleSlug(std::string_view brand_slug, std::string_view display_name);
 
+	static void registerBrandAlias(std::string_view brand, std::string_view alias);
 	static bool unregisterBrand(std::string_view brand_name);
 };
 
