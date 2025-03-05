@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
 #include "CoreModules/4ms/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+#include "CoreModules/CoreHelper.hh"
 #include <array>
 
 namespace MetaModule
@@ -28,24 +28,28 @@ struct CLKDInfo : ModuleInfoBase {
 		CvIn,
 		ClkIn,
 		ClkOut,
-	};
-
-	// Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
-
-	enum {
-		KnobDivide,
-		NumKnobs,
+		DemoScreen
 	};
 
 	enum {
-		InputCv,
-		InputClk_In,
-		NumInJacks,
+		KnobDivide = CoreHelper<CLKDInfo>::param_index<Elem::DivideKnob>(),
+		NumKnobs = CoreHelper<CLKDInfo>::count().num_params,
 	};
 
 	enum {
-		OutputClk_Out,
-		NumOutJacks,
+		InputCv = CoreHelper<CLKDInfo>::input_index<Elem::CvIn>(),
+		InputClk_In = CoreHelper<CLKDInfo>::input_index<Elem::ClkIn>(),
+		NumInJacks = CoreHelper<CLKDInfo>::count().num_inputs,
+	};
+
+	enum {
+		OutputClk_Out = CoreHelper<CLKDInfo>::output_index<Elem::ClkOut>(),
+		NumOutJacks = CoreHelper<CLKDInfo>::count().num_outputs,
+	};
+
+	enum Lights {
+		 DemoScreen = CoreHelper<CLKDInfo>::first_light_index<Elem::DemoScreen>(),
+		 NumLights = CoreHelper<CLKDInfo>::count().num_lights,
 	};
 };
 } // namespace MetaModule
