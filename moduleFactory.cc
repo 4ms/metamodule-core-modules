@@ -30,6 +30,8 @@ static constexpr int MAX_MODULE_TYPES = 512;
 struct BrandRegistry {
 	std::string brand_name;
 	std::string display_name;
+	std::vector<std::string> aliases;
+
 	SeqMap<std::string, ModuleRegistry, MAX_MODULE_TYPES> modules;
 
 	BrandRegistry(std::string_view brand)
@@ -47,7 +49,16 @@ ModuleInfoView nullinfo{};
 } // namespace
 
 static auto brand_registry(std::string_view brand) {
-	return std::find_if(registry().begin(), registry().end(), [=](auto const &b) { return b.brand_name == brand; });
+	// First, try to match on brand_name:
+	auto found = std::ranges::find(registry(), brand, &BrandRegistry::brand_name);
+
+	// If not found, match on alias
+	if (found == registry().end()) {
+		found = std::ranges::find_if(registry(), [=](BrandRegistry const &reg) {
+			return std::ranges::find(reg.aliases, std::string(brand)) != reg.aliases.end();
+		});
+	}
+	return found;
 }
 
 bool ModuleFactory::registerModuleType(std::string_view brand_name,
@@ -59,7 +70,10 @@ bool ModuleFactory::registerModuleType(std::string_view brand_name,
 	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
 		// Brand exists: insert or overwrite existing entry
 		if (brand_reg->modules.overwrite(std::string(module_slug),
-										 {funcCreate, info, std::string{faceplate_filename}, std::string(module_slug)}))
+										 {.creation_func = funcCreate,
+										  .info = info,
+										  .faceplate = std::string{faceplate_filename},
+										  .display_name = std::string(module_slug)}))
 		{
 			brand_reg->display_name = brand_name;
 			return true;
@@ -71,7 +85,10 @@ bool ModuleFactory::registerModuleType(std::string_view brand_name,
 		auto &brand = registry().emplace_back(brand_name);
 		brand.display_name = brand_name;
 		return brand.modules.insert(std::string(module_slug),
-									{funcCreate, info, std::string{faceplate_filename}, std::string(module_slug)});
+									{.creation_func = funcCreate,
+									 .info = info,
+									 .faceplate = std::string{faceplate_filename},
+									 .display_name = std::string(module_slug)});
 	}
 }
 
@@ -239,6 +256,12 @@ std::vector<std::string> ModuleFactory::getAllBrands() {
 bool ModuleFactory::unregisterBrand(std::string_view brand_name) {
 	auto removed = registry().remove_if([=](BrandRegistry &reg) { return reg.brand_name == brand_name; });
 	return removed > 0;
+}
+
+void ModuleFactory::registerBrandAlias(std::string_view brand_name, std::string_view alias) {
+	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
+		brand_reg->aliases.emplace_back(alias);
+	}
 }
 
 } // namespace MetaModule
