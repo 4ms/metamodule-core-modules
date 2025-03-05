@@ -1,6 +1,7 @@
-#include "../../../../src/medium/debug_raw.h"
+#include "CoreModules/CoreHelper.hh"
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "CoreModules/pixels.hh"
 #include "info/CLKD_info.hh"
 #include "processors/tools/clockPhase.h"
 #include "thorvg/thorvg/inc/thorvg.h"
@@ -19,52 +20,111 @@ public:
 	CLKDCore() {
 	}
 
+	static constexpr bool TestRawPixels = false;
+
+	uint32_t disp_width{};
+	uint32_t disp_height{};
+	std::span<uint32_t> pixel_buffer;
+
 	std::array<tvg::SwCanvas *, 1> canvas = {tvg::SwCanvas::gen()};
 	std::array<float, 1> scaling = {1};
 
 	~CLKDCore() = default;
 
-	void show_graphic_display(int display_id, Pixel *pix, uint16_t width, uint16_t height) override {
-		canvas[0]->target(reinterpret_cast<uint32_t *>(pix), width, width, height, tvg::ColorSpace::ARGB8888);
-		scaling[0] = float(width) / base_element(Info::Elements[4]).width_mm;
+	void show_graphic_display(int display_id, std::span<uint32_t> pix, uint16_t width, uint16_t height) override {
+		if (display_id == Info::DemoScreen) {
+			if constexpr (TestRawPixels) {
+				pixel_buffer = pix;
+				disp_height = height;
+				disp_width = width;
+			} else {
+				canvas[0]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
+				scaling[0] = float(width) / base_element(Info::Elements[4]).width_mm;
+			}
+		}
 	}
 
 	void hide_graphic_display(int display_id) override {
-		// scene->remove();
-		canvas[0]->remove();
+		if (display_id == Info::DemoScreen) {
+			// scene->remove();
+			canvas[0]->remove();
+		}
 	}
 
-	bool get_canvas_pixels(int display_id) override {
-		tvg::Scene *scene = tvg::Scene::gen();
-		// scene->remove();
+	bool draw_graphic_display(int display_id) override {
+		if (display_id == Info::DemoScreen) {
+			if constexpr (TestRawPixels) {
+				// Test raw pixels:
+				float split = disp_height / (clockDivideOffset / 2.f + 0.5f);
+				for (auto y = 0u; y < disp_height; y++) {
+					for (auto x = 0u; x < disp_width; x++) {
+						PixelRGBA pixel;
 
-		for (auto i = 0u; i < 2; i++) {
-			for (auto j = 0u; j < 4; j++) {
-				auto sq = tvg::Shape::gen();
-				sq->appendRect(i * 10, j * 10, 7, 7);
-				sq->fill(i * 0x60, j * 0x30, 0xFF, 0xFF);
-				scene->push(sq);
+						if (y < split && x < disp_width / 2) {
+							// Red
+							pixel.r = 0xFF;
+							pixel.g = 0;
+							pixel.b = 0;
+
+						} else if (y >= split && x < disp_width / 2) {
+							// Green
+							//R, G, B
+							pixel = PixelRGBA{0x00, 0xFF, 0x00};
+
+						} else if (y < split && x >= disp_width / 2) {
+							// 50% alpha Blue
+							// ARGB
+							pixel = PixelRGBA{0x800000FF};
+
+						} else {
+							// Orange
+							// RGB
+							pixel = PixelRGBA{0xFF8020};
+							pixel.a = 0xFF;
+						}
+
+						pixel_buffer[y * disp_width + x] = pixel.raw();
+					}
+				}
+
+			} else {
+				// Test with ThorVG:
+				tvg::Scene *scene = tvg::Scene::gen();
+				scene->remove();
+
+				for (auto i = 0u; i < 2; i++) {
+					for (auto j = 0u; j < 4; j++) {
+						auto sq = tvg::Shape::gen();
+						sq->appendRect(i * 10, j * 10, 7, 7);
+						// blue rects
+						sq->fill(i * 0x60, j * 0x30, 0xFF, 0xFF);
+						scene->push(sq);
+					}
+				}
+
+				auto circle = tvg::Shape::gen();
+				circle->appendCircle(15, 25, 15, 25);
+				// yellow circle
+				circle->fill(0xFF, 0xFF, 0x00, 0xCC);
+				scene->push(circle);
+
+				auto circle2 = tvg::Shape::gen();
+				circle2->appendCircle(5, 45, 10, clockDivideOffset * 25);
+				// magenta circle
+				circle2->fill(0x80, 0x00, 0x80, 0xFF);
+				scene->push(circle2);
+
+				scene->scale(scaling[0]);
+
+				canvas[0]->remove();
+				canvas[0]->push(scene);
+				canvas[0]->draw();
+				canvas[0]->sync();
 			}
-		}
 
-		auto circle = tvg::Shape::gen();
-		circle->appendCircle(15, 25, 15, 25);
-		circle->fill(0x00, 0x80, 0xFF, 0xCC);
-		scene->push(circle);
-
-		auto circle2 = tvg::Shape::gen();
-		circle2->appendCircle(5, 45, 10, clockDivideOffset * 25);
-		circle2->fill(0xFF, 0x00, 0x00, 0xFF);
-		scene->push(circle2);
-
-		scene->scale(scaling[0]);
-
-		canvas[0]->remove();
-		canvas[0]->push(scene);
-		canvas[0]->draw();
-		canvas[0]->sync();
-
-		return true;
+			return true;
+		} else
+			return false;
 	}
 
 	void update() override {
