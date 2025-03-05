@@ -129,3 +129,43 @@ TEST_CASE("ModuleInfoView::makeView<T>() matches T:: fields") {
 	CHECK(v.width_hp == MetaModule::EnOscInfo::width_hp);
 	CHECK(v.elements.size() == MetaModule::EnOscInfo::Elements.size());
 }
+
+TEST_CASE("Aliases") {
+	CHECK(ModuleFactory::registerModuleType("BrandA", "ModuleA1", TestCoreMod::create, ABCInfo, "abc.png"));
+	CHECK(ModuleFactory::registerModuleType("BrandA", "ModuleA2", TestCoreMod::create, ABCInfo, "abc.png"));
+
+	CHECK(ModuleFactory::registerModuleType("BrandB", "ModuleB1", TestCoreMod::create, ABCInfo, "abc.png"));
+	CHECK(ModuleFactory::registerModuleType("BrandB", "ModuleB2", TestCoreMod::create, ABCInfo, "abc.png"));
+	CHECK(ModuleFactory::registerModuleType("BrandB", "ModuleB3", TestCoreMod::create, ABCInfo, "abc.png"));
+
+	CHECK(ModuleFactory::registerModuleType("BrandC", "ModuleC1", TestCoreMod::create, ABCInfo, "abc.png"));
+
+	ModuleFactory::registerBrandAlias("BrandB", "beebrand");
+	ModuleFactory::registerBrandAlias("BrandA", "Abrand");
+	ModuleFactory::registerBrandAlias("BrandB", "b-brand");
+
+	CHECK(ModuleFactory::isValidSlug("BrandA:ModuleA1"));
+	CHECK(ModuleFactory::isValidSlug("BrandA:ModuleA2"));
+	CHECK(ModuleFactory::isValidSlug("Abrand:ModuleA1"));
+	CHECK(ModuleFactory::isValidSlug("Abrand:ModuleA2"));
+
+	CHECK(ModuleFactory::isValidSlug("BrandB:ModuleB1"));
+	CHECK(ModuleFactory::isValidSlug("BrandB:ModuleB2"));
+	CHECK(ModuleFactory::isValidSlug("BrandB:ModuleB3"));
+	CHECK(ModuleFactory::isValidSlug("beebrand:ModuleB1"));
+	CHECK(ModuleFactory::isValidSlug("beebrand:ModuleB2"));
+	CHECK(ModuleFactory::isValidSlug("beebrand:ModuleB3"));
+	CHECK(ModuleFactory::isValidSlug("b-brand:ModuleB1"));
+	CHECK(ModuleFactory::isValidSlug("b-brand:ModuleB2"));
+	CHECK(ModuleFactory::isValidSlug("b-brand:ModuleB3"));
+
+	CHECK(ModuleFactory::isValidSlug("BrandC:ModuleC1"));
+
+	CHECK(!ModuleFactory::isValidSlug("beebrand:ModuleC1"));
+	CHECK(!ModuleFactory::isValidSlug("Abrand:ModuleC1"));
+	CHECK(!ModuleFactory::isValidSlug("b-brand:ModuleC1"));
+
+	CHECK(!ModuleFactory::isValidSlug("beebrand:ModuleA1"));
+	CHECK(!ModuleFactory::isValidSlug("Abrand:ModuleB1"));
+	CHECK(!ModuleFactory::isValidSlug("b-brand:ModuleA1"));
+}
