@@ -1,11 +1,11 @@
 #include "CoreModules/CoreHelper.hh"
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
-#include "CoreModules/pixels.hh"
 #include "info/CLKD_info.hh"
 #include "processors/tools/clockPhase.h"
 #include "thorvg/thorvg/inc/thorvg.h"
 #include "util/math.hh"
+#include <chrono>
 
 using namespace MathTools;
 
@@ -15,116 +15,128 @@ namespace MetaModule
 class CLKDCore : public CoreProcessor {
 	using Info = CLKDInfo;
 	using ThisCore = CLKDCore;
+	using CoreHelper = CoreHelper<Info>;
+	using enum Info::Elem;
 
 public:
-	CLKDCore() {
-	}
+	CLKDCore() = default;
 
-	static constexpr bool TestRawPixels = false;
+	std::array<tvg::SwCanvas *, 2> canvas;
+	std::array<tvg::Scene *, 2> scene;
 
-	uint32_t disp_width{};
-	uint32_t disp_height{};
-	std::span<uint32_t> pixel_buffer;
+	tvg::Shape *bg;
+	tvg::Shape *circle;
+	tvg::Shape *oval;
 
-	std::array<tvg::SwCanvas *, 1> canvas = {tvg::SwCanvas::gen()};
-	std::array<float, 1> scaling = {1};
+	tvg::Shape *bg2;
+	tvg::Shape *rect2;
 
 	~CLKDCore() = default;
 
 	void show_graphic_display(int display_id, std::span<uint32_t> pix, uint16_t width, uint16_t height) override {
 		if (display_id == Info::DemoScreen) {
-			if constexpr (TestRawPixels) {
-				pixel_buffer = pix;
-				disp_height = height;
-				disp_width = width;
-			} else {
-				canvas[0]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
-				scaling[0] = float(width) / base_element(Info::Elements[4]).width_mm;
-			}
+			canvas[0] = tvg::SwCanvas::gen();
+			canvas[0]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
+			scene[0] = tvg::Scene::gen();
+
+			// DarkGrey background
+			bg = tvg::Shape::gen();
+			bg->appendRect(0, 0, width, height);
+			bg->fill(0x22, 0x22, 0x22, 0xFF);
+			scene[0]->push(bg);
+
+			// orange circle
+			circle = tvg::Shape::gen();
+			circle->appendCircle(25, 25, 10, 10);
+			circle->fill(0xFF, 0x80, 0x20, 0x80);
+			scene[0]->push(circle);
+
+			// magenta circle
+			oval = tvg::Shape::gen();
+			oval->appendRect(5, 0, width - 5, 10);
+			oval->fill(0x80, 0x00, 0xFF, 0x80);
+			scene[0]->push(oval);
+
+			auto scaling = float(width) / CoreHelper::base_element(DemoScreen).width_mm;
+			scene[0]->scale(scaling);
+			canvas[0]->push(scene[0]);
+
+			needUpdateDisplay1 = true;
+		}
+
+		if (display_id == Info::DemoScreen2) {
+			canvas[1] = tvg::SwCanvas::gen();
+			canvas[1]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
+			scene[1] = tvg::Scene::gen();
+
+			// Light grey background
+			bg2 = tvg::Shape::gen();
+			bg2->appendRect(0, 0, width, height);
+			bg2->fill(0xcc, 0xcc, 0xcc, 0xFF);
+			scene[1]->push(bg2);
+
+			rect2 = tvg::Shape::gen();
+			rect2->appendRect(3, 3, 20, 20);
+			rect2->fill(0xFF, 0x00, 0x00, 0xFF);
+			scene[1]->push(rect2);
+
+			auto scaling = float(width) / CoreHelper::base_element(DemoScreen2).width_mm;
+			scene[1]->scale(scaling);
+			canvas[1]->push(scene[1]);
 		}
 	}
 
 	void hide_graphic_display(int display_id) override {
 		if (display_id == Info::DemoScreen) {
-			// scene->remove();
+			scene[0]->remove();
 			canvas[0]->remove();
+			delete canvas[0];
+		}
+
+		if (display_id == Info::DemoScreen) {
+			scene[1]->remove();
+			canvas[1]->remove();
+			delete canvas[1];
 		}
 	}
 
 	bool draw_graphic_display(int display_id) override {
 		if (display_id == Info::DemoScreen) {
-			if constexpr (TestRawPixels) {
-				// Test raw pixels:
-				float split = disp_height / (clockDivideOffset / 2.f + 0.5f);
-				for (auto y = 0u; y < disp_height; y++) {
-					for (auto x = 0u; x < disp_width; x++) {
-						PixelRGBA pixel;
+			// No need to update graphics if knob didn't move
+			if (!needUpdateDisplay1)
+				return false;
+			needUpdateDisplay1 = false;
 
-						if (y < split && x < disp_width / 2) {
-							// Red
-							pixel.r = 0xFF;
-							pixel.g = 0;
-							pixel.b = 0;
+			circle->scale(clockDivideOffset + 0.5);
+			oval->translate(0, clockDivideOffset * 10);
+			canvas[0]->update(circle);
+			canvas[0]->update(oval);
 
-						} else if (y >= split && x < disp_width / 2) {
-							// Green
-							//R, G, B
-							pixel = PixelRGBA{0x00, 0xFF, 0x00};
-
-						} else if (y < split && x >= disp_width / 2) {
-							// 50% alpha Blue
-							// ARGB
-							pixel = PixelRGBA{0x800000FF};
-
-						} else {
-							// Orange
-							// RGB
-							pixel = PixelRGBA{0xFF8020};
-							pixel.a = 0xFF;
-						}
-
-						pixel_buffer[y * disp_width + x] = pixel.raw();
-					}
-				}
-
-			} else {
-				// Test with ThorVG:
-				tvg::Scene *scene = tvg::Scene::gen();
-				scene->remove();
-
-				for (auto i = 0u; i < 2; i++) {
-					for (auto j = 0u; j < 4; j++) {
-						auto sq = tvg::Shape::gen();
-						sq->appendRect(i * 10, j * 10, 7, 7);
-						// blue rects
-						sq->fill(i * 0x60, j * 0x30, 0xFF, 0xFF);
-						scene->push(sq);
-					}
-				}
-
-				auto circle = tvg::Shape::gen();
-				circle->appendCircle(15, 25, 15, 25);
-				// yellow circle
-				circle->fill(0xFF, 0xFF, 0x00, 0xCC);
-				scene->push(circle);
-
-				auto circle2 = tvg::Shape::gen();
-				circle2->appendCircle(5, 45, 10, clockDivideOffset * 25);
-				// magenta circle
-				circle2->fill(0x80, 0x00, 0x80, 0xFF);
-				scene->push(circle2);
-
-				scene->scale(scaling[0]);
-
-				canvas[0]->remove();
-				canvas[0]->push(scene);
-				canvas[0]->draw();
-				canvas[0]->sync();
-			}
+			canvas[0]->draw();
+			canvas[0]->sync();
 
 			return true;
-		} else
-			return false;
+		}
+
+		if (display_id == Info::DemoScreen2) {
+			if (anim_rot > 0) {
+				// animate
+				uint64_t now_ms = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
+				auto ticks_elapsed = now_ms - last_anim_tm;
+				last_anim_tm = now_ms;
+				anim_rot -= (float)ticks_elapsed / 20.f;
+				if (anim_rot < 0)
+					anim_rot = 0;
+
+				rect2->rotate(anim_rot);
+				canvas[1]->update(rect2);
+			}
+			canvas[1]->draw();
+			canvas[1]->sync();
+			return true;
+		}
+
+		return false;
 	}
 
 	void update() override {
@@ -139,6 +151,11 @@ public:
 	void set_param(int param_id, float val) override {
 		switch (param_id) {
 			case Info::KnobDivide:
+				if (val != clockDivideOffset) {
+					needUpdateDisplay1 = true;
+					anim_rot = 90;
+					last_anim_tm = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
+				}
 				clockDivideOffset = val;
 				update_divider();
 				break;
@@ -198,6 +215,10 @@ private:
 	float clockDivideCV = 0;
 
 	ClockPhase cp;
+
+	bool needUpdateDisplay1 = false;
+	float anim_rot = 0;
+	uint32_t last_anim_tm = 0;
 
 	static constexpr float gateVoltage = 8.0f;
 };
