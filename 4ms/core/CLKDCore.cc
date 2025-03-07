@@ -12,11 +12,10 @@ using namespace MathTools;
 namespace MetaModule
 {
 
-class CLKDCore : public CoreProcessor {
+class CLKDCore : public CoreProcessor, CoreHelper<CLKDInfo> {
 	using Info = CLKDInfo;
 	using ThisCore = CLKDCore;
-	using CoreHelper = CoreHelper<Info>;
-	using enum Info::Elem;
+	using enum CLKDInfo::Elem;
 
 public:
 	CLKDCore() = default;
@@ -34,7 +33,7 @@ public:
 	~CLKDCore() = default;
 
 	void show_graphic_display(int display_id, std::span<uint32_t> pix, uint16_t width, uint16_t height) override {
-		if (display_id == Info::DemoScreen) {
+		if (display_id == display_index<UpperScreen>()) {
 			canvas[0] = tvg::SwCanvas::gen();
 			canvas[0]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
 			scene[0] = tvg::Scene::gen();
@@ -57,14 +56,14 @@ public:
 			oval->fill(0x80, 0x00, 0xFF, 0x80);
 			scene[0]->push(oval);
 
-			auto scaling = float(width) / CoreHelper::base_element(DemoScreen).width_mm;
+			auto scaling = float(width) / base_element(UpperScreen).width_mm;
 			scene[0]->scale(scaling);
 			canvas[0]->push(scene[0]);
 
 			needUpdateDisplay1 = true;
 		}
 
-		if (display_id == Info::DemoScreen2) {
+		if (display_id == display_index<LowerScreen>()) {
 			canvas[1] = tvg::SwCanvas::gen();
 			canvas[1]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
 			scene[1] = tvg::Scene::gen();
@@ -80,28 +79,26 @@ public:
 			rect2->fill(0xFF, 0x00, 0x00, 0xFF);
 			scene[1]->push(rect2);
 
-			auto scaling = float(width) / CoreHelper::base_element(DemoScreen2).width_mm;
+			auto scaling = float(width) / base_element(LowerScreen).width_mm;
 			scene[1]->scale(scaling);
 			canvas[1]->push(scene[1]);
 		}
 	}
 
 	void hide_graphic_display(int display_id) override {
-		if (display_id == Info::DemoScreen) {
-			scene[0]->remove();
-			canvas[0]->remove();
+		if (display_id == display_index<UpperScreen>()) {
+			// canvas[0]->remove();
 			delete canvas[0];
 		}
 
-		if (display_id == Info::DemoScreen) {
-			scene[1]->remove();
-			canvas[1]->remove();
+		if (display_id == display_index<LowerScreen>()) {
+			// canvas[1]->remove();
 			delete canvas[1];
 		}
 	}
 
 	bool draw_graphic_display(int display_id) override {
-		if (display_id == Info::DemoScreen) {
+		if (display_id == display_index<UpperScreen>()) {
 			// No need to update graphics if knob didn't move
 			if (!needUpdateDisplay1)
 				return false;
@@ -118,7 +115,7 @@ public:
 			return true;
 		}
 
-		if (display_id == Info::DemoScreen2) {
+		if (display_id == display_index<LowerScreen>()) {
 			if (anim_rot > 0) {
 				// animate
 				uint64_t now_ms = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
@@ -149,40 +146,35 @@ public:
 	}
 
 	void set_param(int param_id, float val) override {
-		switch (param_id) {
-			case Info::KnobDivide:
-				if (val != clockDivideOffset) {
-					needUpdateDisplay1 = true;
-					anim_rot = 90;
-					last_anim_tm = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
-				}
-				clockDivideOffset = val;
-				update_divider();
-				break;
+		if (param_id == param_index<DivideKnob>()) {
+			if (val != clockDivideOffset) {
+				needUpdateDisplay1 = true;
+				anim_rot = 90;
+				last_anim_tm = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
+			}
+			clockDivideOffset = val;
+			update_divider();
 		}
 	}
 
 	float get_param(int param_id) const override {
-		switch (param_id) {
-			case Info::KnobDivide:
-				return clockDivideOffset;
-		}
-		return 0;
+		if (param_id == param_index<DivideKnob>())
+			return clockDivideOffset;
+		else
+			return 0;
 	}
 
 	void set_input(int input_id, float val) override {
-		switch (input_id) {
-			case Info::InputClk_In:
-				cp.updateClock(val);
-				clockInit = true;
-				break;
-			case Info::InputCv: {
-				float tmp = val / CvRangeVolts;
-				if (tmp != clockDivideCV) {
-					clockDivideCV = tmp;
-					update_divider();
-				}
-			} break;
+		if (input_id == input_index<ClkIn>()) {
+			cp.updateClock(val);
+			clockInit = true;
+
+		} else if (input_id == input_index<CvIn>()) {
+			float tmp = val / CvRangeVolts;
+			if (tmp != clockDivideCV) {
+				clockDivideCV = tmp;
+				update_divider();
+			}
 		}
 	}
 
@@ -193,14 +185,11 @@ public:
 	void set_samplerate(float sr) override {
 	}
 
-	float get_led_brightness(int led_id) const override {
-		return 0.f;
-	}
-
 	void update_divider() {
 		float finalDivide = std::clamp(clockDivideOffset + clockDivideCV, 0.0f, 1.0f);
 		cp.setDivide(map_value(finalDivide, 0.0f, 1.0f, 1.0f, 16.99f));
 	}
+
 	// Boilerplate to auto-register in ModuleFactory
 	// clang-format off
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
