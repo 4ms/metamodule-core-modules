@@ -1,6 +1,5 @@
 #pragma once
 #include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/CoreHelper.hh"
 #include "CoreModules/elements/element_info.hh"
 #include <array>
 
@@ -24,28 +23,13 @@ struct CLKDInfo : ModuleInfoBase {
 		DynamicGraphicDisplay{{{{to_mm<72>(5), to_mm<72>(120), TopLeft, "Demo2", "", to_mm<72>(50), to_mm<72>(80)}}}},
 	}};
 
-	enum class Elem { DivideKnob, CvIn, ClkIn, ClkOut, DemoScreen, DemoScreen2 };
-
-	enum {
-		KnobDivide = CoreHelper<CLKDInfo>::param_index<Elem::DivideKnob>(),
-		NumKnobs = CoreHelper<CLKDInfo>::count().num_params,
-	};
-
-	enum {
-		InputCv = CoreHelper<CLKDInfo>::input_index<Elem::CvIn>(),
-		InputClk_In = CoreHelper<CLKDInfo>::input_index<Elem::ClkIn>(),
-		NumInJacks = CoreHelper<CLKDInfo>::count().num_inputs,
-	};
-
-	enum {
-		OutputClk_Out = CoreHelper<CLKDInfo>::output_index<Elem::ClkOut>(),
-		NumOutJacks = CoreHelper<CLKDInfo>::count().num_outputs,
-	};
-
-	enum Lights {
-		DemoScreen = CoreHelper<CLKDInfo>::first_light_index<Elem::DemoScreen>(),
-		DemoScreen2 = CoreHelper<CLKDInfo>::first_light_index<Elem::DemoScreen2>(),
-		NumLights = CoreHelper<CLKDInfo>::count().num_lights,
+	enum class Elem {
+		DivideKnob,
+		CvIn,
+		ClkIn,
+		ClkOut,
+		UpperScreen,
+		LowerScreen,
 	};
 };
 } // namespace MetaModule
