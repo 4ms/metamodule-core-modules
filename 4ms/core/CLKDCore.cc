@@ -26,11 +26,11 @@ public:
 	tvg::Scene *top_scene;
 	tvg::Scene *bottom_scene;
 
-	tvg::Shape *bg;
-	tvg::Shape *circle;
+	std::array<tvg::Shape *, 8> circles;
 
-	tvg::Shape *bg2;
 	tvg::Shape *rect2;
+
+	float scaling = 1.0f;
 
 	~CLKDCore() = default;
 
@@ -39,27 +39,30 @@ public:
 			top_canvas = tvg::SwCanvas::gen();
 			top_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
 			top_scene = tvg::Scene::gen();
+
 			/////////////////
 
 			// DarkGrey background
-			bg = tvg::Shape::gen();
+			auto bg = tvg::Shape::gen();
 			bg->appendRect(0, 0, width, height);
 			bg->fill(0x22, 0x22, 0x22, 0xFF);
 			top_scene->push(bg);
 
-			// orange circle-ish shape
-			circle = tvg::Shape::gen();
-			circle->appendCircle(0, 0, 10, 10);
-			circle->appendRect(-12, -2, 24, 4);
-			circle->appendRect(-2, -12, 4, 24);
-			circle->translate((float)width / 2, (float)height / 2);
-			circle->fill(0xFF, 0x80, 0x20, 0xFF);
-
-			top_scene->push(circle);
+			// Grid of circles
+			for (auto i = 0u; auto &c : circles) {
+				c = tvg::Shape::gen();
+				float x = int(i % 4) * 3.5f + 3;
+				float y = int(i / 4) * 6 + 5;
+				c->appendCircle(x, y, 1.5f, 1.5f);
+				c->fill(0xFF, 0x80, 0x20, 0xFF);
+				top_scene->push(c);
+				i++;
+			}
 
 			////////////
-			auto scaling = float(width) / base_element(UpperScreen).width_mm;
+			scaling = float(width) / base_element(UpperScreen).width_mm;
 			top_scene->scale(scaling);
+
 			top_canvas->push(top_scene);
 
 			needUpdateDisplay1 = true;
@@ -71,26 +74,22 @@ public:
 			bottom_scene = tvg::Scene::gen();
 
 			// Light grey background
-			bg2 = tvg::Shape::gen();
+			auto bg2 = tvg::Shape::gen();
 			bg2->appendRect(0, 0, width, height);
 			bg2->fill(0xcc, 0xcc, 0xcc, 0xFF);
 			bottom_scene->push(bg2);
 
 			rect2 = tvg::Shape::gen();
 			rect2->appendRect(-10, -10, 20, 20);
-			rect2->translate(20, 20);
 			rect2->fill(0xFF, 0x00, 0x00, 0xFF);
 
-			auto cutout = tvg::Shape::gen();
-			cutout->appendRect(-5, -5, 10, 10);
-			cutout->fill(0xcc, 0xcc, 0xcc, 0xFF);
-			rect2->mask(cutout, tvg::MaskMethod::Subtract);
+			rect2->translate((float)width / 2, (float)height / 2);
 
 			bottom_scene->push(rect2);
 
 			////////////////
 
-			auto scaling = float(width) / base_element(LowerScreen).width_mm;
+			scaling = float(width) / base_element(LowerScreen).width_mm;
 			bottom_scene->scale(scaling);
 
 			bottom_canvas->push(bottom_scene);
@@ -115,13 +114,18 @@ public:
 
 	bool draw_graphic_display(int display_id) override {
 		if (display_id == display_index<UpperScreen>()) {
-			// No need to update graphics if knob didn't move
-			if (!needUpdateDisplay1)
-				return false;
-			needUpdateDisplay1 = false;
 
-			// circle->scale(clockDivideOffset + 0.5);
-			top_canvas->update(circle);
+			auto div_idx = (unsigned)(clockDivideOffset * 7.99f);
+			for (auto i = 0u; i < circles.size(); i++) {
+				if (i == unsigned(cp.getWrappedPhase() * div_idx))
+					circles[i]->fill(0xFF, 0xFF, 0, 0xFF);
+				else if (i == div_idx)
+					circles[i]->fill(0xFF, 0x80, 0x20, 0xFF);
+				else
+					circles[i]->fill(0xcc, 0xcc, 0xcc, 0xFF);
+
+				top_canvas->update(circles[i]);
+			}
 
 			top_canvas->draw();
 			top_canvas->sync();
@@ -132,6 +136,7 @@ public:
 		if (display_id == display_index<LowerScreen>()) {
 			if (clockInit) {
 				rect2->rotate(cp.getWrappedPhase() * 360);
+				rect2->scale(scaling);
 				bottom_canvas->update(rect2);
 
 				bottom_canvas->draw();
