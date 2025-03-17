@@ -20,12 +20,14 @@ class CLKDCore : public CoreProcessor, CoreHelper<CLKDInfo> {
 public:
 	CLKDCore() = default;
 
-	std::array<tvg::SwCanvas *, 2> canvas;
-	std::array<tvg::Scene *, 2> scene;
+	tvg::SwCanvas *top_canvas = nullptr;
+	tvg::SwCanvas *bottom_canvas = nullptr;
+
+	tvg::Scene *top_scene;
+	tvg::Scene *bottom_scene;
 
 	tvg::Shape *bg;
 	tvg::Shape *circle;
-	tvg::Shape *oval;
 
 	tvg::Shape *bg2;
 	tvg::Shape *rect2;
@@ -34,66 +36,80 @@ public:
 
 	void show_graphic_display(int display_id, std::span<uint32_t> pix, uint16_t width, uint16_t height) override {
 		if (display_id == display_index<UpperScreen>()) {
-			canvas[0] = tvg::SwCanvas::gen();
-			canvas[0]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
-			scene[0] = tvg::Scene::gen();
+			top_canvas = tvg::SwCanvas::gen();
+			top_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
+			top_scene = tvg::Scene::gen();
+			/////////////////
 
 			// DarkGrey background
 			bg = tvg::Shape::gen();
 			bg->appendRect(0, 0, width, height);
 			bg->fill(0x22, 0x22, 0x22, 0xFF);
-			scene[0]->push(bg);
+			top_scene->push(bg);
 
-			// orange circle
+			// orange circle-ish shape
 			circle = tvg::Shape::gen();
-			circle->appendCircle(25, 25, 10, 10);
-			circle->fill(0xFF, 0x80, 0x20, 0x80);
-			scene[0]->push(circle);
+			circle->appendCircle(0, 0, 10, 10);
+			circle->appendRect(-12, -2, 24, 4);
+			circle->appendRect(-2, -12, 4, 24);
+			circle->translate((float)width / 2, (float)height / 2);
+			circle->fill(0xFF, 0x80, 0x20, 0xFF);
 
-			// magenta circle
-			oval = tvg::Shape::gen();
-			oval->appendRect(5, 0, width - 5, 10);
-			oval->fill(0x80, 0x00, 0xFF, 0x80);
-			scene[0]->push(oval);
+			top_scene->push(circle);
 
+			////////////
 			auto scaling = float(width) / base_element(UpperScreen).width_mm;
-			scene[0]->scale(scaling);
-			canvas[0]->push(scene[0]);
+			top_scene->scale(scaling);
+			top_canvas->push(top_scene);
 
 			needUpdateDisplay1 = true;
 		}
 
 		if (display_id == display_index<LowerScreen>()) {
-			canvas[1] = tvg::SwCanvas::gen();
-			canvas[1]->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
-			scene[1] = tvg::Scene::gen();
+			bottom_canvas = tvg::SwCanvas::gen();
+			bottom_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
+			bottom_scene = tvg::Scene::gen();
 
 			// Light grey background
 			bg2 = tvg::Shape::gen();
 			bg2->appendRect(0, 0, width, height);
 			bg2->fill(0xcc, 0xcc, 0xcc, 0xFF);
-			scene[1]->push(bg2);
+			bottom_scene->push(bg2);
 
 			rect2 = tvg::Shape::gen();
-			rect2->appendRect(3, 3, 20, 20);
+			rect2->appendRect(-10, -10, 20, 20);
+			rect2->translate(20, 20);
 			rect2->fill(0xFF, 0x00, 0x00, 0xFF);
-			scene[1]->push(rect2);
+
+			auto cutout = tvg::Shape::gen();
+			cutout->appendRect(-5, -5, 10, 10);
+			cutout->fill(0xcc, 0xcc, 0xcc, 0xFF);
+			rect2->mask(cutout, tvg::MaskMethod::Subtract);
+
+			bottom_scene->push(rect2);
+
+			////////////////
 
 			auto scaling = float(width) / base_element(LowerScreen).width_mm;
-			scene[1]->scale(scaling);
-			canvas[1]->push(scene[1]);
+			bottom_scene->scale(scaling);
+
+			bottom_canvas->push(bottom_scene);
 		}
 	}
 
 	void hide_graphic_display(int display_id) override {
 		if (display_id == display_index<UpperScreen>()) {
-			// canvas[0]->remove();
-			delete canvas[0];
+			if (top_canvas) {
+				delete top_canvas;
+				top_canvas = nullptr;
+			}
 		}
 
 		if (display_id == display_index<LowerScreen>()) {
-			// canvas[1]->remove();
-			delete canvas[1];
+			if (bottom_canvas) {
+				delete bottom_canvas;
+				bottom_canvas = nullptr;
+			}
 		}
 	}
 
@@ -104,32 +120,23 @@ public:
 				return false;
 			needUpdateDisplay1 = false;
 
-			circle->scale(clockDivideOffset + 0.5);
-			oval->translate(0, clockDivideOffset * 10);
-			canvas[0]->update(circle);
-			canvas[0]->update(oval);
+			// circle->scale(clockDivideOffset + 0.5);
+			top_canvas->update(circle);
 
-			canvas[0]->draw();
-			canvas[0]->sync();
+			top_canvas->draw();
+			top_canvas->sync();
 
 			return true;
 		}
 
 		if (display_id == display_index<LowerScreen>()) {
-			if (anim_rot > 0) {
-				// animate
-				uint64_t now_ms = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
-				auto ticks_elapsed = now_ms - last_anim_tm;
-				last_anim_tm = now_ms;
-				anim_rot -= (float)ticks_elapsed / 20.f;
-				if (anim_rot < 0)
-					anim_rot = 0;
+			if (clockInit) {
+				rect2->rotate(cp.getWrappedPhase() * 360);
+				bottom_canvas->update(rect2);
 
-				rect2->rotate(anim_rot);
-				canvas[1]->update(rect2);
+				bottom_canvas->draw();
+				bottom_canvas->sync();
 			}
-			canvas[1]->draw();
-			canvas[1]->sync();
 			return true;
 		}
 
@@ -149,8 +156,6 @@ public:
 		if (param_id == param_index<DivideKnob>()) {
 			if (val != clockDivideOffset) {
 				needUpdateDisplay1 = true;
-				anim_rot = 90;
-				last_anim_tm = std::chrono::steady_clock::now().time_since_epoch().count() / 1'000'000LL;
 			}
 			clockDivideOffset = val;
 			update_divider();
@@ -206,8 +211,6 @@ private:
 	ClockPhase cp;
 
 	bool needUpdateDisplay1 = false;
-	float anim_rot = 0;
-	uint32_t last_anim_tm = 0;
 
 	static constexpr float gateVoltage = 8.0f;
 };
