@@ -5,7 +5,6 @@
 #include "processors/tools/clockPhase.h"
 #include "thorvg/thorvg/inc/thorvg.h"
 #include "util/math.hh"
-#include <chrono>
 
 using namespace MathTools;
 
@@ -23,9 +22,6 @@ public:
 	tvg::SwCanvas *top_canvas = nullptr;
 	tvg::SwCanvas *bottom_canvas = nullptr;
 
-	tvg::Scene *top_scene;
-	tvg::Scene *bottom_scene;
-
 	std::array<tvg::Shape *, 8> circles;
 
 	tvg::Shape *rect2;
@@ -37,11 +33,8 @@ public:
 	void show_graphic_display(int display_id, std::span<uint32_t> pix, unsigned width, lv_obj_t *) override {
 		auto height = pix.size() / width;
 		if (display_id == display_index<UpperScreen>()) {
-			top_canvas = tvg::SwCanvas::gen();
-			top_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
-			top_scene = tvg::Scene::gen();
-
-			/////////////////
+			// Make a scene
+			auto top_scene = tvg::Scene::gen();
 
 			// DarkGrey background
 			auto bg = tvg::Shape::gen();
@@ -60,19 +53,23 @@ public:
 				i++;
 			}
 
-			////////////
+			///////////////// Boilerplate: push_scene(display_id, pix, width, top_scene, top_canvas);
+			top_canvas = tvg::SwCanvas::gen();
+			top_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
 			scaling = float(width) / base_element(UpperScreen).width_mm;
 			top_scene->scale(scaling);
-
 			top_canvas->push(top_scene);
-
-			needUpdateDisplay1 = true;
+			////////////
 		}
 
 		if (display_id == display_index<LowerScreen>()) {
+			///////////////// Boilerplate: auto scene = begin_graphic_scene(display_id, pix, width);
+			auto bottom_scene = tvg::Scene::gen();
 			bottom_canvas = tvg::SwCanvas::gen();
 			bottom_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
-			bottom_scene = tvg::Scene::gen();
+			scaling = float(width) / base_element(LowerScreen).width_mm;
+			bottom_scene->scale(scaling);
+			////////////////////
 
 			// Light grey background
 			auto bg2 = tvg::Shape::gen();
@@ -88,11 +85,7 @@ public:
 
 			bottom_scene->push(rect2);
 
-			////////////////
-
-			scaling = float(width) / base_element(LowerScreen).width_mm;
-			bottom_scene->scale(scaling);
-
+			/////////////////////// Boilerplate: end_graphic_scene(scene);
 			bottom_canvas->push(bottom_scene);
 		}
 	}
@@ -160,9 +153,6 @@ public:
 
 	void set_param(int param_id, float val) override {
 		if (param_id == param_index<DivideKnob>()) {
-			if (val != clockDivideOffset) {
-				needUpdateDisplay1 = true;
-			}
 			clockDivideOffset = val;
 			update_divider();
 		}
@@ -215,8 +205,6 @@ private:
 	float clockDivideCV = 0;
 
 	ClockPhase cp;
-
-	bool needUpdateDisplay1 = false;
 
 	static constexpr float gateVoltage = 8.0f;
 };
