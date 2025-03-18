@@ -34,7 +34,8 @@ public:
 
 	~CLKDCore() = default;
 
-	void show_graphic_display(int display_id, std::span<uint32_t> pix, uint16_t width, uint16_t height) override {
+	void show_graphic_display(int display_id, std::span<uint32_t> pix, unsigned width, lv_obj_t *) override {
+		auto height = pix.size() / width;
 		if (display_id == display_index<UpperScreen>()) {
 			top_canvas = tvg::SwCanvas::gen();
 			top_canvas->target(pix.data(), width, width, height, tvg::ColorSpace::ARGB8888);
