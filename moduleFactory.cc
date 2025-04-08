@@ -1,6 +1,6 @@
 #include "CoreModules/moduleFactory.hh"
-#include "util/seq_map.hh"
 #include <list>
+#include <map>
 
 #if defined(TESTPROJECT)
 #define pr_dbg(...)
@@ -32,7 +32,7 @@ struct BrandRegistry {
 	std::string display_name;
 	std::vector<std::string> aliases;
 
-	SeqMap<std::string, ModuleRegistry, MAX_MODULE_TYPES> modules;
+	std::map<std::string, ModuleRegistry> modules;
 
 	BrandRegistry(std::string_view brand)
 		: brand_name{brand} {
@@ -67,29 +67,14 @@ bool ModuleFactory::registerModuleType(std::string_view brand_name,
 									   const ModuleInfoView &info,
 									   std::string_view faceplate_filename) {
 
-	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
-		// Brand exists: insert or overwrite existing entry
-		if (brand_reg->modules.overwrite(std::string(module_slug),
-										 {.creation_func = funcCreate,
-										  .info = info,
-										  .faceplate = std::string{faceplate_filename},
-										  .display_name = std::string(module_slug)}))
-		{
-			brand_reg->display_name = brand_name;
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		// Brand does not exist, create it and insert entry
-		auto &brand = registry().emplace_back(brand_name);
-		brand.display_name = brand_name;
-		return brand.modules.insert(std::string(module_slug),
-									{.creation_func = funcCreate,
-									 .info = info,
-									 .faceplate = std::string{faceplate_filename},
-									 .display_name = std::string(module_slug)});
-	}
+	auto brand_reg = brand_registry(brand_name);
+	auto &brand = (brand_reg != registry().end()) ? *brand_reg : registry().emplace_back(brand_name);
+	brand.display_name = brand_name;
+	brand.modules[std::string(module_slug)] = {.creation_func = funcCreate,
+											   .info = info,
+											   .faceplate = std::string{faceplate_filename},
+											   .display_name = std::string(module_slug)};
+	return true;
 }
 
 bool ModuleFactory::registerModuleType(std::string_view typeslug,
@@ -99,6 +84,9 @@ bool ModuleFactory::registerModuleType(std::string_view typeslug,
 	return registerModuleType("4msCompany", typeslug, funcCreate, info, faceplate_filename);
 }
 
+// brand_module(combined_slug)
+// Splits the slug into brand:module
+// If no brand: is given, then searches all brands for a matching module slug
 static std::pair<std::string_view, std::string_view> brand_module(std::string_view combined_slug) {
 	auto colon = combined_slug.find_first_of(':');
 	if (colon != std::string_view::npos) {
@@ -108,7 +96,7 @@ static std::pair<std::string_view, std::string_view> brand_module(std::string_vi
 		auto module_slug = std::string(combined_slug);
 		//search all brands for module slug
 		for (auto &brand : registry()) {
-			if (brand.modules.get(module_slug)) {
+			if (brand.modules.contains(module_slug)) {
 				// pr_dbg("Brand not specified, found %s in %s\n", module_slug.data(), brand.brand_name.c_str());
 				return {brand.brand_name.c_str(), combined_slug};
 			}
@@ -119,10 +107,13 @@ static std::pair<std::string_view, std::string_view> brand_module(std::string_vi
 
 static ModuleRegistry *find_module(std::string_view combined_slug) {
 	auto [brand, module_name] = brand_module(combined_slug);
+
 	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
-		return brand_reg->modules.get(std::string(module_name));
-	} else
-		return nullptr;
+		if (brand_reg->modules.contains(std::string(module_name)))
+			return &brand_reg->modules[std::string(module_name)];
+	}
+
+	return nullptr;
 }
 
 std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_slug) {
@@ -162,12 +153,10 @@ std::string_view ModuleFactory::getModuleDisplayName(std::string_view combined_s
 
 std::string_view ModuleFactory::getModuleSlug(std::string_view brand_slug, std::string_view display_name) {
 	if (auto brand_reg = brand_registry(brand_slug); brand_reg != registry().end()) {
-		for (auto i = 0u; auto const &module : brand_reg->modules.vals) {
-			if (module.display_name == display_name) {
-				return brand_reg->modules.keys[i];
-			}
-			if (++i >= brand_reg->modules.size())
-				break;
+
+		for (auto const &[slug, module] : brand_reg->modules) {
+			if (module.display_name == display_name)
+				return slug;
 		}
 	}
 	return "";
@@ -181,8 +170,8 @@ std::string_view ModuleFactory::getBrandDisplayName(std::string_view brand_name)
 }
 
 std::string_view ModuleFactory::getBrandSlug(std::string_view display_name) {
-	auto found = std::find_if(
-		registry().begin(), registry().end(), [&](auto const &brand) { return brand.display_name == display_name; });
+	auto found =
+		std::ranges::find_if(registry(), [&](auto const &brand) { return brand.display_name == display_name; });
 
 	if (found != registry().end())
 		return found->brand_name;
@@ -210,8 +199,8 @@ bool ModuleFactory::isValidSlug(std::string_view combined_slug) {
 
 bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view module_name) {
 	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
-		if (auto module = brand_reg->modules.get(std::string(module_name))) {
-			return bool(module->creation_func);
+		if (brand_reg->modules.contains(std::string(module_name))) {
+			return bool(brand_reg->modules[std::string(module_name)].creation_func);
 		}
 	}
 
@@ -220,18 +209,27 @@ bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view 
 
 std::vector<std::string> ModuleFactory::getAllSlugs(std::string_view brand) {
 	std::vector<std::string> slugs;
+
 	auto modules = brand_registry(brand)->modules;
-	slugs.assign(modules.keys.begin(), std::next(modules.keys.begin(), modules.size()));
+	slugs.reserve(modules.size());
+
+	for (auto const &[slug, module] : modules) {
+		slugs.push_back(slug);
+	}
+
 	return slugs;
 }
 
 std::vector<std::string> ModuleFactory::getAllModuleDisplayNames(std::string_view brand) {
 	std::vector<std::string> names;
+
 	auto modules = brand_registry(brand)->modules;
 	names.reserve(modules.size());
-	for (unsigned i = 0; i < modules.size(); i++) {
-		names.push_back(modules.vals[i].display_name);
+
+	for (auto const &[slug, module] : modules) {
+		names.push_back(module.display_name);
 	}
+
 	return names;
 }
 
