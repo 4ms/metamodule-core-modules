@@ -26,7 +26,6 @@ struct ModuleRegistry {
 	std::string display_name;
 };
 
-static constexpr int MAX_MODULE_TYPES = 512;
 struct BrandRegistry {
 	std::string brand_name;
 	std::string display_name;
@@ -249,6 +248,19 @@ std::vector<std::string> ModuleFactory::getAllBrands() {
 		brands.emplace_back(brand.brand_name.c_str());
 	}
 	return brands;
+}
+
+bool ModuleFactory::unregisterModule(std::string_view brand, std::string_view module_name) {
+	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
+		auto removed = brand_reg->modules.erase(std::string(module_name));
+
+		if (removed && brand_reg->modules.size() == 0) {
+			pr_dbg("Brand has no more modules, removing\n");
+			registry().remove_if([=](BrandRegistry &reg) { return reg.brand_name == brand; });
+		}
+		return removed > 0;
+	}
+	return false;
 }
 
 bool ModuleFactory::unregisterBrand(std::string_view brand_name) {
