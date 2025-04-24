@@ -1,4 +1,5 @@
 #include "CoreModules/moduleFactory.hh"
+#include "util/string_compare.hh"
 #include <list>
 #include <map>
 
@@ -51,7 +52,13 @@ static auto brand_registry(std::string_view brand) {
 	// First, try to match on brand_name:
 	auto found = std::ranges::find(registry(), brand, &BrandRegistry::brand_name);
 
-	// If not found, match on alias
+	// If not found, match case-insensitive
+	if (found == registry().end()) {
+		found = std::ranges::find_if(
+			registry(), [&brand](std::string_view a) { return equal_ci(a, brand); }, &BrandRegistry::brand_name);
+	}
+
+	// If still not found, match on alias
 	if (found == registry().end()) {
 		found = std::ranges::find_if(registry(), [=](BrandRegistry const &reg) {
 			return std::ranges::find(reg.aliases, std::string(brand)) != reg.aliases.end();
