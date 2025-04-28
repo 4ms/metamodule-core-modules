@@ -176,6 +176,28 @@ public:
 				case Info::SwitchFreeze:
 					return enosc.get_freeze_button() ? 0.f : 1.f;
 			}
+
+		} else {
+			switch (param_id - (int)Info::NumKnobs - (int)Info::NumSwitches) {
+				case Info::AltParamStereosplit: {
+					auto mode = enosc.get_stereo_mode();
+					return static_cast<unsigned>(mode) / 3.0f;
+				} break;
+				case Info::AltParamNumosc: {
+					auto num_osc = enosc.get_num_osc();
+					return (num_osc - 1) / 16.f;
+				} break;
+				case Info::AltParamCrossfade:
+					return enosc.get_crossfade();
+					break;
+				case Info::AltParamFreezesplit: {
+					auto mode = enosc.get_freeze_mode();
+					return static_cast<unsigned>(mode) / 3.0f;
+				} break;
+				case Info::AltParamFinetune:
+					return enosc.get_fine_tune();
+					break;
+			}
 		}
 		return 0;
 	}

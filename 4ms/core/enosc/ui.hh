@@ -403,6 +403,21 @@ public:
 	void set_stereo_mode(SplitMode val) {
 		control_.set_stereo_mode(val);
 	}
+	SplitMode get_stereo_mode() const {
+		return control_.get_stereo_mode();
+	}
+	float get_fine_tune() const {
+		return control_.get_stereo_mode();
+	}
+	float get_crossfade() const {
+		return control_.get_crossfade();
+	}
+	int get_num_osc() const {
+		return control_.get_num_osc();
+	}
+	SplitMode get_freeze_mode() const {
+		return control_.get_freeze_mode();
+	}
 
 	void set_samplerate(float new_sample_rate) {
 		params_.sample_rate = f(new_sample_rate);

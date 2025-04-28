@@ -686,6 +686,26 @@ public:
 	void set_stereo_mode(SplitMode val) {
 		stereo_mode_raw = val;
 	}
+
+	float get_fine_tune() const {
+		return fine_tune_raw.repr();
+	}
+
+	float get_crossfade() const {
+		return crossfade_raw.repr();
+	}
+
+	int get_num_osc() const {
+		return num_osc_raw;
+	}
+
+	SplitMode get_freeze_mode() const {
+		return freeze_mode_raw;
+	}
+
+	SplitMode get_stereo_mode() const {
+		return stereo_mode_raw;
+	}
 };
 
 } // namespace EnOsc
