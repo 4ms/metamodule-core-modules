@@ -80,6 +80,22 @@ public:
 		return 0.f;
 	}
 
+	void mark_all_inputs_unpatched() override {
+		mark_input_unpatched(Info::InputTrig);
+		mark_input_unpatched(Info::InputV_Oct);
+	}
+
+	void mark_input_unpatched(int input_id) override {
+		switch (input_id) {
+			case Info::InputTrig:
+				gateInput = 0;
+				break;
+			case Info::InputV_Oct:
+				pitchInput = 0;
+				break;
+		}
+	}
+
 	void set_samplerate(float sr) override {
 		k.set_samplerate(sr);
 		e.set_samplerate(sr);
