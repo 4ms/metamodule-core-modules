@@ -130,7 +130,6 @@ public:
 				break;
 
 			case param_index<Elem::FinetuneAltParam>():
-				printf("->%f\n", val);
 				enosc.set_fine_tune(val);
 				break;
 		}
@@ -192,7 +191,6 @@ public:
 				return (enosc.get_num_osc() - 1) / 15.f;
 
 			case param_index<Elem::FinetuneAltParam>():
-				printf("%f\n", enosc.get_fine_tune());
 				return enosc.get_fine_tune();
 
 			default:
