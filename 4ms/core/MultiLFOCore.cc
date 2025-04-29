@@ -34,7 +34,7 @@ public:
 		auto knobFreq = exp5Table.closest(MathTools::constrain(rawRateKnob, 0.f, 1.f));
 		finalRate = knobFreq * MathTools::setPitchMultiple(rawRateCV);
 		if (slowMode)
-			finalRate /= 10.f;
+			finalRate /= 30.f;
 	}
 
 	void set_param(int param_id, float val) override {
