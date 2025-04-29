@@ -407,7 +407,7 @@ public:
 		return control_.get_stereo_mode();
 	}
 	float get_fine_tune() const {
-		return control_.get_stereo_mode();
+		return control_.get_fine_tune();
 	}
 	float get_crossfade() const {
 		return control_.get_crossfade();
