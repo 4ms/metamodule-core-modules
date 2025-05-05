@@ -640,8 +640,14 @@ public:
 
 	// Hardware model setters:
 
+	static constexpr auto t = Float{u0_16::inclusive(f(1_f))}.repr();
+
 	void set_potcv(AdcInput chan, float val) {
 		adc_.set(chan, u0_16::inclusive(f(val).clip(0._f, 1._f)));
+	}
+
+	float get_potcv(AdcInput chan) const {
+		return Float{adc_.get(chan)}.repr();
 	}
 
 	void set_pitchroot_cv(SpiAdcInput chan, float val) {
@@ -679,6 +685,26 @@ public:
 
 	void set_stereo_mode(SplitMode val) {
 		stereo_mode_raw = val;
+	}
+
+	float get_fine_tune() const {
+		return fine_tune_raw.repr();
+	}
+
+	float get_crossfade() const {
+		return crossfade_raw.repr();
+	}
+
+	int get_num_osc() const {
+		return num_osc_raw;
+	}
+
+	SplitMode get_freeze_mode() const {
+		return freeze_mode_raw;
+	}
+
+	SplitMode get_stereo_mode() const {
+		return stereo_mode_raw;
 	}
 };
 

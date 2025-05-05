@@ -54,6 +54,10 @@ public:
 	void set_param(int param_id, float val) override {
 	}
 
+	float get_param(int param_id) const override {
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputClock: // clock

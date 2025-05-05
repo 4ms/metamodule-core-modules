@@ -33,6 +33,8 @@ public:
 	void combineKnobCVFreq() {
 		auto knobFreq = exp5Table.closest(MathTools::constrain(rawRateKnob, 0.f, 1.f));
 		finalRate = knobFreq * MathTools::setPitchMultiple(rawRateCV);
+		if (slowMode)
+			finalRate /= 30.f;
 	}
 
 	void set_param(int param_id, float val) override {
@@ -47,7 +49,25 @@ public:
 			case Info::KnobPw:
 				pwOffset = val;
 				break;
+			case Info::SwitchSlow_Mode + (int)Info::NumKnobs:
+				slowMode = val > 0.5f;
+				rateChanged = true;
+				break;
 		}
+	}
+
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobRate:
+				return rawRateKnob;
+			case Info::KnobPhase:
+				return phaseOffset;
+			case Info::KnobPw:
+				return pwOffset;
+			case Info::SwitchSlow_Mode + (int)Info::NumKnobs:
+				return slowMode ? 1 : 0;
+		}
+		return 0;
 	}
 
 	void set_input(int input_id, float val) override {
@@ -94,6 +114,8 @@ public:
 	}
 
 	float get_led_brightness(int led_id) const override {
+		if (led_id == Info::LedRate_Light)
+			return modPhase;
 		return 0.f;
 	}
 
@@ -115,9 +137,7 @@ private:
 	float pwCV = 0.f;
 	float modPhase = 0.f;
 	float phaseOffset = 0.f;
-
-	// bool currentReset = 0.f;
-	// bool lastReset = 0.f;
+	bool slowMode = false;
 
 	SchmittTrigger reset;
 	EdgeDetector reset_edge;

@@ -80,6 +80,20 @@ public:
 		}
 	}
 
+	float get_param(const int param_id) const override {
+		switch (param_id) {
+			case Info::KnobW_Speed:
+				return MathTools::map_value(wowGen.frequency, .1f, 5.f, 0.f, 1.f);
+			case Info::KnobW_Depth:
+				return wowDepth;
+			case Info::KnobF_Speed:
+				return MathTools::map_value(flutterGen.frequency, 5.0f, 30.0f, 0.f, 1.f);
+			case Info::KnobF_Depth:
+				return flutterDepth;
+		}
+		return 0;
+	}
+
 	void set_samplerate(const float sr) override {
 		p.setSampleRate(sr);
 		flutterGen.set_samplerate(sr);

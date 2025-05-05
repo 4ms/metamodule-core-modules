@@ -110,6 +110,24 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case VerbInfo::KnobSize:
+				return globalCombAtten;
+			case VerbInfo::KnobDamp:
+				return new_damp;
+			case VerbInfo::KnobMix:
+				return mix_knob;
+			case VerbInfo::KnobTime:
+				return new_feedback;
+			case VerbInfo::KnobAp_Ratio:
+				return new_all_ap_ratio;
+			case VerbInfo::KnobComb:
+				return new_all_comb_ratio;
+		}
+		return 0;
+	}
+
 	float getAllpassTuning(const int id) {
 		return currentAllpassTuning[id];
 	}

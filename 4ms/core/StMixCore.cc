@@ -64,6 +64,28 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobLevel_1:
+				return level[0];
+			case Info::KnobLevel_2:
+				return level[1];
+			case Info::KnobLevel_3:
+				return level[2];
+			case Info::KnobLevel_4:
+				return level[3];
+			case Info::KnobPan_1:
+				return pan[0];
+			case Info::KnobPan_2:
+				return pan[1];
+			case Info::KnobPan_3:
+				return pan[2];
+			case Info::KnobPan_4:
+				return pan[3];
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputIn_1_L:

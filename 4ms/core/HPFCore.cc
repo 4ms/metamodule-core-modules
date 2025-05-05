@@ -1,4 +1,3 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/HPF_info.hh"
 #include "processors/hpf.h"
@@ -39,9 +38,25 @@ public:
 				}
 				break;
 			case (Info::SwitchMode + 2): //Info::NumKnobs
-				mode = val ? 1 : 0;
+				mode = val > .5f ? 1 : 0;
 				break;
 		}
+	}
+
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobCutoff:
+				return map_value(cutoffOffset, -1.f, 1.f, 0.f, 1.f);
+			case Info::KnobQ:
+				if (mode == 0)
+					return map_value(hpf.q, 1.f, 20.f, 0.f, 1.f);
+				else if (mode == 1)
+					return map_value(korg.q, 0.f, 10.f, 0.f, 1.f);
+				break;
+			case (Info::SwitchMode + 2): //Info::NumKnobs
+				return mode == 1 ? 1.f : 0.f;
+		}
+		return 0;
 	}
 
 	void set_input(int input_id, float val) override {

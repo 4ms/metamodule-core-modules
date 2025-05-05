@@ -49,6 +49,18 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobThresh: //threshold
+				return wc.getLowThreshold();
+			case Info::KnobRise: //rise
+				return MathTools::map_value(slew.attackTime, 1.f, 2000.f, 0.f, 1.f);
+			case Info::KnobFall: //fall
+				return MathTools::map_value(slew.decayTime, 1.f, 2000.f, 0.f, 1.f);
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		if (input_id == Info::InputInput)
 			signalInput = val / maxOutputVolts;

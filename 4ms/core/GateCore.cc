@@ -49,6 +49,16 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobLength:
+				return gateLength;
+			case Info::KnobDelay:
+				return delayTime;
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputInput:

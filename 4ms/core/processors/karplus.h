@@ -44,6 +44,14 @@ public:
 		feedback = MathTools::map_value(val, 0.0f, 1.0f, 0.98f, 1.0f);
 	}
 
+	float get_spread() const {
+		return MathTools::map_value(spread, 1.001f, 1.01f, 0.f, 1.f);
+	}
+
+	float get_decay() const {
+		return MathTools::map_value(feedback, .98f, 1.f, 0.f, 1.f);
+	}
+
 private:
 	alignas(16) float apPeriods[taps];
 

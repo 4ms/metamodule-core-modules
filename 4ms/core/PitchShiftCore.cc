@@ -39,6 +39,20 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobCoarse:
+				return MathTools::map_value(coarseShift, -12.f, 12.f, 0.f, 1.f);
+			case Info::KnobFine:
+				return MathTools::map_value(fineShift, -1.f, 1.f, 0.f, 1.f);
+			case Info::KnobWindow:
+				return windowOffset;
+			case Info::KnobMix:
+				return mixOffset;
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputInput:

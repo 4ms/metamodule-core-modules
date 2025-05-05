@@ -50,6 +50,8 @@ public:
 
 	static void registerBrandAlias(std::string_view brand, std::string_view alias);
 	static bool unregisterBrand(std::string_view brand_name);
+
+	static bool unregisterModule(std::string_view brand, std::string_view module_name);
 };
 
 } // namespace MetaModule

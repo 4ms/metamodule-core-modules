@@ -25,6 +25,12 @@ public:
 			panPosition = val;
 	}
 
+	float get_param(int param_id) const override {
+		if (param_id == Info::KnobPan)
+			return panPosition;
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
 			case Info::InputInput:

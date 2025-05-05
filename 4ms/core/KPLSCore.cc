@@ -49,6 +49,18 @@ public:
 		}
 	}
 
+	float get_param(int param_id) const override {
+		switch (param_id) {
+			case Info::KnobPitch:
+				return MathTools::map_value(basePitch, 20.f, 400.f, 0.f, 1.f);
+			case Info::KnobDecay:
+				return k.get_decay();
+			case Info::KnobSpread:
+				return k.get_spread();
+		}
+		return 0;
+	}
+
 	void set_input(int input_id, float val) override {
 		val = val / CvRangeVolts;
 
@@ -66,6 +78,22 @@ public:
 		if (output_id == Info::OutputOut)
 			return karpOut * MaxOutputVolts;
 		return 0.f;
+	}
+
+	void mark_all_inputs_unpatched() override {
+		mark_input_unpatched(Info::InputTrig);
+		mark_input_unpatched(Info::InputV_Oct);
+	}
+
+	void mark_input_unpatched(int input_id) override {
+		switch (input_id) {
+			case Info::InputTrig:
+				gateInput = 0;
+				break;
+			case Info::InputV_Oct:
+				pitchInput = 0;
+				break;
+		}
 	}
 
 	void set_samplerate(float sr) override {

@@ -29,6 +29,18 @@ public:
 		}
 	}
 
+	float get_param(int const param_id) const override {
+		switch (param_id) {
+			case Info::Knob_1:
+				return MathTools::map_value(output1, -1.f, 1.f, 0.f, 1.f);
+			case Info::Knob_2:
+				return MathTools::map_value(output2, -1.f, 1.f, 0.f, 1.f);
+			case 3: //hidden param used for calibration checking
+				return octave_mode ? 0 : 1;
+		}
+		return 0;
+	}
+
 	void set_samplerate(const float sr) override {
 	}
 
