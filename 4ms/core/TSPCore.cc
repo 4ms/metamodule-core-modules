@@ -3,7 +3,8 @@
 #include "CoreModules/register_module.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "info/TSP_info.hh"
-#include "util/circular_buffer.hh"
+#include "tsp/wav_file_stream.hh"
+#include "util/edge_detector.hh"
 #include "util/static_string.hh"
 #include <atomic>
 
@@ -15,71 +16,137 @@ namespace MetaModule
 class TSPCore : public SmartCoreProcessor<TSPInfo> {
 	using enum TSPInfo::Elem;
 
-	//1MB max pre-buffering = 2-10sec of buffering, depending on the sample format
-	static constexpr size_t MaxBufferSize = 1 * 1024 * 1024;
-
-	CircularBuffer<float, MaxBufferSize> pre_buff;
-
-	float sample_rate = 48000.f;
-
-	enum class FileSysAction {
-		Idle,
-		FileBrowser,
-		// NextBank,
-		// PrevBank,
-		// NextSample,
-		// PrevSample,
-		// ReadSampleHeader,
-		// Process,
-	};
-
-	std::atomic<FileSysAction> fs_state{FileSysAction::Idle};
-
-	// This runs in the low-pri thread:
-	AsyncThread fs_thread{this, [this]() {
-							  if (fs_state == FileSysAction::FileBrowser) {
-								  //
-							  }
-						  }};
-
 public:
+	TSPCore() {
+		fs_thread.start([this]() { handle_filesystem(); });
+	}
+
 	void update() override {
-		// sampler.update();
+		using enum PlayState;
+
+		switch (play_state) {
+			case Buffering:
+				if (wav.frames_available() >= PreBufferThreshold) {
+					printf("update: Buffering=>Playing\n");
+					play_state = Playing;
+				}
+				setOutput<LeftOut>(0);
+				setOutput<RightOut>(0);
+				break;
+
+			case Playing:
+				setOutput<LeftOut>(wav.get_sample());
+				if (wav.is_stereo())
+					setOutput<RightOut>(wav.get_sample());
+				else
+					setOutput<RightOut>(0);
+				break;
+
+			case Stopped:
+			case LoadSampleInfo:
+				setOutput<LeftOut>(0);
+				setOutput<RightOut>(0);
+				break;
+		};
+	}
+
+	void handle_filesystem() {
+		using enum PlayState;
+
+		switch (play_state) {
+			case Stopped:
+				// do nothing
+				break;
+
+			case LoadSampleInfo:
+				printf("fs: LoadSampleInfo\n");
+				if (!wav.init(sample_filename)) {
+					printf("Could not load sample\n");
+				}
+				printf("Loaded Sample info: stopped");
+				play_state = Stopped;
+				break;
+
+			case Buffering:
+			case Playing:
+				if (wav.frames_available() < PreBufferThreshold) {
+					wav.buffer_frames(1024);
+					if (wav.is_eof()) {
+						printf("EOF: stopped");
+						play_state = Stopped;
+					}
+				}
+				break;
+		};
 	}
 
 	void set_param(int id, float val) override {
-		if (id == param_idx<SampledirAltParam>) {
-			if (val > 0.5) {
+		if (id == param_idx<LoadsampleAltParam>) {
+			load_button.update(val > 0.5f);
+			handle_load_button();
 
-				// fs_state = FileSysAction::FileBrowser;
-				async_open_file(sample_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
-					if (path) {
-						sample_filename = path;
-						printf("Open file %s\n", path);
-						free(path);
-					}
-				});
-			}
+		} else if (id == param_idx<PlayButton>) {
+			play_button.update(val > 0.5f);
+			handle_play_button();
+
+		} else {
+			SmartCoreProcessor::set_param(id, val);
 		}
-
-		SmartCoreProcessor::set_param(id, val);
 	}
 
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
 	}
 
+	void handle_play_button() {
+		if (play_button.went_high()) {
+			if (play_state == PlayState::Stopped) {
+				printf("Play button: => Buffering\n");
+				play_state = PlayState::Buffering;
+			}
+		}
+	}
+
+	void handle_load_button() {
+		if (load_button.went_high()) {
+			async_open_file(sample_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
+				if (path) {
+					sample_filename = path;
+					play_state = PlayState::LoadSampleInfo;
+					printf("Selected a file '%s' => LoadSampleInfo\n", path);
+					free(path);
+				}
+			});
+		}
+	}
+
+	// This runs in the low-pri thread:
+	AsyncThread fs_thread{this};
+
 	enum class PlayState {
 		Stopped,
-		Prebuffering,
-		FadingUp,
+		LoadSampleInfo,
+		Buffering,
+		// FadingUp,
 		Playing,
-		FadingDownToStop,
-		FadingDownToLoop,
+		// FadingDownToStop,
+		// FadingDownToLoop,
 	};
+
+	std::atomic<PlayState> play_state{PlayState::Stopped};
 
 	StaticString<255> sample_filename = "";
 	StaticString<255> sample_dir = "";
+
+	EdgeStateDetector play_button;
+	EdgeStateDetector load_button;
+
+	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024;
+	WavFileStream<PreBufferSamples> wav;
+
+	static constexpr size_t PreBufferThreshold = 256 * 1024;
+
+	float sample_rate = 48000.f;
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
