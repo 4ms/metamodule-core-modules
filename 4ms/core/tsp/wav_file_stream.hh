@@ -28,6 +28,7 @@ struct WavFileStream {
 			auto frames_to_read = std::min(ReadBlockSize / wav.channels, num_frames);
 
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
+			printf("Did read %u + %u/%u\n", wav.readCursorInPCMFrames, frames_to_read, frames_read);
 
 			eof = (frames_read != frames_to_read);
 
@@ -41,6 +42,10 @@ struct WavFileStream {
 			if (eof)
 				break;
 		}
+	}
+
+	bool is_empty() {
+		return pre_buff.num_filled() == 0;
 	}
 
 	float get_sample() {
