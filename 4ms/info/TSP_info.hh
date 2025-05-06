@@ -1,21 +1,20 @@
 #pragma once
 #include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
 #include "CoreModules/elements/element_info.hh"
 #include <array>
 
 namespace MetaModule
 {
 struct TSPInfo : ModuleInfoBase {
-    static constexpr std::string_view slug{"TSP"};
-    static constexpr std::string_view description{"Triggered Sample Player"};
-    static constexpr uint32_t width_hp = 14;
-    static constexpr std::string_view svg_filename{"res/modules/TSP_artwork.svg"};
-    static constexpr std::string_view png_filename{"4ms/fp/TSP.png"};
+	static constexpr std::string_view slug{"TSP"};
+	static constexpr std::string_view description{"Triggered Sample Player"};
+	static constexpr uint32_t width_hp = 14;
+	static constexpr std::string_view svg_filename{"res/modules/TSP_artwork.svg"};
+	static constexpr std::string_view png_filename{"4ms/fp/TSP.png"};
 
-    using enum Coords;
+	using enum Coords;
 
-    static constexpr std::array<Element, 26> Elements{{
+	static constexpr std::array<Element, 26> Elements{{
 		Davies1900hBlackKnob{{to_mm<72>(96.64), to_mm<72>(195.354), Center, "StartPos", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(163.192), to_mm<72>(195.354), Center, "Length", ""}, 0.0f},
 		Davies1900hBlackKnob{{to_mm<72>(30.501), to_mm<72>(195.354), Center, "Pitch", ""}, 1.0f},
@@ -41,87 +40,87 @@ struct TSPInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(141.295), to_mm<72>(323.871), Center, "End Out", ""}},
 		WhiteLight{{to_mm<72>(74.005), to_mm<72>(324.014), Center, "Play Light", ""}},
 		RedLight{{to_mm<72>(96.791), to_mm<72>(39.327), Center, "Busy", ""}},
-		AltParamChoiceLabeled{{{to_mm<72>(19.175), to_mm<72>(77.849), Center, "SampleDir", ""}, 2, 0}, {"OpenDir", "None"}},
-}};
+		AltParamChoiceLabeled{{{to_mm<72>(19.175), to_mm<72>(77.849), Center, "LoadSample", ""}, 1, 0}, {"LoadSample"}},
+	}};
 
-    enum class Elem {
-        StartposKnob,
-        LengthKnob,
-        PitchKnob,
-        PlayButton,
-        ReverseButton,
-        PrevSampleButton,
-        NextSampleButton,
-        PrevBankButton,
-        NextBankButton,
-        ScreenOut,
-        PlayTrigIn,
-        PitchV_OctIn,
-        Prev_SampleTrigIn,
-        NextSampleTrigIn,
-        NextBankTrigIn,
-        Prev_BankTrigIn,
-        ReverseTrigIn,
-        LengthCvIn,
-        StartPosCvIn,
-        SampleCvIn,
-        OutLeftOut,
-        OutRightOut,
-        EndOut,
-        PlayLight,
-        BusyLight,
-        SampledirAltParam,
-    };
+	enum class Elem {
+		StartposKnob,
+		LengthKnob,
+		PitchKnob,
+		PlayButton,
+		ReverseButton,
+		PrevSampleButton,
+		NextSampleButton,
+		PrevBankButton,
+		NextBankButton,
+		ScreenOut,
+		PlayTrigIn,
+		PitchV_OctIn,
+		Prev_SampleTrigIn,
+		NextSampleTrigIn,
+		NextBankTrigIn,
+		Prev_BankTrigIn,
+		ReverseTrigIn,
+		LengthCvIn,
+		StartPosCvIn,
+		SampleCvIn,
+		OutLeftOut,
+		OutRightOut,
+		EndOut,
+		PlayLight,
+		BusyLight,
+		SampledirAltParam,
+	};
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
-    
-    enum {
-        KnobStartpos, 
-        KnobLength, 
-        KnobPitch, 
-        NumKnobs,
-    };
-    
-    enum {
-        SwitchPlay, 
-        SwitchReverse, 
-        SwitchPrev_Sample, 
-        SwitchNext_Sample, 
-        SwitchPrev_Bank, 
-        SwitchNext_Bank, 
-        NumSwitches,
-    };
-    
-    enum {
-        InputPlay_Trig, 
-        InputPitch_V_Oct, 
-        InputPrev__Sample_Trig, 
-        InputNext_Sample_Trig, 
-        InputNext_Bank_Trig, 
-        InputPrev__Bank_Trig, 
-        InputReverse_Trig, 
-        InputLength_Cv, 
-        InputStart_Pos_Cv, 
-        InputSample_Cv, 
-        NumInJacks,
-    };
-    
-    enum {
-        OutputScreen, 
-        OutputOut_Left, 
-        OutputOut_Right, 
-        OutputEnd_Out, 
-        NumOutJacks,
-    };
-    
-    enum {
-        LedPlay_Light, 
-        LedBusy, 
-        NumDiscreteLeds,
-    };
-    
-    enum {
-        AltParamSampledir, 
-    };
+	// Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+
+	enum {
+		KnobStartpos,
+		KnobLength,
+		KnobPitch,
+		NumKnobs,
+	};
+
+	enum {
+		SwitchPlay,
+		SwitchReverse,
+		SwitchPrev_Sample,
+		SwitchNext_Sample,
+		SwitchPrev_Bank,
+		SwitchNext_Bank,
+		NumSwitches,
+	};
+
+	enum {
+		InputPlay_Trig,
+		InputPitch_V_Oct,
+		InputPrev__Sample_Trig,
+		InputNext_Sample_Trig,
+		InputNext_Bank_Trig,
+		InputPrev__Bank_Trig,
+		InputReverse_Trig,
+		InputLength_Cv,
+		InputStart_Pos_Cv,
+		InputSample_Cv,
+		NumInJacks,
+	};
+
+	enum {
+		OutputScreen,
+		OutputOut_Left,
+		OutputOut_Right,
+		OutputEnd_Out,
+		NumOutJacks,
+	};
+
+	enum {
+		LedPlay_Light,
+		LedBusy,
+		NumDiscreteLeds,
+	};
+
+	enum {
+		AltParamSampledir,
+	};
 };
 } // namespace MetaModule
