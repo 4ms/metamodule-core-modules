@@ -31,7 +31,7 @@
      inkscape:window-x="48"
      inkscape:window-y="38"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg192"
+     inkscape:current-layer="components"
      showguides="true"
      showgrid="false" />
   <g
@@ -852,8 +852,8 @@
        height="75.603317"
        style="fill:#0000ff;stroke-width:0px" />
     <rect
-       id="SampleDir_OpenDir_None"
-       data-name="SampleDir@OpenDir@None"
+       id="LoadSample_LoadSample"
+       data-name="LoadSample@LoadSample"
        x="5.3401155"
        y="71.543114"
        width="27.67"
