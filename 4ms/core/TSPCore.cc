@@ -26,21 +26,30 @@ public:
 
 		switch (play_state) {
 			case Buffering:
-				if (wav.frames_available() >= PreBufferThreshold) {
-					printf("update: Buffering=>Playing\n");
+				if (wav.is_eof() || wav.frames_available() >= PreBufferThreshold) {
+					printf("update(): Buffering=>Playing\n");
 					play_state = Playing;
 				}
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
 
-			case Playing:
-				setOutput<LeftOut>(wav.get_sample());
-				if (wav.is_stereo())
-					setOutput<RightOut>(wav.get_sample());
-				else
-					setOutput<RightOut>(0);
-				break;
+			case Playing: {
+
+				if (wav.is_empty()) {
+					printf("EOF: stopping\n");
+					play_state = Stopped;
+				} else {
+					auto left_out = wav.get_sample();
+					printf("%f\n", left_out);
+					setOutput<LeftOut>(left_out * 5.f);
+
+					if (wav.is_stereo())
+						setOutput<RightOut>(wav.get_sample() * 5.f);
+					else
+						setOutput<RightOut>(0);
+				}
+			} break;
 
 			case Stopped:
 			case LoadSampleInfo:
@@ -63,18 +72,15 @@ public:
 				if (!wav.init(sample_filename)) {
 					printf("Could not load sample\n");
 				}
-				printf("Loaded Sample info: stopped");
+				printf("Loaded Sample info: stopped\n");
 				play_state = Stopped;
 				break;
 
 			case Buffering:
 			case Playing:
 				if (wav.frames_available() < PreBufferThreshold) {
-					wav.buffer_frames(1024);
-					if (wav.is_eof()) {
-						printf("EOF: stopped");
-						play_state = Stopped;
-					}
+					if (!wav.is_eof())
+						wav.buffer_frames(1024);
 				}
 				break;
 		};
