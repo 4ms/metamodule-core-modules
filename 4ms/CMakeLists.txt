@@ -40,6 +40,8 @@ target_sources(CoreModules-4ms PRIVATE
 	core/mpeg/envelope_calcs.cc
 	core/peg/envelope_calcs.cc
 
+	core/tsp/dr_wav.c
+
     # core/sampler/mocks/calibration_storage.cc
     # core/sampler/mocks/time.cc
     # core/sampler/src/bank.cc
