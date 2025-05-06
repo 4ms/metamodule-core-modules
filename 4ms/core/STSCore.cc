@@ -1,3 +1,4 @@
+#if 0
 // #include "../../../../../src/medium/debug_raw.h"
 #include "CoreModules/CoreHelper.hh"
 #include "CoreModules/async_thread.hh"
@@ -266,3 +267,4 @@ private:
 };
 
 } // namespace MetaModule
+#endif

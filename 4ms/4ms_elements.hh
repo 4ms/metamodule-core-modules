@@ -61,25 +61,25 @@ struct OrangeButton : LatchingButton {
 	}
 };
 
-struct MomentaryArrowLeftButton : MomentaryButton {
-	constexpr MomentaryArrowLeftButton(BaseElement b)
-		: MomentaryButton{{b, "4ms/comp/left-arrow-10.png"}, "4ms/comp/left-arrow-black-10.png"} {
-	}
-};
+// struct MomentaryArrowLeftButton : MomentaryButton {
+// 	constexpr MomentaryArrowLeftButton(BaseElement b)
+// 		: MomentaryButton{{b, "4ms/comp/left-arrow-10.png"}, "4ms/comp/left-arrow-black-10.png"} {
+// 	}
+// };
 
-struct MomentaryArrowRightButton : MomentaryButton {
-	constexpr MomentaryArrowRightButton(BaseElement b)
-		: MomentaryButton{{b, "4ms/comp/right-arrow-10.png"}, "4ms/comp/right-arrow-black-10.png"} {
-	}
-};
+// struct MomentaryArrowRightButton : MomentaryButton {
+// 	constexpr MomentaryArrowRightButton(BaseElement b)
+// 		: MomentaryButton{{b, "4ms/comp/right-arrow-10.png"}, "4ms/comp/right-arrow-black-10.png"} {
+// 	}
+// };
 
-struct SmallButton : MomentaryButton {
-	constexpr SmallButton(BaseElement b)
-		: MomentaryButton{{b}} {
-		image = "rack-lib/TL1105_0.png";
-		pressed_image = "rack-lib/TL1105_1.png";
-	}
-};
+// struct SmallButton : MomentaryButton {
+// 	constexpr SmallButton(BaseElement b)
+// 		: MomentaryButton{{b}} {
+// 		image = "rack-lib/TL1105_0.png";
+// 		pressed_image = "rack-lib/TL1105_1.png";
+// 	}
+// };
 
 struct WhiteMomentary7mm : MomentaryButtonLight {
 	constexpr WhiteMomentary7mm() = default;
