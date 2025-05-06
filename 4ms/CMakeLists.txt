@@ -39,6 +39,9 @@ target_sources(CoreModules-4ms PRIVATE
 	core/peg-common/pwm.cc
 	core/mpeg/envelope_calcs.cc
 	core/peg/envelope_calcs.cc
+
+	core/tsp/dr_wav.c
+
     #FIXME: linker skips this if in CoreModules, and can't use WHOLE_ARCHIVE
     ../hub/hub_medium.cc
 )
