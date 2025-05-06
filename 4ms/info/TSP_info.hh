@@ -21,13 +21,13 @@ struct TSPInfo : ModuleInfoBase {
 		Davies1900hBlackKnob{{to_mm<72>(30.501), to_mm<72>(195.354), Center, "Pitch", ""}, 1.0f},
 		MomentaryRGB7mm{{to_mm<72>(71.996), to_mm<72>(77.315), Center, "Play", ""}},
 		MomentaryRGB7mm{{to_mm<72>(119.046), to_mm<72>(77.315), Center, "Reverse", ""}},
-		MomentaryArrowLeftButton{{to_mm<72>(140.803), to_mm<72>(39.83), Center, "Prev Sample", ""}},
-		MomentaryArrowRightButton{{to_mm<72>(181.404), to_mm<72>(39.83), Center, "Next Sample", ""}},
-		MomentaryArrowLeftButton{{to_mm<72>(12.852), to_mm<72>(39.83), Center, "Prev Bank", ""}},
-		MomentaryArrowRightButton{{to_mm<72>(53.453), to_mm<72>(39.83), Center, "Next Bank", ""}},
+		WhiteMomentary7mm{{to_mm<72>(140.803), to_mm<72>(39.83), Center, "Prev Sample", ""}},
+		WhiteMomentary7mm{{to_mm<72>(181.404), to_mm<72>(39.83), Center, "Next Sample", ""}},
+		WhiteMomentary7mm{{to_mm<72>(12.852), to_mm<72>(39.83), Center, "Prev Bank", ""}},
+		WhiteMomentary7mm{{to_mm<72>(53.453), to_mm<72>(39.83), Center, "Next Bank", ""}},
 		STSPDisplay{{to_mm<72>(97.102), to_mm<72>(131.957), Center, "Screen", ""}},
 		GateJackInput4ms{{to_mm<72>(19.131), to_mm<72>(243.076), Center, "Play Trig", ""}},
-		AnalogJackInput4ms{{to_mm<72>(57.961), to_mm<72>(243.636), Center, "Pitch V/oct A", ""}},
+		AnalogJackInput4ms{{to_mm<72>(57.961), to_mm<72>(243.636), Center, "Pitch V/oct", ""}},
 		GateJackInput4ms{{to_mm<72>(135.621), to_mm<72>(282.136), Center, "Prev. Sample Trig", ""}},
 		GateJackInput4ms{{to_mm<72>(174.451), to_mm<72>(282.136), Center, "Next Sample Trig", ""}},
 		GateJackInput4ms{{to_mm<72>(174.451), to_mm<72>(243.327), Center, "Next Bank Trig", ""}},
@@ -39,7 +39,7 @@ struct TSPInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(50.495), to_mm<72>(323.871), Center, "Out Left", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(96.791), to_mm<72>(323.871), Center, "Out Right", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(141.295), to_mm<72>(323.871), Center, "End Out", ""}},
-		WhiteLight{{to_mm<72>(74.005), to_mm<72>(324.014), Center, "Play A Light", ""}},
+		WhiteLight{{to_mm<72>(74.005), to_mm<72>(324.014), Center, "Play Light", ""}},
 		RedLight{{to_mm<72>(96.791), to_mm<72>(39.327), Center, "Busy", ""}},
 		AltParamChoiceLabeled{{{to_mm<72>(19.175), to_mm<72>(77.849), Center, "SampleDir", ""}, 2, 0}, {"OpenDir", "None"}},
 }};
@@ -56,7 +56,7 @@ struct TSPInfo : ModuleInfoBase {
         NextBankButton,
         ScreenOut,
         PlayTrigIn,
-        PitchV_OctAIn,
+        PitchV_OctIn,
         Prev_SampleTrigIn,
         NextSampleTrigIn,
         NextBankTrigIn,
@@ -68,7 +68,7 @@ struct TSPInfo : ModuleInfoBase {
         OutLeftOut,
         OutRightOut,
         EndOut,
-        PlayALight,
+        PlayLight,
         BusyLight,
         SampledirAltParam,
     };
@@ -94,7 +94,7 @@ struct TSPInfo : ModuleInfoBase {
     
     enum {
         InputPlay_Trig, 
-        InputPitch_V_Oct_A, 
+        InputPitch_V_Oct, 
         InputPrev__Sample_Trig, 
         InputNext_Sample_Trig, 
         InputNext_Bank_Trig, 
@@ -115,7 +115,7 @@ struct TSPInfo : ModuleInfoBase {
     };
     
     enum {
-        LedPlay_A_Light, 
+        LedPlay_Light, 
         LedBusy, 
         NumDiscreteLeds,
     };
