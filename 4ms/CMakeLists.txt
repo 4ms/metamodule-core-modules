@@ -40,17 +40,17 @@ target_sources(CoreModules-4ms PRIVATE
 	core/mpeg/envelope_calcs.cc
 	core/peg/envelope_calcs.cc
 
-    core/sampler/mocks/calibration_storage.cc
-    core/sampler/mocks/time.cc
-    core/sampler/src/bank.cc
-    core/sampler/src/sample_file.cc
-    core/sampler/src/sts_filesystem.cc
-    core/sampler/src/sts_sampleindex.cc
-    core/sampler/src/sample_header.cc
-    core/sampler/src/str_util.cc
-    core/sampler/src/bank.cc
-    core/sampler/src/bank_util.cc
-    core/sampler/src/wavefmt.cc
+    # core/sampler/mocks/calibration_storage.cc
+    # core/sampler/mocks/time.cc
+    # core/sampler/src/bank.cc
+    # core/sampler/src/sample_file.cc
+    # core/sampler/src/sts_filesystem.cc
+    # core/sampler/src/sts_sampleindex.cc
+    # core/sampler/src/sample_header.cc
+    # core/sampler/src/str_util.cc
+    # core/sampler/src/bank.cc
+    # core/sampler/src/bank_util.cc
+    # core/sampler/src/wavefmt.cc
 
     #FIXME: linker skips this if in CoreModules, and can't use WHOLE_ARCHIVE
     ../hub/hub_medium.cc
