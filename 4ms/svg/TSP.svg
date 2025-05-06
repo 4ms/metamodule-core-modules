@@ -24,15 +24,16 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="2.3845491"
-     inkscape:cx="114.90642"
-     inkscape:cy="303.62134"
+     inkscape:cx="133.35855"
+     inkscape:cy="190.39239"
      inkscape:window-width="1352"
      inkscape:window-height="1051"
      inkscape:window-x="48"
      inkscape:window-y="38"
      inkscape:window-maximized="0"
-     inkscape:current-layer="components"
-     showguides="true" />
+     inkscape:current-layer="svg192"
+     showguides="true"
+     showgrid="false" />
   <g
      id="faceplate"
      transform="translate(-0.13000001,0.64365888)">
@@ -770,29 +771,29 @@
        r="11.34"
        style="fill:#80ff80;stroke-width:0px" />
     <circle
-       id="Next_Bank_MomentaryArrowRightButton"
-       data-name="Next Bank#MomentaryArrowRightButton"
+       id="Next_Bank"
+       data-name="Next Bank"
        cx="53.452827"
        cy="39.830101"
        r="8.5"
        style="fill:#ffc000;stroke-width:0px" />
     <circle
-       id="Prev_Bank_MomentaryArrowLeftButton"
-       data-name="Prev Bank#MomentaryArrowLeftButton"
+       id="Prev_Bank"
+       data-name="Prev Bank"
        cx="12.851911"
        cy="39.830101"
        r="8.5"
        style="fill:#ffc000;stroke-width:0px" />
     <circle
-       id="Next_Sample_MomentaryArrowRightButton-0"
-       data-name="Next Sample#MomentaryArrowRightButton"
+       id="Next_Sample"
+       data-name="Next Sample"
        cx="181.40392"
        cy="39.830101"
        r="8.5"
        style="display:inline;fill:#ffc000;stroke-width:0px" />
     <circle
-       id="Prev_Bank_A_MomentaryArrowLeftButton-1"
-       data-name="Prev Sample#MomentaryArrowLeftButton"
+       id="Prev_Sample"
+       data-name="Prev Sample"
        cx="140.80299"
        cy="39.830101"
        r="8.5"
