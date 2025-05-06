@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="2.3845491"
-     inkscape:cx="133.35855"
-     inkscape:cy="190.39239"
+     inkscape:zoom="1.7592106"
+     inkscape:cx="99.476436"
+     inkscape:cy="259.20717"
      inkscape:window-width="1352"
      inkscape:window-height="1051"
      inkscape:window-x="48"
@@ -36,7 +36,7 @@
      showgrid="false" />
   <g
      id="faceplate"
-     transform="translate(-0.13000001,0.64365888)">
+     transform="translate(-0.12999999,0.64365888)">
     <g
        id="g1">
       <rect
@@ -53,26 +53,26 @@
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';-inkscape-font-specification:'GillSans-SemiBold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.04em;stroke-width:0.938083"
        id="text26-7-0"
        x="157.83841"
-       y="283.84848"><tspan
+       y="272.59091"><tspan
          x="157.83841"
-         y="283.84848"
+         y="272.59091"
          id="tspan26-3-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';-inkscape-font-specification:'GillSans-SemiBold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.938083">Sample</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';-inkscape-font-specification:'GillSans-SemiBold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.04em;stroke-width:0.938083"
        id="text26-7-9-1"
-       x="161.4866"
-       y="246.401"><tspan
-         x="161.4866"
-         y="246.401"
+       x="142.29733"
+       y="239.36494"><tspan
+         x="142.29733"
+         y="239.36494"
          id="tspan26-3-5-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';-inkscape-font-specification:'GillSans-SemiBold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.938083">Bank</tspan></text>
     <rect
-       x="33.345242"
-       y="308.02173"
-       width="135.18146"
-       height="37.715752"
+       x="11.726996"
+       y="299.68036"
+       width="180.37538"
+       height="38.556671"
        rx="8.6288166"
        ry="8.9542484"
        style="stroke:#000000;stroke-width:1.01854"
@@ -81,20 +81,20 @@
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text12"
-       x="29.995716"
-       y="54.894997"><tspan
-         x="29.995716"
-         y="54.894997"
+       x="159.80591"
+       y="47.294552"><tspan
+         x="159.80591"
+         y="47.294552"
          id="tspan12"
          style="stroke-width:0.938083">Bank</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
        id="text15"
-       x="71.501762"
-       y="320.37646"><tspan
-         x="71.501762"
-         y="320.37646"
+       x="68.694481"
+       y="314.97739"><tspan
+         x="68.694481"
+         y="314.97739"
          id="tspan15"
          style="stroke-width:0.938083">OUT</tspan></text>
     <text
@@ -102,99 +102,99 @@
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
        id="text16"
        x="104.94143"
-       y="321.42712"><tspan
+       y="314.97739"><tspan
          x="104.94143"
-         y="321.42712"
+         y="314.97739"
          id="tspan16"
          style="stroke-width:0.938083">R</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
        id="text17"
-       x="56.44989"
-       y="321.42712"><tspan
-         x="56.44989"
-         y="321.42712"
+       x="47.846859"
+       y="314.97739"><tspan
+         x="47.846859"
+         y="314.97739"
          id="tspan17"
          style="stroke-width:0.938083">L</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
-       id="text20"
-       x="52.95895"
-       y="246.401"><tspan
-         x="52.95895"
-         y="246.401"
-         id="tspan20"
-         style="stroke-width:0.938083">1V/OCT</tspan></text>
-    <text
-       transform="scale(0.93808314,1.0660036)"
-       style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text22"
        x="47.122532"
-       y="283.84848"><tspan
+       y="272.59091"><tspan
          x="47.122532"
-         y="283.84848"
+         y="272.59091"
          id="tspan22"
-         style="stroke-width:0.938083">Start Pos CV</tspan></text>
+         style="stroke-width:0.938083">Length CV</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text23"
-       x="8.2459612"
-       y="283.84848"><tspan
-         x="8.2459612"
-         y="283.84848"
+       x="10.564922"
+       y="272.59091"><tspan
+         x="10.564922"
+         y="272.59091"
          id="tspan23"
-         style="stroke-width:0.938083">Length CV</tspan></text>
+         style="stroke-width:0.938083">1V/OCT</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text26"
        x="90.482407"
-       y="283.84848"><tspan
+       y="272.59091"><tspan
          x="90.482407"
-         y="283.84848"
+         y="272.59091"
          id="tspan26"
-         style="stroke-width:0.938083">Sample CV</tspan></text>
+         style="stroke-width:0.938083">Start Pos CV</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text28"
-       x="17.866512"
-       y="246.401"><tspan
-         x="17.866512"
-         y="246.401"
+       x="37.984783"
+       y="239.36494"><tspan
+         x="37.984783"
+         y="239.36494"
          id="tspan28"
          style="stroke-width:0.938083">Play</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text30"
-       x="143.64764"
-       y="76.296066"><tspan
-         x="143.64764"
-         y="76.296066"
+       x="80.14933"
+       y="70.738831"><tspan
+         x="80.14933"
+         y="70.738831"
          id="tspan30"
          style="stroke-width:0.938083">Reverse</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
+       style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
+       id="text30-1"
+       x="51.89101"
+       y="70.738831"><tspan
+         x="51.89101"
+         y="70.738831"
+         id="tspan30-7"
+         style="stroke-width:0.938083">Loop</tspan></text>
+    <text
+       transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
        id="text31"
-       x="140.44023"
-       y="321.42712"><tspan
-         x="140.44023"
-         y="321.42712"
+       x="158.5407"
+       y="314.39114"><tspan
+         x="158.5407"
+         y="314.39114"
          id="tspan31"
          style="stroke-width:0.938083">End Out</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text33"
-       x="44.408707"
-       y="76.296066"><tspan
-         x="44.408707"
-         y="76.296066"
+       x="15.785357"
+       y="70.738831"><tspan
+         x="15.785357"
+         y="70.738831"
          id="tspan33"
          style="stroke-width:0.938083">PLAY</tspan></text>
     <text
@@ -202,9 +202,9 @@
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text8"
        x="26.316193"
-       y="210.25822"><tspan
+       y="203.22217"><tspan
          x="26.316193"
-         y="210.25822"
+         y="203.22217"
          id="tspan8"
          style="stroke-width:0.938083">Pitch</tspan></text>
     <text
@@ -212,14 +212,14 @@
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text9"
        x="87.960762"
-       y="210.14621"><tspan
+       y="203.11015"><tspan
          x="87.960762"
-         y="210.14621"
+         y="203.11015"
          id="tspan9"
          style="stroke-width:0.938083">Start Pos.</tspan></text>
     <g
        id="g63-6-2"
-       transform="translate(63.25258,85.427263)">
+       transform="translate(63.25258,77.926818)">
       <path
          d="m 37.67,90.42 c -0.83,0 -1.65,0.07 -2.45,0.17 l -0.39,-2.21 c 0.93,-0.12 1.88,-0.19 2.84,-0.19 0.96,0 1.91,0.07 2.84,0.19 l -0.39,2.21 c -0.81,-0.1 -1.62,-0.17 -2.45,-0.17 z"
          style="stroke-width:0px"
@@ -283,7 +283,7 @@
     </g>
     <g
        id="g63-6-2-0"
-       transform="translate(-3.0972742,85.427263)">
+       transform="translate(-3.0972742,77.926818)">
       <path
          d="m 37.67,90.42 c -0.83,0 -1.65,0.07 -2.45,0.17 l -0.39,-2.21 c 0.93,-0.12 1.88,-0.19 2.84,-0.19 0.96,0 1.91,0.07 2.84,0.19 l -0.39,2.21 c -0.81,-0.1 -1.62,-0.17 -2.45,-0.17 z"
          style="stroke-width:0px"
@@ -347,7 +347,7 @@
     </g>
     <g
        id="g63-6-2-0-2"
-       transform="translate(129.61922,85.427263)">
+       transform="translate(129.61922,77.926818)">
       <path
          d="m 37.67,90.42 c -0.83,0 -1.65,0.07 -2.45,0.17 l -0.39,-2.21 c 0.93,-0.12 1.88,-0.19 2.84,-0.19 0.96,0 1.91,0.07 2.84,0.19 l -0.39,2.21 c -0.81,-0.1 -1.62,-0.17 -2.45,-0.17 z"
          style="stroke-width:0px"
@@ -414,9 +414,9 @@
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text78"
        x="165.78949"
-       y="210.14621"><tspan
+       y="203.11015"><tspan
          x="165.78949"
-         y="210.14621"
+         y="203.11015"
          id="tspan78"
          style="stroke-width:0.938083">Length</tspan></text>
     <text
@@ -454,19 +454,19 @@
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:600;font-size:5.6285px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text111"
-       x="198.46376"
-       y="206.12521"><tspan
-         x="198.46376"
-         y="206.12521"
+       x="193.66644"
+       y="196.27473"><tspan
+         x="193.66644"
+         y="196.27473"
          id="tspan111"
          style="stroke-width:0.938083">All</tspan></text>
     <path
-       d="m 146.10108,219.84826 v -6.36 c 0,0 -0.35,6.39 5.35,6.36"
+       d="m 147.60117,209.34763 v -6.36 c 0,0 -0.35,6.39 5.35,6.36"
        style="fill:none;stroke:#231f20;stroke-linecap:square"
        id="path151" />
     <g
        id="g153"
-       transform="translate(-35.915557,-40.605643)">
+       transform="translate(-55.417253,-48.106088)">
       <text
          transform="scale(0.93808314,1.0660036)"
          style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
@@ -478,22 +478,12 @@
            id="tspan152"
            style="stroke-width:0.938083">Reverse</tspan></text>
     </g>
-    <text
-       transform="scale(0.93808314,1.0660036)"
-       style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
-       id="text158"
-       x="100.07834"
-       y="54.510426"><tspan
-         x="100.07834"
-         y="54.510426"
-         id="tspan158"
-         style="stroke-width:0.938083">Busy</tspan></text>
     <rect
        id="Screen"
        x="8.1527081"
        y="93.593407"
        width="185.56653"
-       height="76.064903"
+       height="68.501511"
        style="stroke-width:0px" />
     <text
        xml:space="preserve"
@@ -506,70 +496,16 @@
          style="stroke-width:0.750044"
          x="173.63173"
          y="329.53284" /></text>
-    <path
-       sodipodi:type="star"
-       style="fill:#000000;stroke-width:0.751222"
-       id="path195"
-       inkscape:flatsided="false"
-       sodipodi:sides="3"
-       sodipodi:cx="38.58136"
-       sodipodi:cy="66.069038"
-       sodipodi:r1="6.0700049"
-       sodipodi:r2="3.0350025"
-       sodipodi:arg1="-1.0617254"
-       sodipodi:arg2="-0.014527887"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(0.75004441,0,0,0.75004441,-11.611508,5.9086787)"
-       inkscape:transform-center-x="1.1094337"
-       inkscape:transform-center-y="-0.033069644" />
-    <path
-       sodipodi:type="star"
-       style="fill:#000000;stroke-width:0.751222"
-       id="path195-1"
-       inkscape:flatsided="false"
-       sodipodi:sides="3"
-       sodipodi:cx="38.58136"
-       sodipodi:cy="66.069038"
-       sodipodi:r1="6.0700049"
-       sodipodi:r2="3.0350025"
-       sodipodi:arg1="-1.0617254"
-       sodipodi:arg2="-0.014527887"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(-0.75004441,0,0,-0.75004441,86.444682,104.95196)"
-       inkscape:transform-center-x="-1.1094338"
-       inkscape:transform-center-y="0.033069394" />
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text12-5"
-       x="160.91309"
-       y="54.688053"><tspan
-         x="160.91309"
-         y="54.688053"
+       x="155.5304"
+       y="80.371223"><tspan
+         x="155.5304"
+         y="80.371223"
          id="tspan12-4"
          style="stroke-width:0.938083">Sample</tspan></text>
-    <path
-       sodipodi:type="star"
-       style="fill:#000000;stroke-width:0.751222"
-       id="path195-17"
-       inkscape:flatsided="false"
-       sodipodi:sides="3"
-       sodipodi:cx="38.58136"
-       sodipodi:cy="66.069038"
-       sodipodi:r1="6.0700049"
-       sodipodi:r2="3.0350025"
-       sodipodi:arg1="-1.0617254"
-       sodipodi:arg2="-0.014527887"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(0.75004441,0,0,0.75004441,115.93086,5.6880762)"
-       inkscape:transform-center-x="1.1094337"
-       inkscape:transform-center-y="-0.033069644" />
     <path
        sodipodi:type="star"
        style="fill:#000000;stroke-width:0.751222"
@@ -585,9 +521,63 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(-0.75004441,0,0,-0.75004441,213.98705,104.73135)"
-       inkscape:transform-center-x="-1.1094338"
-       inkscape:transform-center-y="0.033069394" />
+       transform="matrix(0.75004441,0,0,0.75004441,101.26094,-14.101451)"
+       inkscape:transform-center-x="-28.800596"
+       inkscape:transform-center-y="-7.3480235" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;stroke-width:0.751222"
+       id="path195-1-1-6"
+       inkscape:flatsided="false"
+       sodipodi:sides="3"
+       sodipodi:cx="38.58136"
+       sodipodi:cy="66.069038"
+       sodipodi:r1="6.0700049"
+       sodipodi:r2="3.0350025"
+       sodipodi:arg1="-1.0617254"
+       sodipodi:arg2="-0.014527887"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
+       transform="matrix(0.75004441,0,0,0.75004441,101.26094,19.01915)"
+       inkscape:transform-center-x="-28.800596"
+       inkscape:transform-center-y="-7.3480235" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;stroke-width:0.751222"
+       id="path195-1-1-1"
+       inkscape:flatsided="false"
+       sodipodi:sides="3"
+       sodipodi:cx="38.58136"
+       sodipodi:cy="66.069038"
+       sodipodi:r1="6.0700049"
+       sodipodi:r2="3.0350025"
+       sodipodi:arg1="-1.0617254"
+       sodipodi:arg2="-0.014527887"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
+       transform="matrix(-0.75004441,0,0,-0.75004441,216.44931,118.06244)"
+       inkscape:transform-center-x="28.800595"
+       inkscape:transform-center-y="7.3480238" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;stroke-width:0.751222"
+       id="path195-1-1-6-5"
+       inkscape:flatsided="false"
+       sodipodi:sides="3"
+       sodipodi:cx="38.58136"
+       sodipodi:cy="66.069038"
+       sodipodi:r1="6.0700049"
+       sodipodi:r2="3.0350025"
+       sodipodi:arg1="-1.0617254"
+       sodipodi:arg2="-0.014527887"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
+       transform="matrix(-0.75004441,0,0,-0.75004441,216.44931,84.941835)"
+       inkscape:transform-center-x="28.800595"
+       inkscape:transform-center-y="7.3480238" />
     <path
        sodipodi:type="star"
        style="fill:#000000;stroke-width:0.751222"
@@ -603,7 +593,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(0.57410324,0,0,0.57410324,117.55968,221.45127)"
+       transform="matrix(0.57410324,0,0,0.57410324,99.558601,213.95082)"
        inkscape:transform-center-x="0.84918757"
        inkscape:transform-center-y="-0.025315068" />
     <path
@@ -621,7 +611,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(-0.57410324,0,0,-0.57410324,200.88882,297.26153)"
+       transform="matrix(-0.57410324,0,0,-0.57410324,182.88774,289.76108)"
        inkscape:transform-center-x="-0.84918606"
        inkscape:transform-center-y="0.025308818" />
     <path
@@ -639,7 +629,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(0.57410324,0,0,0.57410324,117.58024,260.01917)"
+       transform="matrix(0.57410324,0,0,0.57410324,117.58024,248.01845)"
        inkscape:transform-center-x="0.84918757"
        inkscape:transform-center-y="-0.025315068" />
     <path
@@ -657,7 +647,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 41.539675,60.768724 0.07637,5.256224 0.07637,5.256224 -4.590207,-2.561976 -4.590207,-2.561977 4.51384,-2.694247 z"
-       transform="matrix(-0.57410324,0,0,-0.57410324,200.90938,335.82943)"
+       transform="matrix(-0.57410324,0,0,-0.57410324,200.90938,323.82871)"
        inkscape:transform-center-x="-0.84918606"
        inkscape:transform-center-y="0.025308818" />
   </g>
@@ -666,173 +656,166 @@
      transform="translate(4.0146346,0.64365888)"
      style="display:inline">
     <circle
-       id="Busy_RedLight"
-       data-name="Busy#RedLight"
-       cx="96.791336"
-       cy="39.326565"
-       r="4.25"
-       style="fill:#ff00ff;stroke-width:0px" />
-    <circle
        id="Play_Light_WhiteLight"
        data-name="Play Light#WhiteLight"
-       cx="74.005394"
-       cy="324.01376"
+       cx="69.499123"
+       cy="316.51331"
        r="4.25"
        style="fill:#ff00ff;stroke-width:0px" />
     <circle
        id="End_Out"
        data-name="End Out"
-       cx="141.29539"
-       cy="323.8707"
+       cx="157.52048"
+       cy="316.37024"
        r="11.34"
        style="fill:#0000ff;stroke-width:0px" />
     <circle
-       id="Out_Right"
-       data-name="Out Right"
+       id="Right_Out"
+       data-name="Right Out"
        cx="96.791336"
-       cy="323.8707"
+       cy="316.37024"
        r="11.34"
        style="fill:#0000ff;stroke-width:0px" />
     <circle
-       id="Out_Left"
-       data-name="Out Left"
-       cx="50.495388"
-       cy="323.8707"
+       id="Left_Out"
+       data-name="Left Out"
+       cx="42.206913"
+       cy="316.37024"
        r="11.34"
        style="fill:#0000ff;stroke-width:0px" />
-    <circle
-       id="Sample_CV"
-       data-name="Sample CV"
-       cx="96.791344"
-       cy="282.13632"
-       r="11.34"
-       style="fill:#00ff00;stroke-width:0px" />
-    <circle
-       id="Start_Pos_CV"
-       data-name="Start Pos CV"
-       cx="57.961311"
-       cy="281.99631"
-       r="11.34"
-       style="fill:#00ff00;stroke-width:0px" />
-    <circle
-       id="Length_CV"
-       data-name="Length CV"
-       cx="19.131285"
-       cy="282.13632"
-       r="11.34"
-       style="fill:#00ff00;stroke-width:0px" />
-    <circle
-       id="Reverse_Trig"
-       data-name="Reverse Trig"
-       cx="96.791344"
-       cy="243.07613"
-       r="11.34"
-       style="fill:#80ff80;stroke-width:0px" />
-    <circle
-       id="Prev_Bank_Trig"
-       data-name="Prev. Bank Trig"
-       cx="135.62135"
-       cy="243.07613"
-       r="11.34"
-       style="fill:#80ff80;stroke-width:0px" />
-    <circle
-       id="Reverse_Trig_A-5-57"
-       data-name="Next Bank Trig"
-       cx="174.45139"
-       cy="243.3268"
-       r="11.34"
-       style="fill:#80ff80;stroke-width:0px" />
     <circle
        id="Next_Sample_Trig"
        data-name="Next Sample Trig"
        cx="174.45139"
-       cy="282.13632"
+       cy="270.13559"
        r="11.34"
        style="fill:#80ff80;stroke-width:0px" />
     <circle
        id="Prev_Sample_Trig"
        data-name="Prev. Sample Trig"
        cx="135.62135"
-       cy="282.13632"
+       cy="270.13559"
+       r="11.34"
+       style="fill:#80ff80;stroke-width:0px" />
+    <circle
+       id="Start_Pos_CV"
+       data-name="Start Pos CV"
+       cx="96.791344"
+       cy="269.99557"
+       r="11.34"
+       style="fill:#00ff00;stroke-width:0px" />
+    <circle
+       id="Length_CV"
+       data-name="Length CV"
+       cx="57.961311"
+       cy="270.13559"
+       r="11.34"
+       style="fill:#00ff00;stroke-width:0px" />
+    <circle
+       id="Next_Bank_Trig"
+       data-name="Next Bank Trig"
+       cx="156.45029"
+       cy="235.82634"
+       r="11.34"
+       style="fill:#80ff80;stroke-width:0px" />
+    <circle
+       id="Prev_Bank_Trig"
+       data-name="Prev. Bank Trig"
+       cx="117.62025"
+       cy="235.57567"
+       r="11.34"
+       style="fill:#80ff80;stroke-width:0px" />
+    <circle
+       id="Reverse_Trig"
+       data-name="Reverse Trig"
+       cx="77.376328"
+       cy="235.57567"
        r="11.34"
        style="fill:#80ff80;stroke-width:0px" />
     <circle
        id="Pitch_V_oct"
        data-name="Pitch V/oct"
-       cx="57.961311"
-       cy="243.63612"
+       cx="19.131285"
+       cy="270.13559"
        r="11.34"
        style="fill:#00ff00;stroke-width:0px" />
     <circle
        id="Play_Trig"
        data-name="Play Trig"
-       cx="19.131285"
-       cy="243.07613"
+       cx="38.546299"
+       cy="235.57567"
        r="11.34"
        style="fill:#80ff80;stroke-width:0px" />
     <circle
+       id="Prev_Sample"
+       data-name="Prev Sample"
+       cx="138.79547"
+       cy="69.468475"
+       r="8.5"
+       style="display:inline;fill:#ffc000;stroke-width:0px" />
+    <circle
        id="Next_Bank"
        data-name="Next Bank"
-       cx="53.452827"
-       cy="39.830101"
-       r="8.5"
-       style="fill:#ffc000;stroke-width:0px" />
-    <circle
-       id="Prev_Bank"
-       data-name="Prev Bank"
-       cx="12.851911"
-       cy="39.830101"
+       cx="170.99039"
+       cy="34.942142"
        r="8.5"
        style="fill:#ffc000;stroke-width:0px" />
     <circle
        id="Next_Sample"
        data-name="Next Sample"
-       cx="181.40392"
-       cy="39.830101"
+       cx="170.99039"
+       cy="68.331779"
        r="8.5"
        style="display:inline;fill:#ffc000;stroke-width:0px" />
     <circle
-       id="Prev_Sample"
-       data-name="Prev Sample"
-       cx="140.80299"
-       cy="39.830101"
-       r="8.5"
-       style="display:inline;fill:#ffc000;stroke-width:0px" />
-    <circle
-       id="Reverse"
-       data-name="Reverse#MomentaryRGB7mm"
-       cx="119.04578"
-       cy="77.31514"
+       id="Prev_Bank"
+       data-name="Prev Bank"
+       cx="138.79547"
+       cy="36.078838"
        r="8.5"
        style="fill:#ffc000;stroke-width:0px" />
     <circle
-       id="Play_MomentaryRGB7mm"
-       data-name="Play#MomentaryRGB7mm"
-       cx="71.995766"
-       cy="77.31514"
-       r="10.63"
-       style="fill:#ffc000;stroke-width:0px" />
+       id="Length"
+       data-name="Length"
+       cx="163.19188"
+       cy="187.85403"
+       r="17.01"
+       style="fill:#ff0000;stroke-width:0px" />
+    <circle
+       id="StartPos"
+       data-name="StartPos"
+       cx="96.639549"
+       cy="187.85403"
+       r="17.01"
+       style="fill:#ff0040;stroke-width:0px" />
     <circle
        id="Pitch"
        data-name="Pitch"
        cx="30.500608"
-       cy="195.35449"
+       cy="187.85403"
        r="17.01"
        style="fill:#ff0080;stroke-width:0px" />
     <circle
-       id="Start_Pos._A"
-       data-name="Length"
-       cx="163.19188"
-       cy="195.35449"
-       r="17.01"
-       style="fill:#ff0000;stroke-width:0px" />
+       id="Reverse"
+       data-name="Reverse#MomentaryRGB7mm"
+       cx="86.555771"
+       cy="53.154644"
+       r="8.5"
+       style="fill:#ffc000;stroke-width:0px" />
     <circle
-       id="Pitch_A"
-       data-name="StartPos"
-       cx="96.639549"
-       cy="195.35449"
-       r="17.01"
-       style="fill:#ff0040;stroke-width:0px" />
+       id="Loop"
+       data-name="Loop#MomentaryRGB7mm"
+       cx="54.733532"
+       cy="53.154644"
+       r="8.5"
+       style="display:inline;fill:#ffc000;stroke-width:0px" />
+    <circle
+       id="Play_Button"
+       data-name="Play#MomentaryRGB7mm"
+       cx="22.389002"
+       cy="53.154644"
+       r="10.63"
+       style="fill:#ffc000;stroke-width:0px" />
     <text
        id="slug"
        style="font-size:6px;font-family:MyriadPro-Regular, 'Myriad Pro';display:none"
@@ -849,13 +832,13 @@
        x="4.655302"
        y="94.155624"
        width="184.8932"
-       height="75.603317"
+       height="68.310043"
        style="fill:#0000ff;stroke-width:0px" />
     <rect
        id="LoadSample_LoadSample"
        data-name="LoadSample@LoadSample"
-       x="5.3401155"
-       y="71.543114"
+       x="5.9590406"
+       y="94.443352"
        width="27.67"
        height="12.611747"
        style="fill:#808080;stroke-width:0px" />
