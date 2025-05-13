@@ -13,13 +13,13 @@ struct WavFileStream {
 	bool init(std::string_view sample_path) {
 		pre_buff.reset();
 		eof = false;
+
 		// TODO: if we already have this file loaded, then just reset the read position
 		bool ok = drwav_init_file(&wav, sample_path.data(), nullptr);
-		printf("drwav_init => %d\n", ok);
 		return ok;
 	}
 
-	void buffer_frames(unsigned num_frames) {
+	void push_frames_from_file(unsigned num_frames) {
 		if (eof)
 			return;
 
@@ -44,11 +44,7 @@ struct WavFileStream {
 		}
 	}
 
-	bool is_empty() {
-		return pre_buff.num_filled() == 0;
-	}
-
-	float get_sample() {
+	float pop_sample() {
 		return pre_buff.get().value_or(0);
 	}
 
@@ -63,6 +59,19 @@ struct WavFileStream {
 
 	bool is_eof() {
 		return eof;
+	}
+
+	void seek_pos(unsigned frame_num = 0) {
+		drwav_seek_to_pcm_frame(&wav, frame_num);
+
+		// TODO: adjust read and write pos in pre_buff if frame_num is within pre_buff contents.
+		// i.e. no need to read data from disk that we already have in pre_buff.
+		// We would need to set the read pos to the place that contains frame_num,
+		// and set the write pos to the last data following this before the seam
+		//
+		// For now we will just clear any prebuffered content
+		pre_buff.reset();
+		eof = false;
 	}
 
 private:

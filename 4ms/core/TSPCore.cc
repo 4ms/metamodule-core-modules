@@ -10,6 +10,14 @@
 
 //#include "../../../../../src/medium/debug_raw.h"
 
+// #define PRINTF_TSP
+
+#ifdef PRINTF_TSP
+#define print_tsp printf
+#else
+#define print_tsp(...)
+#endif
+
 namespace MetaModule
 {
 
@@ -18,7 +26,7 @@ class TSPCore : public SmartCoreProcessor<TSPInfo> {
 
 public:
 	TSPCore() {
-		fs_thread.start([this]() { handle_filesystem(); });
+		fs_thread.start([this]() { process_filesystem(); });
 	}
 
 	void update() override {
@@ -26,8 +34,8 @@ public:
 
 		switch (play_state) {
 			case Buffering:
-				if (wav.is_eof() || wav.frames_available() >= PreBufferThreshold) {
-					printf("update(): Buffering=>Playing\n");
+				if (stream.is_eof() || stream.frames_available() >= PreBufferThreshold) {
+					print_tsp("update(): Buffering=>Playing\n");
 					play_state = Playing;
 				}
 				setOutput<LeftOut>(0);
@@ -36,21 +44,22 @@ public:
 
 			case Playing: {
 
-				if (wav.is_empty()) {
-					printf("EOF: stopping\n");
+				if (stream.frames_available() == 0) {
+					print_tsp("EOF: stopping\n");
 					play_state = Stopped;
 				} else {
-					auto left_out = wav.get_sample();
-					printf("%f\n", left_out);
+					auto left_out = stream.pop_sample();
+					// print_tsp("%f\n", left_out);
 					setOutput<LeftOut>(left_out * 5.f);
 
-					if (wav.is_stereo())
-						setOutput<RightOut>(wav.get_sample() * 5.f);
+					if (stream.is_stereo())
+						setOutput<RightOut>(stream.pop_sample() * 5.f);
 					else
 						setOutput<RightOut>(0);
 				}
 			} break;
 
+			case Reset:
 			case Stopped:
 			case LoadSampleInfo:
 				setOutput<LeftOut>(0);
@@ -59,7 +68,7 @@ public:
 		};
 	}
 
-	void handle_filesystem() {
+	void process_filesystem() {
 		using enum PlayState;
 
 		switch (play_state) {
@@ -68,19 +77,25 @@ public:
 				break;
 
 			case LoadSampleInfo:
-				printf("fs: LoadSampleInfo\n");
-				if (!wav.init(sample_filename)) {
-					printf("Could not load sample\n");
+				print_tsp("fs: LoadSampleInfo\n");
+				if (!stream.init(sample_filename)) {
+					print_tsp("Could not load sample\n");
 				}
-				printf("Loaded Sample info: stopped\n");
+				print_tsp("Loaded Sample info: stopped\n");
 				play_state = Stopped;
+				break;
+
+			case Reset:
+				print_tsp("fs seek %u\n", seek_pos.load());
+				stream.seek_pos(seek_pos);
+				play_state = Buffering;
 				break;
 
 			case Buffering:
 			case Playing:
-				if (wav.frames_available() < PreBufferThreshold) {
-					if (!wav.is_eof())
-						wav.buffer_frames(1024);
+				if (stream.frames_available() < PreBufferThreshold) {
+					if (!stream.is_eof())
+						stream.push_frames_from_file(1024);
 				}
 				break;
 		};
@@ -100,15 +115,11 @@ public:
 		}
 	}
 
-	void set_samplerate(float sr) override {
-		sample_rate = sr;
-	}
-
 	void handle_play_button() {
 		if (play_button.went_high()) {
 			if (play_state == PlayState::Stopped) {
-				printf("Play button: => Buffering\n");
-				play_state = PlayState::Buffering;
+				print_tsp("Play button: => Reset\n");
+				play_state = PlayState::Reset;
 			}
 		}
 	}
@@ -119,11 +130,15 @@ public:
 				if (path) {
 					sample_filename = path;
 					play_state = PlayState::LoadSampleInfo;
-					printf("Selected a file '%s' => LoadSampleInfo\n", path);
+					print_tsp("Selected a file '%s' => LoadSampleInfo\n", path);
 					free(path);
 				}
 			});
 		}
+	}
+
+	void set_samplerate(float sr) override {
+		sample_rate = sr;
 	}
 
 	// This runs in the low-pri thread:
@@ -137,9 +152,11 @@ public:
 		Playing,
 		// FadingDownToStop,
 		// FadingDownToLoop,
+		Reset,
 	};
 
 	std::atomic<PlayState> play_state{PlayState::Stopped};
+	std::atomic<unsigned> seek_pos = 0;
 
 	StaticString<255> sample_filename = "";
 	StaticString<255> sample_dir = "";
@@ -148,7 +165,7 @@ public:
 	EdgeStateDetector load_button;
 
 	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024;
-	WavFileStream<PreBufferSamples> wav;
+	WavFileStream<PreBufferSamples> stream;
 
 	static constexpr size_t PreBufferThreshold = 256 * 1024;
 
