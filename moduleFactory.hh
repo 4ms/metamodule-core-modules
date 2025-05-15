@@ -36,8 +36,8 @@ public:
 	static bool isValidSlug(std::string_view combined_slug);
 	static bool isValidBrandModule(std::string_view brand, std::string_view module_name);
 
-	static std::vector<std::string> getAllSlugs(std::string_view brand);
-	static std::vector<std::string> getAllBrands();
+	static std::vector<std::string_view> getAllModuleSlugs(std::string_view brand);
+	static std::vector<std::string_view> getAllBrands();
 	static std::vector<std::string> getAllModuleDisplayNames(std::string_view brand);
 	static std::vector<std::string_view> getAllBrandDisplayNames();
 
@@ -45,7 +45,7 @@ public:
 	static std::string_view getModuleDisplayName(std::string_view combined_slug);
 	static void setBrandDisplayName(std::string_view brand_name, std::string_view display_name);
 	static std::string_view getBrandDisplayName(std::string_view brand_name);
-	static std::string_view getBrandSlug(std::string_view display_name);
+	static std::vector<std::string_view> getBrandSlugsWithDisplayName(std::string_view display_name);
 	static std::string_view getModuleSlug(std::string_view brand_slug, std::string_view display_name);
 
 	static void registerBrandAlias(std::string_view brand, std::string_view alias);

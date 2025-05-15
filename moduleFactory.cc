@@ -28,11 +28,11 @@ struct ModuleRegistry {
 };
 
 struct BrandRegistry {
-	std::string brand_name;
+	std::string brand_name; //brand slug
 	std::string display_name;
 	std::vector<std::string> aliases;
 
-	std::map<std::string, ModuleRegistry> modules;
+	std::map<std::string, ModuleRegistry> modules; //module slug => registry
 
 	BrandRegistry(std::string_view brand)
 		: brand_name{brand} {
@@ -48,6 +48,7 @@ ModuleInfoView nullinfo{};
 
 } // namespace
 
+// returns a list iterator
 static auto brand_registry(std::string_view brand) {
 	// First, try to match on brand_name:
 	auto found = std::ranges::find(registry(), brand, &BrandRegistry::brand_name);
@@ -149,7 +150,7 @@ std::string_view ModuleFactory::getModuleDisplayName(std::string_view combined_s
 	if (auto module = find_module(combined_slug))
 		return module->display_name;
 	else {
-		[[maybe_unused]] auto [_, module_name] = brand_module(combined_slug);
+		[[maybe_unused]] auto const &[_, module_name] = brand_module(combined_slug);
 		if (module_name.length())
 			return module_name;
 		else
@@ -175,14 +176,16 @@ std::string_view ModuleFactory::getBrandDisplayName(std::string_view brand_name)
 		return brand_name;
 }
 
-std::string_view ModuleFactory::getBrandSlug(std::string_view display_name) {
-	auto found =
-		std::ranges::find_if(registry(), [&](auto const &brand) { return brand.display_name == display_name; });
+std::vector<std::string_view> ModuleFactory::getBrandSlugsWithDisplayName(std::string_view display_name) {
+	std::vector<std::string_view> slugs;
 
-	if (found != registry().end())
-		return found->brand_name;
-	else
-		return "";
+	for (auto const &brand : registry()) {
+		if (brand.display_name == display_name) {
+			slugs.push_back(brand.brand_name);
+		}
+	}
+
+	return slugs;
 }
 
 void ModuleFactory::setModuleDisplayName(std::string_view combined_slug, std::string_view display_name) {
@@ -213,10 +216,10 @@ bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view 
 	return false;
 }
 
-std::vector<std::string> ModuleFactory::getAllSlugs(std::string_view brand) {
-	std::vector<std::string> slugs;
+std::vector<std::string_view> ModuleFactory::getAllModuleSlugs(std::string_view brand_slug) {
+	std::vector<std::string_view> slugs;
 
-	auto modules = brand_registry(brand)->modules;
+	auto const &modules = brand_registry(brand_slug)->modules;
 	slugs.reserve(modules.size());
 
 	for (auto const &[slug, module] : modules) {
@@ -226,10 +229,10 @@ std::vector<std::string> ModuleFactory::getAllSlugs(std::string_view brand) {
 	return slugs;
 }
 
-std::vector<std::string> ModuleFactory::getAllModuleDisplayNames(std::string_view brand) {
+std::vector<std::string> ModuleFactory::getAllModuleDisplayNames(std::string_view brand_display_name) {
 	std::vector<std::string> names;
 
-	auto modules = brand_registry(brand)->modules;
+	auto const &modules = brand_registry(brand_display_name)->modules;
 	names.reserve(modules.size());
 
 	for (auto const &[slug, module] : modules) {
@@ -243,13 +246,14 @@ std::vector<std::string_view> ModuleFactory::getAllBrandDisplayNames() {
 	std::vector<std::string_view> brands;
 	brands.reserve(registry().size());
 	for (auto &brand : registry()) {
-		brands.push_back(brand.display_name);
+		if (std::ranges::find(brands, brand.display_name) == brands.end())
+			brands.push_back(brand.display_name);
 	}
 	return brands;
 }
 
-std::vector<std::string> ModuleFactory::getAllBrands() {
-	std::vector<std::string> brands;
+std::vector<std::string_view> ModuleFactory::getAllBrands() {
+	std::vector<std::string_view> brands;
 	brands.reserve(registry().size());
 	for (auto &brand : registry()) {
 		brands.emplace_back(brand.brand_name.c_str());
