@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="19.985126mm"
-   height="128.39998mm"
-   viewBox="0 0 56.654108 363.96648"
+   width="30.48mm"
+   height="128.5mm"
+   viewBox="0 0 86.405117 364.25"
    version="1.1"
    id="svg192"
    sodipodi:docname="TSP.svg"
-   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,128 +23,129 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.4585466"
-     inkscape:cx="239.6221"
-     inkscape:cy="334.57964"
-     inkscape:window-width="1880"
-     inkscape:window-height="1387"
-     inkscape:window-x="48"
-     inkscape:window-y="25"
+     inkscape:zoom="1.5811611"
+     inkscape:cx="29.092545"
+     inkscape:cy="246.97041"
+     inkscape:window-width="1192"
+     inkscape:window-height="1046"
+     inkscape:window-x="57"
+     inkscape:window-y="43"
      inkscape:window-maximized="0"
      inkscape:current-layer="components"
      showguides="true"
-     showgrid="false" />
+     showgrid="false"
+     showborder="true" />
   <g
      id="faceplate"
      transform="translate(-0.13000396,0.64468533)">
     <g
        id="g1"
-       transform="matrix(0.28099716,0,0,1,0.09347322,0)">
+       transform="matrix(0.42832743,0,0,1,0.0743197,0)">
       <rect
-         x="0.13000396"
-         y="-0.65644443"
+         x="0"
+         y="0"
          width="201.61807"
          height="363.98999"
          style="fill:#ededed;stroke-width:0px"
          id="rect1" />
     </g>
     <rect
-       x="2.041301"
-       y="239.1584"
-       width="53.404583"
-       height="78.506821"
-       rx="7.0910516"
-       ry="7.9138503"
-       style="stroke:#000000;stroke-width:0.797139"
+       x="7.5634136"
+       y="234.48705"
+       width="71.5383"
+       height="83.10215"
+       rx="7.4971519"
+       ry="7.9516563"
+       style="stroke:#000000;stroke-width:0.949219"
        id="rect2" />
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
        id="text15"
-       x="19.694611"
+       x="36.014042"
        y="293.58231"><tspan
-         x="19.694611"
+         x="36.014042"
          y="293.58231"
          id="tspan15"
          style="stroke-width:0.938083">OUT</tspan></text>
     <text
-       transform="scale(0.93808314,1.0660036)"
-       style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
+       style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083;fill:#ededed;fill-opacity:1"
        id="text16"
-       x="46.928795"
-       y="293.65649"><tspan
-         x="46.928795"
-         y="293.65649"
+       x="62.599415"
+       y="292.64746"
+       transform="scale(0.93808314,1.0660036)"><tspan
+         x="62.599415"
+         y="292.64746"
          id="tspan16"
-         style="stroke-width:0.938083">R</tspan></text>
+         style="stroke-width:0.938083;fill:#ededed;fill-opacity:1">R</tspan></text>
     <text
-       transform="scale(0.93808314,1.0660036)"
-       style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
+       style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083;fill:#ededed;fill-opacity:1"
        id="text17"
-       x="8.6386805"
-       y="293.65649"><tspan
-         x="8.6386805"
-         y="293.65649"
+       x="24.309301"
+       y="292.64746"
+       transform="scale(0.93808314,1.0660036)"><tspan
+         x="24.309301"
+         y="292.64746"
          id="tspan17"
-         style="stroke-width:0.938083">L</tspan></text>
+         style="stroke-width:0.938083;fill:#ededed;fill-opacity:1">L</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text30-1"
-       x="19.737274"
-       y="138.51193"><tspan
-         x="19.737274"
-         y="138.51193"
+       x="55.054874"
+       y="166.62747"><tspan
+         x="55.054874"
+         y="166.62747"
          id="tspan30-7"
          style="stroke-width:0.938083">Loop</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text30-1-8"
-       x="19.737274"
-       y="217.56543"><tspan
-         x="19.737274"
-         y="217.56543"
+       x="55.054874"
+       y="212.76868"><tspan
+         x="55.054874"
+         y="212.76868"
          id="tspan30-7-1"
          style="stroke-width:0.938083">Loop</tspan></text>
     <text
-       transform="scale(0.93808314,1.0660036)"
-       style="font-weight:600;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
+       style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text31"
-       x="16.988363"
-       y="257.49332"><tspan
-         x="16.988363"
-         y="257.49332"
+       x="31.670225"
+       y="256.20224"
+       transform="scale(0.93808314,1.0660036)"><tspan
+         x="31.670225"
+         y="256.20224"
          id="tspan31"
-         style="stroke-width:0.938083">End Out</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';-inkscape-font-specification:'GillSans-SemiBold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">End Out</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text33"
-       x="18.552074"
-       y="105.12711"><tspan
-         x="18.552074"
-         y="105.12711"
+       x="14.952055"
+       y="166.62747"><tspan
+         x="14.952055"
+         y="166.62747"
          id="tspan33"
          style="stroke-width:0.938083">PLAY</tspan></text>
     <text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text33-8"
-       x="18.552074"
-       y="177.45044"><tspan
-         x="18.552074"
-         y="177.45044"
+       x="14.952055"
+       y="212.76868"><tspan
+         x="14.952055"
+         y="212.76868"
          id="tspan33-6"
          style="stroke-width:0.938083">PLAY</tspan></text>
     <text
        transform="scale(0.90553849,1.1043153)"
        style="font-weight:700;font-size:9.96092px;font-family:GillSans-Bold, 'Gill Sans';stroke-width:0.905538"
        id="text79"
-       x="9.4515858"
+       x="25.997639"
        y="303.00201"><tspan
          sodipodi:role="line"
-         x="9.4515858"
+         x="25.997639"
          y="303.00201"
          style="stroke-width:0.905538"
          id="tspan1">SAMPLE</tspan></text>
@@ -152,16 +153,16 @@
        transform="scale(0.90553849,1.1043153)"
        style="font-weight:700;font-size:9.96092px;font-family:GillSans-Bold, 'Gill Sans';stroke-width:0.905538"
        id="text79-3"
-       x="10.305155"
+       x="26.566694"
        y="314.21082"><tspan
          sodipodi:role="line"
-         x="10.305155"
+         x="26.566694"
          y="314.21082"
          style="stroke-width:0.905538"
          id="tspan1-9">PLAYER</tspan></text>
     <g
        id="g81"
-       transform="matrix(0.78542749,0,0,0.78542749,-84.559936,7.2940146)">
+       transform="matrix(0.78542749,0,0,0.78542749,-69.563765,7.2940146)">
       <path
          d="m 150.73,8.93 c 0,0 -4.37,5.55 -6.92,8.79 v -7.53 c 0,-0.65 -0.32,-1.23 -0.8,-1.47 -0.49,-0.24 -1.05,-0.09 -1.41,0.37 l -9.09,11.56 c -0.49,0.63 -0.48,1.63 0.04,2.24 0.51,0.6 1.33,0.59 1.82,-0.04 0,0 4.34,-5.51 6.87,-8.73 v 7.53 c 0,0.65 0.32,1.23 0.81,1.47 0.49,0.24 1.05,0.1 1.41,-0.37 0,0 4.37,-5.56 6.91,-8.79 v 7.69 c 0,0.88 0.57,1.58 1.29,1.58 0.72,0 1.29,-0.71 1.29,-1.58 V 10.04 c 0,-0.65 -0.32,-1.23 -0.81,-1.47 -0.49,-0.24 -1.04,-0.1 -1.41,0.37 z"
          style="stroke:#000000;stroke-width:0.96px"
@@ -177,10 +178,10 @@
     </g>
     <rect
        id="Screen"
-       x="3.0994134"
+       x="6.4022536"
        y="29.262314"
-       width="50.913734"
-       height="47.083603"
+       width="73.860619"
+       height="100.62902"
        style="stroke-width:0px" />
     <text
        xml:space="preserve"
@@ -196,62 +197,62 @@
   </g>
   <g
      id="components"
-     transform="translate(4.0146306,0.64468533)"
-     style="display:inline">
+     style="display:inline"
+     transform="translate(18.85633)">
     <circle
        id="BusyLight"
        data-name="Busy Light#RedLight"
-       cx="3.142364"
-       cy="85.581871"
+       cx="24.34623"
+       cy="140.42691"
        r="4.25"
        style="fill:#ff00ff;stroke-width:0px" />
     <circle
        id="End_Out"
        data-name="End Out"
-       cx="24.191759"
-       cy="253.12503"
+       cx="24.34623"
+       cy="250.12485"
        r="11.34"
        style="fill:#0000ff;stroke-width:0px" />
     <circle
        id="Right_Out"
        data-name="Right Out"
-       cx="37.956245"
+       cx="42.418056"
        cy="291.3165"
        r="11.34"
        style="fill:#0000ff;stroke-width:0px" />
     <circle
        id="Left_Out"
        data-name="Left Out"
-       cx="11.644905"
+       cx="6.2744017"
        cy="291.03357"
        r="11.34"
        style="fill:#0000ff;stroke-width:0px" />
     <circle
        id="Loop_Gate_In"
        data-name="Loop Gate"
-       cx="24.191759"
-       cy="209.80101"
+       cx="42.418056"
+       cy="203.39751"
        r="11.34"
        style="fill:#80ff80;stroke-width:0px" />
     <circle
        id="Play_Trig"
        data-name="Play Trig"
-       cx="24.191759"
-       cy="166.70229"
+       cx="6.2744017"
+       cy="203.39751"
        r="11.34"
        style="fill:#80ff80;stroke-width:0px" />
     <circle
        id="Loop"
        data-name="Loop#MomentaryRGB7mm"
-       cx="24.191759"
-       cy="127.87841"
+       cx="42.418056"
+       cy="154.3969"
        r="8.5"
        style="display:inline;fill:#ffc000;stroke-width:0px" />
     <circle
        id="Play_Button"
        data-name="Play#MomentaryRGB7mm"
-       cx="24.191759"
-       cy="90.114334"
+       cx="6.2744017"
+       cy="154.44621"
        r="10.63"
        style="fill:#ffc000;stroke-width:0px" />
     <text
@@ -267,10 +268,10 @@
     <rect
        id="Screen_TSPDisplay"
        data-name="Screen#TSPDisplay"
-       x="-1.1904265"
-       y="29.587372"
-       width="51.073311"
-       height="46.654541"
+       x="-12.305322"
+       y="29.202152"
+       width="73.303101"
+       height="101.35561"
        style="fill:#0000ff;stroke-width:0px" />
     <rect
        id="LoadSample_LoadSample"
