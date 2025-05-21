@@ -5,6 +5,7 @@
 #include "info/TSP_info.hh"
 #include "tsp/wav_file_stream.hh"
 #include "util/edge_detector.hh"
+#include "util/schmitt_trigger.hh"
 #include "util/static_string.hh"
 #include <atomic>
 
@@ -30,6 +31,8 @@ public:
 	}
 
 	void update() override {
+		handle_interface();
+
 		using enum PlayState;
 
 		switch (play_state) {
@@ -107,32 +110,23 @@ public:
 		};
 	}
 
-	void set_param(int id, float val) override {
-		if (id == param_idx<LoadsampleAltParam>) {
-			load_button.update(val > 0.5f);
-			handle_load_button();
+	void handle_interface() {
+		handle_load_button();
 
-		} else if (id == param_idx<PlayButton>) {
-			play_button.update(val > 0.5f);
-			handle_play_button();
+		play_button.process(getState<PlayButton>() == MomentaryButton::State_t::PRESSED);
+		play_jack.process(getInput<PlayTrigIn>().value_or(0));
 
-		} else {
-			SmartCoreProcessor::set_param(id, val);
-		}
-	}
-
-	void handle_play_button() {
-		if (play_button.went_high()) {
+		if (play_button.just_went_high() || play_jack.just_went_high()) {
 			if (play_state == PlayState::Stopped) {
-				print_tsp("Play button: => Reset\n");
 				play_state = PlayState::Reset;
 			}
 		}
 	}
 
 	void handle_load_button() {
-		if (load_button.went_high()) {
-			async_open_file(sample_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
+		if (load_button.update(getState<LoadsampleAltParam>() > 0.5f)) {
+			std::string_view initial_dir = "";
+			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
 					sample_filename = path;
 					play_state = PlayState::LoadSampleInfo;
@@ -172,6 +166,7 @@ public:
 		}
 	}
 
+private:
 	// This runs in the low-pri thread:
 	AsyncThread fs_thread{this};
 
@@ -190,10 +185,14 @@ public:
 	std::atomic<unsigned> seek_pos = 0;
 
 	StaticString<255> sample_filename = "";
-	StaticString<255> sample_dir = "";
 
-	EdgeStateDetector play_button;
-	EdgeStateDetector load_button;
+	Toggler play_button;
+	cpputil::SchmittTrigger play_jack{0.2f, 0.5f};
+
+	Toggler loop_button;
+	cpputil::SchmittTrigger loop_jack;
+
+	RisingEdgeDetector load_button;
 
 	static constexpr size_t PreBufferSamples = 4 * 1024 * 1024;
 	WavFileStream<PreBufferSamples> stream;
