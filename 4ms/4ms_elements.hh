@@ -252,7 +252,7 @@ struct TSPDisplay : DynamicTextDisplay {
 		: DynamicTextDisplay{{{b}}} {
 		text = "Load a sample";
 		font = "Default_10";
-		color = Colors565::Yellow;
+		color = Colors565::White;
 	}
 };
 
