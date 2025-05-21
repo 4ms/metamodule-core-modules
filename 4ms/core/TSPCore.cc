@@ -61,14 +61,13 @@ public:
 
 			case Reset:
 			case Stopped:
-				setLED<PlayButton>(0);
+				setLED<PlayButton>(0, 0, 0);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
 
 			case LoadSampleInfo:
-				// setLED<PlayButton>(1);
-				setLED<PlayButton>(std::array<float, 3>{0, 1, 0});
+				setLED<PlayButton>(0, 1, 0);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
@@ -196,7 +195,7 @@ public:
 	EdgeStateDetector play_button;
 	EdgeStateDetector load_button;
 
-	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024;
+	static constexpr size_t PreBufferSamples = 4 * 1024 * 1024;
 	WavFileStream<PreBufferSamples> stream;
 
 	StaticString<255> message = "Load a Sample";
