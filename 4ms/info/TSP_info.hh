@@ -9,23 +9,23 @@ namespace MetaModule
 struct TSPInfo : ModuleInfoBase {
     static constexpr std::string_view slug{"TSP"};
     static constexpr std::string_view description{"Sample Player"};
-    static constexpr uint32_t width_hp = 4;
+    static constexpr uint32_t width_hp = 6;
     static constexpr std::string_view svg_filename{"res/modules/TSP_artwork.svg"};
     static constexpr std::string_view png_filename{"4ms/fp/TSP.png"};
 
     using enum Coords;
 
     static constexpr std::array<Element, 10> Elements{{
-		MomentaryRGB7mm{{to_mm<72>(24.192), to_mm<72>(90.114), Center, "Play", ""}},
-		MomentaryRGB7mm{{to_mm<72>(24.192), to_mm<72>(127.878), Center, "Loop", ""}},
-		TSPDisplay{{to_mm<72>(24.346), to_mm<72>(52.915), Center, "Screen", ""}},
-		GateJackInput4ms{{to_mm<72>(24.192), to_mm<72>(166.702), Center, "Play Trig", ""}},
-		GateJackInput4ms{{to_mm<72>(24.192), to_mm<72>(209.801), Center, "Loop Gate", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(11.645), to_mm<72>(291.034), Center, "Left Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(37.956), to_mm<72>(291.317), Center, "Right Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(24.192), to_mm<72>(253.125), Center, "End Out", ""}},
-		RedLight{{to_mm<72>(3.142), to_mm<72>(85.582), Center, "Busy Light", ""}},
-		AltParamChoiceLabeled{{{to_mm<72>(22.954), to_mm<72>(37.064), Center, "LoadSample", ""}, 1, 0}, {"LoadSample"}},
+		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(154.699), Center, "Play", ""}},
+		MomentaryRGB7mm{{to_mm<72>(62.339), to_mm<72>(154.65), Center, "Loop", ""}},
+		TSPDisplay{{to_mm<72>(43.203), to_mm<72>(80.133), Center, "Screen", ""}},
+		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(203.65), Center, "Play Trig", ""}},
+		GateJackInput4ms{{to_mm<72>(61.274), to_mm<72>(203.65), Center, "Loop Gate", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(25.131), to_mm<72>(291.286), Center, "Left Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(291.569), Center, "Right Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(43.203), to_mm<72>(250.377), Center, "End Out", ""}},
+		RedLight{{to_mm<72>(43.203), to_mm<72>(140.68), Center, "Busy Light", ""}},
+		AltParamChoiceLabeled{{{to_mm<72>(42.136), to_mm<72>(356.476), Center, "LoadSample", ""}, 1, 0}, {"LoadSample"}},
 }};
 
     enum class Elem {
