@@ -7,7 +7,7 @@
 namespace MetaModule
 {
 
-template<size_t MaxFrames = 1024 * 1024>
+template<size_t MaxSamples = 1024 * 1024>
 struct WavFileStream {
 
 	bool load(std::string_view sample_path) {
@@ -34,23 +34,42 @@ struct WavFileStream {
 		return loaded;
 	}
 
+	void read_frames_from_file() {
+		// Read in 4kB chunks:
+		unsigned frames_to_read = ReadBlockBytes / wav.fmt.blockAlign;
+		read_frames_from_file(frames_to_read);
+	}
+
 	void read_frames_from_file(unsigned num_frames) {
-		if (eof)
+		if (!loaded || eof)
 			return;
 
 		while (num_frames > 0) {
-
-			unsigned frames_to_read = std::min(ReadBlockSize / wav.channels, num_frames);
+			// Don't try to read more than 4kB at a time
+			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, num_frames);
 
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
+
+			if (canary[0] != 0xAAAA5555 || canary[1] != 0x12345678 || canary[2] != 0xBADCAFE0 ||
+				canary[3] != 0x600DCAFE)
+			{
+				printf("WavFileStream: overran internal read buffer: %x %x %x %x\n",
+					   canary[0],
+					   canary[1],
+					   canary[2],
+					   canary[3]);
+				printf("Req: %u, read: %llu, blockalign: %u\n", num_frames, frames_read, wav.fmt.blockAlign);
+			}
 
 			// printf("Read %llu frames => file position is now %llu\n", frames_read, wav.readCursorInPCMFrames);
 
 			eof = (frames_read != frames_to_read);
 
 			for (auto sample : std::span<float>(read_buff.begin(), frames_read * wav.channels)) {
-				if (!pre_buff.put(sample))
-					break; //buffer overflow
+				if (!pre_buff.put(sample)) {
+					printf("WavFileStream: buffer overflow\n");
+					break;
+				}
 			}
 
 			num_frames -= frames_read;
@@ -96,11 +115,15 @@ private:
 	bool eof = true;
 	bool loaded = false;
 
-	LockFreeFifoSpsc<float, MaxFrames> pre_buff;
+	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
-	static constexpr unsigned ReadBlockSize = 4096 / 4;
+	// assume 4kB is an efficient size to read from an SD Card or USB Drive
+	static constexpr unsigned ReadBlockBytes = 4096;
 
-	std::array<float, ReadBlockSize> read_buff;
+	// read_buff needs to be big enough to hold 4kB of any data converted to floats
+	// e.g. 4kB of 8-bit mono will convert to 4096 floats
+	std::array<float, ReadBlockBytes> read_buff;
+	std::array<uint32_t, 4> canary{0xAAAA5555, 0x12345678, 0xBADCAFE0, 0x600DCAFE};
 };
 
 } // namespace MetaModule

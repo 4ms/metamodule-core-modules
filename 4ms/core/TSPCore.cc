@@ -11,6 +11,8 @@
 
 //#include "../../../../../src/medium/debug_raw.h"
 
+static constexpr bool DEBUG_ENDOUT_IS_PREBUFF_AMT = true;
+
 #define PRINTF_TSP
 
 #ifdef PRINTF_TSP
@@ -43,7 +45,6 @@ public:
 		switch (play_state) {
 			case Buffering:
 				if (stream.is_eof() || stream.frames_available() >= PreBufferThreshold) {
-					print_tsp("update(): Buffering=>Playing\n");
 					play_state = Playing;
 				}
 				setOutput<LeftOut>(0);
@@ -79,7 +80,11 @@ public:
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
-		};
+		}
+
+		if constexpr (DEBUG_ENDOUT_IS_PREBUFF_AMT) {
+			setOutput<EndOut>((float)stream.frames_available() / (float)PreBufferThreshold);
+		}
 	}
 
 	// This runs in a low-priority background task:
@@ -108,13 +113,10 @@ public:
 			case Playing:
 				if (stream.frames_available() < PreBufferThreshold) {
 					if (!stream.is_eof())
-						stream.read_frames_from_file(1024);
+						stream.read_frames_from_file();
 				}
 				break;
 		};
-
-		// if (stream.frames_available())
-		// 	printf("%u\n", stream.frames_available());
 	}
 
 	void handle_play() {
@@ -201,12 +203,12 @@ private:
 
 	RisingEdgeDetector load_button;
 
-	static constexpr size_t PreBufferSamples = 4 * 1024 * 1024;
+	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024;
 	WavFileStream<PreBufferSamples> stream;
 
 	StaticString<255> message = "Load a Sample";
 
-	static constexpr size_t PreBufferThreshold = 1024;
+	size_t PreBufferThreshold = 1024;
 
 	float sample_rate = 48000.f;
 
