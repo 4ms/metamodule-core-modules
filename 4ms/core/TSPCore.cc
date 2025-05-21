@@ -10,7 +10,7 @@
 
 //#include "../../../../../src/medium/debug_raw.h"
 
-// #define PRINTF_TSP
+#define PRINTF_TSP
 
 #ifdef PRINTF_TSP
 #define print_tsp printf
@@ -42,26 +42,33 @@ public:
 				setOutput<RightOut>(0);
 				break;
 
-			case Playing: {
-
-				if (stream.frames_available() == 0) {
-					print_tsp("EOF: stopping\n");
-					play_state = Stopped;
-				} else {
-					auto left_out = stream.pop_sample();
-					// print_tsp("%f\n", left_out);
-					setOutput<LeftOut>(left_out * 5.f);
-
-					if (stream.is_stereo())
+			case Playing:
+				if (stream.frames_available()) {
+					if (stream.is_stereo()) {
+						setOutput<LeftOut>(stream.pop_sample() * 5.f);
 						setOutput<RightOut>(stream.pop_sample() * 5.f);
-					else
+					} else {
+						setOutput<LeftOut>(stream.pop_sample() * 5.f);
 						setOutput<RightOut>(0);
+					}
+
+					setOutput<EndOut>(0.f);
+				} else {
+					setOutput<EndOut>(5.f);
+					play_state = Stopped;
 				}
-			} break;
+				break;
 
 			case Reset:
 			case Stopped:
+				setLED<PlayButton>(0);
+				setOutput<LeftOut>(0);
+				setOutput<RightOut>(0);
+				break;
+
 			case LoadSampleInfo:
+				// setLED<PlayButton>(1);
+				setLED<PlayButton>(std::array<float, 3>{0, 1, 0});
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
@@ -130,7 +137,7 @@ public:
 				if (path) {
 					sample_filename = path;
 					play_state = PlayState::LoadSampleInfo;
-					print_tsp("Selected a file '%s' => LoadSampleInfo\n", path);
+					print_tsp("Selected file '%s' => LoadSampleInfo\n", path);
 					free(path);
 				}
 			});
@@ -139,6 +146,31 @@ public:
 
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
+	}
+
+	void load_state(std::string_view state) override {
+		if (state.length()) {
+			sample_filename.copy(state);
+			play_state = PlayState::LoadSampleInfo;
+			print_tsp("Loading file '%s' => LoadSampleInfo\n", sample_filename.c_str());
+		}
+	}
+
+	std::string save_state() override {
+		return std::string(sample_filename);
+	}
+
+	size_t get_display_text(int display_id, std::span<char> text) override {
+		if (display_id == display_idx<ScreenOut>) {
+
+			size_t chars_to_copy = std::min(text.size(), message.size());
+			std::copy(message.data(), message.data() + chars_to_copy, text.begin());
+
+			return chars_to_copy;
+
+		} else {
+			return 0;
+		}
 	}
 
 	// This runs in the low-pri thread:
@@ -167,7 +199,9 @@ public:
 	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024;
 	WavFileStream<PreBufferSamples> stream;
 
-	static constexpr size_t PreBufferThreshold = 256 * 1024;
+	StaticString<255> message = "Load a Sample";
+
+	static constexpr size_t PreBufferThreshold = 8 * 1024;
 
 	float sample_rate = 48000.f;
 
