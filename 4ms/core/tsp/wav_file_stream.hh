@@ -10,16 +10,31 @@ namespace MetaModule
 template<size_t MaxFrames = 1024 * 1024>
 struct WavFileStream {
 
-	bool init(std::string_view sample_path) {
-		pre_buff.reset();
+	bool load(std::string_view sample_path) {
+		unload();
+
 		eof = false;
 
 		// TODO: if we already have this file loaded, then just reset the read position
-		bool ok = drwav_init_file(&wav, sample_path.data(), nullptr);
-		return ok;
+
+		loaded = drwav_init_file(&wav, sample_path.data(), nullptr);
+		return loaded;
 	}
 
-	void push_frames_from_file(unsigned num_frames) {
+	void unload() {
+		pre_buff.reset();
+
+		if (loaded) {
+			drwav_uninit(&wav);
+			loaded = false;
+		}
+	}
+
+	bool is_loaded() {
+		return loaded;
+	}
+
+	void read_frames_from_file(unsigned num_frames) {
 		if (eof)
 			return;
 
@@ -29,7 +44,7 @@ struct WavFileStream {
 
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
 
-			printf("Read %llu frames => file position is now %llu\n", frames_read, wav.readCursorInPCMFrames);
+			// printf("Read %llu frames => file position is now %llu\n", frames_read, wav.readCursorInPCMFrames);
 
 			eof = (frames_read != frames_to_read);
 
@@ -78,7 +93,8 @@ struct WavFileStream {
 private:
 	drwav wav;
 
-	bool eof = false;
+	bool eof = true;
+	bool loaded = false;
 
 	LockFreeFifoSpsc<float, MaxFrames> pre_buff;
 

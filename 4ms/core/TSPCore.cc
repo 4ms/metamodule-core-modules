@@ -27,11 +27,16 @@ class TSPCore : public SmartCoreProcessor<TSPInfo> {
 
 public:
 	TSPCore() {
-		fs_thread.start([this]() { process_filesystem(); });
+		fs_thread.start([this]() { async_process_filesystem(); });
+	}
+
+	~TSPCore() {
+		stream.unload();
 	}
 
 	void update() override {
-		handle_interface();
+		handle_load_button();
+		handle_play();
 
 		using enum PlayState;
 
@@ -77,7 +82,8 @@ public:
 		};
 	}
 
-	void process_filesystem() {
+	// This runs in a low-priority background task:
+	void async_process_filesystem() {
 		using enum PlayState;
 
 		switch (play_state) {
@@ -87,16 +93,14 @@ public:
 
 			case LoadSampleInfo:
 				print_tsp("fs: LoadSampleInfo\n");
-				if (!stream.init(sample_filename)) {
+				if (!stream.load(sample_filename)) {
 					print_tsp("Could not load sample\n");
 				}
-				print_tsp("Loaded Sample info: stopped\n");
 				play_state = Stopped;
 				break;
 
 			case Reset:
-				print_tsp("fs seek %u\n", seek_pos.load());
-				stream.seek_pos(seek_pos);
+				stream.seek_pos(0);
 				play_state = Buffering;
 				break;
 
@@ -104,27 +108,35 @@ public:
 			case Playing:
 				if (stream.frames_available() < PreBufferThreshold) {
 					if (!stream.is_eof())
-						stream.push_frames_from_file(1024);
+						stream.read_frames_from_file(1024);
 				}
 				break;
 		};
+
+		// if (stream.frames_available())
+		// 	printf("%u\n", stream.frames_available());
 	}
 
-	void handle_interface() {
-		handle_load_button();
-
+	void handle_play() {
 		play_button.process(getState<PlayButton>() == MomentaryButton::State_t::PRESSED);
 		play_jack.process(getInput<PlayTrigIn>().value_or(0));
 
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
+
 			if (play_state == PlayState::Stopped) {
+				if (stream.is_loaded()) {
+					play_state = PlayState::Reset;
+				}
+			}
+
+			if (play_state == PlayState::Playing) {
 				play_state = PlayState::Reset;
 			}
 		}
 	}
 
 	void handle_load_button() {
-		if (load_button.update(getState<LoadsampleAltParam>() > 0.5f)) {
+		if (load_button.update(getState<LoadsampleAltParam>())) {
 			std::string_view initial_dir = "";
 			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
@@ -167,22 +179,17 @@ public:
 	}
 
 private:
-	// This runs in the low-pri thread:
 	AsyncThread fs_thread{this};
 
 	enum class PlayState {
 		Stopped,
 		LoadSampleInfo,
 		Buffering,
-		// FadingUp,
 		Playing,
-		// FadingDownToStop,
-		// FadingDownToLoop,
 		Reset,
 	};
 
 	std::atomic<PlayState> play_state{PlayState::Stopped};
-	std::atomic<unsigned> seek_pos = 0;
 
 	StaticString<255> sample_filename = "";
 
@@ -199,7 +206,7 @@ private:
 
 	StaticString<255> message = "Load a Sample";
 
-	static constexpr size_t PreBufferThreshold = 8 * 1024;
+	static constexpr size_t PreBufferThreshold = 1024;
 
 	float sample_rate = 48000.f;
 
