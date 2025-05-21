@@ -247,12 +247,12 @@ struct RedGreenBlueLight : RgbLight {
 	}
 };
 
-struct STSPDisplay : DynamicTextDisplay {
-	constexpr STSPDisplay(BaseElement b)
+struct TSPDisplay : DynamicTextDisplay {
+	constexpr TSPDisplay(BaseElement b)
 		: DynamicTextDisplay{{{b}}} {
-		text = "Stereo Triggered Sample Player\nA: ----\nB: ----";
+		text = "Load a sample";
 		font = "Default_10";
-		color = Colors565::White;
+		color = Colors565::Yellow;
 	}
 };
 
