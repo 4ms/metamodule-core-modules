@@ -9,17 +9,10 @@
 #include "util/static_string.hh"
 #include <atomic>
 
-//#include "../../../../../src/medium/debug_raw.h"
-
 static constexpr bool DEBUG_ENDOUT_IS_PREBUFF_AMT = true;
 
-#define PRINTF_TSP
-
-#ifdef PRINTF_TSP
 #define print_tsp printf
-#else
-#define print_tsp(...)
-#endif
+// #define print_tsp(...)
 
 namespace MetaModule
 {
@@ -33,17 +26,20 @@ public:
 	}
 
 	~TSPCore() {
+		fs_thread.stop();
 		stream.unload();
 	}
 
 	void update() override {
 		handle_load_button();
 		handle_play();
+		handle_loop_toggle();
 
 		using enum PlayState;
 
 		switch (play_state) {
 			case Buffering:
+				setLED<PlayButton>(0, 0, 1);
 				if (stream.is_eof() || stream.frames_available() >= PreBufferThreshold) {
 					play_state = Playing;
 				}
@@ -52,6 +48,8 @@ public:
 				break;
 
 			case Playing:
+				setLED<PlayButton>(0, 1, 0);
+
 				if (stream.frames_available()) {
 					if (stream.is_stereo()) {
 						setOutput<LeftOut>(stream.pop_sample() * 5.f);
@@ -68,7 +66,10 @@ public:
 					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
 					if (stream.is_eof()) {
 						setOutput<EndOut>(5.f);
-						play_state = Stopped;
+						if (loop_mode)
+							play_state = Reset;
+						else
+							play_state = Stopped;
 					} else {
 						print_tsp("Buffer underflow module %u\n", (unsigned)id);
 					}
@@ -83,7 +84,7 @@ public:
 				break;
 
 			case LoadSampleInfo:
-				setLED<PlayButton>(1, 1, 0);
+				setLED<PlayButton>(0, 0, 1);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
@@ -100,11 +101,9 @@ public:
 
 		switch (play_state) {
 			case Stopped:
-				// do nothing
 				break;
 
 			case LoadSampleInfo:
-				print_tsp("fs: LoadSampleInfo\n");
 				if (!stream.load(sample_filename)) {
 					print_tsp("Could not load sample\n");
 				}
@@ -158,6 +157,19 @@ public:
 		}
 	}
 
+	void handle_loop_toggle() {
+		auto loop_button = getState<LoopButton>() == MomentaryButton::State_t::PRESSED;
+		auto loop_jack = getInput<LoopGateIn>().value_or(0) > 0.5f;
+
+		// Both the button and the jack toggle loop mode ===> Button XOR Jack
+		loop_mode = loop_button ^ loop_jack;
+
+		if (loop_mode)
+			setLED<LoopButton>(1, 1, 0);
+		else
+			setLED<LoopButton>(0, 0, 0);
+	}
+
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
 	}
@@ -205,8 +217,7 @@ private:
 	Toggler play_button;
 	cpputil::SchmittTrigger play_jack{0.2f, 0.5f};
 
-	Toggler loop_button;
-	cpputil::SchmittTrigger loop_jack;
+	bool loop_mode = false;
 
 	RisingEdgeDetector load_button;
 
