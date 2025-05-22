@@ -63,8 +63,15 @@ public:
 
 					setOutput<EndOut>(0.f);
 				} else {
-					setOutput<EndOut>(5.f);
-					play_state = Stopped;
+					// No frames avaiable.
+					// If we're also at the end of file, then stop.
+					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
+					if (stream.is_eof()) {
+						setOutput<EndOut>(5.f);
+						play_state = Stopped;
+					} else {
+						print_tsp("Buffer underflow module %u\n", (unsigned)id);
+					}
 				}
 				break;
 
@@ -76,7 +83,7 @@ public:
 				break;
 
 			case LoadSampleInfo:
-				setLED<PlayButton>(0, 1, 0);
+				setLED<PlayButton>(1, 1, 0);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
