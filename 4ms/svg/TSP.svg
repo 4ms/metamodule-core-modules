@@ -6,14 +6,13 @@
    version="1.1"
    id="svg192"
    sodipodi:docname="TSP.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs192" />
-  <sodipodi:namedview
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs192" /><sodipodi:namedview
      id="namedview192"
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -23,166 +22,129 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="2.1103565"
-     inkscape:cx="118.22647"
-     inkscape:cy="198.54465"
-     inkscape:window-width="1568"
-     inkscape:window-height="1051"
-     inkscape:window-x="57"
-     inkscape:window-y="38"
+     inkscape:zoom="2.640796"
+     inkscape:cx="48.848907"
+     inkscape:cy="169.45648"
+     inkscape:window-width="1600"
+     inkscape:window-height="1358"
+     inkscape:window-x="67"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
      inkscape:current-layer="components"
-     showguides="true"
+     showguides="false"
      showgrid="false"
-     showborder="true" />
-  <g
-     id="faceplate">
-    <g
+     showborder="true" /><g
+     id="faceplate"><g
        id="g1"
-       transform="matrix(0.42832743,0,0,1,0.0743197,0)">
-      <rect
+       transform="matrix(0.42832743,0,0,1,0.0743197,0)"><rect
          x="0"
          y="0"
          width="201.61807"
          height="363.98999"
          style="fill:#ededed;stroke-width:0px"
-         id="rect1" />
-    </g>
-    <rect
+         id="rect1" /></g><rect
        x="7.4334092"
-       y="234.48705"
+       y="242.99481"
        width="71.5383"
        height="83.10215"
        rx="7.4971519"
        ry="7.9516563"
        style="stroke:#000000;stroke-width:0.949219"
-       id="rect2" />
-    <text
+       id="rect2" /><text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#ffffff;stroke-width:0.938083"
        id="text15"
        x="35.875458"
-       y="293.58231"><tspan
+       y="263.1875"><tspan
          x="35.875458"
-         y="293.58231"
+         y="263.1875"
          id="tspan15"
-         style="stroke-width:0.938083">OUT</tspan></text>
-    <text
+         style="stroke-width:0.938083">OUT</tspan></text><text
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#ededed;fill-opacity:1;stroke-width:0.938083"
        id="text16"
        x="61.715683"
-       y="292.64746"
+       y="262.25266"
        transform="scale(0.93808314,1.0660036)"><tspan
          x="61.715683"
-         y="292.64746"
+         y="262.25266"
          id="tspan16"
-         style="fill:#ededed;fill-opacity:1;stroke-width:0.938083">R</tspan></text>
-    <text
+         style="fill:#ededed;fill-opacity:1;stroke-width:0.938083">R</tspan></text><text
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#ededed;fill-opacity:1;stroke-width:0.938083"
        id="text17"
        x="23.425568"
-       y="292.64746"
+       y="262.25266"
        transform="scale(0.93808314,1.0660036)"><tspan
          x="23.425568"
-         y="292.64746"
+         y="262.25266"
          id="tspan17"
-         style="fill:#ededed;fill-opacity:1;stroke-width:0.938083">L</tspan></text>
-    <text
+         style="fill:#ededed;fill-opacity:1;stroke-width:0.938083">L</tspan></text><text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text30-1"
        x="55.054874"
-       y="166.62747"><tspan
+       y="172.62894"><tspan
          x="55.054874"
-         y="166.62747"
+         y="172.62894"
          id="tspan30-7"
-         style="stroke-width:0.938083">Loop</tspan></text>
-    <text
+         style="stroke-width:0.938083">Loop</tspan></text><text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text30-1-8"
        x="55.054874"
-       y="212.76868"><tspan
+       y="218.77014"><tspan
          x="55.054874"
-         y="212.76868"
+         y="218.77014"
          id="tspan30-7-1"
-         style="stroke-width:0.938083">Loop</tspan></text>
-    <text
-       style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
+         style="stroke-width:0.938083">Loop</tspan></text><text
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.04em;stroke-width:0.938083"
        id="text31"
-       x="31.165594"
-       y="256.20224"
+       x="17.896959"
+       y="298.89291"
        transform="scale(0.93808314,1.0660036)"><tspan
-         x="31.165594"
-         y="256.20224"
+         x="17.896959"
+         y="298.89291"
          id="tspan31"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.50467px;font-family:GillSans-SemiBold, 'Gill Sans';-inkscape-font-specification:'GillSans-SemiBold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">End Out</tspan></text>
-    <text
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">End</tspan></text><text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text33"
        x="14.952055"
-       y="166.62747"><tspan
+       y="172.62894"><tspan
          x="14.952055"
-         y="166.62747"
+         y="172.62894"
          id="tspan33"
-         style="stroke-width:0.938083">PLAY</tspan></text>
-    <text
+         style="stroke-width:0.938083">PLAY</tspan></text><text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text33-8"
        x="14.952055"
-       y="212.76868"><tspan
+       y="218.77014"><tspan
          x="14.952055"
-         y="212.76868"
+         y="218.77014"
          id="tspan33-6"
-         style="stroke-width:0.938083">PLAY</tspan></text>
-    <text
+         style="stroke-width:0.938083">PLAY</tspan></text><text
        transform="scale(0.90553849,1.1043153)"
-       style="font-weight:700;font-size:9.96092px;font-family:GillSans-Bold, 'Gill Sans';stroke-width:0.905538"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.50056px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.905538"
        id="text79"
-       x="25.854073"
-       y="303.00201"><tspan
-         sodipodi:role="line"
-         x="25.854073"
-         y="303.00201"
-         style="stroke-width:0.905538"
-         id="tspan1">SAMPLE</tspan></text>
-    <text
-       transform="scale(0.90553849,1.1043153)"
-       style="font-weight:700;font-size:9.96092px;font-family:GillSans-Bold, 'Gill Sans';stroke-width:0.905538"
-       id="text79-3"
-       x="26.423128"
-       y="314.21082"><tspan
-         sodipodi:role="line"
-         x="26.423128"
-         y="314.21082"
-         style="stroke-width:0.905538"
-         id="tspan1-9">PLAYER</tspan></text>
-    <g
+       x="5.3092885"
+       y="309.54633">SAMPLE PLAYER</text><g
        id="g81"
-       transform="matrix(0.78542749,0,0,0.78542749,-69.693769,7.2940146)">
-      <path
+       transform="matrix(0.78542749,0,0,0.78542749,-69.693769,13.315136)"><path
          d="m 150.73,8.93 c 0,0 -4.37,5.55 -6.92,8.79 v -7.53 c 0,-0.65 -0.32,-1.23 -0.8,-1.47 -0.49,-0.24 -1.05,-0.09 -1.41,0.37 l -9.09,11.56 c -0.49,0.63 -0.48,1.63 0.04,2.24 0.51,0.6 1.33,0.59 1.82,-0.04 0,0 4.34,-5.51 6.87,-8.73 v 7.53 c 0,0.65 0.32,1.23 0.81,1.47 0.49,0.24 1.05,0.1 1.41,-0.37 0,0 4.37,-5.56 6.91,-8.79 v 7.69 c 0,0.88 0.57,1.58 1.29,1.58 0.72,0 1.29,-0.71 1.29,-1.58 V 10.04 c 0,-0.65 -0.32,-1.23 -0.81,-1.47 -0.49,-0.24 -1.04,-0.1 -1.41,0.37 z"
          style="stroke:#000000;stroke-width:0.96px"
-         id="path79" />
-      <path
+         id="path79" /><path
          d="m 132.5,8.84 -6.02,7.66 c -0.5,0.63 -0.48,1.63 0.03,2.24 0.52,0.61 1.33,0.59 1.83,-0.04 0,0 2.03,-2.58 3.81,-4.84 v 7.88 c 0,0.87 0.57,1.58 1.29,1.58 0.72,0 1.29,-0.71 1.29,-1.58 V 9.94 c 0,-0.65 -0.32,-1.23 -0.81,-1.47 -0.49,-0.24 -1.05,-0.09 -1.41,0.37 z"
          style="stroke:#000000;stroke-width:0.96px"
-         id="path80" />
-      <path
+         id="path80" /><path
          d="m 161.18,14.49 c -0.2,-0.58 -0.67,-0.96 -1.19,-0.96 h -2.63 l 1.92,-2.44 c 0,0 1,-1.47 0.11,-2.27 -0.88,-0.81 -1.97,0.08 -1.97,0.08 l -4.03,5.12 c -0.36,0.46 -0.46,1.13 -0.26,1.72 0.2,0.58 0.67,0.96 1.19,0.96 h 2.63 l -3.12,3.96 c 0,0 -1.29,1.41 -0.34,2.36 0.96,0.96 2.2,-0.17 2.2,-0.17 l 5.22,-6.64 c 0.36,-0.46 0.46,-1.13 0.26,-1.72 z"
          style="stroke:#000000;stroke-width:0.96px"
-         id="path81" />
-    </g>
-    <rect
+         id="path81" /></g><rect
        id="Screen"
        x="6.2722497"
-       y="29.262314"
+       y="34.075123"
        width="73.860619"
-       height="100.62902"
-       style="stroke-width:0px" />
-    <text
+       height="95.816208"
+       style="stroke-width:0px" /><text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:30.0018px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.750044"
        x="173.63173"
@@ -192,92 +154,121 @@
          id="tspan195"
          style="stroke-width:0.750044"
          x="173.63173"
-         y="329.53284" /></text>
-  </g>
-  <g
+         y="329.53284" /></text><text
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.04em;stroke-width:0.938083"
+       id="text5"
+       x="17.896959"
+       y="298.89291"
+       transform="scale(0.93808314,1.0660036)"><tspan
+         x="17.896959"
+         y="298.89291"
+         id="tspan5"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">End</tspan></text><text
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-0.04em;stroke-width:0.938083"
+       id="text5-8"
+       x="47.61216"
+       y="298.89291"
+       transform="scale(0.93808314,1.0660036)"><tspan
+         x="47.61216"
+         y="298.89291"
+         id="tspan5-3"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">Position</tspan></text></g><g
      id="components"
-     style="display:inline">
-    <circle
+     style="display:inline"><circle
        id="BusyLight"
        data-name="Busy Light#RedLight"
-       cx="43.20256"
+       cx="26.19573"
        cy="140.67953"
        r="4.25"
-       style="fill:#ff00ff;stroke-width:0px" />
-    <circle
+       style="fill:#ff00ff;stroke-width:0px" /><circle
        id="End_Out"
        data-name="End Out"
-       cx="43.20256"
-       cy="250.37747"
+       cx="24.684095"
+       cy="295.88589"
        r="11.34"
-       style="fill:#0000ff;stroke-width:0px" />
-    <circle
+       style="fill:#0000ff;stroke-width:0px" /><circle
+       id="Position"
+       data-name="Position"
+       cx="61.274387"
+       cy="295.88589"
+       r="11.34"
+       style="display:inline;fill:#0000ff;stroke-width:0px" /><circle
        id="Right_Out"
        data-name="Right Out"
        cx="61.274387"
-       cy="291.56912"
+       cy="259.16815"
        r="11.34"
-       style="fill:#0000ff;stroke-width:0px" />
-    <circle
+       style="fill:#0000ff;stroke-width:0px" /><circle
        id="Left_Out"
        data-name="Left Out"
        cx="25.130732"
-       cy="291.28619"
+       cy="258.88522"
        r="11.34"
-       style="fill:#0000ff;stroke-width:0px" />
-    <circle
+       style="fill:#0000ff;stroke-width:0px" /><circle
        id="Loop_Gate_In"
        data-name="Loop Gate"
        cx="61.274387"
-       cy="203.65013"
+       cy="210.04771"
        r="11.34"
-       style="fill:#80ff80;stroke-width:0px" />
-    <circle
+       style="fill:#80ff80;stroke-width:0px" /><circle
        id="Play_Trig"
        data-name="Play Trig"
        cx="25.130732"
-       cy="203.65013"
+       cy="210.04771"
        r="11.34"
-       style="fill:#80ff80;stroke-width:0px" />
-    <circle
-       id="Loop"
-       data-name="Loop#MomentaryRGB7mm"
-       cx="62.339386"
-       cy="154.64952"
-       r="8.5"
-       style="display:inline;fill:#ffc000;stroke-width:0px" />
-    <circle
+       style="fill:#80ff80;stroke-width:0px" /><circle
        id="Play_Button"
        data-name="Play#MomentaryRGB7mm"
        cx="26.19573"
-       cy="154.69884"
+       cy="161.09642"
        r="10.63"
-       style="fill:#ffc000;stroke-width:0px" />
-    <text
+       style="fill:#ffc000;stroke-width:0px" /><circle
+       id="LoopButton"
+       data-name="Loop#OrangeButton"
+       cx="61.467239"
+       cy="161.09642"
+       r="10.63"
+       style="display:inline;fill:#ffc000;stroke-width:0px" /><text
        id="slug"
        style="font-size:6px;font-family:MyriadPro-Regular, 'Myriad Pro';display:none"
        x="106.92887"
-       y="6.466085">TSP</text>
-    <text
+       y="6.466085">TSP</text><text
        id="modulename"
        style="font-size:6px;font-family:MyriadPro-Regular, 'Myriad Pro';display:none"
        x="122.39887"
-       y="6.466085">Sample Player</text>
-    <rect
-       id="Screen_TSPDisplay"
-       data-name="Screen#TSPDisplay"
-       x="10.460532"
-       y="34.075123"
-       width="65.128639"
-       height="91.048691"
-       style="fill:#ffff00;stroke-width:0px" />
-    <rect
+       y="6.466085">Sample Player</text><rect
+       id="Message_TSPDisplay"
+       data-name="Message#TSPDisplay"
+       x="9.0559683"
+       y="37.165165"
+       width="67.937767"
+       height="21.215263"
+       style="fill:#ffff00;stroke-width:0px" /><rect
+       id="WaveformDisplay"
+       data-name="Waveform#DynamicGraphicDisplay"
+       x="9.233675"
+       y="60.753025"
+       width="67.937767"
+       height="66.39827"
+       style="display:inline;fill:#ffff00;stroke-width:0px" /><rect
+       id="PrebufferAmount"
+       data-name="Prebuffer Amount@Very Low@Low@Medium@High@Very High"
+       x="52.040565"
+       y="346.58871"
+       width="9.5456667"
+       height="12.094488"
+       style="display:inline;fill:#808080;stroke-width:0px" /><rect
+       id="PlayTrigMode"
+       data-name="Play Retrig Mode@Retrigger@Stop"
+       x="69.777687"
+       y="346.58139"
+       width="9.8843842"
+       height="12.094488"
+       style="display:inline;fill:#808080;stroke-width:0px" /><rect
        id="LoadSample_LoadSample"
-       data-name="LoadSample@LoadSample"
-       x="28.301325"
-       y="350.16983"
-       width="27.67"
-       height="12.611747"
-       style="fill:#808080;stroke-width:0px" />
-  </g>
-</svg>
+       data-name="Load Sample...@action"
+       x="17.258356"
+       y="346.58871"
+       width="23.433069"
+       height="12.094488"
+       style="fill:#808080;stroke-width:0px" /></g></svg>
