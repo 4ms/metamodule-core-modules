@@ -1,6 +1,5 @@
 #pragma once
 #include "CoreModules/elements/base_element.hh"
-#include "CoreModules/elements/units.hh"
 #include "util/colors_rgb565.hh"
 
 namespace MetaModule
@@ -60,26 +59,6 @@ struct OrangeButton : LatchingButton {
 		: LatchingButton{{b, "4ms/comp/button_x.png"}, defaultValue, Colors565::Orange} {
 	}
 };
-
-// struct MomentaryArrowLeftButton : MomentaryButton {
-// 	constexpr MomentaryArrowLeftButton(BaseElement b)
-// 		: MomentaryButton{{b, "4ms/comp/left-arrow-10.png"}, "4ms/comp/left-arrow-black-10.png"} {
-// 	}
-// };
-
-// struct MomentaryArrowRightButton : MomentaryButton {
-// 	constexpr MomentaryArrowRightButton(BaseElement b)
-// 		: MomentaryButton{{b, "4ms/comp/right-arrow-10.png"}, "4ms/comp/right-arrow-black-10.png"} {
-// 	}
-// };
-
-// struct SmallButton : MomentaryButton {
-// 	constexpr SmallButton(BaseElement b)
-// 		: MomentaryButton{{b}} {
-// 		image = "rack-lib/TL1105_0.png";
-// 		pressed_image = "rack-lib/TL1105_1.png";
-// 	}
-// };
 
 struct WhiteMomentary7mm : MomentaryButtonLight {
 	constexpr WhiteMomentary7mm() = default;
@@ -251,8 +230,9 @@ struct TSPDisplay : DynamicTextDisplay {
 	constexpr TSPDisplay(BaseElement b)
 		: DynamicTextDisplay{{{b}}} {
 		text = "Load a sample";
-		font = "Default_10";
+		font = "Default_12";
 		color = Colors565::White;
+		wrap_mode = WrapMode::Scroll;
 	}
 };
 
