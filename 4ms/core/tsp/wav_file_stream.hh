@@ -7,7 +7,7 @@
 namespace MetaModule
 {
 
-template<size_t MaxSamples = 1024 * 1024>
+template<int64_t MaxSamples = 1024 * 1024>
 struct WavFileStream {
 
 	bool load(std::string_view sample_path) {
@@ -23,6 +23,7 @@ struct WavFileStream {
 
 	void unload() {
 		pre_buff.reset();
+		samples_written_to_prebuff = 0;
 
 		if (loaded) {
 			drwav_uninit(&wav);
@@ -44,22 +45,11 @@ struct WavFileStream {
 		if (!loaded || eof)
 			return;
 
-		while (num_frames > 0) {
+		while (!eof && num_frames > 0) {
 			// Don't try to read more than 4kB at a time
 			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, num_frames);
 
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
-
-			if (canary[0] != 0xAAAA5555 || canary[1] != 0x12345678 || canary[2] != 0xBADCAFE0 ||
-				canary[3] != 0x600DCAFE)
-			{
-				printf("WavFileStream: overran internal read buffer: %x %x %x %x\n",
-					   canary[0],
-					   canary[1],
-					   canary[2],
-					   canary[3]);
-				printf("Req: %u, read: %llu, blockalign: %u\n", num_frames, frames_read, wav.fmt.blockAlign);
-			}
 
 			// printf("Read %llu frames => file position is now %llu\n", frames_read, wav.readCursorInPCMFrames);
 
@@ -70,12 +60,10 @@ struct WavFileStream {
 					printf("WavFileStream: buffer overflow\n");
 					break;
 				}
+				samples_written_to_prebuff++;
 			}
 
 			num_frames -= frames_read;
-
-			if (eof)
-				break;
 		}
 	}
 
@@ -87,26 +75,35 @@ struct WavFileStream {
 		return wav.channels > 1;
 	}
 
+	unsigned samples_available() {
+		return pre_buff.num_filled();
+	}
+
 	unsigned frames_available() {
-		auto samples_avail = pre_buff.num_filled();
-		return samples_avail / wav.channels;
+		return samples_available() / wav.channels;
 	}
 
 	bool is_eof() {
 		return eof;
 	}
 
-	void seek_pos(unsigned frame_num = 0) {
-		drwav_seek_to_pcm_frame(&wav, frame_num);
+	void seek_pos(int64_t frame_num = 0) {
 
-		// TODO: adjust read and write pos in pre_buff if frame_num is within pre_buff contents.
-		// i.e. no need to read data from disk that we already have in pre_buff.
-		// We would need to set the read pos to the place that contains frame_num,
-		// and set the write pos to the last data following this before the seam
-		//
-		// For now we will just clear any prebuffered content
-		pre_buff.reset();
-		eof = false;
+		// Optimization:
+		// if we request to seek to a frame that's already in the prebuffer,
+		// just jump the read head to there (no need to read from disk)
+		if (frame_num < samples_written_to_prebuff && frame_num > (samples_written_to_prebuff - MaxSamples)) {
+			pre_buff.set_read_pos(frame_num * wav.channels);
+		} else {
+			// Otherwise, we don't have the requested frame in our buffer so we need to read it
+			drwav_seek_to_pcm_frame(&wav, frame_num);
+
+			// Start pre-buffering all over again
+			pre_buff.reset();
+			samples_written_to_prebuff = 0;
+			// FIXME: samples_written_to_prebuff is not accurate if frame_num is not 0!
+			eof = false;
+		}
 	}
 
 private:
@@ -114,6 +111,7 @@ private:
 
 	bool eof = true;
 	bool loaded = false;
+	int64_t samples_written_to_prebuff = 0;
 
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
@@ -123,7 +121,6 @@ private:
 	// read_buff needs to be big enough to hold 4kB of any data converted to floats
 	// e.g. 4kB of 8-bit mono will convert to 4096 floats
 	std::array<float, ReadBlockBytes> read_buff;
-	std::array<uint32_t, 4> canary{0xAAAA5555, 0x12345678, 0xBADCAFE0, 0x600DCAFE};
 };
 
 } // namespace MetaModule
