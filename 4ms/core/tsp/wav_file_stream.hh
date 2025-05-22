@@ -22,8 +22,7 @@ struct WavFileStream {
 	}
 
 	void unload() {
-		pre_buff.reset();
-		samples_written_to_prebuff = 0;
+		reset_prebuff();
 
 		if (loaded) {
 			drwav_uninit(&wav);
@@ -95,15 +94,21 @@ struct WavFileStream {
 		if (frame_num < samples_written_to_prebuff && frame_num > (samples_written_to_prebuff - MaxSamples)) {
 			pre_buff.set_read_pos(frame_num * wav.channels);
 		} else {
-			// Otherwise, we don't have the requested frame in our buffer so we need to read it
+			// Otherwise, we don't have the requested frame in our buffer
+			// so we need to prepare to read from disk
 			drwav_seek_to_pcm_frame(&wav, frame_num);
 
-			// Start pre-buffering all over again
-			pre_buff.reset();
-			samples_written_to_prebuff = 0;
 			// FIXME: samples_written_to_prebuff is not accurate if frame_num is not 0!
+			reset_prebuff();
+
 			eof = false;
 		}
+	}
+
+	void reset_prebuff() {
+		pre_buff.set_write_pos(0);
+		pre_buff.set_read_pos(0);
+		samples_written_to_prebuff = 0;
 	}
 
 private:
