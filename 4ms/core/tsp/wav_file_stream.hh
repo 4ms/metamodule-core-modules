@@ -1,4 +1,5 @@
 #pragma once
+#include "../../medium/debug_raw.h"
 #include "tsp/dr_wav.h"
 #include "util/lockfree_fifo_spsc.hh"
 #include <cstdio>
@@ -7,7 +8,7 @@
 namespace MetaModule
 {
 
-template<int64_t MaxSamples = 1024 * 1024>
+template<uint64_t MaxSamples = 1024 * 1024>
 struct WavFileStream {
 
 	bool load(std::string_view sample_path) {
@@ -30,7 +31,7 @@ struct WavFileStream {
 		}
 	}
 
-	bool is_loaded() {
+	bool is_loaded() const {
 		return loaded;
 	}
 
@@ -44,61 +45,87 @@ struct WavFileStream {
 		if (!loaded || eof)
 			return;
 
-		while (!eof && num_frames > 0) {
-			// Don't try to read more than 4kB at a time
+		while (num_frames > 0) {
+			// Read blocks of maximum 4kB at a time
 			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, num_frames);
 
+			last_frame_written = wav.readCursorInPCMFrames;
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
-
-			// printf("Read %llu frames => file position is now %llu\n", frames_read, wav.readCursorInPCMFrames);
 
 			eof = (frames_read != frames_to_read);
 
-			for (auto sample : std::span<float>(read_buff.begin(), frames_read * wav.channels)) {
-				if (!pre_buff.put(sample)) {
-					printf("WavFileStream: buffer overflow\n");
-					break;
-				}
-				samples_written_to_prebuff++;
+			if (frames_read > num_frames) {
+				printf("WavFileStream: Internal error: drwav read more frames than requested\n");
+				frames_read = num_frames;
 			}
 
-			num_frames -= frames_read;
+			for (auto frame = 0u; frame < frames_read; frame++) {
+				auto num_free = pre_buff.num_free();
+				if (num_free >= wav.channels) {
+					for (auto sample = 0u; sample < wav.channels; sample++) {
+						pre_buff.put(read_buff[frame * wav.channels + sample]);
+					}
+				} else {
+					printf("WavFileStream: prebuffer overflow\n");
+					break;
+				}
+
+				num_frames--;
+				last_frame_written++;
+			}
+
+			if (eof)
+				break;
 		}
 	}
 
+	size_t num_free() {
+		return pre_buff.num_free();
+	}
+
 	float pop_sample() {
-		return pre_buff.get().value_or(0);
+		auto p = pre_buff.get().value_or(0);
+		return p;
 	}
 
 	bool is_stereo() const {
-		return wav.channels > 1;
+		return loaded ? wav.channels > 1 : false;
 	}
 
-	unsigned samples_available() {
+	unsigned samples_available() const {
 		return pre_buff.num_filled();
 	}
 
-	unsigned frames_available() {
+	unsigned frames_available() const {
 		return samples_available() / wav.channels;
 	}
 
-	bool is_eof() {
+	bool is_eof() const {
 		return eof;
 	}
 
-	void seek_pos(int64_t frame_num = 0) {
+	uint64_t current_playback_frame() const {
+		return last_frame_written > frames_available() ? last_frame_written - frames_available() : 0;
+	}
+
+	uint64_t total_frames() const {
+		return loaded ? wav.totalPCMFrameCount : 0;
+	}
+
+	void seek_pos(uint64_t frame_num = 0) {
+
+		const auto frames_in_prebuff = std::min(MaxSamples / wav.channels, last_frame_written);
 
 		// Optimization:
 		// if we request to seek to a frame that's already in the prebuffer,
 		// just jump the read head to there (no need to read from disk)
-		if (frame_num < samples_written_to_prebuff && frame_num > (samples_written_to_prebuff - MaxSamples)) {
+		if (frame_num < last_frame_written && frame_num >= (last_frame_written - frames_in_prebuff)) {
 			pre_buff.set_read_pos(frame_num * wav.channels);
 		} else {
 			// Otherwise, we don't have the requested frame in our buffer
 			// so we need to prepare to read from disk
 			drwav_seek_to_pcm_frame(&wav, frame_num);
 
-			// FIXME: samples_written_to_prebuff is not accurate if frame_num is not 0!
 			reset_prebuff();
 
 			eof = false;
@@ -108,7 +135,7 @@ struct WavFileStream {
 	void reset_prebuff() {
 		pre_buff.set_write_pos(0);
 		pre_buff.set_read_pos(0);
-		samples_written_to_prebuff = 0;
+		last_frame_written = 0;
 	}
 
 private:
@@ -116,10 +143,13 @@ private:
 
 	bool eof = true;
 	bool loaded = false;
-	int64_t samples_written_to_prebuff = 0;
 
+	uint64_t last_frame_written = 0;
+
+public:
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
+private:
 	// assume 4kB is an efficient size to read from an SD Card or USB Drive
 	static constexpr unsigned ReadBlockBytes = 4096;
 

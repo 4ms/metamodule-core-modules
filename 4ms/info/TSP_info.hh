@@ -1,5 +1,4 @@
 #pragma once
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
 #include "CoreModules/4ms/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
 #include <array>
@@ -15,61 +14,41 @@ struct TSPInfo : ModuleInfoBase {
 
 	using enum Coords;
 
-	static constexpr std::array<Element, 10> Elements{{
-		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(154.699), Center, "Play", ""}},
-		MomentaryRGB7mm{{to_mm<72>(62.339), to_mm<72>(154.65), Center, "Loop", ""}},
-		TSPDisplay{{to_mm<72>(10), to_mm<72>(34), TopLeft, "Screen", "", to_mm<72>(65), to_mm<72>(91)}},
-		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(203.65), Center, "Play Trig", ""}},
-		GateJackInput4ms{{to_mm<72>(61.274), to_mm<72>(203.65), Center, "Loop Gate", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(25.131), to_mm<72>(291.286), Center, "Left Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(291.569), Center, "Right Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(43.203), to_mm<72>(250.377), Center, "End Out", ""}},
-		RedLight{{to_mm<72>(43.203), to_mm<72>(140.68), Center, "Busy Light", ""}},
-		AltParamAction{to_mm<72>(42.136), to_mm<72>(356.476), Center, "Load Sample...", "Load Sample..."},
+	static constexpr std::array<Element, 14> Elements{{
+		OrangeButton{{to_mm<72>(61.467), to_mm<72>(161.096), Center, "Loop", ""}},
+		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(161.096), Center, "Play", ""}},
+		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(210.048), Center, "Play Trig", ""}},
+		GateJackInput4ms{{to_mm<72>(61.274), to_mm<72>(210.048), Center, "Loop Gate", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(25.131), to_mm<72>(258.885), Center, "Left Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(259.168), Center, "Right Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(295.886), Center, "Position", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(24.684), to_mm<72>(295.886), Center, "End Out", ""}},
+		DynamicGraphicDisplay{
+			{{{to_mm<72>(9.234), to_mm<72>(60.753), TopLeft, "Waveform", "", to_mm<72>(67.938), to_mm<72>(66.398)}}}},
+		TSPDisplay{{to_mm<72>(9.056), to_mm<72>(37.165), TopLeft, "Message", "", to_mm<72>(67.938), to_mm<72>(21.215)}},
+		RedLight{{to_mm<72>(26.196), to_mm<72>(140.68), Center, "Busy Light", ""}},
+		AltParamAction{{to_mm<72>(28.975), to_mm<72>(352.636), Center, "Load Sample...", ""}},
+		AltParamChoiceLabeled{{{to_mm<72>(74.72), to_mm<72>(352.629), Center, "Play Retrig Mode", ""}, 2, 0},
+							  {"Retrigger", "Stop"}},
+		AltParamChoiceLabeled{{{to_mm<72>(56.813), to_mm<72>(352.636), Center, "Prebuffer Amount", ""}, 5, 0},
+							  {"Very Low", "Low", "Medium", "High", "Very High"}},
 	}};
 
 	enum class Elem {
-		PlayButton,
 		LoopButton,
-		ScreenOut,
+		PlayButton,
 		PlayTrigIn,
 		LoopGateIn,
 		LeftOut,
 		RightOut,
+		PositionOut,
 		EndOut,
+		WaveformDisplay,
+		MessageDisplay,
 		BusyLight,
-		LoadsampleAltParam,
-	};
-
-	// Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
-
-	enum {
-		SwitchPlay,
-		SwitchLoop,
-		NumSwitches,
-	};
-
-	enum {
-		InputPlay_Trig,
-		InputLoop_Gate,
-		NumInJacks,
-	};
-
-	enum {
-		OutputScreen,
-		OutputLeft_Out,
-		OutputRight_Out,
-		OutputEnd_Out,
-		NumOutJacks,
-	};
-
-	enum {
-		LedBusy_Light,
-		NumDiscreteLeds,
-	};
-
-	enum {
-		AltParamLoadsample,
+		LoadSampleAltParam,
+		PlayRetrigModeAltParam,
+		PrebufferAmountAltParam,
 	};
 };
 } // namespace MetaModule
