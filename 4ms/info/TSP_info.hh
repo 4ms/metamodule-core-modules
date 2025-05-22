@@ -18,7 +18,7 @@ struct TSPInfo : ModuleInfoBase {
 	static constexpr std::array<Element, 10> Elements{{
 		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(154.699), Center, "Play", ""}},
 		MomentaryRGB7mm{{to_mm<72>(62.339), to_mm<72>(154.65), Center, "Loop", ""}},
-		TSPDisplay{{to_mm<72>(43.203), to_mm<72>(80.133), Center, "Screen", ""}},
+		TSPDisplay{{to_mm<72>(10), to_mm<72>(34), TopLeft, "Screen", "", to_mm<72>(65), to_mm<72>(91)}},
 		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(203.65), Center, "Play Trig", ""}},
 		GateJackInput4ms{{to_mm<72>(61.274), to_mm<72>(203.65), Center, "Loop Gate", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(25.131), to_mm<72>(291.286), Center, "Left Out", ""}},

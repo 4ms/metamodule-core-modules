@@ -71,7 +71,7 @@ public:
 						else
 							play_state = Stopped;
 					} else {
-						print_tsp("Buffer underflow module %u\n", (unsigned)id);
+						message.copy("Buffer underflow\n");
 					}
 				}
 				break;
@@ -105,7 +105,7 @@ public:
 
 			case LoadSampleInfo:
 				if (!stream.load(sample_filename)) {
-					print_tsp("Could not load sample\n");
+					message.copy("Error loading file\n");
 				}
 				play_state = Stopped;
 				break;
@@ -148,9 +148,7 @@ public:
 			std::string_view initial_dir = "";
 			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
-					sample_filename = path;
-					play_state = PlayState::LoadSampleInfo;
-					print_tsp("Selected file '%s' => LoadSampleInfo\n", path);
+					load_sample(path);
 					free(path);
 				}
 			});
@@ -176,10 +174,17 @@ public:
 
 	void load_state(std::string_view state) override {
 		if (state.length()) {
-			sample_filename.copy(state);
-			play_state = PlayState::LoadSampleInfo;
-			print_tsp("Loading file '%s' => LoadSampleInfo\n", sample_filename.c_str());
+			load_sample(state);
 		}
+	}
+
+	void load_sample(std::string_view filename) {
+		sample_filename.copy(filename);
+		play_state = PlayState::LoadSampleInfo;
+		if (auto pos = filename.find_last_of('/'); pos != filename.npos)
+			message.copy(filename.substr(pos + 1, filename.length() - pos - 5));
+		else
+			message.copy(filename.substr(0, filename.length() - 4));
 	}
 
 	std::string save_state() override {
