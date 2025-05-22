@@ -404,4 +404,14 @@ struct RedGreenBlueLight : RgbLight {
 	}
 };
 
+struct TSPDisplay : DynamicTextDisplay {
+	constexpr TSPDisplay(BaseElement b)
+		: DynamicTextDisplay{{{b}}} {
+		text = "Load a sample";
+		font = "Default_12";
+		color = Colors565::White;
+		wrap_mode = WrapMode::Scroll;
+	}
+};
+
 } // namespace MetaModule
