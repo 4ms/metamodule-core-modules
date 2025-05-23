@@ -1,6 +1,7 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
+#include "CoreModules/waveform_display.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "info/TSP_info.hh"
 #include "tsp/wav_file_stream.hh"
@@ -35,10 +36,10 @@ public:
 
 		switch (play_state) {
 			case Buffering:
-				setLED<PlayButton>(Yellow);
-				if (stream.is_eof() || stream.frames_available() >= PreBufferFramesThreshold) {
+				if (stream.is_eof() || stream.frames_available() >= prebuffer_threshold()) {
 					play_state = Playing;
 				}
+				setLED<PlayButton>(Yellow);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
 				break;
@@ -51,20 +52,22 @@ public:
 						setOutput<LeftOut>(stream.pop_sample() * 5.f);
 						setOutput<RightOut>(stream.pop_sample() * 5.f);
 					} else {
-						setOutput<LeftOut>(stream.pop_sample() * 5.f);
-						setOutput<RightOut>(0);
+						auto mono = stream.pop_sample() * 5.f;
+						setOutput<LeftOut>(mono);
+						setOutput<RightOut>(mono);
 					}
 
+					waveform.set_current_position((float)stream.current_playback_frame() / stream.total_frames());
 				} else {
 					// No frames avaiable.
 					// If we're also at the end of file, then stop.
 					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
 					if (stream.is_eof()) {
-						end_out.start(0.010); //10ms pulse
+						end_out.start(0.010);
 						play_state = loop_mode ? Reset : Stopped;
 					} else {
 						setLED<PlayButton>(Red);
-						message.copy("Buffer underflow\n");
+						message = "Buffer underflow";
 					}
 				}
 				break;
@@ -87,15 +90,6 @@ public:
 		setOutput<PositionOut>(8 * (float)stream.current_playback_frame() / (float)stream.total_frames());
 	}
 
-	void debug_state() {
-		// setOutput<PositionOut>(5.f * (float)stream.pre_buff.head() / stream.pre_buff.max_size());
-		// setOutput<PositionOut>((float)stream.frames_available() / (float)PreBufferSamples);
-
-		// setOutput<EndOut>((float)stream.frames_available() / (float)PreBufferThreshold);
-		// setOutput<EndOut>(8 * (float)stream.num_free() / (float)(PreBufferSamples));
-		// setOutput<EndOut>(5.f * (float)stream.pre_buff.tail() / stream.pre_buff.max_size());
-	}
-
 	// This runs in a low-priority background task:
 	void async_process_filesystem() {
 		using enum PlayState;
@@ -106,7 +100,7 @@ public:
 
 			case LoadSampleInfo:
 				if (!stream.load(sample_filename)) {
-					message.copy("Error loading file\n");
+					message = "Error loading file";
 				}
 				play_state = Stopped;
 				break;
@@ -118,7 +112,7 @@ public:
 
 			case Buffering:
 			case Playing:
-				if (stream.frames_available() < PreBufferFramesThreshold) {
+				if (stream.frames_available() < prebuffer_threshold()) {
 					if (!stream.is_eof()) {
 						stream.read_frames_from_file();
 					}
@@ -139,6 +133,7 @@ public:
 
 			else if (play_state == PlayState::Playing)
 			{
+				end_out.start(0.010);
 				play_state = getState<PlayRetrigModeAltParam>() ? PlayState::Stopped : PlayState::Reset;
 			}
 		}
@@ -154,29 +149,26 @@ public:
 				}
 			});
 		}
+	}
 
-		PreBufferFramesThreshold = std::max(getState<PrebufferAmountAltParam>() * 4096, 1024u);
+	unsigned prebuffer_threshold() {
+		return std::max(getState<PrebufferAmountAltParam>() * 4096, 1024u);
 	}
 
 	void handle_loop_toggle() {
-		auto loop_button = getState<LoopButton>() == LatchingButton::State_t::DOWN;
-		auto loop_jack = getInput<LoopGateIn>().value_or(0) > 0.5f;
+		if (loop_button.update(getState<LoopButton>() == LatchingButton::State_t::DOWN))
+			loop_mode = !loop_mode;
 
-		// Both the button and the jack toggle loop mode ===> Button XOR Jack
-		loop_mode = loop_button ^ loop_jack;
+		loop_jack.process(getInput<LoopGateIn>().value_or(0));
+		if (loop_jack.just_went_high())
+			loop_mode = !loop_mode;
 
-		setLED<LoopButton>(loop_mode ? 0.5f : 0.f);
+		setLED<LoopButton>(loop_mode ? 1.f : 0.f);
 	}
 
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
 		end_out.set_update_rate_hz(sr);
-	}
-
-	void load_state(std::string_view state) override {
-		if (state.length()) {
-			load_sample(state);
-		}
 	}
 
 	void load_sample(std::string_view filename) {
@@ -186,6 +178,12 @@ public:
 			message.copy(filename.substr(pos + 1, filename.length() - pos - 5));
 		else
 			message.copy(filename.substr(0, filename.length() - 4));
+	}
+
+	void load_state(std::string_view state) override {
+		if (state.length()) {
+			load_sample(state);
+		}
 	}
 
 	std::string save_state() override {
@@ -199,12 +197,26 @@ public:
 			return 0;
 	}
 
+	void show_graphic_display(int display_id, std::span<uint32_t> buf, unsigned width, lv_obj_t *lvgl_canvas) override {
+		if (display_id == display_idx<WaveformDisplay>)
+			waveform.show_graphic_display(buf, width, lvgl_canvas);
+	}
+
+	bool draw_graphic_display(int display_id) override {
+		if (display_id == display_idx<WaveformDisplay>)
+			return waveform.draw_graphic_display();
+		return false;
+	}
+
+	void hide_graphic_display(int display_id) override {
+		if (display_id == display_idx<WaveformDisplay>)
+			waveform.hide_graphic_display();
+	}
+
 private:
-	// File:
 	AsyncThread fs_thread{this};
 	StaticString<255> sample_filename = "";
 
-	// Playing:
 	enum class PlayState {
 		Stopped,
 		LoadSampleInfo,
@@ -214,10 +226,11 @@ private:
 	};
 	std::atomic<PlayState> play_state{PlayState::Stopped};
 
-	// Controls/UI:
 	Toggler play_button;
 	cpputil::SchmittTrigger play_jack{0.2f, 0.5f};
 
+	RisingEdgeDetector loop_button;
+	cpputil::SchmittTrigger loop_jack{0.2f, 0.5f};
 	bool loop_mode = false;
 
 	OneShot end_out{48000};
@@ -231,12 +244,14 @@ private:
 
 	StaticString<255> message = "Load a Sample";
 
-	// Wav Stream:
+	StreamingWaveformDisplay waveform{
+		base_element(WaveformDisplay).width_mm,
+	};
+
 	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024; //~11sec stereo, 22sec mono
-	size_t PreBufferFramesThreshold = 4096;						//4096 is about ~40ms latency with a fast card
 	WavFileStream<PreBufferSamples> stream;
 
-	// Resampler:
+	//TODO: Resampler
 	float sample_rate = 48000.f;
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
