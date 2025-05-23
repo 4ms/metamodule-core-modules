@@ -14,7 +14,7 @@ struct TSPInfo : ModuleInfoBase {
 
     using enum Coords;
 
-    static constexpr std::array<Element, 14> Elements{{
+    static constexpr std::array<Element, 15> Elements{{
 		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(161.096), Center, "Play", ""}},
 		OrangeButton{{to_mm<72>(61.467), to_mm<72>(161.096), Center, "Loop", ""}},
 		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(210.048), Center, "Play Trig", ""}},
@@ -28,7 +28,8 @@ struct TSPInfo : ModuleInfoBase {
 		RedLight{{to_mm<72>(26.196), to_mm<72>(140.68), Center, "Busy Light", ""}},
 		AltParamAction{{to_mm<72>(28.975), to_mm<72>(352.636), Center, "Load Sample...", ""}},
 		AltParamChoiceLabeled{{{to_mm<72>(74.72), to_mm<72>(352.629), Center, "Play Retrig Mode", ""}, 2, 0}, {"Retrigger", "Stop"}},
-		AltParamChoiceLabeled{{{to_mm<72>(56.813), to_mm<72>(352.636), Center, "Prebuffer Amount", ""}, 5, 0}, {"Very Low", "Low", "Medium", "High", "Very High"}},
+		AltParamContinuous{{to_mm<72>(63.524), to_mm<72>(352.716), Center, "WaveformZoom", ""}, 0.5f},
+		AltParamChoiceLabeled{{{to_mm<72>(51.985), to_mm<72>(352.92), Center, "Prebuffer Amount", ""}, 5, 0}, {"Very Low", "Low", "Medium", "High", "Very High"}},
 }};
 
     enum class Elem {
@@ -45,6 +46,7 @@ struct TSPInfo : ModuleInfoBase {
         BusyLight,
         LoadSampleAltParam,
         PlayRetrigModeAltParam,
+        WaveformzoomAltParam,
         PrebufferAmountAltParam,
     };
 
