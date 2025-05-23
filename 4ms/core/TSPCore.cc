@@ -20,6 +20,7 @@ class TSPCore : public SmartCoreProcessor<TSPInfo> {
 public:
 	TSPCore() {
 		fs_thread.start([this]() { async_process_filesystem(); });
+		waveform.set_x_zoom(120);
 	}
 
 	~TSPCore() {
@@ -48,16 +49,13 @@ public:
 				setLED<PlayButton>(Green);
 
 				if (stream.frames_available()) {
-					if (stream.is_stereo()) {
-						setOutput<LeftOut>(stream.pop_sample() * 5.f);
-						setOutput<RightOut>(stream.pop_sample() * 5.f);
-					} else {
-						auto mono = stream.pop_sample() * 5.f;
-						setOutput<LeftOut>(mono);
-						setOutput<RightOut>(mono);
-					}
+					auto left = stream.pop_sample();
+					auto right = stream.is_stereo() ? left : stream.pop_sample();
+					setOutput<LeftOut>(left * 5.f);
+					setOutput<RightOut>(right * 5.f);
 
-					waveform.set_current_position((float)stream.current_playback_frame() / stream.total_frames());
+					waveform.draw_sample(left);
+					waveform.set_cursor_position((float)stream.current_playback_frame() / stream.total_frames());
 				} else {
 					// No frames avaiable.
 					// If we're also at the end of file, then stop.
@@ -149,6 +147,8 @@ public:
 				}
 			});
 		}
+
+		waveform.set_x_zoom(getState<WaveformzoomAltParam>() * 4800);
 	}
 
 	unsigned prebuffer_threshold() {
@@ -197,15 +197,16 @@ public:
 			return 0;
 	}
 
-	void show_graphic_display(int display_id, std::span<uint32_t> buf, unsigned width, lv_obj_t *lvgl_canvas) override {
+	void show_graphic_display(int display_id, std::span<uint32_t> buf, unsigned width, lv_obj_t *canvas) override {
 		if (display_id == display_idx<WaveformDisplay>)
-			waveform.show_graphic_display(buf, width, lvgl_canvas);
+			waveform.show_graphic_display(buf, width, canvas);
 	}
 
 	bool draw_graphic_display(int display_id) override {
 		if (display_id == display_idx<WaveformDisplay>)
 			return waveform.draw_graphic_display();
-		return false;
+		else
+			return false;
 	}
 
 	void hide_graphic_display(int display_id) override {
@@ -246,6 +247,7 @@ private:
 
 	StreamingWaveformDisplay waveform{
 		base_element(WaveformDisplay).width_mm,
+		base_element(WaveformDisplay).height_mm,
 	};
 
 	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024; //~11sec stereo, 22sec mono
