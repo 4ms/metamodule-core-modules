@@ -2,6 +2,7 @@
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
 #include "CoreModules/waveform_display.hh"
+#include "dsp/resampler.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "info/TSP_info.hh"
 #include "tsp/wav_file_stream.hh"
@@ -257,8 +258,8 @@ private:
 	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024; //~11sec stereo, 22sec mono
 	WavFileStream<PreBufferSamples> stream;
 
-	//TODO: Resampler
 	float sample_rate = 48000.f;
+	AudioResampler resampler{2};
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
