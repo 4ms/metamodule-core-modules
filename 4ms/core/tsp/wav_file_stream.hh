@@ -1,5 +1,6 @@
 #pragma once
-#include "../../medium/debug_raw.h"
+// #include "../../medium/debug_raw.h"
+#include "dsp/resampler.hh"
 #include "tsp/dr_wav.h"
 #include "util/lockfree_fifo_spsc.hh"
 #include <cstdio>
@@ -59,15 +60,30 @@ struct WavFileStream {
 				frames_read = num_frames;
 			}
 
-			for (auto frame = 0u; frame < frames_read; frame++) {
-				auto num_free = pre_buff.num_free();
-				if (num_free >= wav.channels) {
-					for (auto sample = 0u; sample < wav.channels; sample++) {
-						pre_buff.put(read_buff[frame * wav.channels + sample]);
+			// Push samples into resampler
+			resampler.set_input_stride(wav.channels);
+			resampler.set_output_stride(wav.channels);
+			resampler.set_sample_rate_in_out(wav.sampleRate, out_sr);
+
+			const size_t in_samples = frames_read * wav.channels;
+			const size_t out_samples = in_samples / (wav.sampleRate / out_sr);
+			for (auto chan = 0u; chan < wav.channels; chan++) {
+				auto inp = std::span<const float>{&read_buff[chan], in_samples};
+				auto outp = std::span<float>{&resamp_buff[chan], out_samples};
+
+				resampler.process(chan, inp, outp);
+				// resampler.push(chan, std::span(&read_buff[chan], frames_read));
+			}
+
+			// Pop samples out of resampler, storing in pre_buff
+			for (auto frame = 0u; frame < out_samples / wav.channels; frame++) {
+				if (pre_buff.num_free() >= wav.channels) {
+					for (auto chan = 0u; chan < wav.channels; chan++) {
+						pre_buff.put(resamp_buff[frame * wav.channels + chan]);
+						// pre_buff.put(resampler.pop());
 					}
 				} else {
 					printf("WavFileStream: prebuffer overflow\n");
-					break;
 				}
 
 				num_frames--;
@@ -82,6 +98,13 @@ struct WavFileStream {
 	float pop_sample() {
 		auto p = pre_buff.get().value_or(0);
 		return p;
+	}
+
+	void set_samplerate(float samplerate) {
+		out_sr = samplerate;
+		if (loaded) {
+			resampler.set_sample_rate_in_out(wav.sampleRate, samplerate);
+		}
 	}
 
 	bool is_stereo() const {
@@ -149,16 +172,19 @@ private:
 
 	uint64_t last_frame_written = 0;
 
-public:
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
-private:
 	// assume 4kB is an efficient size to read from an SD Card or USB Drive
 	static constexpr unsigned ReadBlockBytes = 4096;
 
 	// read_buff needs to be big enough to hold 4kB of any data converted to floats
 	// e.g. 4kB of 8-bit mono will convert to 4096 floats
 	std::array<float, ReadBlockBytes> read_buff;
+
+	// ResamplingRingBuffer<2, 4096> resampler;
+	AudioResampler resampler{2};
+	std::array<float, ReadBlockBytes * 2> resamp_buff;
+	float out_sr = 48000.f;
 };
 
 } // namespace MetaModule
