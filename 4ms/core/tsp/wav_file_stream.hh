@@ -79,10 +79,6 @@ struct WavFileStream {
 		}
 	}
 
-	size_t num_free() {
-		return pre_buff.num_free();
-	}
-
 	float pop_sample() {
 		auto p = pre_buff.get().value_or(0);
 		return p;
@@ -112,7 +108,7 @@ struct WavFileStream {
 		return loaded ? wav.totalPCMFrameCount : 0;
 	}
 
-	void seek_pos(uint64_t frame_num = 0) {
+	void seek_frame_in_file(uint64_t frame_num = 0) {
 
 		const auto frames_in_prebuff = std::min(MaxSamples / wav.channels, last_frame_written);
 
@@ -132,13 +128,20 @@ struct WavFileStream {
 		}
 	}
 
+	std::optional<uint32_t> wav_sample_rate() const {
+		if (loaded)
+			return wav.sampleRate;
+		else
+			return {};
+	}
+
+private:
 	void reset_prebuff() {
 		pre_buff.set_write_pos(0);
 		pre_buff.set_read_pos(0);
 		last_frame_written = 0;
 	}
 
-private:
 	drwav wav;
 
 	bool eof = true;
