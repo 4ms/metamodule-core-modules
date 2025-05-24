@@ -52,6 +52,14 @@ public:
 				setLED<PlayButton>(Green);
 
 				if (stream.frames_available()) {
+					// if (resampler.needs_input()) {
+					// 	   left = resampler.process(0, stream.pop_sample());
+					// 	   right = stream.is_stereo() ? resampler.process(1, stream.pop_sample()) : left;
+					// } else {
+					//     left = resampler.get_next(0);
+					//     right = stream.is_stere() ? resampler.get_next(1) : left;
+					// }
+
 					auto left = stream.pop_sample();
 					auto right = stream.is_stereo() ? stream.pop_sample() : left;
 					setOutput<LeftOut>(left * 5.f);
@@ -108,7 +116,7 @@ public:
 				break;
 
 			case Reset:
-				stream.seek_pos(0);
+				stream.seek_frame_in_file(0);
 				play_state = Buffering;
 				break;
 
@@ -174,6 +182,7 @@ public:
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
 		end_out.set_update_rate_hz(sr);
+		resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sr), sr);
 	}
 
 	void load_sample(std::string_view filename) {
@@ -199,7 +208,7 @@ public:
 		if (display_id == display_idx<MessageDisplay>)
 			return copy_text(message, text);
 		else
-				return 0;
+			return 0;
 	}
 
 	void show_graphic_display(int display_id, std::span<uint32_t> buf, unsigned width, lv_obj_t *canvas) override {
