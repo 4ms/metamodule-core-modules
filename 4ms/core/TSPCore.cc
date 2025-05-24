@@ -21,6 +21,8 @@ public:
 	TSPCore() {
 		fs_thread.start([this]() { async_process_filesystem(); });
 		waveform.set_x_zoom(120);
+		waveform.set_wave_color(0x33, 0xFF, 0xBB); //teal
+		waveform.set_bar_color(0x33, 0x33, 0x33);  //dark grey
 	}
 
 	~TSPCore() {
@@ -50,7 +52,7 @@ public:
 
 				if (stream.frames_available()) {
 					auto left = stream.pop_sample();
-					auto right = stream.is_stereo() ? left : stream.pop_sample();
+					auto right = stream.is_stereo() ? stream.pop_sample() : left;
 					setOutput<LeftOut>(left * 5.f);
 					setOutput<RightOut>(right * 5.f);
 
@@ -75,6 +77,7 @@ public:
 				setLED<PlayButton>(Off);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
+				waveform.draw_sample(0);
 				break;
 
 			case LoadSampleInfo:
@@ -124,6 +127,7 @@ public:
 		play_jack.process(getInput<PlayTrigIn>().value_or(0));
 
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
+			waveform.sync();
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
 				play_state = PlayState::Reset;
@@ -148,7 +152,7 @@ public:
 			});
 		}
 
-		waveform.set_x_zoom(getState<WaveformzoomAltParam>() * 4800);
+		waveform.set_x_zoom(getState<WaveformZoomAltParam>() * 2000);
 	}
 
 	unsigned prebuffer_threshold() {
@@ -194,7 +198,7 @@ public:
 		if (display_id == display_idx<MessageDisplay>)
 			return copy_text(message, text);
 		else
-			return 0;
+				return 0;
 	}
 
 	void show_graphic_display(int display_id, std::span<uint32_t> buf, unsigned width, lv_obj_t *canvas) override {

@@ -28,7 +28,7 @@ struct TSPInfo : ModuleInfoBase {
 		RedLight{{to_mm<72>(26.196), to_mm<72>(140.68), Center, "Busy Light", ""}},
 		AltParamAction{{to_mm<72>(28.975), to_mm<72>(352.636), Center, "Load Sample...", ""}},
 		AltParamChoiceLabeled{{{to_mm<72>(74.72), to_mm<72>(352.629), Center, "Play Retrig Mode", ""}, 2, 0}, {"Retrigger", "Stop"}},
-		AltParamContinuous{{to_mm<72>(63.524), to_mm<72>(352.716), Center, "WaveformZoom", ""}, 0.5f},
+		AltParamContinuous{{to_mm<72>(63.524), to_mm<72>(352.716), Center, "Waveform Zoom", ""}, 0.1015625f},
 		AltParamChoiceLabeled{{{to_mm<72>(51.985), to_mm<72>(352.92), Center, "Prebuffer Amount", ""}, 5, 0}, {"Very Low", "Low", "Medium", "High", "Very High"}},
 }};
 
@@ -46,7 +46,7 @@ struct TSPInfo : ModuleInfoBase {
         BusyLight,
         LoadSampleAltParam,
         PlayRetrigModeAltParam,
-        WaveformzoomAltParam,
+        WaveformZoomAltParam,
         PrebufferAmountAltParam,
     };
 
