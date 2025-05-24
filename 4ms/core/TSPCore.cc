@@ -52,13 +52,6 @@ public:
 				setLED<PlayButton>(Green);
 
 				if (stream.frames_available()) {
-					// if (resampler.needs_input()) {
-					// 	   left = resampler.process(0, stream.pop_sample());
-					// 	   right = stream.is_stereo() ? resampler.process(1, stream.pop_sample()) : left;
-					// } else {
-					//     left = resampler.get_next(0);
-					//     right = stream.is_stere() ? resampler.get_next(1) : left;
-					// }
 
 					auto left = stream.pop_sample();
 					auto right = stream.is_stereo() ? stream.pop_sample() : left;
@@ -86,7 +79,7 @@ public:
 				setLED<PlayButton>(Off);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
-				waveform.draw_sample(0);
+				// waveform.draw_sample(0);
 				break;
 
 			case LoadSampleInfo:
