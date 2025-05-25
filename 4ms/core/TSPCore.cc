@@ -2,7 +2,6 @@
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
 #include "CoreModules/waveform_display.hh"
-#include "dsp/resampler.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "info/TSP_info.hh"
 #include "tsp/wav_file_stream.hh"
@@ -175,7 +174,7 @@ public:
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
 		end_out.set_update_rate_hz(sr);
-		resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sr), sr);
+		stream.set_samplerate(sr);
 	}
 
 	void load_sample(std::string_view filename) {
@@ -261,7 +260,6 @@ private:
 	WavFileStream<PreBufferSamples> stream;
 
 	float sample_rate = 48000.f;
-	AudioResampler resampler{2};
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
