@@ -24,6 +24,8 @@ struct WavFileStream {
 	void unload() {
 		reset_prebuff();
 
+		resampler.flush();
+
 		if (loaded) {
 			drwav_uninit(&wav);
 			loaded = false;
@@ -58,7 +60,7 @@ struct WavFileStream {
 			}
 
 			// Push samples into resampler
-			resampler.set_sample_rate_in_out(wav.sampleRate, out_sr);
+			resampler.set_samplerate_in_out(wav.sampleRate, out_sr);
 
 			auto input = std::span<const float>(read_buff.data(), frames_read * wav.channels);
 			auto output = resampler.process_block(wav.channels, input);
@@ -87,7 +89,7 @@ struct WavFileStream {
 	void set_samplerate(float samplerate) {
 		out_sr = samplerate;
 		if (loaded) {
-			resampler.set_sample_rate_in_out(wav.sampleRate, out_sr);
+			resampler.set_samplerate_in_out(wav.sampleRate, out_sr);
 		}
 	}
 
