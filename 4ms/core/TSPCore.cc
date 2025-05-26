@@ -20,9 +20,9 @@ class TSPCore : public SmartCoreProcessor<TSPInfo> {
 public:
 	TSPCore() {
 		fs_thread.start([this]() { async_process_filesystem(); });
-		waveform.set_x_zoom(120);
+
 		waveform.set_wave_color(0x33, 0xFF, 0xBB); //teal
-		waveform.set_bar_color(0x33, 0x33, 0x33);  //dark grey
+		waveform.set_bar_color(0x55, 0x55, 0x55);  //dark grey
 	}
 
 	~TSPCore() {
@@ -157,6 +157,7 @@ public:
 	}
 
 	unsigned prebuffer_threshold() {
+		// Convert 0-4 to 1024-16384
 		return std::max(getState<PrebufferAmountAltParam>() * 4096, 1024u);
 	}
 
@@ -256,10 +257,19 @@ private:
 		base_element(WaveformDisplay).height_mm,
 	};
 
-	static constexpr size_t PreBufferSamples = 1 * 1024 * 1024; //~11sec stereo, 22sec mono
-	WavFileStream<PreBufferSamples> stream;
-
 	float sample_rate = 48000.f;
+
+	// Size of pre-buffer. This determines how much sample data we store in RAM
+	// The larger this is, the longer the sample we can load and re-trigger without
+	// needing to read from disk again.
+	// 512kB is about 5.5sec of stereo or 11sec of mono
+	static constexpr size_t PreBufferSamples = 512 * 1024;
+
+	// Maximum resampling ratio we support. Worse case is reading a 22k file and
+	// playing back at 96kHz
+	static constexpr unsigned MaxResampleRatio = (96000.f / 22050.f) + 1; // +1 to round up
+
+	WavFileStream<PreBufferSamples, MaxResampleRatio> stream;
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
