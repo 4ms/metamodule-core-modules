@@ -41,13 +41,13 @@ struct WavFileStream {
 		read_frames_from_file(frames_to_read);
 	}
 
-	void read_frames_from_file(unsigned num_frames) {
+	void read_frames_from_file(int num_frames) {
 		if (!loaded || eof)
 			return;
 
 		while (num_frames > 0) {
 			// Read blocks of maximum 4kB at a time
-			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, num_frames);
+			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, (unsigned)num_frames);
 
 			next_frame_to_write = wav.readCursorInPCMFrames;
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
@@ -60,15 +60,17 @@ struct WavFileStream {
 			}
 
 			// Push samples into resampler
-			resampler.set_samplerate_in_out(wav.sampleRate, out_sr);
+			resampler.set_samplerate_in_out(wav.sampleRate, out_samplerate);
 
 			auto input = std::span<const float>(read_buff.data(), frames_read * wav.channels);
 			auto output = resampler.process_block(wav.channels, input);
 
+			// Copy resampled frames to pre-buffer, one at a time
 			for (auto out : output) {
 				if (!pre_buff.put(out)) {
 					printf("WavFileStream: Buffer overflow\n");
-					// TODO: Handle buffer overflow.
+					// TODO: Handle buffer overflow: we read too much from disk and the audio thread
+					// is not consuming the samples fast enough to make room.
 					// Set drwav read cursor back to this position, pop back if we're not a frame boundary,
 					// set next_frame_to_write, and abort
 				}
@@ -87,9 +89,9 @@ struct WavFileStream {
 	}
 
 	void set_samplerate(float samplerate) {
-		out_sr = samplerate;
+		out_samplerate = samplerate;
 		if (loaded) {
-			resampler.set_samplerate_in_out(wav.sampleRate, out_sr);
+			resampler.set_samplerate_in_out(wav.sampleRate, out_samplerate);
 		}
 	}
 
@@ -169,9 +171,8 @@ private:
 
 	static constexpr auto MaxChannels = 2; //Stereo or Mono files only
 	ResamplingInterleavedBuffer<MaxChannels, ReadBlockBytes, MaxResamplingRatio> resampler;
-	// AudioResampler resampler{2};
-	// std::array<float, ReadBlockBytes * 2> resamp_buff;
-	float out_sr = 48000.f;
+
+	float out_samplerate = 48000.f;
 };
 
 } // namespace MetaModule
