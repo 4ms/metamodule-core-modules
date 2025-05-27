@@ -68,7 +68,7 @@ public:
 						play_state = loop_mode ? Reset : Stopped;
 					} else {
 						setLED<PlayButton>(Red);
-						message = "Buffer underflow";
+						// message = "Buffer underflow";
 					}
 				}
 				break;
@@ -162,12 +162,12 @@ public:
 	}
 
 	void handle_loop_toggle() {
-		if (loop_button.update(getState<LoopButton>() == LatchingButton::State_t::DOWN))
-			loop_mode = !loop_mode;
+		loop_mode = getState<LoopButton>() == LatchingButton::State_t::DOWN;
 
 		loop_jack.process(getInput<LoopGateIn>().value_or(0));
-		if (loop_jack.just_went_high())
+		if (loop_jack.is_high()) {
 			loop_mode = !loop_mode;
+		}
 
 		setLED<LoopButton>(loop_mode ? 1.f : 0.f);
 	}
