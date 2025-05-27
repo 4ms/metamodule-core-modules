@@ -75,6 +75,14 @@ struct WavFileStream {
 					// set next_frame_to_write, and abort
 				}
 			}
+
+			// printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. Resmp to %zu frames. eof=%d\n",
+			// 		num_frames,
+			// 		frames_to_read,
+			// 		frames_read,
+			// 		output.size() / wav.channels,
+			// 		eof);
+
 			num_frames -= output.size() / wav.channels;
 			next_frame_to_write += output.size() / wav.channels;
 
