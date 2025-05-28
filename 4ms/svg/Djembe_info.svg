@@ -84,7 +84,7 @@
     <circle id="Pitch_CV" data-name="Pitch CV" cx="32" cy="214.53" r="11.34" style="fill: lime; stroke-width: 0px;"/>
     <circle id="Strike_Amt" data-name="Strike Amt" cx="83.37" cy="119.09" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
     <circle id="Hit" cx="31.83" cy="119.09" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
-    <circle id="Sharpness" cx="83.37" cy="57.85" r="17.01" style="fill: red; stroke-width: 0px;"/>
+    <circle id="Sharpness" cx="83.37" cy="57.85" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
     <circle id="Pitch" cx="31.83" cy="57.85" r="17.01" style="fill: #ff0020; stroke-width: 0px;"/>
     <text id="slug" transform="translate(70.11 369.32)" style="fill: #000; font-family: MyriadPro-Regular, &apos;Myriad Pro&apos;; font-size: 3px;"><tspan x="0" y="0" style="letter-spacing: 0em;">D</tspan><tspan x="2.01" y="0" style="letter-spacing: 0em;">jembe</tspan></text>
     <text id="modulename" transform="translate(83.43 369.32)" style="fill: #000; font-family: MyriadPro-Regular, &apos;Myriad Pro&apos;; font-size: 3px;"><tspan x="0" y="0" style="letter-spacing: 0em;">D</tspan><tspan x="2.01" y="0" style="letter-spacing: 0em;">jembe Drum</tspan><tspan x="17.73" y="0" style="letter-spacing: -.04em;"> </tspan><tspan x="18.25" y="0" style="letter-spacing: -.03em;">V</tspan><tspan x="19.83" y="0" style="letter-spacing: 0em;">oi</tspan><tspan x="22.18" y="0" style="letter-spacing: 0em;">c</tspan><tspan x="23.5" y="0">e</tspan></text>

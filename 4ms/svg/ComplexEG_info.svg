@@ -174,16 +174,16 @@
     <circle id="Release_CV" data-name="Release CV" cx="179.96" cy="214.13" r="11.34" style="fill: lime; stroke-width: 0px;"/>
     <circle id="Decay_CV" data-name="Decay CV" cx="131.96" cy="214.13" r="11.34" style="fill: lime; stroke-width: 0px;"/>
     <circle id="Attack_CV" data-name="Attack CV" cx="83.96" cy="214.13" r="11.34" style="fill: lime; stroke-width: 0px;"/>
-    <circle id="Input" cx="36.45" cy="214.13" r="11.34" style="fill: lime; stroke-width: 0px;"/>
+    <circle id="GateIn" data-name="Gate In" cx="36.45" cy="214.13" r="11.34" style="fill: lime; stroke-width: 0px;"/>
     <circle id="Hold" cx="172.52" cy="163.23" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
     <circle id="Loop" cx="108.12" cy="159.77" r="10.63" style="fill: #ff8000; stroke-width: 0px;"/>
     <circle id="Sustain" cx="43.62" cy="163.28" r="17.01" style="fill: #ff0060; stroke-width: 0px;"/>
     <circle id="R_Curve" data-name="R Curve" cx="172.62" cy="104.51" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
     <circle id="D_Curve" data-name="D Curve" cx="108.12" cy="104.51" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
     <circle id="A_Curve" data-name="A Curve" cx="43.62" cy="104.51" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
-    <circle id="Release" cx="172.62" cy="45.53" r="17.01" style="fill: #ff0030; stroke-width: 0px;"/>
-    <circle id="Decay" cx="108.12" cy="45.53" r="17.01" style="fill: #ff0020; stroke-width: 0px;"/>
-    <circle id="Attack" cx="43.62" cy="46.2" r="17.01" style="fill: #ff0020; stroke-width: 0px;"/>
+    <circle id="Release" cx="172.62" cy="45.53" r="17.01" style="fill: #ff0020; stroke-width: 0px;"/>
+    <circle id="Decay" cx="108.12" cy="45.53" r="17.01" style="fill: #ff0010; stroke-width: 0px;"/>
+    <circle id="Attack" cx="43.62" cy="46.2" r="17.01" style="fill: #ff0010; stroke-width: 0px;"/>
     <text id="slug" transform="translate(154.76 359.59)" style="fill: #000; font-family: MyriadPro-Regular, &apos;Myriad Pro&apos;; font-size: 3px;"><tspan x="0" y="0" style="letter-spacing: -.01em;">C</tspan><tspan x="1.71" y="0" style="letter-spacing: 0em;">ompl</tspan><tspan x="8.27" y="0" style="letter-spacing: 0em;">e</tspan><tspan x="9.76" y="0" style="letter-spacing: 0em;">xEG</tspan></text>
     <text id="modulename" transform="translate(175.92 359.59)" style="fill: #000; font-family: MyriadPro-Regular, &apos;Myriad Pro&apos;; font-size: 3px;"><tspan x="0" y="0" style="letter-spacing: -.01em;">C</tspan><tspan x="1.71" y="0" style="letter-spacing: 0em;">ompl</tspan><tspan x="8.27" y="0" style="letter-spacing: 0em;">e</tspan><tspan x="9.76" y="0" style="letter-spacing: 0em;">x E</tspan><tspan x="13.27" y="0" style="letter-spacing: -.01em;">n</tspan><tspan x="14.89" y="0" style="letter-spacing: -.01em;">v</tspan><tspan x="16.3" y="0">elope </tspan><tspan x="24.01" y="0" style="letter-spacing: 0em;">G</tspan><tspan x="25.96" y="0">ene</tspan><tspan x="30.63" y="0" style="letter-spacing: 0em;">rat</tspan><tspan x="34.01" y="0" style="letter-spacing: 0em;">or</tspan></text>
   </g>
