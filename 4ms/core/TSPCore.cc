@@ -157,8 +157,8 @@ public:
 	}
 
 	unsigned prebuffer_threshold() {
-		// Convert 0-4 to 1024-16384
-		return std::max(getState<PrebufferAmountAltParam>() * 4096, 1024u);
+		// Convert 0-4 to 1k-64k samples
+		return std::max(getState<PrebufferAmountAltParam>() * 16384, 1024u);
 	}
 
 	void handle_loop_toggle() {
