@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -107,10 +107,10 @@ struct PEGInfo : ModuleInfoBase {
         CurveBlueJackIn,
         SkewBlueJackIn,
         DivBlueJackIn,
-        EnvredlightLight,
-        EnvbluelightLight,
-        EorredlightLight,
-        EofredlightLight,
+        EnvredLight,
+        EnvblueLight,
+        EorredLight,
+        EofredLight,
         EofblueLight,
         HalfriseblueLight,
         AsyncRedModeAltParam,
@@ -125,7 +125,7 @@ struct PEGInfo : ModuleInfoBase {
         HalfNRBlueModeAltParam,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobPing_Div_Mult_Red, 
@@ -201,5 +201,6 @@ struct PEGInfo : ModuleInfoBase {
         AltParamEor_Red_Mode, 
         AltParamHalfNR_Blue_Mode, 
     };
+
 };
 } // namespace MetaModule

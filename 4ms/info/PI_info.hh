@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,11 +16,11 @@ struct PIInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 18> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(30.9), to_mm<72>(54.04), Center, "Sensitivity", ""}},
-		Knob9mm{{to_mm<72>(86.53), to_mm<72>(46.58), Center, "Env. Level", ""}},
-		Knob9mm{{to_mm<72>(30.8), to_mm<72>(109.3), Center, "Sustain", ""}},
-		Knob9mm{{to_mm<72>(86.53), to_mm<72>(97.941), Center, "Inv. Level", ""}},
-		Knob9mm{{to_mm<72>(30.8), to_mm<72>(153.17), Center, "Env. Decay", ""}},
+		Davies1900hBlackKnob{{to_mm<72>(30.9), to_mm<72>(54.04), Center, "Sensitivity", ""}, 0.875f},
+		Knob9mm{{to_mm<72>(86.53), to_mm<72>(46.58), Center, "Env. Level", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(30.8), to_mm<72>(109.3), Center, "Sustain", ""}, 0.5f},
+		Knob9mm{{to_mm<72>(86.53), to_mm<72>(97.941), Center, "Inv. Level", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(30.8), to_mm<72>(153.17), Center, "Env. Decay", ""}, 0.5f},
 		Toggle3posHoriz{{to_mm<72>(86.53), to_mm<72>(145.308), Center, "Gain", ""}, {"Low", "Med", "High"}},
 		Toggle2posHoriz{{to_mm<72>(30.8), to_mm<72>(195.475), Center, "Env Mode", ""}, {"Follow", "Gen"}},
 		AnalogJackOutput4ms{{to_mm<72>(86.52), to_mm<72>(196.113), Center, "Env. Out", ""}},
@@ -57,7 +57,7 @@ struct PIInfo : ModuleInfoBase {
         EnvNLight,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobSensitivity, 
@@ -97,5 +97,6 @@ struct PIInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+
 };
 } // namespace MetaModule

@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -59,7 +59,7 @@ struct DLDInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(229.0), to_mm<72>(13.0), Center, "Soft Clip B", ""}, 2, 0}, {"On", "Off"}},
 		AltParamChoiceLabeled{{{to_mm<72>(12.0), to_mm<72>(13.0), Center, "AutoMute A", ""}, 2, 0}, {"On", "Off"}},
 		AltParamChoiceLabeled{{{to_mm<72>(212.0), to_mm<72>(13.0), Center, "AutoMute B", ""}, 2, 0}, {"On", "Off"}},
-		AltParamChoiceLabeled{{{to_mm<72>(167.59), to_mm<72>(42.51), Center, "Ping Method", ""}, 5, 0}, {"Avg 4", "Avg 2", "1:1", "Ignore Jitter", "Ignore % Change"}},
+		AltParamChoiceLabeled{{{to_mm<72>(167.59), to_mm<72>(42.51), Center, "Ping Method", ""}, 5, 0}, {"Avg 4", "Avg 2", "1:1", "IgnoreJitter", "Ignore%Change"}},
 		AltParamChoiceLabeled{{{to_mm<72>(122.51), to_mm<72>(281.49), Center, "Hold A", ""}, 2, 0}, {"Trig", "Gate"}},
 		AltParamChoiceLabeled{{{to_mm<72>(165.98), to_mm<72>(281.49), Center, "Hold B", ""}, 2, 0}, {"Trig", "Gate"}},
 		AltParamChoiceLabeled{{{to_mm<72>(122.51), to_mm<72>(242.1), Center, "Rev. A", ""}, 2, 0}, {"Trig", "Gate"}},
@@ -138,7 +138,7 @@ struct DLDInfo : ModuleInfoBase {
         CrossfadeBAltParam,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobTime_A, 
@@ -218,5 +218,6 @@ struct DLDInfo : ModuleInfoBase {
         AltParamCrossfade_A, 
         AltParamCrossfade_B, 
     };
+
 };
 } // namespace MetaModule

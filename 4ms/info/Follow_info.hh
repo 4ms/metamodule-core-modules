@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -33,7 +33,7 @@ struct FollowInfo : ModuleInfoBase {
         EnvOut,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobRise, 
@@ -55,5 +55,6 @@ struct FollowInfo : ModuleInfoBase {
     };
     
     
+
 };
 } // namespace MetaModule
