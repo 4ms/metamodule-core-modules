@@ -1,8 +1,7 @@
 #pragma once
 
-#include "4ms_elements.hh"
+#include "helpers/4ms_elements.hh"
 #include <cmath>
-
 
 namespace MetaModule::StateConversion
 {
@@ -53,4 +52,4 @@ constexpr Toggle3posHoriz::State_t convertState(const T &, float val) requires(s
 	}
 }
 
-}
+} // namespace MetaModule::StateConversion

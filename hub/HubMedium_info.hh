@@ -1,6 +1,6 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+#include "helpers/4ms_elements.hh"
 #include <array>
 
 namespace MetaModule
