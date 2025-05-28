@@ -25,10 +25,6 @@ struct LPGInfo : ModuleInfoBase {
 		AnalogJackInput4ms{{to_mm<72>(83.32), to_mm<72>(272.09), Center, "Color CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(32.13), to_mm<72>(313.7), Center, "Decay CV", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(83.32), to_mm<72>(313.7), Center, "Out", ""}},
-
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{0, 0},
-	}};
 }};
 
     enum class Elem {

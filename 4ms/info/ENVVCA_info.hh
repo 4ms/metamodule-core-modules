@@ -37,10 +37,6 @@ struct ENVVCAInfo : ModuleInfoBase {
 		OrangeLight{{to_mm<72>(106.41), to_mm<72>(256.6), Center, "EOR Light", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{4, 2},
-	}};
-
     enum class Elem {
         RiseSwitch,
         FallSwitch,

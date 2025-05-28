@@ -74,11 +74,6 @@ struct DLDInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(254.17), to_mm<72>(53.39), Center, "Crossfade B", ""}, 7, 3}, {"1ms", "2ms", "4ms", "8ms", "25ms", "100ms", "250ms"}},
 }};
 
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{1, 3}, 
-		{6, 6}},
-	};
-
     enum class Elem {
         TimeAKnob,
         TimeMultASwitch,

@@ -24,10 +24,6 @@ struct HPFInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{1, 0}, 
-	}};
-
     enum class Elem {
         CutoffKnob,
         QKnob,

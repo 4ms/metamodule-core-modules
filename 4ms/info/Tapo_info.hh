@@ -52,11 +52,6 @@ struct TapoInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(184.402), to_mm<72>(25.929), Center, "Mode", ""}, 2, 0}, {"Edit", "Seq"}},
 }};
 
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{4, 1}, 
-		{4, 2}},
-	};
-
     enum class Elem {
         LevelKnob,
         TimeKnob,

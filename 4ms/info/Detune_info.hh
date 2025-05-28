@@ -26,10 +26,6 @@ struct DetuneInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(83.18), to_mm<72>(313.57), Center, "Out", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{0, 0}, 
-	}};
-
     enum class Elem {
         WSpeedKnob,
         FSpeedKnob,

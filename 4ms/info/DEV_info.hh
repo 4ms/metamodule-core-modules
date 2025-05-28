@@ -62,11 +62,6 @@ struct DEVInfo : ModuleInfoBase {
 		RedBlueLight{{to_mm<72>(164.39), to_mm<72>(327.52), Center, "Env B Light", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{7, 3},
-		{10, 6},
-	}};
-
     enum class Elem {
         RiseASwitch,
         FallASwitch,

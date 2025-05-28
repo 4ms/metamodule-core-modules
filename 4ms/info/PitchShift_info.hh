@@ -27,10 +27,6 @@ struct PitchShiftInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(69.79), to_mm<72>(325.98), Center, "Out", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{0, 0}, 
-	}};
-
     enum class Elem {
         CoarseKnob,
         FineKnob,

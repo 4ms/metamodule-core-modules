@@ -73,11 +73,6 @@ struct SHEVInfo : ModuleInfoBase {
 		OrangeLight{{to_mm<72>(236.01), to_mm<72>(275.79), Center, "EOF B Light", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{8, 4},
-		{9, 8},
-	}};
-
     enum class Elem {
         CycleAButton,
         RiseASwitch,
