@@ -21,10 +21,10 @@ public:
 	void set_param(int param_id, float val) override {
 		float bipolarKnob = MathTools::map_value(val, 0.0f, 1.0f, -1.0f, 1.0f);
 		switch (param_id) {
-			case Info::Knob_1:
+			case Info::KnobCh__1:
 				level1 = bipolarKnob;
 				break;
-			case Info::Knob_2:
+			case Info::KnobCh__2:
 				level2 = bipolarKnob;
 				break;
 		}
@@ -32,10 +32,10 @@ public:
 
 	float get_param(int param_id) const override {
 		switch (param_id) {
-			case Info::Knob_1:
+			case Info::KnobCh__1:
 				return level1 / 2.f + 0.5f;
 				break;
-			case Info::Knob_2:
+			case Info::KnobCh__2:
 				return level2 / 2.f + 0.5f;
 				break;
 		}
@@ -47,10 +47,10 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputIn_1:
+			case Info::InputCh__1_In:
 				in1 = val;
 				break;
-			case Info::InputIn_2:
+			case Info::InputCh__2_In:
 				in2 = val;
 				break;
 		}
@@ -58,10 +58,10 @@ public:
 
 	float get_output(int output_id) const override {
 		switch (output_id) {
-			case Info::OutputOut_1:
+			case Info::OutputCh__1_Out:
 				return out1;
 				break;
-			case Info::OutputOut_2:
+			case Info::OutputCh__2_Out:
 				return out2;
 				break;
 			default:
@@ -71,16 +71,16 @@ public:
 	}
 
 	void mark_input_unpatched(int input_id) override {
-		if (input_id == Info::InputIn_1)
+		if (input_id == Info::InputCh__1_In)
 			in1Connected = false;
-		else if (input_id == Info::InputIn_2)
+		else if (input_id == Info::InputCh__2_In)
 			in2Connected = false;
 	}
 
 	void mark_input_patched(int input_id) override {
-		if (input_id == Info::InputIn_1)
+		if (input_id == Info::InputCh__1_In)
 			in1Connected = true;
-		else if (input_id == Info::InputIn_2)
+		else if (input_id == Info::InputCh__2_In)
 			in2Connected = true;
 	}
 

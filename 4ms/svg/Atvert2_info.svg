@@ -6,7 +6,7 @@
    version="1.1"
    id="svg55"
    sodipodi:docname="Atvert2_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,11 +23,11 @@
      inkscape:document-units="mm"
      inkscape:zoom="0.47829694"
      inkscape:cx="38.678901"
-     inkscape:cy="246.70867"
+     inkscape:cy="247.75404"
      inkscape:window-width="1312"
-     inkscape:window-height="449"
-     inkscape:window-x="52"
-     inkscape:window-y="38"
+     inkscape:window-height="730"
+     inkscape:window-x="1752"
+     inkscape:window-y="194"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <defs
@@ -302,42 +302,42 @@
      id="components">
     <circle
        id="Out_2"
-       data-name="Out 2"
+       data-name="Ch. 2 Out"
        cx="28.88"
        cy="313.16"
        r="11.34"
        style="fill: blue; stroke-width: 0px;" />
     <circle
        id="Out_1"
-       data-name="Out 1"
+       data-name="Ch. 1 Out"
        cx="28.88"
        cy="265.02"
        r="11.34"
        style="fill: blue; stroke-width: 0px;" />
     <circle
        id="In_2"
-       data-name="In 2"
+       data-name="Ch. 2 In"
        cx="28.88"
        cy="216.87"
        r="11.34"
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="In_1"
-       data-name="In 1"
+       data-name="Ch. 1 In"
        cx="28.88"
        cy="168.72"
        r="11.34"
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="_2"
-       data-name="2"
+       data-name="Ch. 2!-100!100!%"
        cx="28.8"
        cy="94.96"
        r="8.5"
        style="fill:#ff0080" />
     <circle
        id="_1"
-       data-name="1"
+       data-name="Ch. 1!-100!100!%"
        cx="28.9"
        cy="46.86"
        r="8.5"
