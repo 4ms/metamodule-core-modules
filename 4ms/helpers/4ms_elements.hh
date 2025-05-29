@@ -1,6 +1,5 @@
 #pragma once
 #include "CoreModules/elements/base_element.hh"
-#include "CoreModules/elements/units.hh"
 #include "util/colors_rgb565.hh"
 
 namespace MetaModule
@@ -11,25 +10,28 @@ namespace MetaModule
 //
 struct Knob9mm : Knob {
 	constexpr Knob9mm() = default;
-	constexpr Knob9mm(BaseElement b, float defaultValue = 0.5f)
-		: Knob{{{b, "4ms/comp/knob9mm_x.png"}}} {
-		default_value = defaultValue;
+	constexpr Knob9mm(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: Knob{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}} {
+		this->units = units;
 	}
 };
 
 struct DaviesLargeKnob : Knob {
 	constexpr DaviesLargeKnob() = default;
-	constexpr DaviesLargeKnob(BaseElement b, float defaultValue = 0.5f)
-		: Knob{{{b, "4ms/comp/knob_large_x.png"}}} {
-		default_value = defaultValue;
+	constexpr DaviesLargeKnob(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: Knob{{{b, "4ms/comp/knob_large_x.png"}, defaultValue, minValue, maxValue}} {
+		this->units = units;
 	}
 };
 
 struct Davies1900hBlackKnob : Knob {
 	constexpr Davies1900hBlackKnob() = default;
-	constexpr Davies1900hBlackKnob(BaseElement b, float defaultValue = 0.5f)
-		: Knob{{{b, "4ms/comp/knob_x.png"}}} {
-		default_value = defaultValue;
+	constexpr Davies1900hBlackKnob(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: Knob{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}} {
+		this->units = units;
 	}
 };
 
@@ -38,17 +40,19 @@ struct Davies1900hBlackKnob : Knob {
 //
 struct Slider25mmHorizLED : SliderLight {
 	constexpr Slider25mmHorizLED() = default;
-	constexpr Slider25mmHorizLED(BaseElement b, float defaultValue = 0.5f)
-		: SliderLight{{{{b, "4ms/comp/slider_horiz_x.png"}}, "4ms/comp/slider_horiz_handle_x.png"}, Colors565::White} {
-		default_value = defaultValue;
+	constexpr Slider25mmHorizLED(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: SliderLight{{{{b, "4ms/comp/slider_horiz_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
 	}
 };
 
 struct Slider25mmVertLED : SliderLight {
 	constexpr Slider25mmVertLED() = default;
-	constexpr Slider25mmVertLED(BaseElement b, float defaultValue = 0.5f)
-		: SliderLight{{{{b, "4ms/comp/slider_x.png"}}, "4ms/comp/slider_handle_x.png"}, Colors565::White} {
-		default_value = defaultValue;
+	constexpr Slider25mmVertLED(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: SliderLight{{{{b, "4ms/comp/slider_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
 	}
 };
 
