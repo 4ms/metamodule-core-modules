@@ -39,7 +39,7 @@ public:
 
 		switch (play_state) {
 			case Buffering:
-				if (stream.is_eof() || stream.frames_available() >= prebuffer_threshold()) {
+				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold) {
 					play_state = Playing;
 				}
 				setLED<PlayButton>(Yellow);
@@ -68,6 +68,7 @@ public:
 						play_state = loop_mode ? Reset : Stopped;
 					} else {
 						setLED<PlayButton>(Red);
+						printf("%u buffer underflow\n", id);
 						// message = "Buffer underflow";
 					}
 				}
@@ -89,7 +90,7 @@ public:
 		}
 
 		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
-		setOutput<PositionOut>(8 * (float)stream.current_playback_frame() / (float)stream.total_frames());
+		setOutput<PositionOut>(5.f * (float)stream.current_playback_frame() / (float)stream.total_frames());
 	}
 
 	// This runs in a low-priority background task:
@@ -114,7 +115,7 @@ public:
 
 			case Buffering:
 			case Playing:
-				if (stream.frames_available() < prebuffer_threshold()) {
+				if (stream.frames_available() < prebuff_threshold) {
 					if (!stream.is_eof()) {
 						stream.read_frames_from_file();
 					}
@@ -156,9 +157,16 @@ public:
 		waveform.set_x_zoom(getState<WaveformZoomAltParam>() * 2000);
 	}
 
-	unsigned prebuffer_threshold() {
-		// Convert 0-4 to 1k-64k samples
-		return std::max(getState<PrebufferAmountAltParam>() * 16384, 1024u);
+	void set_param(int id, float val) override {
+		// Buffer Threshold alt param: handle it only when the user changes it
+		if (id == param_idx<BufferThresholdAltParam>) {
+			auto samples_per_frame = stream.is_stereo() ? 2 : 1;
+			prebuff_threshold = std::max<unsigned>(val * PreBufferSamples / samples_per_frame, 1024);
+			return;
+		}
+
+		// All other parameters:
+		SmartCoreProcessor::set_param(id, val);
 	}
 
 	void handle_loop_toggle() {
@@ -258,12 +266,14 @@ private:
 	};
 
 	float sample_rate = 48000.f;
+	unsigned prebuff_threshold = 1024;
 
 	// Size of pre-buffer. This determines how much sample data we store in RAM
 	// The larger this is, the longer the sample we can load and re-trigger without
 	// needing to read from disk again.
-	// 512kB is about 5.5sec of stereo or 11sec of mono
-	static constexpr size_t PreBufferSamples = 512 * 1024;
+	// 512k samples is about 5.5sec of stereo or 11sec of mono and uses 512k * 4 = 2MB
+	// 1024K samples is about 11sec of stereo or 22sec of mono and uses 1M * 4 = 4MB
+	static constexpr size_t PreBufferSamples = 1024 * 1024;
 
 	// Maximum resampling ratio we support. Worse case is reading a 22k file and
 	// playing back at 96kHz
