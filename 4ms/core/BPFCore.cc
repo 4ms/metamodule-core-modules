@@ -60,10 +60,10 @@ public:
 
 	void set_input(const int input_id, const float val) override {
 		switch (input_id) {
-			case Info::InputInput:
+			case Info::InputAudio_In:
 				signalInput = val;
 				break;
-			case Info::InputCv:
+			case Info::InputCutoff_Cv_In:
 				cutoffCV = val / CvRangeVolts;
 				break;
 		}
