@@ -47,7 +47,7 @@ struct WavFileStream {
 
 		while (num_frames > 0) {
 			// Read blocks of maximum 4kB at a time
-			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, (unsigned)num_frames);
+			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign / 2, (unsigned)num_frames);
 
 			next_frame_to_write = wav.readCursorInPCMFrames;
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
@@ -171,7 +171,7 @@ private:
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
 	// assume 4kB is an efficient size to read from an SD Card or USB Drive
-	static constexpr unsigned ReadBlockBytes = 4096;
+	static constexpr unsigned ReadBlockBytes = 512;
 
 	// read_buff needs to be big enough to hold 4kB of any data converted to floats
 	// Worst case: 4kB of 8-bit mono data will convert to 4096 floats
