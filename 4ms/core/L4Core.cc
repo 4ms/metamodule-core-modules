@@ -28,40 +28,40 @@ public:
 		float outputRight = 0.f;
 
 		{
-			auto input = getInput<In1In>().value_or(0.f);
+			auto input = getInput<Ch_1In>().value_or(0.f);
 			auto filteredInput = channel1DCBlocker(input);
-			auto channelLeft = filteredInput * PanningTable.lookup(1.f - getState<Pan1Knob>()) * LevelTable.lookup(getState<Level1Knob>());
-			auto channelRight = filteredInput * PanningTable.lookup(getState<Pan1Knob>()) * LevelTable.lookup(getState<Level1Knob>());
+			auto channelLeft = filteredInput * PanningTable.lookup(1.f - getState<Ch_1PanKnob>()) * LevelTable.lookup(getState<Ch_1LevelKnob>());
+			auto channelRight = filteredInput * PanningTable.lookup(getState<Ch_1PanKnob>()) * LevelTable.lookup(getState<Ch_1LevelKnob>());
 
 			outputLeft += channelLeft;
 			outputRight += channelRight;
 
-			setLED<Level1LedLight>(std::array<float,3>{0.f, channel1EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel1EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
+			setLED<Ch_1LevelLedLight>(std::array<float,3>{0.f, channel1EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel1EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
 		}
 
 		{
-			auto input = getInput<In2In>();
+			auto input = getInput<Ch_2In>();
 			auto filteredInput = channel2DCBlocker(*input);
-			auto channelLeft = filteredInput * PanningTable.lookup(1.f - getState<Pan2Knob>()) * LevelTable.lookup(getState<Level2Knob>());
-			auto channelRight = filteredInput * PanningTable.lookup(getState<Pan2Knob>()) * LevelTable.lookup(getState<Level2Knob>());
+			auto channelLeft = filteredInput * PanningTable.lookup(1.f - getState<Ch_2PanKnob>()) * LevelTable.lookup(getState<Ch_2LevelKnob>());
+			auto channelRight = filteredInput * PanningTable.lookup(getState<Ch_2PanKnob>()) * LevelTable.lookup(getState<Ch_2LevelKnob>());
 
 			outputLeft += channelLeft;
 			outputRight += channelRight;
 
-			setLED<Level2LedLight>(std::array<float,3>{0.f, channel2EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel2EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
+			setLED<Ch_2LevelLedLight>(std::array<float,3>{0.f, channel2EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel2EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
 		}
 
 		{
 			float channelLeft = 0.f;
 			float channelRight = 0.f;
 
-			auto inputL = getInput<In3LIn>().value_or(0.f);
+			auto inputL = getInput<Ch_3LeftIn>().value_or(0.f);
 			auto filteredInput = channel3LeftDCBlocker(inputL);
-			channelLeft = filteredInput * LevelTable.lookup(getState<Level3Knob>());
+			channelLeft = filteredInput * LevelTable.lookup(getState<Ch_3LevelKnob>());
 
-			if(auto inputR = getInput<In3RIn>(); inputR) {
+			if(auto inputR = getInput<Ch_3RightIn>(); inputR) {
 				auto filteredInput = channel3RightDCBlocker(*inputR);
-				channelRight = filteredInput * LevelTable.lookup(getState<Level3Knob>());
+				channelRight = filteredInput * LevelTable.lookup(getState<Ch_3LevelKnob>());
 
 			} else
 				channelRight =  channelLeft;
@@ -69,20 +69,20 @@ public:
 			outputLeft += channelLeft;
 			outputRight += channelRight;
 
-			setLED<Level3LedLight>(std::array<float,3>{0.f, channel3EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel3EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
+			setLED<Ch_3LevelLedLight>(std::array<float,3>{0.f, channel3EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel3EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
 		}
 
 		{
 			float channelLeft = 0.f;
 			float channelRight = 0.f;
 
-			auto inputL = getInput<In4LIn>().value_or(0.f);
+			auto inputL = getInput<Ch_4LeftIn>().value_or(0.f);
 			auto filteredInput = channel4LeftDCBlocker(inputL);
-			channelLeft = filteredInput * LevelTable.lookup(getState<Level4Knob>());
+			channelLeft = filteredInput * LevelTable.lookup(getState<Ch_4LevelKnob>());
 
-			if(auto inputR = getInput<In4RIn>(); inputR) {
+			if(auto inputR = getInput<Ch_4RightIn>(); inputR) {
 				auto filteredInput = channel4RightDCBlocker(*inputR);
-				channelRight = filteredInput * LevelTable.lookup(getState<Level4Knob>());
+				channelRight = filteredInput * LevelTable.lookup(getState<Ch_4LevelKnob>());
 
 			} else 
 				channelRight = channelLeft;
@@ -90,7 +90,7 @@ public:
 			outputLeft += channelLeft;
 			outputRight += channelRight;
 
-			setLED<Level4LedLight>(std::array<float,3>{0.f, channel4EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel4EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
+			setLED<Ch_4LevelLedLight>(std::array<float,3>{0.f, channel4EnvelopeRight(gcem::abs(channelRight)) / LEDScaling , channel4EnvelopeLeft(gcem::abs(channelLeft)) / LEDScaling});
 		}
 
 		//+6dB output boost
@@ -100,7 +100,7 @@ public:
 		auto headphoneOut = (outputLeft + outputRight) * LevelTable.lookup(getState<HeadphoneLevelKnob>());
 
 		//-16.2dB attenuation in line mode
-		if(getState<Mod__OR_LineSwitch>() == Toggle2posHoriz::State_t::RIGHT) {
+		if(getState<OutputLevelSwitch>() == Toggle2posHoriz::State_t::RIGHT) {
 			outputLeft *= 0.155f;
 			outputRight *= 0.155f;
 		}
@@ -113,11 +113,11 @@ public:
 		auto clippingLeft = outputLeftEnvelope >= 10.f ? 1.f : 0.f;
 		auto clippingRight = outputRightEnvelope >= 10.f ? 1.f : 0.f;
 
-		setLED<OutLLedLight>(std::array<float,3>{clippingLeft, 0.0f, outputLeftEnvelope / LEDScaling});
-		setLED<OutRLedLight>(std::array<float,3>{clippingRight, outputRightEnvelope / LEDScaling, 0.f});
+		setLED<MainOutLeftLedLight>(std::array<float,3>{clippingLeft, 0.0f, outputLeftEnvelope / LEDScaling});
+		setLED<MainOutRightLedLight>(std::array<float,3>{clippingRight, outputRightEnvelope / LEDScaling, 0.f});
 
-		setOutput<OutLeftOut>(std::clamp(outputLeft, -11.f, 11.f));
-		setOutput<OutRightOut>(std::clamp(outputRight, -11.f, 11.f));
+		setOutput<MainLeftOut>(std::clamp(outputLeft, -11.f, 11.f));
+		setOutput<MainRightOut>(std::clamp(outputRight, -11.f, 11.f));
 		setOutput<HeadphoneOut>(std::clamp(headphoneOut, -11.f, 11.f));
 	}
 
