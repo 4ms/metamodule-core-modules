@@ -61,7 +61,7 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputInput:
+			case Info::InputGate_In:
 				signalInput = val;
 				break;
 			case Info::InputLength_Cv:
@@ -74,7 +74,7 @@ public:
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputGate_Out)
 			return gateOutput ? MaxOutputVolts : 0.f;
 		return 0.f;
 	}
