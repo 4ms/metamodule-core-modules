@@ -16,21 +16,21 @@ struct HPFInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 6> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Cutoff", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Q", ""}, 0.0f},
-		OrangeButton{{to_mm<72>(28.8), to_mm<72>(168.66), Center, "Mode", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "CV", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Input", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out", ""}},
+		Toggle2posHoriz{{to_mm<72>(29.269), to_mm<72>(170.57), Center, "Mode", ""}, {"Standard", "Korg"}},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Cutoff", ""}, 0.5f, 130.0, 2093.0, "hz"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Q", ""}, 0.0f, 1.0, 20.0, "x"},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Cutoff CV In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Audio In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Audio Out", ""}},
 }};
 
     enum class Elem {
+        ModeSwitch,
         CutoffKnob,
         QKnob,
-        ModeButton,
-        CvIn,
-        InputIn,
-        Out,
+        CutoffCvIn,
+        AudioIn,
+        AudioOut,
     };
 
     // Legacy naming
@@ -47,13 +47,13 @@ struct HPFInfo : ModuleInfoBase {
     };
     
     enum {
-        InputCv, 
-        InputInput, 
+        InputCutoff_Cv_In, 
+        InputAudio_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut, 
+        OutputAudio_Out, 
         NumOutJacks,
     };
     

@@ -6,7 +6,7 @@
    version="1.1"
    id="svg44"
    sodipodi:docname="HPF_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -21,13 +21,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.47829694"
-     inkscape:cx="38.678901"
-     inkscape:cy="246.70867"
+     inkscape:zoom="1.352828"
+     inkscape:cx="0.36959612"
+     inkscape:cy="160.03512"
      inkscape:window-width="1312"
-     inkscape:window-height="449"
-     inkscape:window-x="52"
-     inkscape:window-y="38"
+     inkscape:window-height="730"
+     inkscape:window-x="1785"
+     inkscape:window-y="387"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <defs
@@ -286,33 +286,30 @@
        cx="28.8"
        cy="313.23"
        r="11.34"
-       style="fill: blue; stroke-width: 0px;" />
+       style="fill: blue; stroke-width: 0px;"
+       data-name="Audio Out" />
     <circle
        id="Input"
        cx="28.8"
        cy="265.04"
        r="11.34"
-       style="fill: lime; stroke-width: 0px;" />
+       style="fill: lime; stroke-width: 0px;"
+       data-name="Audio In" />
     <circle
        id="CV"
        cx="28.8"
        cy="216.85"
        r="11.34"
-       style="fill: lime; stroke-width: 0px;" />
+       style="fill: lime; stroke-width: 0px;"
+       data-name="Cutoff CV In" />
     <circle
-       id="Mode"
-       cx="28.8"
-       cy="168.66"
-       r="10.63"
-       style="fill: #ff8000; stroke-width: 0px;" />
-    <circle
-       id="Q"
+       id="Q!1!20!x"
        cx="28.8"
        cy="94.96"
        r="8.5"
        style="fill: red; stroke-width: 0px;" />
     <circle
-       id="Cutoff"
+       id="Cutoff!130!2093!hz"
        cx="28.8"
        cy="46.77"
        r="8.5"
@@ -358,5 +355,12 @@
          y="0"
          style="letter-spacing: 0em;"
          id="tspan44">er</tspan></text>
+    <rect
+       style="fill:#ff8080;fill-opacity:1;stroke-width:0.324113"
+       id="Mode@Standard@Korg"
+       width="14.1765"
+       height="8.5059004"
+       x="22.180887"
+       y="166.31743" />
   </g>
 </svg>

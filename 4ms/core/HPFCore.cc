@@ -61,17 +61,17 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputInput:
+			case Info::InputAudio_In:
 				signalInput = val;
 				break;
-			case Info::InputCv:
+			case Info::InputCutoff_Cv_In:
 				cutoffCV = val / CvRangeVolts;
 				break;
 		}
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputAudio_Out)
 			return signalOutput;
 		return 0.f;
 	}
