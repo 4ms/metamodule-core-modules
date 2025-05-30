@@ -16,21 +16,21 @@ struct SHInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 6> Elements{{
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(72.35), Center, "Samp 1", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(120.54), Center, "In 1", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(168.72), Center, "Samp 2", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "In 2", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Out 1", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out 2", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(72.35), Center, "Ch. 1 Sample In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(120.54), Center, "Ch. 1 Clock In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(168.72), Center, "Ch. 2 Sample In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Ch. 2 Clock In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Ch. 1 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Ch. 2 Out", ""}},
 }};
 
     enum class Elem {
-        Samp1In,
-        In1In,
-        Samp2In,
-        In2In,
-        Out1Out,
-        Out2Out,
+        Ch_1SampleIn,
+        Ch_1ClockIn,
+        Ch_2SampleIn,
+        Ch_2ClockIn,
+        Ch_1Out,
+        Ch_2Out,
     };
 
     // Legacy naming
@@ -38,16 +38,16 @@ struct SHInfo : ModuleInfoBase {
     
     
     enum {
-        InputSamp_1, 
-        InputIn_1, 
-        InputSamp_2, 
-        InputIn_2, 
+        InputCh__1_Sample_In, 
+        InputCh__1_Clock_In, 
+        InputCh__2_Sample_In, 
+        InputCh__2_Clock_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut_1, 
-        OutputOut_2, 
+        OutputCh__1_Out, 
+        OutputCh__2_Out, 
         NumOutJacks,
     };
     
