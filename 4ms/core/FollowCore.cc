@@ -26,7 +26,7 @@ public:
 
 	void set_param(int param_id, float val) override {
 		switch (param_id) {
-			case Info::KnobThresh: //threshold
+			case Info::KnobThreshold: //threshold
 			{
 				float topThresh;
 				float bottomThresh;
@@ -51,7 +51,7 @@ public:
 
 	float get_param(int param_id) const override {
 		switch (param_id) {
-			case Info::KnobThresh: //threshold
+			case Info::KnobThreshold: //threshold
 				return wc.getLowThreshold();
 			case Info::KnobRise: //rise
 				return MathTools::map_value(slew.attackTime, 1.f, 2000.f, 0.f, 1.f);
@@ -62,15 +62,15 @@ public:
 	}
 
 	void set_input(int input_id, float val) override {
-		if (input_id == Info::InputInput)
+		if (input_id == Info::InputSignal_In)
 			signalInput = val / maxOutputVolts;
 	}
 
 	float get_output(int output_id) const override {
 		switch (output_id) {
-			case Info::OutputEnv:
+			case Info::OutputEnvelope_Out:
 				return envOutput * maxOutputVolts;
-			case Info::OutputGate:
+			case Info::OutputGate_Out:
 				return gateOutput * maxOutputVolts;
 			default:
 				return 0.f;
