@@ -16,19 +16,19 @@ struct PanInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 5> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Pan", ""}, 0.5f},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(168.66), Center, "CV", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Input", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Out 1", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out 2", ""}},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Pan", ""}, 0.5f, -100.0, 100.0, "%"},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(168.66), Center, "Pan CV In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Audio In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Ch. 1 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Ch. 2 Out", ""}},
 }};
 
     enum class Elem {
         PanKnob,
-        CvIn,
-        InputIn,
-        Out1Out,
-        Out2Out,
+        PanCvIn,
+        AudioIn,
+        Ch_1Out,
+        Ch_2Out,
     };
 
     // Legacy naming
@@ -40,14 +40,14 @@ struct PanInfo : ModuleInfoBase {
     
     
     enum {
-        InputCv, 
-        InputInput, 
+        InputPan_Cv_In, 
+        InputAudio_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut_1, 
-        OutputOut_2, 
+        OutputCh__1_Out, 
+        OutputCh__2_Out, 
         NumOutJacks,
     };
     
