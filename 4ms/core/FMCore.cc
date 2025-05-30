@@ -41,10 +41,10 @@ public:
 			case Info::KnobIndex:
 				indexKnob = val;
 				break;
-			case Info::KnobRatio_C:
+			case Info::KnobRatio_Coarse:
 				ratioCoarse = ratioTable[MathTools::map_value(val, 0.0f, 1.0f, 0, 7)];
 				break;
-			case Info::KnobRatio_F:
+			case Info::KnobRatio_Fine:
 				if (val < 0.5f)
 					ratioFine = MathTools::map_value(val, 0.0f, 0.5f, 0.5f, 1.0f);
 				else
@@ -73,11 +73,11 @@ public:
 			}
 			case Info::KnobIndex:
 				return indexKnob;
-			case Info::KnobRatio_C: {
+			case Info::KnobRatio_Coarse: {
 				auto t = std::find(ratioTable.begin(), ratioTable.end(), ratioCoarse);
 				return std::distance(ratioTable.begin(), t) / static_cast<float>(ratioTable.size() - 1);
 			}
-			case Info::KnobRatio_F:
+			case Info::KnobRatio_Fine:
 				if (ratioFine > 1.f)
 					return MathTools::map_value(ratioFine, 1.f, 2.f, .5f, 1.f);
 				else
@@ -100,23 +100,23 @@ public:
 			case Info::InputIndex_Cv_In:
 				indexCV = val;
 				break;
-			case Info::InputV_Oct_P:
+			case Info::InputV_Oct_Carrier:
 				pitchInput = val;
 				break;
-			case Info::InputShape_Cv:
+			case Info::InputShape_Cv_In:
 				shapeCV = val;
 				break;
-			case Info::InputMix_Cv:
+			case Info::InputMix_Cv_In:
 				mixCV = val;
 				break;
-			case Info::InputV_Oct_S:
+			case Info::InputV_Oct_Modulator:
 				secondPitchInput = val;
 				break;
 		}
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputAudio_Out)
 			return mainOutput * maxOutputVolts;
 		return 0.f;
 	}
@@ -130,12 +130,12 @@ public:
 	}
 
 	void mark_input_unpatched(int input_id) override {
-		if (input_id == Info::InputV_Oct_S)
+		if (input_id == Info::InputV_Oct_Modulator)
 			secondPitchConnected = false;
 	}
 
 	void mark_input_patched(int input_id) override {
-		if (input_id == Info::InputV_Oct_S)
+		if (input_id == Info::InputV_Oct_Modulator)
 			secondPitchConnected = true;
 	}
 

@@ -16,20 +16,20 @@ struct FMInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 14> Elements{{
-		Knob9mm{{to_mm<72>(31.83), to_mm<72>(40.21), Center, "Pitch", ""}, 0.5f},
+		Knob9mm{{to_mm<72>(31.83), to_mm<72>(40.21), Center, "Pitch", ""}, 0.5f, 20.0, 20000.0, "hz"},
 		Knob9mm{{to_mm<72>(83.37), to_mm<72>(40.21), Center, "Mix", ""}, 0.5f},
 		Knob9mm{{to_mm<72>(31.83), to_mm<72>(83.35), Center, "Index", ""}, 0.625f},
-		Knob9mm{{to_mm<72>(83.37), to_mm<72>(83.35), Center, "Index CV", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(31.83), to_mm<72>(126.49), Center, "Ratio C", ""}, 0.375f},
-		Knob9mm{{to_mm<72>(83.37), to_mm<72>(126.49), Center, "Ratio F", ""}, 0.0f},
+		Knob9mm{{to_mm<72>(83.37), to_mm<72>(83.35), Center, "Index CV", ""}, 0.5f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(31.83), to_mm<72>(126.49), Center, "Ratio Coarse", ""}, 0.375f, 0.125, 16.0, "."},
+		Knob9mm{{to_mm<72>(83.37), to_mm<72>(126.49), Center, "Ratio Fine", ""}, 0.0f, 0.5, 2.0, "."},
 		Knob9mm{{to_mm<72>(31.83), to_mm<72>(169.63), Center, "Shape", ""}, 0.0f},
-		Knob9mm{{to_mm<72>(83.37), to_mm<72>(169.63), Center, "Shape CV", ""}, 0.5f},
-		AnalogJackInput4ms{{to_mm<72>(31.83), to_mm<72>(214.43), Center, "V/Oct P", ""}},
-		AnalogJackInput4ms{{to_mm<72>(83.37), to_mm<72>(214.43), Center, "V/Oct S", ""}},
-		AnalogJackInput4ms{{to_mm<72>(31.83), to_mm<72>(263.15), Center, "Mix CV", ""}},
+		Knob9mm{{to_mm<72>(83.37), to_mm<72>(169.63), Center, "Shape CV", ""}, 0.5f, -100.0, 100.0, "%"},
+		AnalogJackInput4ms{{to_mm<72>(31.83), to_mm<72>(214.43), Center, "V/Oct Carrier", ""}},
+		AnalogJackInput4ms{{to_mm<72>(83.37), to_mm<72>(214.43), Center, "V/Oct Modulator", ""}},
+		AnalogJackInput4ms{{to_mm<72>(31.83), to_mm<72>(263.15), Center, "Mix CV In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.37), to_mm<72>(263.15), Center, "Index CV In", ""}},
-		AnalogJackInput4ms{{to_mm<72>(31.83), to_mm<72>(311.88), Center, "Shape CV", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(83.37), to_mm<72>(311.88), Center, "Out", ""}},
+		AnalogJackInput4ms{{to_mm<72>(31.83), to_mm<72>(311.88), Center, "Shape CV In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(83.37), to_mm<72>(311.88), Center, "Audio Out", ""}},
 }};
 
     enum class Elem {
@@ -37,16 +37,16 @@ struct FMInfo : ModuleInfoBase {
         MixKnob,
         IndexKnob,
         IndexCvKnob,
-        RatioCKnob,
-        RatioFKnob,
+        RatioCoarseKnob,
+        RatioFineKnob,
         ShapeKnob,
         ShapeCvKnob,
-        V_OctPIn,
-        V_OctSIn,
+        V_OctCarrierIn,
+        V_OctModulatorIn,
         MixCvIn,
         IndexCvIn,
         ShapeCvIn,
-        Out,
+        AudioOut,
     };
 
     // Legacy naming
@@ -56,8 +56,8 @@ struct FMInfo : ModuleInfoBase {
         KnobMix, 
         KnobIndex, 
         KnobIndex_Cv, 
-        KnobRatio_C, 
-        KnobRatio_F, 
+        KnobRatio_Coarse, 
+        KnobRatio_Fine, 
         KnobShape, 
         KnobShape_Cv, 
         NumKnobs,
@@ -65,16 +65,16 @@ struct FMInfo : ModuleInfoBase {
     
     
     enum {
-        InputV_Oct_P, 
-        InputV_Oct_S, 
-        InputMix_Cv, 
+        InputV_Oct_Carrier, 
+        InputV_Oct_Modulator, 
+        InputMix_Cv_In, 
         InputIndex_Cv_In, 
-        InputShape_Cv, 
+        InputShape_Cv_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut, 
+        OutputAudio_Out, 
         NumOutJacks,
     };
     

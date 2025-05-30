@@ -6,7 +6,7 @@
    version="1.1"
    id="svg115"
    sodipodi:docname="FM_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -21,15 +21,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.47829694"
-     inkscape:cx="76.312427"
-     inkscape:cy="247.75404"
+     inkscape:zoom="1.9131878"
+     inkscape:cx="105.58295"
+     inkscape:cy="337.39501"
      inkscape:window-width="1312"
-     inkscape:window-height="496"
-     inkscape:window-x="52"
-     inkscape:window-y="38"
+     inkscape:window-height="730"
+     inkscape:window-x="2470"
+     inkscape:window-y="311"
      inkscape:window-maximized="0"
-     inkscape:current-layer="components" />
+     inkscape:current-layer="Layer_4" />
   <defs
      id="defs16">
     <clipPath
@@ -254,12 +254,15 @@
            y="0"
            id="tspan23">FM</tspan></text>
       <text
-         transform="translate(70.08 239.7) scale(.88 1)"
-         style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
-         id="text24"><tspan
-           x="0"
-           y="0"
-           id="tspan24">V/Oct S</tspan></text>
+         transform="scale(0.93808314,1.0660036)"
+         style="font-weight:700;font-size:7.50467px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#000000;stroke-width:0.938083"
+         id="text24"
+         x="71.507462"
+         y="224.85854"><tspan
+           x="71.507462"
+           y="224.85854"
+           id="tspan24"
+           style="stroke-width:0.938083">V/Oct M</tspan></text>
       <text
          transform="translate(73.77 287.83) scale(.88 1)"
          style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
@@ -275,12 +278,12 @@
            y="0"
            id="tspan26">Out</tspan></text>
       <text
-         transform="translate(18.2 239.7) scale(.88 1)"
-         style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+         transform="matrix(0.88,0,0,1,18.2,239.7)"
+         style="font-weight:700;font-size:8px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;fill:#000000"
          id="text27"><tspan
            x="0"
            y="0"
-           id="tspan27">V/Oct P</tspan></text>
+           id="tspan27">V/Oct C</tspan></text>
       <text
          transform="translate(25.41 287.83) scale(.88 1)"
          style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
@@ -795,10 +798,11 @@
        cx="83.37"
        cy="311.88"
        r="11.34"
-       style="fill: blue; stroke-width: 0px;" />
+       style="fill: blue; stroke-width: 0px;"
+       data-name="Audio Out" />
     <circle
        id="Shape_CV"
-       data-name="Shape CV"
+       data-name="Shape CV In"
        cx="31.83"
        cy="311.88"
        r="11.34"
@@ -812,28 +816,28 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Mix_CV"
-       data-name="Mix CV"
+       data-name="Mix CV In"
        cx="31.83"
        cy="263.15"
        r="11.34"
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="V_Oct_S"
-       data-name="V/Oct S"
+       data-name="V/Oct Modulator"
        cx="83.37"
        cy="214.43"
        r="11.34"
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="V_Oct_P"
-       data-name="V/Oct P"
+       data-name="V/Oct Carrier"
        cx="31.83"
        cy="214.43"
        r="11.34"
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Shape_CV-2"
-       data-name="Shape CV"
+       data-name="Shape CV!-100!100!%"
        cx="83.37"
        cy="169.63"
        r="8.5"
@@ -846,21 +850,21 @@
        style="fill: red; stroke-width: 0px;" />
     <circle
        id="Ratio_F"
-       data-name="Ratio F"
+       data-name="Ratio Fine!0.5!2!."
        cx="83.37"
        cy="126.49"
        r="8.5"
        style="fill: red; stroke-width: 0px;" />
     <circle
        id="Ratio_C"
-       data-name="Ratio C"
+       data-name="Ratio Coarse!0.125!16!."
        cx="31.83"
        cy="126.49"
        r="8.5"
        style="fill:#ff0030" />
     <circle
        id="Index_CV"
-       data-name="Index CV"
+       data-name="Index CV!-100!100!%"
        cx="83.37"
        cy="83.35"
        r="8.5"
@@ -882,7 +886,8 @@
        cx="31.83"
        cy="40.21"
        r="8.5"
-       style="fill:#ff0040" />
+       style="fill:#ff0040"
+       data-name="Pitch!20!20000!hz" />
     <text
        id="slug"
        transform="translate(83.96 369.32)"
