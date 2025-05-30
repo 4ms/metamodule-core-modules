@@ -16,7 +16,7 @@ struct DetuneInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 8> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(57.84), Center, "Wow Speed", ""}, 0.25f, 0.1, 5.0, "hz"},
+		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(57.84), Center, "Wow Speed", ""}, 0.25f, 0.1, 5.33, "hz"},
 		Davies1900hBlackKnob{{to_mm<72>(83.35), to_mm<72>(57.84), Center, "Flutter Speed", ""}, 0.0f, 5.0, 30.0, "hz"},
 		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(119.08), Center, "Wow Depth", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(83.35), to_mm<72>(119.08), Center, "Flutter Depth", ""}, 0.5f},
