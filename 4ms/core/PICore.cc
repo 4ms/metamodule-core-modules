@@ -34,7 +34,7 @@ public:
 
 		auto scaledInput = 0.f;
 
-		if (auto input = getInput<In>(); input) {
+		if (auto input = getInput<AudioIn>(); input) {
 			auto filteredInput = dcBlocker(*input);
 			auto maximumGain = readMaximumGain();
 			scaledInput = std::clamp(filteredInput * (getState<SensitivityKnob>() * maximumGain), -12.f, 12.f);
@@ -56,13 +56,13 @@ public:
 		setLED<GateLight>(gateState == TRIGGERED ? 1.f : 0.f);
 		setOutput<GateOut>(gateState == TRIGGERED ? gateOutHighVoltage : gateOutLowVoltage);
 
-		setOutput<Env_OutPOut>(envelopePOut);
+		setOutput<EnvelopePositiveOut>(envelopePOut);
 		setLED<EnvPLight>(envelopePOut / envelopeHighVoltage);
-		setOutput<Env_OutNOut>(envelopeNOut);
+		setOutput<EnvelopeNegativeOut>(envelopeNOut);
 		setLED<EnvNLight>(envelopeNOut/ envelopeHighVoltage);
 
-		setOutput<Env_Out>(envelopePOut * getState<Env_LevelKnob>());
-		setOutput<Inv_Out>(envelopeNOut * getState<Inv_LevelKnob>());
+		setOutput<EnvelopeOut>(envelopePOut * getState<EnvelopeLevelKnob>());
+		setOutput<InvertedOut>(envelopeNOut * getState<InvertedLevelKnob>());
 
 		setOutput<AudioOut>(scaledInput);
 		auto sensLight = senseEnvelope(scaledInput);
@@ -115,7 +115,7 @@ public:
 
 	void setDecayTime()
 	{
-		envelope.setDecay(getState<Env_DecayKnob>() * (maximumDecayTimeInS - minimumDecayTimeInS) + minimumDecayTimeInS);
+		envelope.setDecay(getState<EnvelopeDecayKnob>() * (maximumDecayTimeInS - minimumDecayTimeInS) + minimumDecayTimeInS);
 	}
 
 	float generateEnvelope(float input)

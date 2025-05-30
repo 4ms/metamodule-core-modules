@@ -6,7 +6,7 @@
    version="1.1"
    id="svg226"
    sodipodi:docname="PI_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -26,12 +26,12 @@
      showgrid="false"
      inkscape:zoom="2.2519928"
      inkscape:cx="134.10345"
-     inkscape:cy="223.80178"
-     inkscape:window-width="1680"
-     inkscape:window-height="1051"
-     inkscape:window-x="52"
-     inkscape:window-y="38"
-     inkscape:window-maximized="1"
+     inkscape:cy="223.57976"
+     inkscape:window-width="1200"
+     inkscape:window-height="1186"
+     inkscape:window-x="2240"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
      id="faceplate"
@@ -967,7 +967,7 @@
      transform="translate(0.00208206,0.005)">
     <circle
        id="Env._Out_-"
-       data-name="Env. Out -"
+       data-name="Envelope Negative Out"
        cx="41.830002"
        cy="318.60999"
        r="11.34"
@@ -981,7 +981,7 @@
        style="fill:#ff00ff" />
     <circle
        id="Env._Out_"
-       data-name="Env. Out +"
+       data-name="Envelope Positive Out"
        cx="19.950001"
        cy="286.07999"
        r="11.34"
@@ -1009,7 +1009,7 @@
        style="fill:#8080ff" />
     <circle
        id="Inv._Out"
-       data-name="Inv. Out"
+       data-name="Inverted Out"
        cx="86.519997"
        cy="248.3605"
        r="11.34"
@@ -1026,10 +1026,11 @@
        cx="19.83"
        cy="221.47"
        r="11.34"
-       style="fill:#00ff00" />
+       style="fill:#00ff00"
+       data-name="Audio In" />
     <circle
        id="Env._Out"
-       data-name="Env. Out"
+       data-name="Envelope Out"
        cx="86.519997"
        cy="196.1134"
        r="11.34"
@@ -1052,14 +1053,14 @@
        style="fill:#ffc080" />
     <circle
        id="Env._Decay"
-       data-name="Env. Decay"
+       data-name="Envelope Decay"
        cx="30.799999"
        cy="153.17"
        r="8.5"
        style="fill:#ff0040" />
     <circle
        id="Inv._Level"
-       data-name="Inv. Level"
+       data-name="Inverted Level"
        cx="86.529999"
        cy="97.940865"
        r="8.5"
@@ -1072,7 +1073,7 @@
        style="fill:#ff0040" />
     <circle
        id="Env._Level"
-       data-name="Env. Level"
+       data-name="Envelope Level"
        cx="86.529999"
        cy="46.580002"
        r="8.5"
