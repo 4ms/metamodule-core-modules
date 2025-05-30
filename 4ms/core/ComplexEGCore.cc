@@ -17,7 +17,7 @@ public:
 	ComplexEGCore() = default;
 
 	void update() override {
-		isLooping = getState<LoopButton>() == LatchingButton::State_t::DOWN ? true : false;
+		isLooping = getState<LoopSwitch>() == 1 ? true : false;
 
 		float finalAttack =
 			constrain(getInput<AttackCvIn>().value_or(0.f) / CvRangeVolts + getState<AttackKnob>(), 0.0f, 1.0f);
@@ -60,8 +60,6 @@ public:
 		setOutput<ReleaseOut>((currentStage == e.RELEASE) ? MaxOutputVolts : 0);
 
 		setOutput<Out>(envelopeOutput * MaxOutputVolts);
-
-		setLED<LoopButton>(isLooping ? 1.f : 0.f);
 	}
 
 	void set_samplerate(float sr) override {
