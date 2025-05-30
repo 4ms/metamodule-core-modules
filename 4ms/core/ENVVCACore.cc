@@ -83,17 +83,17 @@ public:
 		setLED<RiseSlider>(slopeState == TriangleOscillator::SlopeState_t::RISING ? val / 8.f : 0);
 		setLED<FallSlider>(slopeState == TriangleOscillator::SlopeState_t::FALLING ? val / 8.f : 0);
 		val = val / VoltageDivider(100e3f, 100e3f);
-		val *= getState<EnvLevelSlider>();
-		setOutput<EnvOut>(val);
-		setLED<EnvLevelSlider>(val / 8.f);
+		val *= getState<EnvelopeLevelSlider>();
+		setOutput<EnvelopeOut>(val);
+		setLED<EnvelopeLevelSlider>(val / 8.f);
 	}
 
 	void displayOscillatorState(TriangleOscillator::SlopeState_t slopeState) {
 		if (slopeState == TriangleOscillator::SlopeState_t::FALLING) {
-			setOutput<EorOut>(8.f);
+			setOutput<EndOfRiseGateOut>(8.f);
 			setLED<EorLight>(true);
 		} else {
-			setOutput<EorOut>(0);
+			setOutput<EndOfRiseGateOut>(0);
 			setLED<EorLight>(false);
 		}
 	}
@@ -153,8 +153,8 @@ public:
 		fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<FallCvKnob>() * scaledTimeCV);
 
 		// sum with static value from fader + range switch
-		auto riseRange = getState<RiseSwitch>();
-		auto fallRange = getState<FallSwitch>();
+		auto riseRange = getState<RiseRangeSwitch>();
+		auto fallRange = getState<FallRangeSwitch>();
 		riseCV = -rScaleLEDs - ProcessCVOffset(getState<RiseSlider>(), riseRange);
 		fallCV = -fScaleLEDs - ProcessCVOffset(getState<FallSlider>(), fallRange);
 

@@ -6,7 +6,7 @@
    version="1.1"
    id="svg5498"
    sodipodi:docname="ENVVCA_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,13 +24,13 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="in"
      showgrid="false"
-     inkscape:zoom="2.0572917"
-     inkscape:cx="5.5898733"
-     inkscape:cy="230.88607"
+     inkscape:zoom="1.0286459"
+     inkscape:cx="48.121518"
+     inkscape:cy="204.1519"
      inkscape:window-width="1392"
-     inkscape:window-height="1051"
-     inkscape:window-x="50"
-     inkscape:window-y="38"
+     inkscape:window-height="847"
+     inkscape:window-x="2233"
+     inkscape:window-y="239"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
@@ -1380,7 +1380,8 @@
        cx="92.03"
        cy="278.73"
        r="11.34"
-       style="fill: #8080ff" />
+       style="fill: #8080ff"
+       data-name="End of Rise Gate Out" />
     <circle
        id="EOR_Light_OrangeLight"
        data-name="EOR Light#OrangeLight"
@@ -1393,7 +1394,8 @@
        cx="22.3"
        cy="278.73"
        r="11.34"
-       style="fill: lime" />
+       style="fill: lime"
+       data-name="Follow In" />
     <circle
        id="Cycle"
        cx="57.25"
@@ -1405,23 +1407,25 @@
        cx="92.03"
        cy="227.06"
        r="11.34"
-       style="fill: blue" />
+       style="fill: blue"
+       data-name="Envelope Out" />
     <circle
        id="Trigger"
        cx="22.3"
        cy="227.06"
        r="11.34"
-       style="fill: #80ff80" />
+       style="fill: #80ff80"
+       data-name="Trigger In" />
     <circle
        id="Time_CV"
-       data-name="Time CV"
+       data-name="Time CV In"
        cx="57.25"
        cy="203.53"
        r="11.34"
        style="fill: lime" />
     <circle
        id="Fall_CV"
-       data-name="Fall CV"
+       data-name="Fall CV!-100!100!%"
        cx="92.85"
        cy="178.25"
        r="8.5"
@@ -1442,14 +1446,14 @@
        style="fill: #f0f" />
     <circle
        id="Rise_CV"
-       data-name="Rise CV"
+       data-name="Rise CV!-100!100!%"
        cx="21.69"
        cy="178.25"
        r="8.5"
        style="fill: #ff0080" />
     <rect
        id="Env_Level_Slider"
-       data-name="Env Level Slider"
+       data-name="Envelope Level"
        x="88.67"
        y="70.54"
        width="5.67"
@@ -1457,7 +1461,7 @@
        style="fill: #ff0080" />
     <rect
        id="Fall_Slider"
-       data-name="Fall Slider"
+       data-name="Fall!.05!180000!ms"
        x="54.49"
        y="70.75"
        width="5.67"
@@ -1465,7 +1469,7 @@
        style="fill: #ff0040" />
     <rect
        id="Rise_Slider"
-       data-name="Rise Slider"
+       data-name="Rise!0.05!180000!ms"
        x="20.35"
        y="70.54"
        width="5.67"
@@ -1480,7 +1484,7 @@
        style="fill: #ff8000" />
     <rect
        id="Fall_Switch"
-       data-name="Fall Switch@Fast@Med@Slow"
+       data-name="Fall Range@Fast@Med@Slow"
        x="51.66"
        y="34.8"
        width="11.34"
@@ -1488,7 +1492,7 @@
        style="fill:#ffc081" />
     <rect
        id="Rise_Switch"
-       data-name="Rise Switch@Fast@Med@Slow"
+       data-name="Rise Range@Fast@Med@Slow"
        x="17.52"
        y="34.8"
        width="11.34"

@@ -16,20 +16,20 @@ struct ENVVCAInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 19> Elements{{
-		Toggle3pos{{to_mm<72>(23.19), to_mm<72>(43.305), Center, "Rise Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
-		Toggle3pos{{to_mm<72>(57.33), to_mm<72>(43.305), Center, "Fall Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
+		Toggle3pos{{to_mm<72>(23.19), to_mm<72>(43.305), Center, "Rise Range", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
+		Toggle3pos{{to_mm<72>(57.33), to_mm<72>(43.305), Center, "Fall Range", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		OrangeButton{{to_mm<72>(92.17), to_mm<72>(41.65), Center, "Cycle", ""}},
-		Slider25mmVertLED{{to_mm<72>(23.185), to_mm<72>(108.81), Center, "Rise Slider", ""}, 0.5f},
-		Slider25mmVertLED{{to_mm<72>(57.325), to_mm<72>(109.02), Center, "Fall Slider", ""}, 0.5f},
-		Slider25mmVertLED{{to_mm<72>(91.505), to_mm<72>(108.81), Center, "Env Level Slider", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(21.69), to_mm<72>(178.25), Center, "Rise CV", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(92.85), to_mm<72>(178.25), Center, "Fall CV", ""}, 1.0f},
-		AnalogJackInput4ms{{to_mm<72>(57.25), to_mm<72>(203.53), Center, "Time CV", ""}},
-		GateJackInput4ms{{to_mm<72>(22.3), to_mm<72>(227.06), Center, "Trigger", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(92.03), to_mm<72>(227.06), Center, "Env", ""}},
+		Slider25mmVertLED{{to_mm<72>(23.185), to_mm<72>(108.81), Center, "Rise", ""}, 0.5f, 0.05, 180000.0, "ms"},
+		Slider25mmVertLED{{to_mm<72>(57.325), to_mm<72>(109.02), Center, "Fall", ""}, 0.5f, 0.05, 180000.0, "ms"},
+		Slider25mmVertLED{{to_mm<72>(91.505), to_mm<72>(108.81), Center, "Envelope Level", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(21.69), to_mm<72>(178.25), Center, "Rise CV", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(92.85), to_mm<72>(178.25), Center, "Fall CV", ""}, 1.0f, -100.0, 100.0, "%"},
+		AnalogJackInput4ms{{to_mm<72>(57.25), to_mm<72>(203.53), Center, "Time CV In", ""}},
+		GateJackInput4ms{{to_mm<72>(22.3), to_mm<72>(227.06), Center, "Trigger In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(92.03), to_mm<72>(227.06), Center, "Envelope Out", ""}},
 		GateJackInput4ms{{to_mm<72>(57.25), to_mm<72>(254.25), Center, "Cycle", ""}},
-		AnalogJackInput4ms{{to_mm<72>(22.3), to_mm<72>(278.73), Center, "Follow", ""}},
-		GateJackOutput4ms{{to_mm<72>(92.03), to_mm<72>(278.73), Center, "EOR", ""}},
+		AnalogJackInput4ms{{to_mm<72>(22.3), to_mm<72>(278.73), Center, "Follow In", ""}},
+		GateJackOutput4ms{{to_mm<72>(92.03), to_mm<72>(278.73), Center, "End of Rise Gate Out", ""}},
 		AnalogJackInput4ms{{to_mm<72>(35.87), to_mm<72>(322.47), Center, "Audio In", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(78.57), to_mm<72>(322.5), Center, "Audio Out", ""}},
 		RedBlueLight{{to_mm<72>(45.11), to_mm<72>(174.84), Center, "Rise Light", ""}},
@@ -38,20 +38,20 @@ struct ENVVCAInfo : ModuleInfoBase {
 }};
 
     enum class Elem {
-        RiseSwitch,
-        FallSwitch,
+        RiseRangeSwitch,
+        FallRangeSwitch,
         CycleButton,
         RiseSlider,
         FallSlider,
-        EnvLevelSlider,
+        EnvelopeLevelSlider,
         RiseCvKnob,
         FallCvKnob,
         TimeCvIn,
         TriggerIn,
-        EnvOut,
+        EnvelopeOut,
         CycleIn,
         FollowIn,
-        EorOut,
+        EndOfRiseGateOut,
         AudioIn,
         AudioOut,
         RiseLight,
@@ -62,33 +62,33 @@ struct ENVVCAInfo : ModuleInfoBase {
     // Legacy naming
     
     enum {
-        KnobRise_Slider, 
-        KnobFall_Slider, 
-        KnobEnv_Level_Slider, 
+        KnobRise, 
+        KnobFall, 
+        KnobEnvelope_Level, 
         KnobRise_Cv, 
         KnobFall_Cv, 
         NumKnobs,
     };
     
     enum {
-        SwitchRise_Switch, 
-        SwitchFall_Switch, 
+        SwitchRise_Range, 
+        SwitchFall_Range, 
         SwitchCycle, 
         NumSwitches,
     };
     
     enum {
-        InputTime_Cv, 
-        InputTrigger, 
+        InputTime_Cv_In, 
+        InputTrigger_In, 
         InputCycle, 
-        InputFollow, 
+        InputFollow_In, 
         InputAudio_In, 
         NumInJacks,
     };
     
     enum {
-        OutputEnv, 
-        OutputEor, 
+        OutputEnvelope_Out, 
+        OutputEnd_Of_Rise_Gate_Out, 
         OutputAudio_Out, 
         NumOutJacks,
     };
