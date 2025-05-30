@@ -37,9 +37,9 @@ public:
 
 		e.set_sustain(finalSustain);
 
-		e.set_attack_curve(getState<ACurveKnob>());
-		e.set_decay_curve(getState<DCurveKnob>());
-		e.set_release_curve(getState<RCurveKnob>());
+		e.set_attack_curve(getState<AttackCurveKnob>());
+		e.set_decay_curve(getState<DecayCurveKnob>());
+		e.set_release_curve(getState<ReleaseCurveKnob>());
 
 		if (isLooping) {
 			if (currentStage == Envelope::IDLE) {
@@ -59,7 +59,7 @@ public:
 		setOutput<SustainOut>((currentStage == e.SUSTAIN) ? MaxOutputVolts : 0);
 		setOutput<ReleaseOut>((currentStage == e.RELEASE) ? MaxOutputVolts : 0);
 
-		setOutput<Out>(envelopeOutput * MaxOutputVolts);
+		setOutput<EnvelopeOut>(envelopeOutput * MaxOutputVolts);
 	}
 
 	void set_samplerate(float sr) override {

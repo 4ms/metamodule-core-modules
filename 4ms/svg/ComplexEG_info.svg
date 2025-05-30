@@ -28,10 +28,10 @@
      inkscape:cy="243.00472"
      inkscape:window-width="1200"
      inkscape:window-height="1186"
-     inkscape:window-x="2240"
-     inkscape:window-y="25"
+     inkscape:window-x="2301"
+     inkscape:window-y="145"
      inkscape:window-maximized="0"
-     inkscape:current-layer="components" />
+     inkscape:current-layer="svg155" />
   <g
      id="faceplate">
     <rect
@@ -755,7 +755,8 @@
        cx="179.96"
        cy="309.84"
        r="11.34"
-       style="fill: blue; stroke-width: 0px;" />
+       style="fill: blue; stroke-width: 0px;"
+       data-name="Envelope Out" />
     <circle
        id="Hold_Out"
        data-name="Hold Out"
@@ -848,21 +849,21 @@
        style="fill: #ff0060; stroke-width: 0px;" />
     <circle
        id="R_Curve"
-       data-name="R Curve"
+       data-name="Release Curve"
        cx="172.62"
        cy="104.51"
        r="17.01"
        style="fill: #ff0040; stroke-width: 0px;" />
     <circle
        id="D_Curve"
-       data-name="D Curve"
+       data-name="Decay Curve"
        cx="108.12"
        cy="104.51"
        r="17.01"
        style="fill: #ff0040; stroke-width: 0px;" />
     <circle
        id="A_Curve"
-       data-name="A Curve"
+       data-name="Attack Curve"
        cx="43.62"
        cy="104.51"
        r="17.01"

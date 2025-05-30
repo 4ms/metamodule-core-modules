@@ -20,9 +20,9 @@ struct ComplexEGInfo : ModuleInfoBase {
 		Davies1900hBlackKnob{{to_mm<72>(43.62), to_mm<72>(46.2), Center, "Attack", ""}, 0.125f, 1.0, 1000.0, "ms"},
 		Davies1900hBlackKnob{{to_mm<72>(108.12), to_mm<72>(45.53), Center, "Decay", ""}, 0.125f, 1.0, 1000.0, "ms"},
 		Davies1900hBlackKnob{{to_mm<72>(172.62), to_mm<72>(45.53), Center, "Release", ""}, 0.25f, 1.0, 1000.0, "ms"},
-		Davies1900hBlackKnob{{to_mm<72>(43.62), to_mm<72>(104.51), Center, "A Curve", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(108.12), to_mm<72>(104.51), Center, "D Curve", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(172.62), to_mm<72>(104.51), Center, "R Curve", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(43.62), to_mm<72>(104.51), Center, "Attack Curve", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(108.12), to_mm<72>(104.51), Center, "Decay Curve", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(172.62), to_mm<72>(104.51), Center, "Release Curve", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(43.62), to_mm<72>(163.28), Center, "Sustain", ""}, 0.75f},
 		Davies1900hBlackKnob{{to_mm<72>(172.52), to_mm<72>(163.23), Center, "Hold", ""}, 0.5f, 1.0, 1000.0, "ms"},
 		AnalogJackInput4ms{{to_mm<72>(36.45), to_mm<72>(214.13), Center, "Gate In", ""}},
@@ -36,7 +36,7 @@ struct ComplexEGInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(36.45), to_mm<72>(309.84), Center, "Release Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(83.96), to_mm<72>(309.84), Center, "Sustain Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(131.96), to_mm<72>(309.84), Center, "Hold Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(179.96), to_mm<72>(309.84), Center, "Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(179.96), to_mm<72>(309.84), Center, "Envelope Out", ""}},
 }};
 
     enum class Elem {
@@ -44,9 +44,9 @@ struct ComplexEGInfo : ModuleInfoBase {
         AttackKnob,
         DecayKnob,
         ReleaseKnob,
-        ACurveKnob,
-        DCurveKnob,
-        RCurveKnob,
+        AttackCurveKnob,
+        DecayCurveKnob,
+        ReleaseCurveKnob,
         SustainKnob,
         HoldKnob,
         GateIn,
@@ -60,7 +60,7 @@ struct ComplexEGInfo : ModuleInfoBase {
         ReleaseOut,
         SustainOut,
         HoldOut,
-        Out,
+        EnvelopeOut,
     };
 
     // Legacy naming
@@ -69,9 +69,9 @@ struct ComplexEGInfo : ModuleInfoBase {
         KnobAttack, 
         KnobDecay, 
         KnobRelease, 
-        KnobA_Curve, 
-        KnobD_Curve, 
-        KnobR_Curve, 
+        KnobAttack_Curve, 
+        KnobDecay_Curve, 
+        KnobRelease_Curve, 
         KnobSustain, 
         KnobHold, 
         NumKnobs,
@@ -98,7 +98,7 @@ struct ComplexEGInfo : ModuleInfoBase {
         OutputRelease_Out, 
         OutputSustain_Out, 
         OutputHold_Out, 
-        OutputOut, 
+        OutputEnvelope_Out, 
         NumOutJacks,
     };
     
