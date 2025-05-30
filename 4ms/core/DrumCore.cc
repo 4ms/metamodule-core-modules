@@ -109,28 +109,28 @@ public:
 			case Info::KnobPitch:
 				baseFrequency = MathTools::map_value(val, 0.0f, 1.0f, 10.0f, 1000.0f);
 				break;
-			case Info::KnobPitch_Env: // pitch envelope
+			case Info::KnobPitch_Envelope: // pitch envelope
 				basePitchEnvTime = val;
 				setPitchEnvelope();
 				break;
-			case Info::KnobPitch_Amt:
+			case Info::KnobPitch_Amount:
 				pitchAmount = val;
 				break;
-			case Info::KnobRatio:
+			case Info::KnobFm_Ratio:
 				ratio = MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 16.0f);
 				break;
-			case Info::KnobFm_Env: // fm envelope
+			case Info::KnobFm_Envelope: // fm envelope
 				baseFMEnvTime = val;
 				setFMEnvelope();
 				break;
-			case Info::KnobFm_Amt:
+			case Info::KnobFm_Amount:
 				fmAmount = val;
 				break;
-			case Info::KnobTone_Env: // tone envelope
+			case Info::KnobTone_Envelope: // tone envelope
 				baseToneEnvTime = val;
 				setToneEnvelope();
 				break;
-			case Info::KnobNoise_Env: // noise envelope
+			case Info::KnobNoise_Envelope: // noise envelope
 				baseNoiseEnvTime = val;
 				setNoiseEnvelope();
 				break;
@@ -144,19 +144,19 @@ public:
 		switch (param_id) {
 			case Info::KnobPitch:
 				return MathTools::map_value(baseFrequency, 10.0f, 1000.0f, 0.f, 1.f);
-			case Info::KnobPitch_Env: // pitch envelope
+			case Info::KnobPitch_Envelope: // pitch envelope
 				return basePitchEnvTime;
-			case Info::KnobPitch_Amt:
+			case Info::KnobPitch_Amount:
 				return pitchAmount;
-			case Info::KnobRatio:
+			case Info::KnobFm_Ratio:
 				return MathTools::map_value(ratio, 1.0f, 16.0f, 0.f, 1.f);
-			case Info::KnobFm_Env: // fm envelope
+			case Info::KnobFm_Envelope: // fm envelope
 				return baseFMEnvTime;
-			case Info::KnobFm_Amt:
+			case Info::KnobFm_Amount:
 				return fmAmount;
-			case Info::KnobTone_Env: // tone envelope
+			case Info::KnobTone_Envelope: // tone envelope
 				return baseToneEnvTime;
-			case Info::KnobNoise_Env: // noise envelope
+			case Info::KnobNoise_Envelope: // noise envelope
 				return baseNoiseEnvTime;
 			case Info::KnobNoise_Blend:
 				return noiseBlend;
@@ -207,53 +207,53 @@ public:
 		val = val / CvRangeVolts;
 
 		switch (input_id) {
-			case Info::InputTrigger:
+			case Info::InputTrigger_In:
 				gateIn = val;
 				break;
-			case Info::InputV_Oct:
+			case Info::InputV_Oct_In:
 				pitchCV = val;
 				break;
-			case Info::InputN_Env_Cv:
+			case Info::InputNoise_Envelope_Cv_In:
 				noiseEnvCV = val;
 				setNoiseEnvelope();
 				break;
-			case Info::InputFm_Env_Cv:
+			case Info::InputFm_Envelope_Cv_In:
 				FMEnvCV = val;
 				setFMEnvelope();
 				break;
-			case Info::InputP_Env_Cv:
+			case Info::InputPitch_Envelope_Cv_In:
 				pitchEnvCV = val;
 				setPitchEnvelope();
 				break;
-			case Info::InputT_Env_Cv:
+			case Info::InputTone_Envelope_Cv_In:
 				toneEnvCV = val;
 				setToneEnvelope();
 				break;
 
-			case Info::InputP_Amt_Cv:
+			case Info::InputPitch_Amount_Cv_In:
 				break;
-			case Info::InputN_Blend_Cv:
+			case Info::InputNoise_Blend_Cv_In:
 				break;
-			case Info::InputFm_Amt_Cv:
+			case Info::InputFm_Amount_Cv_In:
 				break;
-			case Info::InputRatio_Cv:
+			case Info::InputRatio_Cv_In:
 				break;
 		}
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputAudio_Out)
 			return drumOutput * outputVolts;
 		return 0.f;
 	}
 
 	void mark_input_unpatched(int input_id) override {
-		if (input_id == Info::InputV_Oct) {
+		if (input_id == Info::InputV_Oct_In) {
 			pitchConnected = false;
 		}
 	}
 	void mark_input_patched(int input_id) override {
-		if (input_id == Info::InputV_Oct) {
+		if (input_id == Info::InputV_Oct_In) {
 			pitchConnected = true;
 		}
 	}
