@@ -43,7 +43,7 @@ public:
 				e.set_sustain(MathTools::map_value(val, 0.0f, 1.0f, 0.0f, 0.2f));
 				e.set_envelope_time(3, MathTools::map_value(val, 0.0f, 1.0f, 200.0f, 1000.0f));
 				break;
-			case Info::KnobSpread:
+			case Info::KnobDetune:
 				k.set_spread(val);
 				break;
 		}
@@ -55,7 +55,7 @@ public:
 				return MathTools::map_value(basePitch, 20.f, 400.f, 0.f, 1.f);
 			case Info::KnobDecay:
 				return k.get_decay();
-			case Info::KnobSpread:
+			case Info::KnobDetune:
 				return k.get_spread();
 		}
 		return 0;
@@ -65,32 +65,32 @@ public:
 		val = val / CvRangeVolts;
 
 		switch (input_id) {
-			case Info::InputTrig:
+			case Info::InputTrigger_In:
 				gateInput = val;
 				break;
-			case Info::InputV_Oct:
+			case Info::InputV_Oct_In:
 				pitchInput = val;
 				break;
 		}
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputAudio_Out)
 			return karpOut * MaxOutputVolts;
 		return 0.f;
 	}
 
 	void mark_all_inputs_unpatched() override {
-		mark_input_unpatched(Info::InputTrig);
-		mark_input_unpatched(Info::InputV_Oct);
+		mark_input_unpatched(Info::InputTrigger_In);
+		mark_input_unpatched(Info::InputV_Oct_In);
 	}
 
 	void mark_input_unpatched(int input_id) override {
 		switch (input_id) {
-			case Info::InputTrig:
+			case Info::InputTrigger_In:
 				gateInput = 0;
 				break;
-			case Info::InputV_Oct:
+			case Info::InputV_Oct_In:
 				pitchInput = 0;
 				break;
 		}
