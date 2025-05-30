@@ -16,15 +16,15 @@ struct PitchShiftInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 9> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(50.4), to_mm<72>(46.78), Center, "Coarse", ""}, 0.25f},
-		Knob9mm{{to_mm<72>(50.4), to_mm<72>(94.75), Center, "Fine", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(50.4), to_mm<72>(139.5), Center, "Window", ""}, 0.0f},
+		Davies1900hBlackKnob{{to_mm<72>(50.4), to_mm<72>(46.78), Center, "Coarse", ""}, 0.25f, -12.0, 12.0, "semitones"},
+		Knob9mm{{to_mm<72>(50.4), to_mm<72>(94.75), Center, "Fine", ""}, 0.5f, -1.0, 1.0, "semitones"},
+		Knob9mm{{to_mm<72>(50.4), to_mm<72>(139.5), Center, "Window", ""}, 0.0f, 0.42, 200.0, "ms"},
 		Knob9mm{{to_mm<72>(50.4), to_mm<72>(184.25), Center, "Mix", ""}, 0.875f},
-		AnalogJackInput4ms{{to_mm<72>(30.79), to_mm<72>(232.35), Center, "Input", ""}},
+		AnalogJackInput4ms{{to_mm<72>(30.79), to_mm<72>(232.35), Center, "Audio In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(69.79), to_mm<72>(232.35), Center, "Pitch CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(30.79), to_mm<72>(281.45), Center, "Window CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(69.79), to_mm<72>(281.45), Center, "Mix CV", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(69.79), to_mm<72>(325.98), Center, "Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(69.79), to_mm<72>(325.98), Center, "Audio Out", ""}},
 }};
 
     enum class Elem {
@@ -32,11 +32,11 @@ struct PitchShiftInfo : ModuleInfoBase {
         FineKnob,
         WindowKnob,
         MixKnob,
-        InputIn,
+        AudioIn,
         PitchCvIn,
         WindowCvIn,
         MixCvIn,
-        Out,
+        AudioOut,
     };
 
     // Legacy naming
@@ -51,7 +51,7 @@ struct PitchShiftInfo : ModuleInfoBase {
     
     
     enum {
-        InputInput, 
+        InputAudio_In, 
         InputPitch_Cv, 
         InputWindow_Cv, 
         InputMix_Cv, 
@@ -59,7 +59,7 @@ struct PitchShiftInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputOut, 
+        OutputAudio_Out, 
         NumOutJacks,
     };
     
