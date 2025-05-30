@@ -19,22 +19,22 @@ public:
 	}
 
 	void set_param(int param_id, float val) override {
-		static_assert(Info::Knob_1 + 1 == Info::Knob_2);
-		static_assert(Info::Knob_2 + 1 == Info::Knob_3);
-		static_assert(Info::Knob_3 + 1 == Info::Knob_4);
-		static_assert(Info::Knob_4 + 1 == Info::Knob_5);
-		static_assert(Info::Knob_5 + 1 == Info::Knob_6);
-		static_assert(Info::Knob_6 + 1 == Info::Knob_7);
-		static_assert(Info::Knob_7 + 1 == Info::Knob_8);
+		static_assert(Info::KnobStep_1 + 1 == Info::KnobStep_2);
+		static_assert(Info::KnobStep_2 + 1 == Info::KnobStep_3);
+		static_assert(Info::KnobStep_3 + 1 == Info::KnobStep_4);
+		static_assert(Info::KnobStep_4 + 1 == Info::KnobStep_5);
+		static_assert(Info::KnobStep_5 + 1 == Info::KnobStep_6);
+		static_assert(Info::KnobStep_6 + 1 == Info::KnobStep_7);
+		static_assert(Info::KnobStep_7 + 1 == Info::KnobStep_8);
 
-		if (param_id >= Info::Knob_1 && param_id <= Info::Knob_8)
-			seq.setStep(param_id - Info::Knob_1, val);
+		if (param_id >= Info::KnobStep_1 && param_id <= Info::KnobStep_8)
+			seq.setStep(param_id - Info::KnobStep_1, val);
 		// else if (param_id == Info::KnobLength)
 		// 	seq.setLength(MathTools::map_value(val, 0.0f, 1.0f, 0, 8));
 	}
 
 	float get_param(int param_id) const override {
-		if (param_id >= Info::Knob_1 && param_id <= Info::Knob_8)
+		if (param_id >= Info::KnobStep_1 && param_id <= Info::KnobStep_8)
 			return seq.getStep(param_id);
 		return 0;
 	}
