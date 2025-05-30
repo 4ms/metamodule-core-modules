@@ -22,12 +22,12 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="2.0449221"
-     inkscape:cx="38.387771"
-     inkscape:cy="246.70867"
-     inkscape:window-width="1200"
-     inkscape:window-height="1186"
-     inkscape:window-x="2240"
-     inkscape:window-y="25"
+     inkscape:cx="38.38777"
+     inkscape:cy="364.07255"
+     inkscape:window-width="1832"
+     inkscape:window-height="1252"
+     inkscape:window-x="2403"
+     inkscape:window-y="55"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <defs
@@ -303,13 +303,6 @@
        style="fill: lime; stroke-width: 0px;"
        data-name="Cutoff CV In" />
     <circle
-       id="Mode"
-       cx="28.8"
-       cy="168.66"
-       r="10.63"
-       style="fill: #ff8000; stroke-width: 0px;"
-       data-name="Mode@Standard@Oberheim" />
-    <circle
        id="Q"
        cx="28.8"
        cy="94.96"
@@ -359,5 +352,13 @@
          x="17.09"
          y="0"
          id="tspan42">er</tspan></text>
+    <rect
+       style="fill:#ff8080;fill-opacity:1;stroke-width:0.236791"
+       id="Mode"
+       width="14.173496"
+       height="8.5040979"
+       x="22.005602"
+       y="167.94728"
+       data-name="Mode@Standard@Oberheim" />
   </g>
 </svg>
