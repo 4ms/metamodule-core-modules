@@ -16,47 +16,47 @@ struct DetuneInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 8> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(57.84), Center, "W Speed", ""}, 0.25f},
-		Davies1900hBlackKnob{{to_mm<72>(83.35), to_mm<72>(57.84), Center, "F Speed", ""}, 0.0f},
-		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(119.08), Center, "W Depth", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(83.35), to_mm<72>(119.08), Center, "F Depth", ""}, 0.5f},
-		AnalogJackInput4ms{{to_mm<72>(31.99), to_mm<72>(271.96), Center, "Input", ""}},
-		AnalogJackInput4ms{{to_mm<72>(83.18), to_mm<72>(271.96), Center, "Detune", ""}},
-		AnalogJackInput4ms{{to_mm<72>(31.99), to_mm<72>(313.57), Center, "Depth", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(83.18), to_mm<72>(313.57), Center, "Out", ""}},
+		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(57.84), Center, "Wow Speed", ""}, 0.25f, 0.1, 5.0, "hz"},
+		Davies1900hBlackKnob{{to_mm<72>(83.35), to_mm<72>(57.84), Center, "Flutter Speed", ""}, 0.0f, 5.0, 30.0, "hz"},
+		Davies1900hBlackKnob{{to_mm<72>(31.82), to_mm<72>(119.08), Center, "Wow Depth", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(83.35), to_mm<72>(119.08), Center, "Flutter Depth", ""}, 0.5f},
+		AnalogJackInput4ms{{to_mm<72>(31.99), to_mm<72>(271.96), Center, "Audio In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(83.18), to_mm<72>(271.96), Center, "Detune CV In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(31.99), to_mm<72>(313.57), Center, "Depth CV In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(83.18), to_mm<72>(313.57), Center, "Audio Out", ""}},
 }};
 
     enum class Elem {
-        WSpeedKnob,
-        FSpeedKnob,
-        WDepthKnob,
-        FDepthKnob,
-        InputIn,
-        DetuneIn,
-        DepthIn,
-        Out,
+        WowSpeedKnob,
+        FlutterSpeedKnob,
+        WowDepthKnob,
+        FlutterDepthKnob,
+        AudioIn,
+        DetuneCvIn,
+        DepthCvIn,
+        AudioOut,
     };
 
     // Legacy naming
     
     enum {
-        KnobW_Speed, 
-        KnobF_Speed, 
-        KnobW_Depth, 
-        KnobF_Depth, 
+        KnobWow_Speed, 
+        KnobFlutter_Speed, 
+        KnobWow_Depth, 
+        KnobFlutter_Depth, 
         NumKnobs,
     };
     
     
     enum {
-        InputInput, 
-        InputDetune, 
-        InputDepth, 
+        InputAudio_In, 
+        InputDetune_Cv_In, 
+        InputDepth_Cv_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut, 
+        OutputAudio_Out, 
         NumOutJacks,
     };
     
