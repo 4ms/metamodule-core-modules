@@ -16,14 +16,14 @@ struct SISMInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 34> Elements{{
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(46.64), Center, "Ch. 1 Scale", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(46.64), Center, "Ch. 1 Shift", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(111.44), Center, "Ch. 2 Scale", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(111.44), Center, "Ch. 2 Shift", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(176.24), Center, "Ch. 3 Scale", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(176.24), Center, "Ch. 3 Shift", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(241.04), Center, "Ch. 4 Scale", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(241.04), Center, "Ch. 4 Shift", ""}, 0.5f},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(46.64), Center, "Ch. 1 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(46.64), Center, "Ch. 1 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(111.44), Center, "Ch. 2 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(111.44), Center, "Ch. 2 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(176.24), Center, "Ch. 3 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(176.24), Center, "Ch. 3 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(241.04), Center, "Ch. 4 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(241.04), Center, "Ch. 4 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
 		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(52.84), Center, "Ch. 1 In", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(52.9), Center, "Ch. 1 Out", ""}},
 		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(117.64), Center, "Ch. 2 In", ""}},
