@@ -16,32 +16,32 @@ struct SourceInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 4> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.72), Center, "1", ""}, 0.25f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "2", ""}, 0.25f},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.11), Center, " 1 Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.21), Center, " 2 Out", ""}},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.72), Center, "Ch. 1 Offset", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Ch. 2 Offset", ""}, 0.5f, -10.0, 10.0, "v"},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.11), Center, "Ch. 1 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.21), Center, "Ch. 2 Out", ""}},
 }};
 
     enum class Elem {
-        _1Knob,
-        _2Knob,
-        _1Out,
-        _2Out,
+        Ch_1OffsetKnob,
+        Ch_2OffsetKnob,
+        Ch_1Out,
+        Ch_2Out,
     };
 
     // Legacy naming
     
     enum {
-        Knob_1, 
-        Knob_2, 
+        KnobCh__1_Offset, 
+        KnobCh__2_Offset, 
         NumKnobs,
     };
     
     
     
     enum {
-        Output_1_Out, 
-        Output_2_Out, 
+        OutputCh__1_Out, 
+        OutputCh__2_Out, 
         NumOutJacks,
     };
     
