@@ -63,8 +63,8 @@ public:
 			cp.updateReset(val);
 		} else if (input_id == Info::InputCv) {
 			cvInput = MathTools::constrain(val / CvRangeVolts, 0.0f, 1.0f);
-		} else if (input_id >= Info::InputIn_1 && input_id <= Info::InputIn_4) {
-			auto inputNum = input_id - Info::InputIn_1;
+		} else if (input_id >= Info::InputCh__1_In && input_id <= Info::InputCh__4_In) {
+			auto inputNum = input_id - Info::InputCh__1_In;
 			signalInputs[inputNum] = val;
 		}
 	}

@@ -16,25 +16,25 @@ struct Switch14Info : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 8> Elements{{
-		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(167.04), Center, "In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(167.04), Center, "Signal In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(167.04), Center, "Reset", ""}},
 		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(214.43), Center, "Clock", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(214.43), Center, "CV", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(31.76), to_mm<72>(263.15), Center, "Out 1", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(83.3), to_mm<72>(263.15), Center, "Out 2", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(31.76), to_mm<72>(311.88), Center, "Out 3", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(83.3), to_mm<72>(311.88), Center, "Out 4", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(31.76), to_mm<72>(263.15), Center, "Ch. 1 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(83.3), to_mm<72>(263.15), Center, "Ch. 2 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(31.76), to_mm<72>(311.88), Center, "Ch. 3 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(83.3), to_mm<72>(311.88), Center, "Ch. 4 Out", ""}},
 }};
 
     enum class Elem {
-        In,
+        SignalIn,
         ResetIn,
         ClockIn,
         CvIn,
-        Out1Out,
-        Out2Out,
-        Out3Out,
-        Out4Out,
+        Ch_1Out,
+        Ch_2Out,
+        Ch_3Out,
+        Ch_4Out,
     };
 
     // Legacy naming
@@ -42,7 +42,7 @@ struct Switch14Info : ModuleInfoBase {
     
     
     enum {
-        InputIn, 
+        InputSignal_In, 
         InputReset, 
         InputClock, 
         InputCv, 
@@ -50,10 +50,10 @@ struct Switch14Info : ModuleInfoBase {
     };
     
     enum {
-        OutputOut_1, 
-        OutputOut_2, 
-        OutputOut_3, 
-        OutputOut_4, 
+        OutputCh__1_Out, 
+        OutputCh__2_Out, 
+        OutputCh__3_Out, 
+        OutputCh__4_Out, 
         NumOutJacks,
     };
     
