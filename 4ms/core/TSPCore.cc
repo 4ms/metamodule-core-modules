@@ -65,7 +65,7 @@ public:
 					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
 					if (stream.is_eof()) {
 						end_out.start(0.010);
-						play_state = loop_mode ? Reset : Stopped;
+						play_state = Stopped;
 					} else {
 						setLED<PlayButton>(Red);
 						printf("%u buffer underflow\n", id);
@@ -116,7 +116,12 @@ public:
 			case Buffering:
 			case Playing:
 				if (stream.frames_available() < prebuff_threshold) {
-					if (!stream.is_eof()) {
+
+					if (stream.is_eof()) {
+						if (loop_mode) {
+							stream.seek_frame_in_file(0);
+						}
+					} else {
 						stream.read_frames_from_file();
 					}
 				}
