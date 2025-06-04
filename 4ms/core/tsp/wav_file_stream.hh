@@ -141,8 +141,6 @@ struct WavFileStream {
 			// so we need to prepare to read from disk
 			drwav_seek_to_pcm_frame(&wav, frame_num);
 
-			reset_prebuff();
-
 			eof = false;
 		}
 	}
