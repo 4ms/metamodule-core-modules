@@ -159,7 +159,8 @@ public:
 			});
 		}
 
-		waveform.set_x_zoom(getState<WaveformZoomAltParam>() * 2000);
+		float inc = 1.f / (300.f * getState<WaveformZoomAltParam>() + 1.f);
+		waveform.set_x_zoom(inc);
 	}
 
 	void set_param(int id, float val) override {
