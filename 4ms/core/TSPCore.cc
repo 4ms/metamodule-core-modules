@@ -31,6 +31,7 @@ public:
 	}
 
 	int ctr = 0;
+	unsigned last_frame = 0;
 	void update() override {
 		ctr++;
 		handle_load_button();
@@ -44,7 +45,6 @@ public:
 		switch (play_state) {
 			case Buffering:
 				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold) {
-					printf("%d: Buffering->Play (eof=%d)\n", ctr, stream.is_eof());
 					play_state = Playing;
 				}
 				setLED<PlayButton>(Yellow);
@@ -54,6 +54,16 @@ public:
 
 			case Playing:
 				setLED<PlayButton>(Green);
+
+				if (loop_mode && current_frame == 1) {
+					end_out.start(0.010);
+					// printf("%d: eof->loop\n", ctr);
+				}
+				// if (last_frame > current_frame) {
+				// 	end_out.start(0.010);
+				// 	printf("%d: eof->loop %u %u\n", ctr, last_frame, current_frame);
+				// }
+				// last_frame = current_frame;
 
 				if (stream.frames_available()) {
 					auto left = stream.pop_sample();
@@ -72,13 +82,8 @@ public:
 					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
 					if (stream.is_eof()) {
 						end_out.start(0.010);
-						if (loop_mode) {
-							stream.reset_read_pos(0);
-							printf("%d: eof->loop\n", ctr);
-						} else {
-							play_state = Stopped;
-							printf("%d: eof -> Stop\n", ctr);
-						}
+						play_state = Stopped;
+						printf("%d: eof -> Stop\n", ctr);
 					} else {
 						setLED<PlayButton>(Red);
 						printf("%u buffer underflow\n", (unsigned)id);
