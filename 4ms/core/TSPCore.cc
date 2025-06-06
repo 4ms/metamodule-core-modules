@@ -30,16 +30,21 @@ public:
 		stream.unload();
 	}
 
+	int ctr = 0;
 	void update() override {
+		ctr++;
 		handle_load_button();
 		handle_play();
 		handle_loop_toggle();
 
 		using enum PlayState;
 
+		auto current_frame = stream.current_playback_frame();
+
 		switch (play_state) {
 			case Buffering:
 				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold) {
+					printf("%d: Buffering->Play (eof=%d)\n", ctr, stream.is_eof());
 					play_state = Playing;
 				}
 				setLED<PlayButton>(Yellow);
@@ -51,24 +56,32 @@ public:
 				setLED<PlayButton>(Green);
 
 				if (stream.frames_available()) {
-
 					auto left = stream.pop_sample();
 					auto right = stream.is_stereo() ? stream.pop_sample() : left;
 					setOutput<LeftOut>(left * 5.f);
 					setOutput<RightOut>(right * 5.f);
 
 					waveform.draw_sample(left);
-					waveform.set_cursor_position((float)stream.current_playback_frame() / stream.total_frames());
+					waveform.set_cursor_position((float)current_frame / stream.total_frames());
+
+					// printf("%d: %u -> %u\n", ctr, current_frame, stream.frames_available());
+
 				} else {
 					// No frames avaiable.
-					// If we're also at the end of file, then stop.
+					// If we're also at the end of file, then stop or loop.
 					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
 					if (stream.is_eof()) {
 						end_out.start(0.010);
-						play_state = Stopped;
+						if (loop_mode) {
+							stream.reset_read_pos(0);
+							printf("%d: eof->loop\n", ctr);
+						} else {
+							play_state = Stopped;
+							printf("%d: eof -> Stop\n", ctr);
+						}
 					} else {
 						setLED<PlayButton>(Red);
-						printf("%u buffer underflow\n", id);
+						printf("%u buffer underflow\n", (unsigned)id);
 						// message = "Buffer underflow";
 					}
 				}
@@ -90,7 +103,7 @@ public:
 		}
 
 		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
-		setOutput<PositionOut>(5.f * (float)stream.current_playback_frame() / (float)stream.total_frames());
+		setOutput<PositionOut>(5.f * (float)current_frame / (float)stream.total_frames());
 	}
 
 	// This runs in a low-priority background task:
@@ -166,9 +179,16 @@ public:
 	void set_param(int id, float val) override {
 		// Buffer Threshold alt param: handle it only when the user changes it
 		if (id == param_idx<BufferThresholdAltParam>) {
-			auto samples_per_frame = stream.is_stereo() ? 2 : 1;
-			prebuff_threshold = std::max<unsigned>(val * PreBufferSamples / samples_per_frame, 1024);
-			return;
+			const auto samples_per_frame = stream.is_stereo() ? 2 : 1;
+			const auto max_frames = std::min<unsigned>(stream.total_frames(), PreBufferSamples / samples_per_frame);
+
+			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
+
+			printf("prebuff_threshold = %u, frames avail = %u, total_frames = %u, max_frames = %u\n",
+				   prebuff_threshold,
+				   stream.frames_available(),
+				   stream.total_frames(),
+				   max_frames);
 		}
 
 		// All other parameters:
@@ -259,7 +279,7 @@ private:
 
 	RisingEdgeDetector load_button;
 
-	static constexpr std::array<float, 3> Yellow = {0.9f, 0, 1.f};
+	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
 	static constexpr std::array<float, 3> Green = {0.1f, 1.f, 0.1f};
 	static constexpr std::array<float, 3> Off = {0, 0, 0};
