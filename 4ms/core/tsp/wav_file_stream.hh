@@ -9,7 +9,7 @@
 namespace MetaModule
 {
 
-template<uint64_t MaxSamples = 1024 * 1024, uint32_t MaxResamplingRatio = 4>
+template<uint32_t MaxSamples = 1024 * 1024, uint32_t MaxResamplingRatio = 4>
 struct WavFileStream {
 
 	bool load(std::string_view sample_path) {
@@ -49,7 +49,6 @@ struct WavFileStream {
 			// Read blocks of maximum 4kB at a time
 			unsigned frames_to_read = std::min(ReadBlockBytes / wav.fmt.blockAlign, (unsigned)num_frames);
 
-			next_frame_to_write = wav.readCursorInPCMFrames;
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
 
 			eof = (frames_read != frames_to_read);
@@ -66,6 +65,7 @@ struct WavFileStream {
 			auto output = resampler.process_block(wav.channels, input);
 
 			// Copy resampled frames to pre-buffer, one at a time
+			unsigned frame_ctr = 0;
 			for (auto out : output) {
 				if (!pre_buff.put(out)) {
 					printf("WavFileStream: Buffer overflow\n");
@@ -73,6 +73,11 @@ struct WavFileStream {
 					// is not consuming the samples fast enough to make room.
 					// Set drwav read cursor back to this position, pop back if we're not a frame boundary,
 					// set next_frame_to_write, and abort
+				}
+				if (++frame_ctr >= wav.channels) {
+					frame_ctr = 0;
+					next_frame_to_write.store(next_frame_to_write.load() + 1);
+					// printf("next_frame_to_write=%u\n", next_frame_to_write.load());
 				}
 			}
 
@@ -84,10 +89,12 @@ struct WavFileStream {
 			// 		eof);
 
 			num_frames -= output.size() / wav.channels;
-			next_frame_to_write += output.size() / wav.channels;
+			// next_frame_to_write += output.size() / wav.channels;
 
-			if (eof)
+			if (eof) {
+				printf("EOF\n");
 				break;
+			}
 		}
 	}
 
@@ -119,27 +126,38 @@ struct WavFileStream {
 		return eof;
 	}
 
-	uint64_t current_playback_frame() const {
+	unsigned current_playback_frame() const {
+		// if (next_frame_to_write < frames_available())
+		// 	printf("next_frame_to_write=%u, frames_available==%u, total_frames %u\n",
+		// 		   next_frame_to_write.load(),
+		// 		   frames_available(),
+		// 		   total_frames());
+
 		return next_frame_to_write > frames_available() ? next_frame_to_write - frames_available() : 0;
 	}
 
-	uint64_t total_frames() const {
-		return loaded ? wav.totalPCMFrameCount : 0;
+	unsigned total_frames() const {
+		return loaded ? ((unsigned)wav.totalPCMFrameCount * out_samplerate / (float)wav.sampleRate) : 0;
+	}
+
+	void reset_read_pos(unsigned frame_num = 0) {
+		pre_buff.set_read_pos(frame_num * wav.channels);
 	}
 
 	void seek_frame_in_file(uint64_t frame_num = 0) {
 
-		const auto frames_in_prebuff = std::min(MaxSamples / wav.channels, next_frame_to_write);
+		const auto frames_in_prebuff = std::min<unsigned>(MaxSamples / wav.channels, next_frame_to_write.load());
 
 		// Optimization:
 		// if we request to seek to a frame that's already in the prebuffer,
 		// just jump the read head to there (no need to read from disk)
-		if (frame_num < next_frame_to_write && frame_num >= (next_frame_to_write - frames_in_prebuff)) {
-			pre_buff.set_read_pos(frame_num * wav.channels);
+		if (frame_num < next_frame_to_write && (frames_in_prebuff + frame_num) >= next_frame_to_write) {
+			// printf("Reset without seek\n");
 		} else {
-			// Otherwise, we don't have the requested frame in our buffer
-			// so we need to prepare to read from disk
+			// Otherwise, prepare to read from disk
 			drwav_seek_to_pcm_frame(&wav, frame_num);
+			printf("Reset\n");
+			next_frame_to_write = frame_num;
 
 			eof = false;
 		}
@@ -164,7 +182,7 @@ private:
 	bool eof = true;
 	bool loaded = false;
 
-	uint64_t next_frame_to_write = 0;
+	std::atomic<unsigned> next_frame_to_write = 0;
 
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
