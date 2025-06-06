@@ -133,7 +133,8 @@ struct WavFileStream {
 		// 		   frames_available(),
 		// 		   total_frames());
 
-		return next_frame_to_write > frames_available() ? next_frame_to_write - frames_available() : 0;
+		return next_frame_to_write > frames_available() ? next_frame_to_write - frames_available() :
+														  next_frame_to_write + total_frames() - frames_available();
 	}
 
 	unsigned total_frames() const {
@@ -152,7 +153,7 @@ struct WavFileStream {
 		// if we request to seek to a frame that's already in the prebuffer,
 		// just jump the read head to there (no need to read from disk)
 		if (frame_num < next_frame_to_write && (frames_in_prebuff + frame_num) >= next_frame_to_write) {
-			// printf("Reset without seek\n");
+			printf("Reset without seek\n");
 		} else {
 			// Otherwise, prepare to read from disk
 			drwav_seek_to_pcm_frame(&wav, frame_num);
