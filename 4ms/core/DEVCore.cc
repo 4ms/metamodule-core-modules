@@ -9,7 +9,6 @@
 #include "CoreModules/4ms/core/helpers/EdgeDetector.h"
 #include "CoreModules/4ms/core/helpers/FlipFlop.h"
 #include "CoreModules/4ms/core/helpers/circuit_elements.h"
-#include "CoreModules/4ms/core/helpers/mapping.h"
 #include "CoreModules/4ms/core/helpers/quantization.h"
 
 namespace MetaModule
