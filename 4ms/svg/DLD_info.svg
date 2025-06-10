@@ -3139,7 +3139,7 @@
        style="fill: lime;" />
     <circle
        id="Delay_Feed_B"
-       data-name="Delay Feed B!0!110!%"
+       data-name="Delay Feed B"
        cx="245.19"
        cy="183.78"
        r="17.01"
@@ -3160,14 +3160,14 @@
        style="fill:#ff0040" />
     <circle
        id="Delay_Feed_A"
-       data-name="Delay Feed A!0!110!%"
+       data-name="Delay Feed A"
        cx="43.46"
        cy="184.04"
        r="17.01"
        style="fill: #ff0080;" />
     <circle
        id="Feedback_B"
-       data-name="Feedback B"
+       data-name="Feedback B!0!110!%"
        cx="254.59"
        cy="119.05"
        r="17.01"
@@ -3202,7 +3202,7 @@
        style="fill: #ffc000;" />
     <circle
        id="Feedback_A"
-       data-name="Feedback A"
+       data-name="Feedback A!0!110!%"
        cx="34.17"
        cy="119.05"
        r="17.01"
