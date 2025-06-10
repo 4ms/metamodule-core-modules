@@ -178,10 +178,10 @@ struct OctaveKnob : KnobSnapped {
 		pos_names[2] = "-2";
 		pos_names[3] = "-1";
 		pos_names[4] = "0";
-		pos_names[5] = "1";
-		pos_names[6] = "2";
-		pos_names[7] = "3";
-		pos_names[8] = "4";
+		pos_names[5] = "+1";
+		pos_names[6] = "+2";
+		pos_names[7] = "+3";
+		pos_names[8] = "+4";
 		min_angle = -135;
 		max_angle = 135;
 	}
