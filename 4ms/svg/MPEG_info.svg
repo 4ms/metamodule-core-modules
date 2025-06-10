@@ -731,12 +731,14 @@
        style="fill:#ffc000;stroke-width:0px"
        data-name="Ping#MomentaryRGB7mm" />
     <circle
+       data-name="Offset!-100!100!%"
        id="Offset"
        cx="91.139999"
        cy="188.53999"
        r="8.5"
        style="fill:#ff0080;stroke-width:0px" />
     <circle
+       data-name="Scale!-10!10!V"
        id="Scale"
        cx="91.139999"
        cy="133.33"
