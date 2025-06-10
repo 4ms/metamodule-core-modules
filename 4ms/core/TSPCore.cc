@@ -86,8 +86,8 @@ public:
 						printf("%d: eof -> Stop\n", ctr);
 					} else {
 						setLED<PlayButton>(Red);
-						printf("%u buffer underflow\n", (unsigned)id);
-						// message = "Buffer underflow";
+						//printf("%u buffer underflow\n", (unsigned)id);
+						message = "Buffer underflow";
 					}
 				}
 				break;
