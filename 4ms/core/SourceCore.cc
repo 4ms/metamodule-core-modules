@@ -2,6 +2,7 @@
 #include "CoreModules/moduleFactory.hh"
 #include "info/Source_info.hh"
 #include "util/math.hh"
+#include <cmath>
 
 namespace MetaModule
 {
