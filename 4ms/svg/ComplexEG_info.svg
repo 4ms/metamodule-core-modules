@@ -850,6 +850,7 @@
        y="160.49689"
        data-name="Loop@Off@On" />
     <circle
+       data-name="Sustain!0!8!V"
        id="Sustain"
        cx="43.62"
        cy="163.28"
