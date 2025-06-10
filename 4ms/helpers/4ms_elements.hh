@@ -213,7 +213,8 @@ struct Slider25mmHorizLED : SliderLight {
 	constexpr Slider25mmHorizLED() = default;
 	constexpr Slider25mmHorizLED(
 		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: SliderLight{{{{b, "4ms/comp/slider_horiz_x.png"}, defaultValue, minValue, maxValue}}} {
+		: SliderLight{{{{b, "4ms/comp/slider_horiz_x.png"}, defaultValue, minValue, maxValue},
+					   "4ms/comp/slider_horiz_handle_x.png"}} {
 		this->units = units;
 	}
 };
@@ -222,7 +223,8 @@ struct Slider25mmVertLED : SliderLight {
 	constexpr Slider25mmVertLED() = default;
 	constexpr Slider25mmVertLED(
 		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: SliderLight{{{{b, "4ms/comp/slider_x.png"}, defaultValue, minValue, maxValue}}} {
+		: SliderLight{
+			  {{{b, "4ms/comp/slider_x.png"}, defaultValue, minValue, maxValue}, "4ms/comp/slider_handle_x.png"}} {
 		this->units = units;
 	}
 };
