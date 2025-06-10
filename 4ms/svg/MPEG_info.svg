@@ -25,13 +25,13 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.7111054"
-     inkscape:cx="76.266488"
-     inkscape:cy="242.53328"
-     inkscape:window-width="1680"
-     inkscape:window-height="1051"
-     inkscape:window-x="52"
+     inkscape:cx="29.220877"
+     inkscape:cy="99.935398"
+     inkscape:window-width="1312"
+     inkscape:window-height="989"
+     inkscape:window-x="49"
      inkscape:window-y="38"
-     inkscape:window-maximized="1"
+     inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
      id="faceplate"
@@ -750,7 +750,7 @@
        style="fill:#ff0040;stroke-width:0px" />
     <circle
        id="Div_Mult"
-       data-name="Div/Mult"
+       data-name="Div/Mult#DivMultKnob_d32x16"
        cx="36.450001"
        cy="87.769997"
        r="17.01"

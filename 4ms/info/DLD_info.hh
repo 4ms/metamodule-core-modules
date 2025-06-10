@@ -16,11 +16,11 @@ struct DLDInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 56> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(34.32), to_mm<72>(53.53), Center, "Time A", ""}, 0.5f},
+		DivMultKnobDLD{{to_mm<72>(34.32), to_mm<72>(53.53), Center, "Time A", ""}, 0.5f},
 		Toggle3pos{{to_mm<72>(84.11), to_mm<72>(51.455), Center, "Time Mult A", ""}, {"1/8th", "=", "+16"}, Toggle3pos::State_t::CENTER},
 		WhiteMomentary7mm{{to_mm<72>(124.03), to_mm<72>(42.51), Center, "Ping Button", ""}},
 		Toggle3pos{{to_mm<72>(205.35), to_mm<72>(51.455), Center, "Time Mult B", ""}, {"1/8th", "=", "+16"}, Toggle3pos::State_t::CENTER},
-		Davies1900hBlackKnob{{to_mm<72>(254.17), to_mm<72>(53.39), Center, "Time B", ""}, 0.5f},
+		DivMultKnobDLD{{to_mm<72>(254.17), to_mm<72>(53.39), Center, "Time B", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(34.17), to_mm<72>(119.05), Center, "Feedback A", ""}, 0.375f},
 		WhiteMomentary7mm{{to_mm<72>(81.85), to_mm<72>(123.11), Center, "Reverse A", ""}},
 		WhiteMomentary7mm{{to_mm<72>(118.44), to_mm<72>(135.74), Center, "Hold A", ""}},

@@ -25,12 +25,12 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.3104056"
-     inkscape:cx="178.10726"
-     inkscape:cy="218.14352"
-     inkscape:window-width="2088"
-     inkscape:window-height="1387"
-     inkscape:window-x="472"
-     inkscape:window-y="25"
+     inkscape:cx="199.96489"
+     inkscape:cy="101.28092"
+     inkscape:window-width="1680"
+     inkscape:window-height="1051"
+     inkscape:window-x="145"
+     inkscape:window-y="251"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
@@ -3230,7 +3230,7 @@
        style="fill: blue;" />
     <circle
        id="Time_B"
-       data-name="Time B"
+       data-name="Time B#DivMultKnobDLD"
        cx="254.17"
        cy="53.39"
        r="17.01"
@@ -3281,7 +3281,7 @@
        style="fill: #f0f;" />
     <circle
        id="Time_A"
-       data-name="Time A"
+       data-name="Time A#DivMultKnobDLD"
        cx="34.32"
        cy="53.53"
        r="17.01"

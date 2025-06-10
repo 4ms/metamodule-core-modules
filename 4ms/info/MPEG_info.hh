@@ -16,7 +16,7 @@ struct MPEGInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 25> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(36.45), to_mm<72>(87.77), Center, "Div/Mult", ""}, 0.5f},
+		DivMultKnob_d32x16{{to_mm<72>(36.45), to_mm<72>(87.77), Center, "Div/Mult", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(37.35), to_mm<72>(154.72), Center, "Shape", ""}, 0.5f},
 		Knob9mm{{to_mm<72>(91.14), to_mm<72>(133.33), Center, "Scale", ""}, 1.0f},
 		Knob9mm{{to_mm<72>(91.14), to_mm<72>(188.54), Center, "Offset", ""}, 1.0f},

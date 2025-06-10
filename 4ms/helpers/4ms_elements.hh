@@ -64,6 +64,135 @@ struct DivMultKnob_d32x16 : KnobSnapped {
 	}
 };
 
+struct DivMultKnob_d8x8 : KnobSnapped {
+	constexpr DivMultKnob_d8x8() = default;
+	constexpr DivMultKnob_d8x8(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 15;
+		pos_names[0] = "/8";
+		pos_names[1] = "/7";
+		pos_names[2] = "/6";
+		pos_names[3] = "/5";
+		pos_names[4] = "/4";
+		pos_names[5] = "/3";
+		pos_names[6] = "/2";
+		pos_names[7] = "=";
+		pos_names[8] = "x2";
+		pos_names[9] = "x3";
+		pos_names[10] = "x4";
+		pos_names[11] = "x5";
+		pos_names[12] = "x6";
+		pos_names[13] = "x7";
+		pos_names[14] = "x8";
+		min_angle = -142;
+		max_angle = 142;
+	}
+};
+
+struct DivMultKnobDLD : KnobSnapped {
+	constexpr DivMultKnobDLD() = default;
+	constexpr DivMultKnobDLD(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 17;
+		pos_names[0] = "x1";
+		pos_names[1] = "x1.5";
+		pos_names[2] = "x2";
+		pos_names[3] = "x3";
+		pos_names[4] = "x4";
+		pos_names[5] = "x5";
+		pos_names[6] = "x6";
+		pos_names[7] = "x7";
+		pos_names[8] = "x8";
+		pos_names[9] = "x9";
+		pos_names[10] = "x10";
+		pos_names[11] = "x11";
+		pos_names[12] = "x12";
+		pos_names[13] = "x13";
+		pos_names[14] = "x14";
+		pos_names[15] = "x15";
+		pos_names[16] = "x16";
+		min_angle = -145;
+		max_angle = 145;
+	}
+};
+
+struct DivMultKnob_d1d16 : KnobSnapped {
+	constexpr DivMultKnob_d1d16() = default;
+	constexpr DivMultKnob_d1d16(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 16;
+		pos_names[0] = "=";
+		pos_names[1] = "/2";
+		pos_names[2] = "/3";
+		pos_names[3] = "/4";
+		pos_names[4] = "/5";
+		pos_names[5] = "/6";
+		pos_names[6] = "/7";
+		pos_names[7] = "/8";
+		pos_names[8] = "/9";
+		pos_names[9] = "/10";
+		pos_names[10] = "/11";
+		pos_names[11] = "/12";
+		pos_names[12] = "/13";
+		pos_names[13] = "/14";
+		pos_names[14] = "/15";
+		pos_names[15] = "/16";
+	}
+};
+
+struct DivMultKnob_x1x16 : KnobSnapped {
+	constexpr DivMultKnob_x1x16() = default;
+	constexpr DivMultKnob_x1x16(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 16;
+		pos_names[0] = "x1";
+		pos_names[1] = "x2";
+		pos_names[2] = "x3";
+		pos_names[3] = "x4";
+		pos_names[4] = "x5";
+		pos_names[5] = "x6";
+		pos_names[6] = "x7";
+		pos_names[7] = "x8";
+		pos_names[8] = "x9";
+		pos_names[9] = "x10";
+		pos_names[10] = "x11";
+		pos_names[11] = "x12";
+		pos_names[12] = "x13";
+		pos_names[13] = "x14";
+		pos_names[14] = "x15";
+		pos_names[15] = "x16";
+	}
+};
+
+struct OctaveKnob : KnobSnapped {
+	constexpr OctaveKnob() = default;
+	constexpr OctaveKnob(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 9;
+		pos_names[0] = "-4";
+		pos_names[1] = "-3";
+		pos_names[2] = "-2";
+		pos_names[3] = "-1";
+		pos_names[4] = "0";
+		pos_names[5] = "1";
+		pos_names[6] = "2";
+		pos_names[7] = "3";
+		pos_names[8] = "4";
+		min_angle = -135;
+		max_angle = 135;
+	}
+};
+
 //
 // Sliders
 //
