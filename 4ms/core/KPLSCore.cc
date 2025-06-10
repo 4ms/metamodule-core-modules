@@ -43,7 +43,7 @@ public:
 				e.set_sustain(MathTools::map_value(val, 0.0f, 1.0f, 0.0f, 0.2f));
 				e.set_envelope_time(3, MathTools::map_value(val, 0.0f, 1.0f, 200.0f, 1000.0f));
 				break;
-			case Info::KnobDetune:
+			case Info::KnobSpread:
 				k.set_spread(val);
 				break;
 		}
@@ -55,7 +55,7 @@ public:
 				return MathTools::map_value(basePitch, 20.f, 400.f, 0.f, 1.f);
 			case Info::KnobDecay:
 				return k.get_decay();
-			case Info::KnobDetune:
+			case Info::KnobSpread:
 				return k.get_spread();
 		}
 		return 0;

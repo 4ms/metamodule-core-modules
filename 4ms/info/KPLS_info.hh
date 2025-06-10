@@ -18,7 +18,7 @@ struct KPLSInfo : ModuleInfoBase {
     static constexpr std::array<Element, 6> Elements{{
 		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Pitch", ""}, 0.5f, 20.0, 400.0, "hz"},
 		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Decay", ""}, 0.25f, 200.0, 1000.0, "ms"},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(143.15), Center, "Detune", ""}, 0.5f, 0.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(143.15), Center, "Spread", ""}, 0.5f, 0.0, 100.0, "%"},
 		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "V/Oct In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Trigger In", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.26), Center, "Audio Out", ""}},
@@ -38,7 +38,7 @@ struct KPLSInfo : ModuleInfoBase {
     enum {
         KnobPitch, 
         KnobDecay, 
-        KnobDetune, 
+        KnobSpread, 
         NumKnobs,
     };
     

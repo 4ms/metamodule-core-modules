@@ -321,7 +321,7 @@
          id="text44"><tspan
            x="0"
            y="0"
-           id="tspan44">Detune</tspan></text>
+           id="tspan44">Spread</tspan></text>
       <text
          transform="translate(16.25 357.19) scale(.82 1)"
          style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 11px; font-weight: 700;"
@@ -382,7 +382,7 @@
        cy="143.15"
        r="8.5"
        style="fill: #ff0040; stroke-width: 0px;"
-       data-name="Detune!0!100!%" />
+       data-name="Spread!0!100!%" />
     <circle
        id="Decay"
        cx="28.8"
