@@ -58,9 +58,9 @@ private:
 		const static Info::Elem _5VEnvOut = P5VEnvRedOut;
 		const static Info::Elem EoFOut = EofRedOut;
 		const static Info::Elem SecondaryOut = EorOut;
-		const static Info::Elem EnvOutLight = EnvredlightLight;
-		const static Info::Elem EofLight = EofredlightLight;
-		const static Info::Elem SecondaryLight = EorredlightLight;
+		const static Info::Elem EnvOutLight = EnvredLight;
+		const static Info::Elem EofLight = EofredLight;
+		const static Info::Elem SecondaryLight = EorredLight;
 
 		const static Info::Elem AsyncModeAltParam = AsyncRedModeAltParam;
 		const static Info::Elem FreeNRunningPingAltParam = FreeNRunningPingRedAltParam;
@@ -85,7 +85,7 @@ private:
 		const static Info::Elem _5VEnvOut = P5VEnvBlueOut;
 		const static Info::Elem EoFOut = EofBlueOut;
 		const static Info::Elem SecondaryOut = HalfROut;
-		const static Info::Elem EnvOutLight = EnvbluelightLight;
+		const static Info::Elem EnvOutLight = EnvblueLight;
 		const static Info::Elem EofLight = EofblueLight;
 		const static Info::Elem SecondaryLight = HalfriseblueLight;
 

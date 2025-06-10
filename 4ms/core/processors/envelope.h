@@ -2,7 +2,6 @@
 
 #include "processors/tools/schmittTrigger.h"
 #include "util/math.hh"
-#include "util/math_tables.hh"
 
 class Envelope {
 public:
@@ -86,8 +85,9 @@ public:
 			envOut = sustainLevel;
 
 			// End Sustain if gate is low
-			if (!gateInput.output())
+			if (!gateInput.output()) {
 				stage = RELEASE;
+			}
 
 		} else if (stage == IDLE) {
 			envOut = 0.f;
@@ -113,18 +113,19 @@ public:
 
 			phaccu += increment;
 			if (phaccu >= 1.0f) {
-				if (stage == ATTACK)
+				if (stage == ATTACK) {
 					stage = holdEnable ? HOLD : DECAY;
-				else if (stage == HOLD)
+				} else if (stage == HOLD) {
 					stage = DECAY;
-				else if (stage == DECAY)
+				} else if (stage == DECAY)
 					stage = gateInput.output() ? SUSTAIN : RELEASE;
-				else if (stage == SUSTAIN)
+				else if (stage == SUSTAIN) {
 					stage = RELEASE;
-				else if (stage == RELEASE)
+				} else if (stage == RELEASE) {
 					stage = IDLE;
-				else
+				} else {
 					stage = IDLE;
+				}
 
 				phaccu = 0;
 			}

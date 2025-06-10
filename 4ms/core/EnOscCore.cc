@@ -220,34 +220,34 @@ public:
 
 		// Ui::set_potcv will clamp
 		switch (input_id) {
-			case Info::InputBalance_Jack:
+			case Info::InputBalance_Cv:
 				enosc.set_potcv(AdcInput::CV_BALANCE, cv_to_val(cv));
 				break;
-			case Info::InputCross_Fm_Jack:
+			case Info::InputCross_Fm_Cv:
 				enosc.set_potcv(AdcInput::CV_MOD, cv_to_val(cv));
 				break;
-			case Info::InputPitch_Jack:
+			case Info::InputPitch_1V_Oct:
 				enosc.set_pitchroot_cv(SpiAdcInput::CV_PITCH, pitchcv_to_val(cv));
 				break;
-			case Info::InputRoot_Jack:
+			case Info::InputRoot_1V_Oct:
 				enosc.set_pitchroot_cv(SpiAdcInput::CV_ROOT, pitchcv_to_val(cv));
 				break;
-			case Info::InputScale_Jack:
+			case Info::InputScale_Cv:
 				enosc.set_potcv(AdcInput::CV_SCALE, cv_to_val(cv));
 				break;
-			case Info::InputSpread_Jack:
+			case Info::InputSpread_Cv:
 				enosc.set_potcv(AdcInput::CV_SPREAD, cv_to_val(cv));
 				break;
-			case Info::InputTwist_Jack:
+			case Info::InputTwist_Cv:
 				enosc.set_potcv(AdcInput::CV_TWIST, cv_to_val(cv));
 				break;
-			case Info::InputWarp_Jack:
+			case Info::InputWarp_Cv:
 				enosc.set_potcv(AdcInput::CV_WARP, cv_to_val(cv));
 				break;
-			case Info::InputFreeze_Jack:
+			case Info::InputFreeze_Cv:
 				enosc.set_freeze_gate(cv > gate_threshold);
 				break;
-			case Info::InputLearn_Jack:
+			case Info::InputLearn_Cv:
 				enosc.set_learn_gate(cv > gate_threshold);
 				break;
 		}

@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -28,10 +28,6 @@ struct FreeverbInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(83.32), to_mm<72>(312.1), Center, "Out", ""}},
 }};
 
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{0, 0},
-	}};
-
     enum class Elem {
         SizeKnob,
         FeedbackKnob,
@@ -45,7 +41,7 @@ struct FreeverbInfo : ModuleInfoBase {
         Out,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobSize, 
@@ -71,5 +67,6 @@ struct FreeverbInfo : ModuleInfoBase {
     };
     
     
+
 };
 } // namespace MetaModule

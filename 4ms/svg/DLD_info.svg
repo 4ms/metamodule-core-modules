@@ -6,7 +6,7 @@
    version="1.1"
    id="svg681"
    sodipodi:docname="DLD_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,12 +25,12 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.3104056"
-     inkscape:cx="178.10726"
-     inkscape:cy="218.14352"
-     inkscape:window-width="2088"
-     inkscape:window-height="1387"
-     inkscape:window-x="472"
-     inkscape:window-y="25"
+     inkscape:cx="199.96489"
+     inkscape:cy="249.30687"
+     inkscape:window-width="2032"
+     inkscape:window-height="847"
+     inkscape:window-x="1972"
+     inkscape:window-y="174"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
@@ -3167,7 +3167,7 @@
        style="fill: #ff0080;" />
     <circle
        id="Feedback_B"
-       data-name="Feedback B"
+       data-name="Feedback B!0!110!%"
        cx="254.59"
        cy="119.05"
        r="17.01"
@@ -3202,7 +3202,7 @@
        style="fill: #ffc000;" />
     <circle
        id="Feedback_A"
-       data-name="Feedback A"
+       data-name="Feedback A!0!110!%"
        cx="34.17"
        cy="119.05"
        r="17.01"
@@ -3230,7 +3230,7 @@
        style="fill: blue;" />
     <circle
        id="Time_B"
-       data-name="Time B"
+       data-name="Time B#DivMultKnobDLD"
        cx="254.17"
        cy="53.39"
        r="17.01"
@@ -3281,7 +3281,7 @@
        style="fill: #f0f;" />
     <circle
        id="Time_A"
-       data-name="Time A"
+       data-name="Time A#DivMultKnobDLD"
        cx="34.32"
        cy="53.53"
        r="17.01"

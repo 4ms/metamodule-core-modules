@@ -37,28 +37,28 @@ public:
 
 	void set_param(int param_id, float val) override {
 		switch (param_id) {
-			case Info::KnobLevel_1:
+			case Info::KnobCh__1_Level:
 				level[0] = val;
 				break;
-			case Info::KnobLevel_2:
+			case Info::KnobCh__2_Level:
 				level[1] = val;
 				break;
-			case Info::KnobLevel_3:
+			case Info::KnobCh__3_Level:
 				level[2] = val;
 				break;
-			case Info::KnobLevel_4:
+			case Info::KnobCh__4_Level:
 				level[3] = val;
 				break;
-			case Info::KnobPan_1:
+			case Info::KnobCh__1_Pan:
 				pan[0] = val;
 				break;
-			case Info::KnobPan_2:
+			case Info::KnobCh__2_Pan:
 				pan[1] = val;
 				break;
-			case Info::KnobPan_3:
+			case Info::KnobCh__3_Pan:
 				pan[2] = val;
 				break;
-			case Info::KnobPan_4:
+			case Info::KnobCh__4_Pan:
 				pan[3] = val;
 				break;
 		}
@@ -66,21 +66,21 @@ public:
 
 	float get_param(int param_id) const override {
 		switch (param_id) {
-			case Info::KnobLevel_1:
+			case Info::KnobCh__1_Level:
 				return level[0];
-			case Info::KnobLevel_2:
+			case Info::KnobCh__2_Level:
 				return level[1];
-			case Info::KnobLevel_3:
+			case Info::KnobCh__3_Level:
 				return level[2];
-			case Info::KnobLevel_4:
+			case Info::KnobCh__4_Level:
 				return level[3];
-			case Info::KnobPan_1:
+			case Info::KnobCh__1_Pan:
 				return pan[0];
-			case Info::KnobPan_2:
+			case Info::KnobCh__2_Pan:
 				return pan[1];
-			case Info::KnobPan_3:
+			case Info::KnobCh__3_Pan:
 				return pan[2];
-			case Info::KnobPan_4:
+			case Info::KnobCh__4_Pan:
 				return pan[3];
 		}
 		return 0;
@@ -88,39 +88,39 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputIn_1_L:
+			case Info::InputCh__1_Left_In:
 				leftInputs[0] = val;
 				if (!rightConnected[0])
 					rightInputs[0] = val;
 				break;
-			case Info::InputIn_2_L:
+			case Info::InputCh__2_Left_In:
 				leftInputs[1] = val;
 				if (!rightConnected[0])
 					rightInputs[1] = val;
 				break;
-			case Info::InputIn_3_L:
+			case Info::InputCh__3_Left_In:
 				leftInputs[2] = val;
 				if (!rightConnected[0])
 					rightInputs[2] = val;
 				break;
-			case Info::InputIn_4_L:
+			case Info::InputCh__4_Left_In:
 				leftInputs[3] = val;
 				if (!rightConnected[0])
 					rightInputs[3] = val;
 				break;
-			case Info::InputIn_1_R:
+			case Info::InputCh__1_Right_In:
 				if (rightConnected[0])
 					rightInputs[0] = val;
 				break;
-			case Info::InputIn_2_R:
+			case Info::InputCh__2_Right_In:
 				if (rightConnected[1])
 					rightInputs[1] = val;
 				break;
-			case Info::InputIn_3_R:
+			case Info::InputCh__3_Right_In:
 				if (rightConnected[2])
 					rightInputs[2] = val;
 				break;
-			case Info::InputIn_4_R:
+			case Info::InputCh__4_Right_In:
 				if (rightConnected[3])
 					rightInputs[3] = val;
 				break;
@@ -128,9 +128,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputL)
+		if (output_id == Info::OutputLeft_Out)
 			return leftOut;
-		if (output_id == Info::OutputR)
+		if (output_id == Info::OutputRight_Out)
 			return rightOut;
 		return 0.f;
 	}
@@ -144,16 +144,16 @@ public:
 
 	void mark_input_unpatched(const int input_id) override {
 		switch (input_id) {
-			case Info::InputIn_1_R:
+			case Info::InputCh__1_Right_In:
 				rightConnected[0] = false;
 				break;
-			case Info::InputIn_2_R:
+			case Info::InputCh__2_Right_In:
 				rightConnected[1] = false;
 				break;
-			case Info::InputIn_3_R:
+			case Info::InputCh__3_Right_In:
 				rightConnected[2] = false;
 				break;
-			case Info::InputIn_4_R:
+			case Info::InputCh__4_Right_In:
 				rightConnected[3] = false;
 				break;
 		}
@@ -161,16 +161,16 @@ public:
 
 	void mark_input_patched(const int input_id) override {
 		switch (input_id) {
-			case Info::InputIn_1_R:
+			case Info::InputCh__1_Right_In:
 				rightConnected[0] = true;
 				break;
-			case Info::InputIn_2_R:
+			case Info::InputCh__2_Right_In:
 				rightConnected[1] = true;
 				break;
-			case Info::InputIn_3_R:
+			case Info::InputCh__3_Right_In:
 				rightConnected[2] = true;
 				break;
-			case Info::InputIn_4_R:
+			case Info::InputCh__4_Right_In:
 				rightConnected[3] = true;
 				break;
 		}

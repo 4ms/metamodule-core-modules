@@ -61,7 +61,7 @@ public:
 				all_ap_tuning_needs_update = true;
 				break;
 
-			case VerbInfo::KnobDamp:
+			case VerbInfo::KnobDamping:
 				new_damp = val;
 				damp_needs_update = true;
 				break;
@@ -114,7 +114,7 @@ public:
 		switch (param_id) {
 			case VerbInfo::KnobSize:
 				return globalCombAtten;
-			case VerbInfo::KnobDamp:
+			case VerbInfo::KnobDamping:
 				return new_damp;
 			case VerbInfo::KnobMix:
 				return mix_knob;
@@ -217,7 +217,7 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case VerbInfo::InputInput:
+			case VerbInfo::InputAudio_In:
 				signalIn = val;
 				break;
 
@@ -261,7 +261,7 @@ public:
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut) {
+		if (output_id == Info::OutputAudio_Out) {
 			return signalOut;
 		}
 		return 0.f;

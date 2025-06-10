@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -24,16 +24,16 @@ struct DEVInfo : ModuleInfoBase {
 		Toggle3pos{{to_mm<72>(212.77), to_mm<72>(41.905), Center, "Fall B Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		Slider25mmVertLED{{to_mm<72>(22.415), to_mm<72>(108.25), Center, "Rise A Slider", ""}, 0.5f},
 		Slider25mmVertLED{{to_mm<72>(56.265), to_mm<72>(108.25), Center, "Fall A Slider", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(93.13), to_mm<72>(95.86), Center, "Level A", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(137.25), to_mm<72>(95.86), Center, "Level B", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(93.13), to_mm<72>(138.65), Center, "Offset A", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(137.25), to_mm<72>(138.65), Center, "Offset B", ""}, 0.5f},
+		Knob9mm{{to_mm<72>(93.13), to_mm<72>(95.86), Center, "Level A", ""}, 1.0f, -10.0, 10.0, "V"},
+		Knob9mm{{to_mm<72>(137.25), to_mm<72>(95.86), Center, "Level B", ""}, 1.0f, -10.0, 10.0, "V"},
+		Knob9mm{{to_mm<72>(93.13), to_mm<72>(138.65), Center, "Offset A", ""}, 0.5f, -10.0, 10.0, "V"},
+		Knob9mm{{to_mm<72>(137.25), to_mm<72>(138.65), Center, "Offset B", ""}, 0.5f, -10.0, 10.0, "V"},
 		Slider25mmVertLED{{to_mm<72>(174.115), to_mm<72>(108.25), Center, "Rise B Slider", ""}, 0.5f},
 		Slider25mmVertLED{{to_mm<72>(207.965), to_mm<72>(108.25), Center, "Fall B Slider", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(23.5), to_mm<72>(184.03), Center, "Rise A", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(94.11), to_mm<72>(183.67), Center, "Fall A", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(136.27), to_mm<72>(184.03), Center, "Rise B", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(206.87), to_mm<72>(184.03), Center, "Fall B", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(23.5), to_mm<72>(184.03), Center, "Rise A", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(94.11), to_mm<72>(183.67), Center, "Fall A", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(136.27), to_mm<72>(184.03), Center, "Rise B", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(206.87), to_mm<72>(184.03), Center, "Fall B", ""}, 1.0f, -100.0, 100.0, "%"},
 		GateJackInput4ms{{to_mm<72>(115.19), to_mm<72>(60.85), Center, "Cycle Gate", ""}},
 		AnalogJackInput4ms{{to_mm<72>(58.56), to_mm<72>(208.68), Center, "Time CV A", ""}},
 		AnalogJackInput4ms{{to_mm<72>(171.86), to_mm<72>(208.68), Center, "Time CV B", ""}},
@@ -61,11 +61,6 @@ struct DEVInfo : ModuleInfoBase {
 		RedBlueLight{{to_mm<72>(65.92), to_mm<72>(327.45), Center, "Env A Light", ""}},
 		RedBlueLight{{to_mm<72>(164.39), to_mm<72>(327.52), Center, "Env B Light", ""}},
 }};
-
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{7, 3},
-		{10, 6},
-	}};
 
     enum class Elem {
         RiseASwitch,
@@ -114,7 +109,7 @@ struct DEVInfo : ModuleInfoBase {
         EnvBLight,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobRise_A_Slider, 
@@ -180,5 +175,6 @@ struct DEVInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+
 };
 } // namespace MetaModule

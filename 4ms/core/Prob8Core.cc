@@ -41,20 +41,20 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputClock:
+			case Info::InputClock_In:
 				cp.updateClock(val);
 				break;
-			case Info::InputReset:
+			case Info::InputReset_Gate_In:
 				cp.updateReset(val);
 				break;
 		}
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputProbability_Output)
 			return gateOutput * MaxOutputVolts;
 
-		if (output_id == Info::OutputInv)
+		if (output_id == Info::OutputInverted_Out)
 			return (1 - gateOutput) * MaxOutputVolts;
 
 		return 0.f;

@@ -16,39 +16,39 @@ public:
 	}
 
 	void update() override {
-		if(auto channel1InputValue = getInput<In1In>(); channel1InputValue) {
+		if(auto channel1InputValue = getInput<Ch_1In>(); channel1InputValue) {
 			inputValue[0] = *channel1InputValue;
 		} else {
 			inputValue[0] = 0.f;
 		}
 
-		if(auto channel2InputValue = getInput<In2In>(); channel2InputValue) {
+		if(auto channel2InputValue = getInput<Ch_2In>(); channel2InputValue) {
 			inputValue[1] = *channel2InputValue;
 		} else {
 			inputValue[1] = inputValue[0];
 		}
 
-		if(auto channel3InputValue = getInput<In3In>(); channel3InputValue) {
+		if(auto channel3InputValue = getInput<Ch_3In>(); channel3InputValue) {
 			inputValue[2] = *channel3InputValue;
 		} else {
 			inputValue[2] = 0.f;
 		}
 
-		if(auto channel4InputValue = getInput<In4In>(); channel4InputValue) {
+		if(auto channel4InputValue = getInput<Ch_4In>(); channel4InputValue) {
 			inputValue[3] = *channel4InputValue;
 		} else {
 			inputValue[3] = inputValue[2];
 		}
 
-		outputValue[0] = process(inputValue[0], getState<Scale1Knob>(), getState<Shift1Knob>());
-		outputValue[1] = process(inputValue[1], getState<Scale2Knob>(), getState<Shift2Knob>());
-		outputValue[2] = process(inputValue[2], getState<Scale3Knob>(), getState<Shift3Knob>());
-		outputValue[3] = process(inputValue[3], getState<Scale4Knob>(), getState<Shift4Knob>());
+		outputValue[0] = process(inputValue[0], getState<Ch_1ScaleKnob>(), getState<Ch_1ShiftKnob>());
+		outputValue[1] = process(inputValue[1], getState<Ch_2ScaleKnob>(), getState<Ch_2ShiftKnob>());
+		outputValue[2] = process(inputValue[2], getState<Ch_3ScaleKnob>(), getState<Ch_3ShiftKnob>());
+		outputValue[3] = process(inputValue[3], getState<Ch_4ScaleKnob>(), getState<Ch_4ShiftKnob>());
 
-		setOutput<Out1Out>(std::clamp(outputValue[0], minimumOutputInV, maximumOutputInV));
-		setOutput<Out2Out>(std::clamp(outputValue[1], minimumOutputInV, maximumOutputInV));
-		setOutput<Out3Out>(std::clamp(outputValue[2], minimumOutputInV, maximumOutputInV));
-		setOutput<Out4Out>(std::clamp(outputValue[3], minimumOutputInV, maximumOutputInV));
+		setOutput<Ch_1Out>(std::clamp(outputValue[0], minimumOutputInV, maximumOutputInV));
+		setOutput<Ch_2Out>(std::clamp(outputValue[1], minimumOutputInV, maximumOutputInV));
+		setOutput<Ch_3Out>(std::clamp(outputValue[2], minimumOutputInV, maximumOutputInV));
+		setOutput<Ch_4Out>(std::clamp(outputValue[3], minimumOutputInV, maximumOutputInV));
 
 		setLED<LedN1Light>(outputValue[0] / negativeLEDScaling);
 		setLED<LedP1Light>(outputValue[0] / positiveLEDScaling);
@@ -72,10 +72,10 @@ public:
 			sliceNegative += std::clamp(outputValue[index], minimumOutputInV, 0.f);
 			mixOut += outputValue[index];
 
-			mixOutSW += isPatched<Out1Out>() ? 0 : outputValue[0];
-			mixOutSW += isPatched<Out2Out>() ? 0 : outputValue[1];
-			mixOutSW += isPatched<Out3Out>() ? 0 : outputValue[2];
-			mixOutSW += isPatched<Out4Out>() ? 0 : outputValue[3];
+			mixOutSW += isPatched<Ch_1Out>() ? 0 : outputValue[0];
+			mixOutSW += isPatched<Ch_2Out>() ? 0 : outputValue[1];
+			mixOutSW += isPatched<Ch_3Out>() ? 0 : outputValue[2];
+			mixOutSW += isPatched<Ch_4Out>() ? 0 : outputValue[3];
 		}
 
 		setOutput<PSliceOut>(std::clamp(slicePositive, 0.f, maximumOutputInV));

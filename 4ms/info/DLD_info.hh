@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,17 +16,17 @@ struct DLDInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 56> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(34.32), to_mm<72>(53.53), Center, "Time A", ""}, 0.5f},
+		DivMultKnobDLD{{to_mm<72>(34.32), to_mm<72>(53.53), Center, "Time A", ""}, 0.5f},
 		Toggle3pos{{to_mm<72>(84.11), to_mm<72>(51.455), Center, "Time Mult A", ""}, {"1/8th", "=", "+16"}, Toggle3pos::State_t::CENTER},
 		WhiteMomentary7mm{{to_mm<72>(124.03), to_mm<72>(42.51), Center, "Ping Button", ""}},
 		Toggle3pos{{to_mm<72>(205.35), to_mm<72>(51.455), Center, "Time Mult B", ""}, {"1/8th", "=", "+16"}, Toggle3pos::State_t::CENTER},
-		Davies1900hBlackKnob{{to_mm<72>(254.17), to_mm<72>(53.39), Center, "Time B", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(34.17), to_mm<72>(119.05), Center, "Feedback A", ""}, 0.375f},
+		DivMultKnobDLD{{to_mm<72>(254.17), to_mm<72>(53.39), Center, "Time B", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(34.17), to_mm<72>(119.05), Center, "Feedback A", ""}, 0.375f, 0.0, 110.0, "%"},
 		WhiteMomentary7mm{{to_mm<72>(81.85), to_mm<72>(123.11), Center, "Reverse A", ""}},
 		WhiteMomentary7mm{{to_mm<72>(118.44), to_mm<72>(135.74), Center, "Hold A", ""}},
 		WhiteMomentary7mm{{to_mm<72>(169.66), to_mm<72>(135.74), Center, "Hold B", ""}},
 		WhiteMomentary7mm{{to_mm<72>(206.08), to_mm<72>(123.11), Center, "Reverse B", ""}},
-		Davies1900hBlackKnob{{to_mm<72>(254.59), to_mm<72>(119.05), Center, "Feedback B", ""}, 0.375f},
+		Davies1900hBlackKnob{{to_mm<72>(254.59), to_mm<72>(119.05), Center, "Feedback B", ""}, 0.375f, 0.0, 110.0, "%"},
 		Davies1900hBlackKnob{{to_mm<72>(43.46), to_mm<72>(184.04), Center, "Delay Feed A", ""}, 1.0f},
 		Davies1900hBlackKnob{{to_mm<72>(111.56), to_mm<72>(178.84), Center, "Mix A", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(177.02), to_mm<72>(178.91), Center, "Mix B", ""}, 0.5f},
@@ -59,7 +59,7 @@ struct DLDInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(229.0), to_mm<72>(13.0), Center, "Soft Clip B", ""}, 2, 0}, {"On", "Off"}},
 		AltParamChoiceLabeled{{{to_mm<72>(12.0), to_mm<72>(13.0), Center, "AutoMute A", ""}, 2, 0}, {"On", "Off"}},
 		AltParamChoiceLabeled{{{to_mm<72>(212.0), to_mm<72>(13.0), Center, "AutoMute B", ""}, 2, 0}, {"On", "Off"}},
-		AltParamChoiceLabeled{{{to_mm<72>(167.59), to_mm<72>(42.51), Center, "Ping Method", ""}, 5, 0}, {"Avg 4", "Avg 2", "1:1", "Ignore Jitter", "Ignore % Change"}},
+		AltParamChoiceLabeled{{{to_mm<72>(167.59), to_mm<72>(42.51), Center, "Ping Method", ""}, 5, 0}, {"Avg 4", "Avg 2", "1:1", "IgnoreJitter", "Ignore%Change"}},
 		AltParamChoiceLabeled{{{to_mm<72>(122.51), to_mm<72>(281.49), Center, "Hold A", ""}, 2, 0}, {"Trig", "Gate"}},
 		AltParamChoiceLabeled{{{to_mm<72>(165.98), to_mm<72>(281.49), Center, "Hold B", ""}, 2, 0}, {"Trig", "Gate"}},
 		AltParamChoiceLabeled{{{to_mm<72>(122.51), to_mm<72>(242.1), Center, "Rev. A", ""}, 2, 0}, {"Trig", "Gate"}},
@@ -73,11 +73,6 @@ struct DLDInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(34.32), to_mm<72>(53.53), Center, "Crossfade A", ""}, 7, 3}, {"1ms", "2ms", "4ms", "8ms", "25ms", "100ms", "250ms"}},
 		AltParamChoiceLabeled{{{to_mm<72>(254.17), to_mm<72>(53.39), Center, "Crossfade B", ""}, 7, 3}, {"1ms", "2ms", "4ms", "8ms", "25ms", "100ms", "250ms"}},
 }};
-
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{1, 3}, 
-		{6, 6}},
-	};
 
     enum class Elem {
         TimeAKnob,
@@ -138,7 +133,7 @@ struct DLDInfo : ModuleInfoBase {
         CrossfadeBAltParam,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobTime_A, 
@@ -218,5 +213,6 @@ struct DLDInfo : ModuleInfoBase {
         AltParamCrossfade_A, 
         AltParamCrossfade_B, 
     };
+
 };
 } // namespace MetaModule

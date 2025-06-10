@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -56,22 +56,22 @@ struct VCAMInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(169.64), to_mm<72>(37.9), Center, "Out 2", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(240.2), to_mm<72>(37.9), Center, "Out 3", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(310.76), to_mm<72>(37.9), Center, "Out 4", ""}},
-		AnalogJackInput4ms{{to_mm<72>(134.24), to_mm<72>(67.6), Center, "A1 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(204.9), to_mm<72>(67.6), Center, "A2 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(275.43), to_mm<72>(67.6), Center, "A3 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(345.99), to_mm<72>(67.6), Center, "A4 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(99.08), to_mm<72>(97.62), Center, "B1 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(169.75), to_mm<72>(97.62), Center, "B2 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(240.27), to_mm<72>(97.62), Center, "B3 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(310.84), to_mm<72>(97.62), Center, "B4 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(134.24), to_mm<72>(127.73), Center, "C1 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(204.9), to_mm<72>(127.73), Center, "C2 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(275.43), to_mm<72>(127.73), Center, "C3 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(345.99), to_mm<72>(127.73), Center, "C4 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(99.08), to_mm<72>(157.41), Center, "D1 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(169.75), to_mm<72>(157.41), Center, "D2 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(240.27), to_mm<72>(157.41), Center, "D3 Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(310.84), to_mm<72>(157.41), Center, "D4 Jack", ""}},
+		AnalogJackInput4ms{{to_mm<72>(134.24), to_mm<72>(67.6), Center, "A1 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(204.9), to_mm<72>(67.6), Center, "A2 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(275.43), to_mm<72>(67.6), Center, "A3 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(345.99), to_mm<72>(67.6), Center, "A4 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(99.08), to_mm<72>(97.62), Center, "B1 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(169.75), to_mm<72>(97.62), Center, "B2 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(240.27), to_mm<72>(97.62), Center, "B3 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(310.84), to_mm<72>(97.62), Center, "B4 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(134.24), to_mm<72>(127.73), Center, "C1 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(204.9), to_mm<72>(127.73), Center, "C2 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(275.43), to_mm<72>(127.73), Center, "C3 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(345.99), to_mm<72>(127.73), Center, "C4 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(99.08), to_mm<72>(157.41), Center, "D1 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(169.75), to_mm<72>(157.41), Center, "D2 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(240.27), to_mm<72>(157.41), Center, "D3 CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(310.84), to_mm<72>(157.41), Center, "D4 CV", ""}},
 }};
 
     enum class Elem {
@@ -133,7 +133,7 @@ struct VCAMInfo : ModuleInfoBase {
         D4JackIn,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobA1_Level, 
@@ -208,5 +208,6 @@ struct VCAMInfo : ModuleInfoBase {
     };
     
     
+
 };
 } // namespace MetaModule

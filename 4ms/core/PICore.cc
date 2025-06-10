@@ -26,15 +26,15 @@ public:
 		, mode(FOLLOW)
 		, gateState(IDLE)
 		, dcBlocker(DCBlockerFactor) {
-			envelope.setAttack(0.005f);
-		}
+		envelope.setAttack(0.005f);
+	}
 
 	void update() override {
 		ticks++;
 
 		auto scaledInput = 0.f;
 
-		if (auto input = getInput<In>(); input) {
+		if (auto input = getInput<AudioIn>(); input) {
 			auto filteredInput = dcBlocker(*input);
 			auto maximumGain = readMaximumGain();
 			scaledInput = std::clamp(filteredInput * (getState<SensitivityKnob>() * maximumGain), -12.f, 12.f);
@@ -49,24 +49,26 @@ public:
 
 		auto envelopePOut = 0.f;
 
-		envelopePOut = generateEnvelope(mode == FOLLOW ? scaledInput : gateState == TRIGGERED ? gateOutHighVoltage : gateOutLowVoltage);
+		envelopePOut = generateEnvelope(mode == FOLLOW		   ? scaledInput :
+										gateState == TRIGGERED ? gateOutHighVoltage :
+																 gateOutLowVoltage);
 
 		auto envelopeNOut = envelopeHighVoltage - envelopePOut;
 
 		setLED<GateLight>(gateState == TRIGGERED ? 1.f : 0.f);
 		setOutput<GateOut>(gateState == TRIGGERED ? gateOutHighVoltage : gateOutLowVoltage);
 
-		setOutput<Env_OutPOut>(envelopePOut);
+		setOutput<EnvPOut>(envelopePOut);
 		setLED<EnvPLight>(envelopePOut / envelopeHighVoltage);
-		setOutput<Env_OutNOut>(envelopeNOut);
-		setLED<EnvNLight>(envelopeNOut/ envelopeHighVoltage);
+		setOutput<EnvNOut>(envelopeNOut);
+		setLED<EnvNLight>(envelopeNOut / envelopeHighVoltage);
 
-		setOutput<Env_Out>(envelopePOut * getState<Env_LevelKnob>());
-		setOutput<Inv_Out>(envelopeNOut * getState<Inv_LevelKnob>());
+		setOutput<Env_Out>(envelopePOut * getState<EnvLevelKnob>());
+		setOutput<InvertedOut>(envelopeNOut * getState<InvertedLevelKnob>());
 
 		setOutput<AudioOut>(scaledInput);
 		auto sensLight = senseEnvelope(scaledInput);
-		setLED<Sens_Light>(std::array<float,3>{(sensLight - 6.f) / 3.f,0.f,sensLight / 3.5f});
+		setLED<Sens_Light>(std::array<float, 3>{(sensLight - 6.f) / 3.f, 0.f, sensLight / 3.5f});
 	}
 
 	float readMaximumGain() {
@@ -90,8 +92,7 @@ public:
 		}
 	}
 
-	void updateGate(uint32_t now)
-	{
+	void updateGate(uint32_t now) {
 		if (gateState == TRIGGERED) {
 			auto gateLengthInTicks = getState<SustainKnob>() * (maximumGateLengthInTicks - minimumGateLengthInTicks) +
 									 minimumGateLengthInTicks;
@@ -102,24 +103,21 @@ public:
 		}
 	}
 
-	void readEnvelopeMode()
-	{
+	void readEnvelopeMode() {
 		auto envMode = getState<EnvModeSwitch>();
 
-		if(envMode == Toggle2posHoriz::State_t::LEFT) {
+		if (envMode == Toggle2posHoriz::State_t::LEFT) {
 			mode = FOLLOW;
 		} else {
 			mode = GEN;
 		}
 	}
 
-	void setDecayTime()
-	{
-		envelope.setDecay(getState<Env_DecayKnob>() * (maximumDecayTimeInS - minimumDecayTimeInS) + minimumDecayTimeInS);
+	void setDecayTime() {
+		envelope.setDecay(getState<EnvDecayKnob>() * (maximumDecayTimeInS - minimumDecayTimeInS) + minimumDecayTimeInS);
 	}
 
-	float generateEnvelope(float input)
-	{
+	float generateEnvelope(float input) {
 		static constexpr float envelopeInputGain = 3.2f;
 		static constexpr float envelopeInputOffset = -0.29f;
 

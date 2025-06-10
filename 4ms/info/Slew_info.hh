@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,20 +16,20 @@ struct SlewInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 4> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Rise", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Fall", ""}, 0.5f},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Input", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out", ""}},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Rise", ""}, 0.5f, 1.0, 2000.0, "ms"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Fall", ""}, 0.5f, 1.0, 2000.0, "ms"},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Signal In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Slewed Out", ""}},
 }};
 
     enum class Elem {
         RiseKnob,
         FallKnob,
-        InputIn,
-        Out,
+        SignalIn,
+        SlewedOut,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobRise, 
@@ -39,15 +39,16 @@ struct SlewInfo : ModuleInfoBase {
     
     
     enum {
-        InputInput, 
+        InputSignal_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut, 
+        OutputSlewed_Out, 
         NumOutJacks,
     };
     
     
+
 };
 } // namespace MetaModule

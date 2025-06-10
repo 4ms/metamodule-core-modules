@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,62 +16,63 @@ struct Prob8Info : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 12> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(47.1), Center, "1", ""}, 1.0f},
-		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(47.1), Center, "2", ""}, 1.0f},
-		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(104.19), Center, "3", ""}, 0.0f},
-		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(104.19), Center, "4", ""}, 0.0f},
-		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(163.5), Center, "5", ""}, 0.875f},
-		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(163.5), Center, "6", ""}, 1.0f},
-		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(222.27), Center, "7", ""}, 0.0f},
-		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(222.27), Center, "8", ""}, 0.0f},
-		AnalogJackInput4ms{{to_mm<72>(30.9), to_mm<72>(272.37), Center, "Clock", ""}},
-		AnalogJackInput4ms{{to_mm<72>(84.57), to_mm<72>(272.37), Center, "Reset", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(30.9), to_mm<72>(314.05), Center, "Inv", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(84.57), to_mm<72>(314.05), Center, "Out", ""}},
+		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(47.1), Center, "Step 1", ""}, 1.0f},
+		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(47.1), Center, "Step 2", ""}, 1.0f},
+		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(104.19), Center, "Step 3", ""}, 0.0f},
+		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(104.19), Center, "Step 4", ""}, 0.0f},
+		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(163.5), Center, "Step 5", ""}, 0.875f},
+		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(163.5), Center, "Step 6", ""}, 1.0f},
+		Davies1900hBlackKnob{{to_mm<72>(32.75), to_mm<72>(222.27), Center, "Step 7", ""}, 0.0f},
+		Davies1900hBlackKnob{{to_mm<72>(84.28), to_mm<72>(222.27), Center, "Step 8", ""}, 0.0f},
+		AnalogJackInput4ms{{to_mm<72>(30.9), to_mm<72>(272.37), Center, "Clock In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(84.57), to_mm<72>(272.37), Center, "Reset Gate In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(30.9), to_mm<72>(314.05), Center, "Inverted Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(84.57), to_mm<72>(314.05), Center, "Probability Output", ""}},
 }};
 
     enum class Elem {
-        _1Knob,
-        _2Knob,
-        _3Knob,
-        _4Knob,
-        _5Knob,
-        _6Knob,
-        _7Knob,
-        _8Knob,
+        Step1Knob,
+        Step2Knob,
+        Step3Knob,
+        Step4Knob,
+        Step5Knob,
+        Step6Knob,
+        Step7Knob,
+        Step8Knob,
         ClockIn,
-        ResetIn,
-        InvOut,
-        Out,
+        ResetGateIn,
+        InvertedOut,
+        ProbabilityOutputOut,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
-        Knob_1, 
-        Knob_2, 
-        Knob_3, 
-        Knob_4, 
-        Knob_5, 
-        Knob_6, 
-        Knob_7, 
-        Knob_8, 
+        KnobStep_1, 
+        KnobStep_2, 
+        KnobStep_3, 
+        KnobStep_4, 
+        KnobStep_5, 
+        KnobStep_6, 
+        KnobStep_7, 
+        KnobStep_8, 
         NumKnobs,
     };
     
     
     enum {
-        InputClock, 
-        InputReset, 
+        InputClock_In, 
+        InputReset_Gate_In, 
         NumInJacks,
     };
     
     enum {
-        OutputInv, 
-        OutputOut, 
+        OutputInverted_Out, 
+        OutputProbability_Output, 
         NumOutJacks,
     };
     
     
+
 };
 } // namespace MetaModule

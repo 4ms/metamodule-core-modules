@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,44 +16,45 @@ struct Atvert2Info : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 6> Elements{{
-		Knob9mm{{to_mm<72>(28.9), to_mm<72>(46.86), Center, "1", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "2", ""}, 1.0f},
-		AnalogJackInput4ms{{to_mm<72>(28.88), to_mm<72>(168.72), Center, "In 1", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.88), to_mm<72>(216.87), Center, "In 2", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.88), to_mm<72>(265.02), Center, "Out 1", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.88), to_mm<72>(313.16), Center, "Out 2", ""}},
+		Knob9mm{{to_mm<72>(28.9), to_mm<72>(46.86), Center, "Ch. 1", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Ch. 2", ""}, 1.0f, -100.0, 100.0, "%"},
+		AnalogJackInput4ms{{to_mm<72>(28.88), to_mm<72>(168.72), Center, "Ch. 1 In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.88), to_mm<72>(216.87), Center, "Ch. 2 In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.88), to_mm<72>(265.02), Center, "Ch. 1 Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.88), to_mm<72>(313.16), Center, "Ch. 2 Out", ""}},
 }};
 
     enum class Elem {
-        _1Knob,
-        _2Knob,
-        In1In,
-        In2In,
-        Out1Out,
-        Out2Out,
+        Ch_1Knob,
+        Ch_2Knob,
+        Ch_1In,
+        Ch_2In,
+        Ch_1Out,
+        Ch_2Out,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
-        Knob_1, 
-        Knob_2, 
+        KnobCh__1, 
+        KnobCh__2, 
         NumKnobs,
     };
     
     
     enum {
-        InputIn_1, 
-        InputIn_2, 
+        InputCh__1_In, 
+        InputCh__2_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut_1, 
-        OutputOut_2, 
+        OutputCh__1_Out, 
+        OutputCh__2_Out, 
         NumOutJacks,
     };
     
     
+
 };
 } // namespace MetaModule

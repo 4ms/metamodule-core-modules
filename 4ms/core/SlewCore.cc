@@ -43,12 +43,12 @@ public:
 	}
 
 	void set_input(int input_id, float val) override {
-		if (input_id == Info::InputInput)
+		if (input_id == Info::InputSignal_In)
 			signalInput = val;
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputSlewed_Out)
 			return signalOutput;
 		return 0.f;
 	}

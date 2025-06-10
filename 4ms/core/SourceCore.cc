@@ -19,10 +19,10 @@ public:
 
 	void set_param(int const param_id, const float val) override {
 		switch (param_id) {
-			case Info::Knob_1:
+			case Info::KnobCh__1_Offset:
 				output1 = MathTools::map_value(val, 0.0f, 1.0f, -1.0f, 1.0f);
 				break;
-			case Info::Knob_2:
+			case Info::KnobCh__2_Offset:
 				output2 = MathTools::map_value(val, 0.0f, 1.0f, -1.0f, 1.0f);
 				break;
 			case 3: //hidden param used for calibration checking
@@ -32,9 +32,9 @@ public:
 
 	float get_param(int const param_id) const override {
 		switch (param_id) {
-			case Info::Knob_1:
+			case Info::KnobCh__1_Offset:
 				return MathTools::map_value(output1, -1.f, 1.f, 0.f, 1.f);
-			case Info::Knob_2:
+			case Info::KnobCh__2_Offset:
 				return MathTools::map_value(output2, -1.f, 1.f, 0.f, 1.f);
 			case 3: //hidden param used for calibration checking
 				return octave_mode ? 0 : 1;
@@ -50,12 +50,12 @@ public:
 
 	float get_output(const int output_id) const override {
 		switch (output_id) {
-			case Info::Output_1_Out: {
+			case Info::OutputCh__1_Out: {
 				float out = output1 * OutputVoltageRange;
 				return octave_mode ? std::round(out) : out;
 			} break;
 
-			case Info::Output_2_Out: {
+			case Info::OutputCh__2_Out: {
 				float out = output2 * OutputVoltageRange;
 				return octave_mode ? std::round(out) : out;
 			} break;

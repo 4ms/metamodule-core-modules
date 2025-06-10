@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -22,24 +22,24 @@ struct SHEVInfo : ModuleInfoBase {
 		Toggle3pos{{to_mm<72>(159.95), to_mm<72>(41.275), Center, "Rise B Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{to_mm<72>(192.83), to_mm<72>(41.285), Center, "Fall B Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		OrangeButton{{to_mm<72>(267.89), to_mm<72>(41.55), Center, "Cycle B", ""}},
-		Knob9mm{{to_mm<72>(23.59), to_mm<72>(86.1), Center, "Level A", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(23.59), to_mm<72>(86.1), Center, "Level A", ""}, 1.0f, -10.0, 10.0, "V"},
 		Toggle3pos{{to_mm<72>(61.58), to_mm<72>(96.635), Center, "Trig Mode A", ""}, {"ASR", "AR", "Cycle"}},
 		Slider25mmVertLED{{to_mm<72>(94.665), to_mm<72>(104.78), Center, "Rise A Slider", ""}, 0.5f},
 		Slider25mmVertLED{{to_mm<72>(127.065), to_mm<72>(104.78), Center, "Fall A Slider", ""}, 0.5f},
 		Slider25mmVertLED{{to_mm<72>(159.945), to_mm<72>(104.78), Center, "Rise B Slider", ""}, 0.5f},
 		Slider25mmVertLED{{to_mm<72>(192.345), to_mm<72>(104.78), Center, "Fall B Slider", ""}, 0.5f},
 		Toggle3pos{{to_mm<72>(225.43), to_mm<72>(96.635), Center, "Trig Mode B", ""}, {"ASR", "AR", "Cycle"}},
-		Knob9mm{{to_mm<72>(263.62), to_mm<72>(86.05), Center, "Level B", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(23.67), to_mm<72>(132.68), Center, "Offset A", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(263.42), to_mm<72>(132.63), Center, "Offset B", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(23.59), to_mm<72>(179.21), Center, "Shape A", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(263.62), to_mm<72>(86.05), Center, "Level B", ""}, 1.0f, -10.0, 10.0, "V"},
+		Knob9mm{{to_mm<72>(23.67), to_mm<72>(132.68), Center, "Offset A", ""}, 0.5f, -10.0, 10.0, "V"},
+		Knob9mm{{to_mm<72>(263.42), to_mm<72>(132.63), Center, "Offset B", ""}, 0.5f, -10.0, 10.0, "V"},
+		Knob9mm{{to_mm<72>(23.59), to_mm<72>(179.21), Center, "Shape A", ""}, 1.0f, -100.0, 100.0, "%"},
 		Slider25mmHorizLED{{to_mm<72>(93.36), to_mm<72>(168.515), Center, "Shape A Slider", ""}, 0.5f},
 		Slider25mmHorizLED{{to_mm<72>(193.65), to_mm<72>(168.515), Center, "Shape B Slider", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(263.45), to_mm<72>(179.21), Center, "Shape B", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(68.74), to_mm<72>(206.72), Center, "Rise A", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(117.86), to_mm<72>(206.72), Center, "Fall A", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(169.15), to_mm<72>(206.72), Center, "Rise B", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(218.26), to_mm<72>(206.72), Center, "Fall B", ""}, 1.0f},
+		Knob9mm{{to_mm<72>(263.45), to_mm<72>(179.21), Center, "Shape B", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(68.74), to_mm<72>(206.72), Center, "Rise A", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(117.86), to_mm<72>(206.72), Center, "Fall A", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(169.15), to_mm<72>(206.72), Center, "Rise B", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(218.26), to_mm<72>(206.72), Center, "Fall B", ""}, 1.0f, -100.0, 100.0, "%"},
 		GateJackInput4ms{{to_mm<72>(59.23), to_mm<72>(41.53), Center, "Trig A", ""}},
 		GateJackInput4ms{{to_mm<72>(227.77), to_mm<72>(41.53), Center, "Trig B", ""}},
 		AnalogJackInput4ms{{to_mm<72>(23.59), to_mm<72>(224.47), Center, "Shape CV A", ""}},
@@ -72,11 +72,6 @@ struct SHEVInfo : ModuleInfoBase {
 		OrangeLight{{to_mm<72>(50.99), to_mm<72>(275.79), Center, "EOR A", ""}},
 		OrangeLight{{to_mm<72>(236.01), to_mm<72>(275.79), Center, "EOF B Light", ""}},
 }};
-
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{8, 4},
-		{9, 8},
-	}};
 
     enum class Elem {
         CycleAButton,
@@ -136,7 +131,7 @@ struct SHEVInfo : ModuleInfoBase {
         EofBLight,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobLevel_A, 
@@ -213,5 +208,6 @@ struct SHEVInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+
 };
 } // namespace MetaModule

@@ -153,8 +153,8 @@ public:
 		fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<FallCvKnob>() * scaledTimeCV);
 
 		// sum with static value from fader + range switch
-		auto riseRange = getState<RiseSwitch>();
-		auto fallRange = getState<FallSwitch>();
+		auto riseRange = getState<RiseRangeSwitch>();
+		auto fallRange = getState<FallRangeSwitch>();
 		riseCV = -rScaleLEDs - ProcessCVOffset(getState<RiseSlider>(), riseRange);
 		fallCV = -fScaleLEDs - ProcessCVOffset(getState<FallSlider>(), fallRange);
 

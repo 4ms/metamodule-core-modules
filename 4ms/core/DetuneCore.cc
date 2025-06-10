@@ -65,16 +65,16 @@ public:
 
 	void set_param(const int param_id, const float val) override {
 		switch (param_id) {
-			case Info::KnobW_Speed:
+			case Info::KnobWow_Speed:
 				wowGen.frequency = MathTools::map_value(val, 0.0f, 1.0f, 0.1f, 5.0f);
 				break;
-			case Info::KnobW_Depth:
+			case Info::KnobWow_Depth:
 				wowDepth = val;
 				break;
-			case Info::KnobF_Speed:
+			case Info::KnobFlutter_Speed:
 				flutterGen.frequency = MathTools::map_value(val, 0.0f, 1.0f, 5.0f, 30.0f);
 				break;
-			case Info::KnobF_Depth:
+			case Info::KnobFlutter_Depth:
 				flutterDepth = val;
 				break;
 		}
@@ -82,13 +82,13 @@ public:
 
 	float get_param(const int param_id) const override {
 		switch (param_id) {
-			case Info::KnobW_Speed:
+			case Info::KnobWow_Speed:
 				return MathTools::map_value(wowGen.frequency, .1f, 5.f, 0.f, 1.f);
-			case Info::KnobW_Depth:
+			case Info::KnobWow_Depth:
 				return wowDepth;
-			case Info::KnobF_Speed:
+			case Info::KnobFlutter_Speed:
 				return MathTools::map_value(flutterGen.frequency, 5.0f, 30.0f, 0.f, 1.f);
-			case Info::KnobF_Depth:
+			case Info::KnobFlutter_Depth:
 				return flutterDepth;
 		}
 		return 0;
@@ -102,28 +102,28 @@ public:
 
 	void set_input(const int input_id, const float val) override {
 		switch (input_id) {
-			case Info::InputInput:
+			case Info::InputAudio_In:
 				signalInput = val;
 				break;
-			case Info::InputDetune:
+			case Info::InputDetune_Cv_In:
 				cvAmount = val / CvRangeVolts;
 				break;
 		}
 	}
 
 	float get_output(const int output_id) const override {
-		if (output_id == Info::OutputOut)
+		if (output_id == Info::OutputAudio_Out)
 			return signalOutput;
 		return 0.f;
 	}
 
 	void mark_input_unpatched(const int input_id) override {
-		if (input_id == Info::InputDetune)
+		if (input_id == Info::InputDetune_Cv_In)
 			detuneCvConnected = false;
 	}
 
 	void mark_input_patched(const int input_id) override {
-		if (input_id == Info::InputDetune)
+		if (input_id == Info::InputDetune_Cv_In)
 			detuneCvConnected = true;
 	}
 

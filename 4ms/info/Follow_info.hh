@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,44 +16,45 @@ struct FollowInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 6> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Rise", ""}, 0.0f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Fall", ""}, 0.0f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(143.15), Center, "Thresh", ""}, 0.0f},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Input", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Gate", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Env", ""}},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Rise", ""}, 0.0f, 1.0, 2000.0, "ms"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Fall", ""}, 0.0f, 1.0, 2000.0, "ms"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(143.15), Center, "Threshold", ""}, 0.0f, 0.0, 8.0, "v"},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Signal In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Gate Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Envelope Out", ""}},
 }};
 
     enum class Elem {
         RiseKnob,
         FallKnob,
-        ThreshKnob,
-        InputIn,
+        ThresholdKnob,
+        SignalIn,
         GateOut,
-        EnvOut,
+        EnvelopeOut,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobRise, 
         KnobFall, 
-        KnobThresh, 
+        KnobThreshold, 
         NumKnobs,
     };
     
     
     enum {
-        InputInput, 
+        InputSignal_In, 
         NumInJacks,
     };
     
     enum {
-        OutputGate, 
-        OutputEnv, 
+        OutputGate_Out, 
+        OutputEnvelope_Out, 
         NumOutJacks,
     };
     
     
+
 };
 } // namespace MetaModule

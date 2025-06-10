@@ -27,10 +27,10 @@
      inkscape:zoom="2.4379278"
      inkscape:cx="211.24498"
      inkscape:cy="249.39213"
-     inkscape:window-width="2512"
-     inkscape:window-height="1387"
-     inkscape:window-x="50"
-     inkscape:window-y="25"
+     inkscape:window-width="1680"
+     inkscape:window-height="1051"
+     inkscape:window-x="49"
+     inkscape:window-y="38"
      inkscape:window-maximized="1"
      inkscape:current-layer="components" />
   <g
@@ -2642,7 +2642,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Div_Mult_4"
-       data-name="Div Mult 4"
+       data-name="Div Mult 4#DivMultKnob_d32x16"
        cx="202.3"
        cy="292.29"
        r="17.01"
@@ -2734,7 +2734,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Div_Mult_3"
-       data-name="Div Mult 3"
+       data-name="Div Mult 3#DivMultKnob_d32x16"
        cx="202.3"
        cy="223.17"
        r="17.01"
@@ -2826,7 +2826,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Div_Mult_2"
-       data-name="Div Mult 2"
+       data-name="Div Mult 2#DivMultKnob_d32x16"
        cx="202.3"
        cy="154.05"
        r="17.01"
@@ -2918,7 +2918,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Div_Mult_1"
-       data-name="Div Mult 1"
+       data-name="Div Mult 1#DivMultKnob_d32x16"
        cx="202.3"
        cy="84.93"
        r="17.01"

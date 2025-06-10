@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,12 +16,12 @@ struct GateInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 6> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.85), Center, "Length", ""}, 0.25f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.99), Center, "Delay", ""}, 0.0f},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.85), Center, "Length", ""}, 0.25f, 1.0, 1000.0, "ms"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.99), Center, "Delay", ""}, 0.0f, 0.0, 1000.0, "ms"},
 		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(168.72), Center, "Length CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.89), Center, "Delay CV", ""}},
-		GateJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.06), Center, "Input", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out", ""}},
+		GateJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.06), Center, "Gate In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Gate Out", ""}},
 }};
 
     enum class Elem {
@@ -29,11 +29,11 @@ struct GateInfo : ModuleInfoBase {
         DelayKnob,
         LengthCvIn,
         DelayCvIn,
-        InputIn,
-        Out,
+        GateIn,
+        GateOut,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobLength, 
@@ -45,15 +45,16 @@ struct GateInfo : ModuleInfoBase {
     enum {
         InputLength_Cv, 
         InputDelay_Cv, 
-        InputInput, 
+        InputGate_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut, 
+        OutputGate_Out, 
         NumOutJacks,
     };
     
     
+
 };
 } // namespace MetaModule

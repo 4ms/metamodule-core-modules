@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,10 +16,10 @@ struct Switch41Info : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 8> Elements{{
-		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(167.04), Center, "In 1", ""}},
-		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(167.04), Center, "In 2", ""}},
-		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(214.43), Center, "In 3", ""}},
-		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(214.43), Center, "In 4", ""}},
+		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(167.04), Center, "Ch. 1 In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(167.04), Center, "Ch. 2 In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(214.43), Center, "Ch. 3 In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(214.43), Center, "Ch. 4 In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(263.15), Center, "Clock", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.3), to_mm<72>(263.15), Center, "CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(31.76), to_mm<72>(311.88), Center, "Reset", ""}},
@@ -27,25 +27,25 @@ struct Switch41Info : ModuleInfoBase {
 }};
 
     enum class Elem {
-        In1In,
-        In2In,
-        In3In,
-        In4In,
+        Ch_1In,
+        Ch_2In,
+        Ch_3In,
+        Ch_4In,
         ClockIn,
         CvIn,
         ResetIn,
         Out,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     
     
     enum {
-        InputIn_1, 
-        InputIn_2, 
-        InputIn_3, 
-        InputIn_4, 
+        InputCh__1_In, 
+        InputCh__2_In, 
+        InputCh__3_In, 
+        InputCh__4_In, 
         InputClock, 
         InputCv, 
         InputReset, 
@@ -58,5 +58,6 @@ struct Switch41Info : ModuleInfoBase {
     };
     
     
+
 };
 } // namespace MetaModule

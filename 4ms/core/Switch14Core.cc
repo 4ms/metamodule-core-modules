@@ -66,7 +66,7 @@ public:
 			case Info::InputReset: // reset
 				cp.updateReset(val / CvRangeVolts);
 				break;
-			case Info::InputIn: // signal
+			case Info::InputSignal_In: // signal
 				inputSignal = val;
 				break;
 			case Info::InputCv:
@@ -78,15 +78,15 @@ public:
 	float get_output(int output_id) const override {
 		// Output jacks must be sequential
 		// or else our logic doesn't work:
-		static_assert(Info::OutputOut_1 + 1 == Info::OutputOut_2);
-		static_assert(Info::OutputOut_2 + 1 == Info::OutputOut_3);
-		static_assert(Info::OutputOut_3 + 1 == Info::OutputOut_4);
+		static_assert(Info::OutputCh__1_Out + 1 == Info::OutputCh__2_Out);
+		static_assert(Info::OutputCh__2_Out + 1 == Info::OutputCh__3_Out);
+		static_assert(Info::OutputCh__3_Out + 1 == Info::OutputCh__4_Out);
 
 		if (output_id < (int)NumThrows) {
 			if (cvMode)
 				return panSignals[output_id] * inputSignal;
 
-			if (output_id == stepNum + Info::OutputOut_1)
+			if (output_id == stepNum + Info::OutputCh__1_Out)
 				return inputSignal;
 		}
 		return 0;

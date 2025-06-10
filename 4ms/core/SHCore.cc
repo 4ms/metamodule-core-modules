@@ -28,21 +28,21 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputIn_1:
+			case Info::InputCh__1_Clock_In:
 				input[0] = val;
 				break;
 
-			case Info::InputSamp_1:
+			case Info::InputCh__1_Sample_In:
 				if (trig[0](triggerDetector[0](val))) {
 					held[0] = input[0];
 				}
 				break;
 
-			case Info::InputIn_2:
+			case Info::InputCh__2_Clock_In:
 				input[1] = val;
 				break;
 
-			case Info::InputSamp_2:
+			case Info::InputCh__2_Sample_In:
 				if (trig[1](triggerDetector[1](val))) {
 					held[1] = input[1];
 				}

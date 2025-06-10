@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,7 +16,7 @@ struct OctaveInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 4> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Octave", ""}, 0.0f},
+		OctaveKnob{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Octave", ""}, 0.5f},
 		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Input", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out", ""}},
@@ -29,7 +29,7 @@ struct OctaveInfo : ModuleInfoBase {
         Out,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobOctave, 
@@ -49,5 +49,6 @@ struct OctaveInfo : ModuleInfoBase {
     };
     
     
+
 };
 } // namespace MetaModule

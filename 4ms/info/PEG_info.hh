@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -18,15 +18,15 @@ struct PEGInfo : ModuleInfoBase {
     static constexpr std::array<Element, 52> Elements{{
 		MomentaryRGB7mm{{to_mm<72>(68.06), to_mm<72>(45.56), Center, "Ping Red", ""}},
 		MomentaryRGB7mm{{to_mm<72>(120.9), to_mm<72>(41.96), Center, "Cycle Red", ""}},
-		Davies1900hBlackKnob{{to_mm<72>(34.2), to_mm<72>(106.06), Center, "Ping Div Mult Red", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(34.16), to_mm<72>(170.68), Center, "Scale Red", ""}, 1.0f},
+		DivMultKnob_d8x8{{to_mm<72>(34.2), to_mm<72>(106.06), Center, "Ping Div Mult Red", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(34.16), to_mm<72>(170.68), Center, "Scale Red", ""}, 1.0f, -100.0, 100.0, "%"},
 		Davies1900hBlackKnob{{to_mm<72>(95.87), to_mm<72>(151.47), Center, "Skew Red", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(106.67), to_mm<72>(215.41), Center, "Curve Red", ""}, 0.5f},
 		OrangeButton{{to_mm<72>(21.56), to_mm<72>(213.99), Center, "Bi-polar Red", ""}},
 		MomentaryRGB7mm{{to_mm<72>(220.56), to_mm<72>(45.56), Center, "Ping Blue", ""}},
 		MomentaryRGB7mm{{to_mm<72>(167.48), to_mm<72>(41.9), Center, "Cycle Blue", ""}},
-		Davies1900hBlackKnob{{to_mm<72>(254.32), to_mm<72>(106.02), Center, "Ping Div Mult Blue", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(254.75), to_mm<72>(170.82), Center, "Scale Blue", ""}, 1.0f},
+		DivMultKnob_d8x8{{to_mm<72>(254.32), to_mm<72>(106.02), Center, "Ping Div Mult Blue", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(254.75), to_mm<72>(170.82), Center, "Scale Blue", ""}, 1.0f, -100.0, 100.0, "%"},
 		Davies1900hBlackKnob{{to_mm<72>(192.91), to_mm<72>(151.47), Center, "Skew Blue", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(182.51), to_mm<72>(215.41), Center, "Curve Blue", ""}, 0.5f},
 		OrangeButton{{to_mm<72>(267.04), to_mm<72>(213.99), Center, "Bi-polar Blue", ""}},
@@ -40,11 +40,11 @@ struct PEGInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(48.56), to_mm<72>(248.86), Center, "Env Red", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(239.76), to_mm<72>(248.86), Center, "Env Blue", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(27.7), to_mm<72>(281.13), Center, "+5V Env Red", ""}},
-		GateJackOutput4ms{{to_mm<72>(69.36), to_mm<72>(281.13), Center, "EOR", ""}},
+		GateJackOutput4ms{{to_mm<72>(69.36), to_mm<72>(281.13), Center, "EOR Red", ""}},
 		GateJackOutput4ms{{to_mm<72>(111.11), to_mm<72>(281.13), Center, "EOF Red", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(144.22), to_mm<72>(299.87), Center, "OR", ""}},
 		GateJackOutput4ms{{to_mm<72>(177.5), to_mm<72>(281.13), Center, "EOF Blue", ""}},
-		GateJackOutput4ms{{to_mm<72>(219.06), to_mm<72>(280.99), Center, "Half R", ""}},
+		GateJackOutput4ms{{to_mm<72>(219.06), to_mm<72>(280.99), Center, "Half R Blue", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(260.81), to_mm<72>(280.99), Center, "+5V Env Blue", ""}},
 		AnalogJackInput4ms{{to_mm<72>(27.7), to_mm<72>(317.08), Center, "Div Red Jack", ""}},
 		AnalogJackInput4ms{{to_mm<72>(69.36), to_mm<72>(317.08), Center, "Skew Red Jack", ""}},
@@ -107,10 +107,10 @@ struct PEGInfo : ModuleInfoBase {
         CurveBlueJackIn,
         SkewBlueJackIn,
         DivBlueJackIn,
-        EnvredlightLight,
-        EnvbluelightLight,
-        EorredlightLight,
-        EofredlightLight,
+        EnvredLight,
+        EnvblueLight,
+        EorredLight,
+        EofredLight,
         EofblueLight,
         HalfriseblueLight,
         AsyncRedModeAltParam,
@@ -125,7 +125,7 @@ struct PEGInfo : ModuleInfoBase {
         HalfNRBlueModeAltParam,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobPing_Div_Mult_Red, 
@@ -201,5 +201,6 @@ struct PEGInfo : ModuleInfoBase {
         AltParamEor_Red_Mode, 
         AltParamHalfNR_Blue_Mode, 
     };
+
 };
 } // namespace MetaModule

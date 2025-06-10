@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "CoreModules/4ms/helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,7 +16,7 @@ struct EnOscInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 32> Elements{{
-		Davies1900hBlackKnob{{to_mm<72>(54.1), to_mm<72>(78.08), Center, "Scale", ""}, 0.453125f},
+		Knob_1_10{{to_mm<72>(54.1), to_mm<72>(78.08), Center, "Scale", ""}, 0.453125f},
 		Davies1900hBlackKnob{{to_mm<72>(115.27), to_mm<72>(61.62), Center, "Spread", ""}, 0.375f},
 		Davies1900hBlackKnob{{to_mm<72>(176.96), to_mm<72>(78.07), Center, "Pitch", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(32.72), to_mm<72>(144.14), Center, "Balance", ""}, 0.5f},
@@ -31,16 +31,16 @@ struct EnOscInfo : ModuleInfoBase {
 		Toggle3pos{{to_mm<72>(214.23), to_mm<72>(201.725), Center, "Warp Switch", ""}, {"Segment", "Cheb", "Fold"}, Toggle3pos::State_t::UP},
 		MomentaryRGB7mm{{to_mm<72>(21.63), to_mm<72>(42.53), Center, "Learn", ""}},
 		MomentaryRGB7mm{{to_mm<72>(209.56), to_mm<72>(42.53), Center, "Freeze", ""}},
-		AnalogJackInput4ms{{to_mm<72>(21.88), to_mm<72>(262.78), Center, "Pitch Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(21.88), to_mm<72>(305.91), Center, "Root Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(59.42), to_mm<72>(275.86), Center, "Scale Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(96.88), to_mm<72>(262.78), Center, "Spread Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(134.28), to_mm<72>(262.78), Center, "Cross FM Jack", ""}},
-		GateJackInput4ms{{to_mm<72>(171.75), to_mm<72>(275.86), Center, "Learn Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(59.42), to_mm<72>(319.0), Center, "Balance Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(96.88), to_mm<72>(305.93), Center, "Twist Jack", ""}},
-		AnalogJackInput4ms{{to_mm<72>(134.28), to_mm<72>(305.93), Center, "Warp Jack", ""}},
-		GateJackInput4ms{{to_mm<72>(171.75), to_mm<72>(319.03), Center, "Freeze Jack", ""}},
+		AnalogJackInput4ms{{to_mm<72>(21.88), to_mm<72>(262.78), Center, "Pitch 1v/Oct", ""}},
+		AnalogJackInput4ms{{to_mm<72>(21.88), to_mm<72>(305.91), Center, "Root 1v/Oct", ""}},
+		AnalogJackInput4ms{{to_mm<72>(59.42), to_mm<72>(275.86), Center, "Scale CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(96.88), to_mm<72>(262.78), Center, "Spread CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(134.28), to_mm<72>(262.78), Center, "Cross FM CV", ""}},
+		GateJackInput4ms{{to_mm<72>(171.75), to_mm<72>(275.86), Center, "Learn CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(59.42), to_mm<72>(319.0), Center, "Balance CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(96.88), to_mm<72>(305.93), Center, "Twist CV", ""}},
+		AnalogJackInput4ms{{to_mm<72>(134.28), to_mm<72>(305.93), Center, "Warp CV", ""}},
+		GateJackInput4ms{{to_mm<72>(171.75), to_mm<72>(319.03), Center, "Freeze CV", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(209.12), to_mm<72>(262.78), Center, "Out A", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(209.12), to_mm<72>(305.91), Center, "Out B", ""}},
 		AltParamChoiceLabeled{{{to_mm<72>(61.77), to_mm<72>(208.21), Center, "FreezeSplit", ""}, 3, 0}, {"Even/Odd", "Low/High", "Root/Others"}},
@@ -66,16 +66,16 @@ struct EnOscInfo : ModuleInfoBase {
         WarpSwitch,
         LearnButton,
         FreezeButton,
-        PitchJackIn,
-        RootJackIn,
-        ScaleJackIn,
-        SpreadJackIn,
-        CrossFmJackIn,
-        LearnJackIn,
-        BalanceJackIn,
-        TwistJackIn,
-        WarpJackIn,
-        FreezeJackIn,
+        Pitch1V_OctIn,
+        Root1V_OctIn,
+        ScaleCvIn,
+        SpreadCvIn,
+        CrossFmCvIn,
+        LearnCvIn,
+        BalanceCvIn,
+        TwistCvIn,
+        WarpCvIn,
+        FreezeCvIn,
         OutAOut,
         OutBOut,
         FreezesplitAltParam,
@@ -85,7 +85,7 @@ struct EnOscInfo : ModuleInfoBase {
         FinetuneAltParam,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobScale, 
@@ -111,16 +111,16 @@ struct EnOscInfo : ModuleInfoBase {
     };
     
     enum {
-        InputPitch_Jack, 
-        InputRoot_Jack, 
-        InputScale_Jack, 
-        InputSpread_Jack, 
-        InputCross_Fm_Jack, 
-        InputLearn_Jack, 
-        InputBalance_Jack, 
-        InputTwist_Jack, 
-        InputWarp_Jack, 
-        InputFreeze_Jack, 
+        InputPitch_1V_Oct, 
+        InputRoot_1V_Oct, 
+        InputScale_Cv, 
+        InputSpread_Cv, 
+        InputCross_Fm_Cv, 
+        InputLearn_Cv, 
+        InputBalance_Cv, 
+        InputTwist_Cv, 
+        InputWarp_Cv, 
+        InputFreeze_Cv, 
         NumInJacks,
     };
     
@@ -138,5 +138,6 @@ struct EnOscInfo : ModuleInfoBase {
         AltParamNumosc, 
         AltParamFinetune, 
     };
+
 };
 } // namespace MetaModule

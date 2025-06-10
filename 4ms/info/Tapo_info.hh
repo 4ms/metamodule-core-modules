@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -52,11 +52,6 @@ struct TapoInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(184.402), to_mm<72>(25.929), Center, "Mode", ""}, 2, 0}, {"Edit", "Seq"}},
 }};
 
-	static constexpr std::array<BypassRoute, 2> bypass_routes{{
-		{4, 1}, 
-		{4, 2}},
-	};
-
     enum class Elem {
         LevelKnob,
         TimeKnob,
@@ -94,7 +89,7 @@ struct TapoInfo : ModuleInfoBase {
         ModeAltParam,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobLevel, 
@@ -152,5 +147,6 @@ struct TapoInfo : ModuleInfoBase {
         AltParamPan, 
         AltParamMode, 
     };
+
 };
 } // namespace MetaModule

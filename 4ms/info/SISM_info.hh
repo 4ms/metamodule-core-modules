@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,22 +16,22 @@ struct SISMInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 34> Elements{{
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(46.64), Center, "Scale 1", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(46.64), Center, "Shift 1", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(111.44), Center, "Scale 2", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(111.44), Center, "Shift 2", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(176.24), Center, "Scale 3", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(176.24), Center, "Shift 3", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(64.25), to_mm<72>(241.04), Center, "Scale 4", ""}, 1.0f},
-		Knob9mm{{to_mm<72>(107.45), to_mm<72>(241.04), Center, "Shift 4", ""}, 0.5f},
-		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(52.84), Center, "In 1", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(52.9), Center, "Out 1", ""}},
-		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(117.64), Center, "In 2", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(117.7), Center, "Out 2", ""}},
-		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(182.44), Center, "In 3", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(182.5), Center, "Out 3", ""}},
-		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(247.24), Center, "In 4", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(247.3), Center, "Out 4", ""}},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(46.64), Center, "Ch. 1 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(46.64), Center, "Ch. 1 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(111.44), Center, "Ch. 2 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(111.44), Center, "Ch. 2 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(176.24), Center, "Ch. 3 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(176.24), Center, "Ch. 3 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		Knob9mm{{to_mm<72>(64.25), to_mm<72>(241.04), Center, "Ch. 4 Scale", ""}, 1.0f, -100.0, 100.0, "%"},
+		Knob9mm{{to_mm<72>(107.45), to_mm<72>(241.04), Center, "Ch. 4 Shift", ""}, 0.5f, -10.0, 10.0, "v"},
+		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(52.84), Center, "Ch. 1 In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(52.9), Center, "Ch. 1 Out", ""}},
+		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(117.64), Center, "Ch. 2 In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(117.7), Center, "Ch. 2 Out", ""}},
+		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(182.44), Center, "Ch. 3 In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(182.5), Center, "Ch. 3 Out", ""}},
+		AnalogJackInput4ms{{to_mm<72>(21.77), to_mm<72>(247.24), Center, "Ch. 4 In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(150.52), to_mm<72>(247.3), Center, "Ch. 4 Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(21.1), to_mm<72>(312.16), Center, "+ Slice", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(64.25), to_mm<72>(312.16), Center, "- Slice", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(107.45), to_mm<72>(312.16), Center, "Mix (SW)", ""}},
@@ -53,22 +53,22 @@ struct SISMInfo : ModuleInfoBase {
 }};
 
     enum class Elem {
-        Scale1Knob,
-        Shift1Knob,
-        Scale2Knob,
-        Shift2Knob,
-        Scale3Knob,
-        Shift3Knob,
-        Scale4Knob,
-        Shift4Knob,
-        In1In,
-        Out1Out,
-        In2In,
-        Out2Out,
-        In3In,
-        Out3Out,
-        In4In,
-        Out4Out,
+        Ch_1ScaleKnob,
+        Ch_1ShiftKnob,
+        Ch_2ScaleKnob,
+        Ch_2ShiftKnob,
+        Ch_3ScaleKnob,
+        Ch_3ShiftKnob,
+        Ch_4ScaleKnob,
+        Ch_4ShiftKnob,
+        Ch_1In,
+        Ch_1Out,
+        Ch_2In,
+        Ch_2Out,
+        Ch_3In,
+        Ch_3Out,
+        Ch_4In,
+        Ch_4Out,
         PSliceOut,
         NSliceOut,
         Mix_Sw_Out,
@@ -89,34 +89,34 @@ struct SISMInfo : ModuleInfoBase {
         LedPMixLight,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
-        KnobScale_1, 
-        KnobShift_1, 
-        KnobScale_2, 
-        KnobShift_2, 
-        KnobScale_3, 
-        KnobShift_3, 
-        KnobScale_4, 
-        KnobShift_4, 
+        KnobCh__1_Scale, 
+        KnobCh__1_Shift, 
+        KnobCh__2_Scale, 
+        KnobCh__2_Shift, 
+        KnobCh__3_Scale, 
+        KnobCh__3_Shift, 
+        KnobCh__4_Scale, 
+        KnobCh__4_Shift, 
         NumKnobs,
     };
     
     
     enum {
-        InputIn_1, 
-        InputIn_2, 
-        InputIn_3, 
-        InputIn_4, 
+        InputCh__1_In, 
+        InputCh__2_In, 
+        InputCh__3_In, 
+        InputCh__4_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut_1, 
-        OutputOut_2, 
-        OutputOut_3, 
-        OutputOut_4, 
+        OutputCh__1_Out, 
+        OutputCh__2_Out, 
+        OutputCh__3_Out, 
+        OutputCh__4_Out, 
         OutputP_Slice, 
         OutputN_Slice, 
         OutputMix__Sw_, 
@@ -142,5 +142,6 @@ struct SISMInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+
 };
 } // namespace MetaModule

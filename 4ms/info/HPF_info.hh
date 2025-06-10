@@ -1,7 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
-#include "CoreModules/4ms/4ms_element_state_conversions.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -16,28 +16,24 @@ struct HPFInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 6> Elements{{
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Cutoff", ""}, 0.5f},
-		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Q", ""}, 0.0f},
-		OrangeButton{{to_mm<72>(28.8), to_mm<72>(168.66), Center, "Mode", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "CV", ""}},
-		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Input", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Out", ""}},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(46.77), Center, "Cutoff", ""}, 0.5f, 130.0, 2093.0, "hz"},
+		Knob9mm{{to_mm<72>(28.8), to_mm<72>(94.96), Center, "Q", ""}, 0.0f, 1.0, 20.0, "x"},
+		Toggle2posHoriz{{to_mm<72>(29.269), to_mm<72>(170.57), Center, "Mode", ""}, {"Standard", "Korg"}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(216.85), Center, "Cutoff CV In", ""}},
+		AnalogJackInput4ms{{to_mm<72>(28.8), to_mm<72>(265.04), Center, "Audio In", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(28.8), to_mm<72>(313.23), Center, "Audio Out", ""}},
 }};
-
-	static constexpr std::array<BypassRoute, 1> bypass_routes{{
-		{1, 0}, 
-	}};
 
     enum class Elem {
         CutoffKnob,
         QKnob,
-        ModeButton,
-        CvIn,
-        InputIn,
-        Out,
+        ModeSwitch,
+        CutoffCvIn,
+        AudioIn,
+        AudioOut,
     };
 
-    // Legacy naming (safe to remove once all legacy 4ms CoreModules are converted)
+    // Legacy naming
     
     enum {
         KnobCutoff, 
@@ -51,16 +47,17 @@ struct HPFInfo : ModuleInfoBase {
     };
     
     enum {
-        InputCv, 
-        InputInput, 
+        InputCutoff_Cv_In, 
+        InputAudio_In, 
         NumInJacks,
     };
     
     enum {
-        OutputOut, 
+        OutputAudio_Out, 
         NumOutJacks,
     };
     
     
+
 };
 } // namespace MetaModule

@@ -33,20 +33,20 @@ public:
 
 	void set_input(int input_id, float val) override {
 		switch (input_id) {
-			case Info::InputInput:
+			case Info::InputAudio_In:
 				signalInput = val;
 				break;
-			case Info::InputCv:
+			case Info::InputPan_Cv_In:
 				panCV = val / CvRangeVolts;
 		}
 	}
 
 	float get_output(int output_id) const override {
 		switch (output_id) {
-			case Info::OutputOut_1:
+			case Info::OutputCh__1_Out:
 				return leftOut;
 
-			case Info::OutputOut_2:
+			case Info::OutputCh__2_Out:
 				return rightOut;
 		}
 		return 0.f;
