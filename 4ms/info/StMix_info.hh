@@ -32,8 +32,8 @@ struct StMixInfo : ModuleInfoBase {
 		AnalogJackInput4ms{{to_mm<72>(160.85), to_mm<72>(271.8), Center, "Ch. 3 Right In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(223.88), to_mm<72>(222.7), Center, "Ch. 4 Left In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(223.88), to_mm<72>(271.8), Center, "Ch. 4 Right In", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(138.33), to_mm<72>(322.18), Center, "Main Left Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(206.36), to_mm<72>(322.18), Center, "Main Right Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(138.33), to_mm<72>(322.18), Center, "Left Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(206.36), to_mm<72>(322.18), Center, "Right Out", ""}},
 }};
 
     enum class Elem {
@@ -53,8 +53,8 @@ struct StMixInfo : ModuleInfoBase {
         Ch_3RightIn,
         Ch_4LeftIn,
         Ch_4RightIn,
-        MainLeftOut,
-        MainRightOut,
+        LeftOut,
+        RightOut,
     };
 
     // Legacy naming
@@ -85,8 +85,8 @@ struct StMixInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputMain_Left_Out, 
-        OutputMain_Right_Out, 
+        OutputLeft_Out, 
+        OutputRight_Out, 
         NumOutJacks,
     };
     

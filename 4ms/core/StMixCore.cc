@@ -128,9 +128,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
-		if (output_id == Info::OutputMain_Left_Out)
+		if (output_id == Info::OutputLeft_Out)
 			return leftOut;
-		if (output_id == Info::OutputMain_Right_Out)
+		if (output_id == Info::OutputRight_Out)
 			return rightOut;
 		return 0.f;
 	}

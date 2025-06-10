@@ -719,13 +719,13 @@
   <g
      id="components">
     <circle
-       id="Main Right Out"
+       id="Right Out"
        cx="206.36"
        cy="322.18"
        r="11.34"
        style="fill: blue; stroke-width: 0px;" />
     <circle
-       id="Main Left Out"
+       id="Left Out"
        cx="138.33"
        cy="322.18"
        r="11.34"
