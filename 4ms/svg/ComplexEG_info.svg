@@ -6,7 +6,7 @@
    version="1.1"
    id="svg155"
    sodipodi:docname="ComplexEG_info.svg"
-   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -841,6 +841,14 @@
        r="17.01"
        style="fill: #ff0040; stroke-width: 0px;"
        data-name="Hold!1!1000!ms" />
+    <rect
+       style="fill:#ff8080;stroke-width:0.195905"
+       id="LoopSwitch"
+       width="14.172954"
+       height="8.5037718"
+       x="101.99757"
+       y="160.49689"
+       data-name="Loop@Off@On" />
     <circle
        id="Sustain"
        cx="43.62"
@@ -955,13 +963,5 @@
          y="0"
          style="letter-spacing: 0em;"
          id="tspan155">or</tspan></text>
-    <rect
-       style="fill:#ff8080;stroke-width:0.195905"
-       id="LoopSwitch"
-       width="14.172954"
-       height="8.5037718"
-       x="101.99757"
-       y="160.49689"
-       data-name="Loop@Off@On" />
   </g>
 </svg>

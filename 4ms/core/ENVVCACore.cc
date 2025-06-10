@@ -83,17 +83,17 @@ public:
 		setLED<RiseSlider>(slopeState == TriangleOscillator::SlopeState_t::RISING ? val / 8.f : 0);
 		setLED<FallSlider>(slopeState == TriangleOscillator::SlopeState_t::FALLING ? val / 8.f : 0);
 		val = val / VoltageDivider(100e3f, 100e3f);
-		val *= getState<EnvelopeLevelSlider>();
-		setOutput<EnvelopeOut>(val);
-		setLED<EnvelopeLevelSlider>(val / 8.f);
+		val *= getState<EnvLevelSlider>();
+		setOutput<EnvOut>(val);
+		setLED<EnvLevelSlider>(val / 8.f);
 	}
 
 	void displayOscillatorState(TriangleOscillator::SlopeState_t slopeState) {
 		if (slopeState == TriangleOscillator::SlopeState_t::FALLING) {
-			setOutput<EndOfRiseGateOut>(8.f);
+			setOutput<EorOut>(8.f);
 			setLED<EorLight>(true);
 		} else {
-			setOutput<EndOfRiseGateOut>(0);
+			setOutput<EorOut>(0);
 			setLED<EorLight>(false);
 		}
 	}

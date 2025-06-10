@@ -16,7 +16,6 @@ struct ComplexEGInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 21> Elements{{
-		Toggle2posHoriz{{to_mm<72>(109.084), to_mm<72>(164.749), Center, "Loop", ""}, {"Off", "On"}},
 		Davies1900hBlackKnob{{to_mm<72>(43.62), to_mm<72>(46.2), Center, "Attack", ""}, 0.125f, 1.0, 1000.0, "ms"},
 		Davies1900hBlackKnob{{to_mm<72>(108.12), to_mm<72>(45.53), Center, "Decay", ""}, 0.125f, 1.0, 1000.0, "ms"},
 		Davies1900hBlackKnob{{to_mm<72>(172.62), to_mm<72>(45.53), Center, "Release", ""}, 0.25f, 1.0, 1000.0, "ms"},
@@ -24,6 +23,7 @@ struct ComplexEGInfo : ModuleInfoBase {
 		Davies1900hBlackKnob{{to_mm<72>(108.12), to_mm<72>(104.51), Center, "Decay Curve", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(172.62), to_mm<72>(104.51), Center, "Release Curve", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(43.62), to_mm<72>(163.28), Center, "Sustain", ""}, 0.75f},
+		Toggle2posHoriz{{to_mm<72>(109.084), to_mm<72>(164.749), Center, "Loop", ""}, {"Off", "On"}},
 		Davies1900hBlackKnob{{to_mm<72>(172.52), to_mm<72>(163.23), Center, "Hold", ""}, 0.5f, 1.0, 1000.0, "ms"},
 		AnalogJackInput4ms{{to_mm<72>(36.45), to_mm<72>(214.13), Center, "Gate In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.96), to_mm<72>(214.13), Center, "Attack CV", ""}},
@@ -40,7 +40,6 @@ struct ComplexEGInfo : ModuleInfoBase {
 }};
 
     enum class Elem {
-        LoopSwitch,
         AttackKnob,
         DecayKnob,
         ReleaseKnob,
@@ -48,6 +47,7 @@ struct ComplexEGInfo : ModuleInfoBase {
         DecayCurveKnob,
         ReleaseCurveKnob,
         SustainKnob,
+        LoopSwitch,
         HoldKnob,
         GateIn,
         AttackCvIn,
