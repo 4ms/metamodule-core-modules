@@ -1,5 +1,5 @@
 #pragma once
-#include "helpers/4ms_elements.hh"
+#include "CoreModules/4ms/helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
 
 #include <array>
