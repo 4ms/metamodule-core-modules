@@ -25,12 +25,12 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.1131277"
-     inkscape:cx="180.53807"
+     inkscape:cx="180.77469"
      inkscape:cy="245.60749"
-     inkscape:window-width="1920"
-     inkscape:window-height="1205"
-     inkscape:window-x="50"
-     inkscape:window-y="25"
+     inkscape:window-width="1680"
+     inkscape:window-height="1051"
+     inkscape:window-x="49"
+     inkscape:window-y="38"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
@@ -1988,7 +1988,8 @@
        cx="54.1"
        cy="78.08"
        r="17.01"
-       style="fill:#FF003A" />
+       style="fill:#FF003A"
+       data-name="Scale#Knob_1_10" />
     <text
        id="slug"
        transform="translate(80.36 8.09)"

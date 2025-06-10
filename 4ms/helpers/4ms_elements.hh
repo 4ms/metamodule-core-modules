@@ -193,6 +193,26 @@ struct OctaveKnob : KnobSnapped {
 	}
 };
 
+struct Knob_1_10 : KnobSnapped {
+	constexpr Knob_1_10() = default;
+	constexpr Knob_1_10(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 10;
+		pos_names[0] = "1";
+		pos_names[1] = "2";
+		pos_names[2] = "3";
+		pos_names[3] = "4";
+		pos_names[4] = "5";
+		pos_names[5] = "6";
+		pos_names[6] = "7";
+		pos_names[7] = "8";
+		pos_names[8] = "9";
+		pos_names[9] = "10";
+	}
+};
+
 //
 // Sliders
 //
