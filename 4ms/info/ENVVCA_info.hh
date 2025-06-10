@@ -21,7 +21,7 @@ struct ENVVCAInfo : ModuleInfoBase {
 		OrangeButton{{to_mm<72>(92.17), to_mm<72>(41.65), Center, "Cycle", ""}},
 		Slider25mmVertLED{{to_mm<72>(23.185), to_mm<72>(108.81), Center, "Rise", ""}, 0.5f},
 		Slider25mmVertLED{{to_mm<72>(57.325), to_mm<72>(109.02), Center, "Fall", ""}, 0.5f},
-		Slider25mmVertLED{{to_mm<72>(91.505), to_mm<72>(108.81), Center, "Env Level", ""}, 1.0f},
+		Slider25mmVertLED{{to_mm<72>(91.505), to_mm<72>(108.81), Center, "Env Level", ""}, 1.0f, 0.0, 10.0, "V"},
 		Knob9mm{{to_mm<72>(21.69), to_mm<72>(178.25), Center, "Rise CV", ""}, 1.0f, -100.0, 100.0, "%"},
 		Knob9mm{{to_mm<72>(92.85), to_mm<72>(178.25), Center, "Fall CV", ""}, 1.0f, -100.0, 100.0, "%"},
 		AnalogJackInput4ms{{to_mm<72>(57.25), to_mm<72>(203.53), Center, "Time CV In", ""}},
