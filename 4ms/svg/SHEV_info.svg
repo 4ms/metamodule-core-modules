@@ -6,7 +6,7 @@
    version="1.1"
    id="svg497"
    sodipodi:docname="SHEV_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,14 +23,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.7533322"
-     inkscape:cx="171.67312"
-     inkscape:cy="228.13703"
-     inkscape:window-width="1680"
-     inkscape:window-height="1051"
-     inkscape:window-x="52"
-     inkscape:window-y="38"
-     inkscape:window-maximized="1"
+     inkscape:zoom="1.2397931"
+     inkscape:cx="181.4819"
+     inkscape:cy="260.52734"
+     inkscape:window-width="1200"
+     inkscape:window-height="847"
+     inkscape:window-x="1832"
+     inkscape:window-y="268"
+     inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
      id="faceplate">
@@ -2902,7 +2902,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Fall_B"
-       data-name="Fall B"
+       data-name="Fall B!-100!100!%"
        cx="218.26"
        cy="206.72"
        r="8.5"
@@ -2923,14 +2923,14 @@
        style="fill: #f0f; stroke-width: 0px;" />
     <circle
        id="Rise_B"
-       data-name="Rise B"
+       data-name="Rise B!-100!100!%"
        cx="169.15"
        cy="206.72"
        r="8.5"
        style="fill: #ff0080; stroke-width: 0px;" />
     <circle
        id="Fall_A"
-       data-name="Fall A"
+       data-name="Fall A!-100!100!%"
        cx="117.86"
        cy="206.72"
        r="8.5"
@@ -2951,7 +2951,7 @@
        style="fill: #f0f; stroke-width: 0px;" />
     <circle
        id="Rise_A"
-       data-name="Rise A"
+       data-name="Rise A!-100!100!%"
        cx="68.74"
        cy="206.72"
        r="8.5"
@@ -2965,7 +2965,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Shape_B"
-       data-name="Shape B"
+       data-name="Shape B!-100!100!%"
        cx="263.45"
        cy="179.21"
        r="8.5"
@@ -3002,7 +3002,7 @@
        style="fill: #f0f; stroke-width: 0px;" />
     <circle
        id="Shape_A"
-       data-name="Shape A"
+       data-name="Shape A!-100!100!%"
        cx="23.59"
        cy="179.21"
        r="8.5"
