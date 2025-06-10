@@ -35,6 +35,35 @@ struct Davies1900hBlackKnob : Knob {
 	}
 };
 
+struct DivMultKnob_d32x16 : KnobSnapped {
+	constexpr DivMultKnob_d32x16() = default;
+	constexpr DivMultKnob_d32x16(
+		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+		this->units = units;
+		num_pos = 19;
+		pos_names[0] = "/32";
+		pos_names[1] = "/16";
+		pos_names[2] = "/8";
+		pos_names[3] = "/7";
+		pos_names[4] = "/6";
+		pos_names[5] = "/5";
+		pos_names[6] = "/4";
+		pos_names[7] = "/3";
+		pos_names[8] = "/2";
+		pos_names[9] = "=";
+		pos_names[10] = "x2";
+		pos_names[11] = "x3";
+		pos_names[12] = "x4";
+		pos_names[13] = "x5";
+		pos_names[14] = "x6";
+		pos_names[15] = "x7";
+		pos_names[16] = "x8";
+		pos_names[17] = "x12";
+		pos_names[18] = "x16";
+	}
+};
+
 //
 // Sliders
 //
