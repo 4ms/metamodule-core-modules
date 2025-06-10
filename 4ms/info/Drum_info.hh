@@ -33,7 +33,7 @@ struct DrumInfo : ModuleInfoBase {
 		AnalogJackInput4ms{{to_mm<72>(84.7), to_mm<72>(262.92), Center, "FM Env CV In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(132.98), to_mm<72>(262.92), Center, "FM Amount CV In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(181.26), to_mm<72>(262.92), Center, "Tone Env CV In", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(36.42), to_mm<72>(311.64), Center, "Inverted Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(36.42), to_mm<72>(311.64), Center, "Tone Env  Out", ""}},
 		AnalogJackInput4ms{{to_mm<72>(84.7), to_mm<72>(311.64), Center, "Noise Env CV In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(132.98), to_mm<72>(311.64), Center, "Noise Blend CV In", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(181.26), to_mm<72>(311.64), Center, "Audio Out", ""}},
@@ -57,7 +57,7 @@ struct DrumInfo : ModuleInfoBase {
         FmEnvCvIn,
         FmAmountCvIn,
         ToneEnvCvIn,
-        InvertedOut,
+        ToneEnvOut,
         NoiseEnvCvIn,
         NoiseBlendCvIn,
         AudioOut,
@@ -94,7 +94,7 @@ struct DrumInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputInverted_Out, 
+        OutputTone_Env__Out, 
         OutputAudio_Out, 
         NumOutJacks,
     };

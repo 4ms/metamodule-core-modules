@@ -262,8 +262,8 @@ public:
 	float get_output(int output_id) const override {
 		if (output_id == Info::OutputAudio_Out)
 			return drumOutput * outputVolts;
-		if (output_id == Info::OutputInverted_Out)
-			return tenv;
+		if (output_id == Info::OutputTone_Env__Out)
+			return tenv * outputVolts;
 		return 0.f;
 	}
 
