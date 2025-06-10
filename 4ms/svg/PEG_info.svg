@@ -2191,7 +2191,7 @@
        style="fill:#0000ff" />
     <circle
        id="Half_R"
-       data-name="Half R"
+       data-name="Half R Blue"
        cx="219.06"
        cy="280.98999"
        r="11.34"
@@ -2217,7 +2217,8 @@
        r="11.34"
        style="fill:#8080ff" />
     <circle
-       id="EOR"
+       data-name="EOR Red"
+       id="EOR_Red"
        cx="69.360001"
        cy="281.13"
        r="11.34"
@@ -2315,7 +2316,7 @@
        style="fill:#ff0040" />
     <circle
        id="Scale_Blue"
-       data-name="Scale Blue"
+       data-name="Scale Blue!-100!100!%"
        cx="254.75"
        cy="170.82001"
        r="17.01"
@@ -2364,7 +2365,7 @@
        style="fill:#ff0040" />
     <circle
        id="Scale_Red"
-       data-name="Scale Red"
+       data-name="Scale Red!-100!100!%"
        cx="34.16"
        cy="170.67999"
        r="17.01"
