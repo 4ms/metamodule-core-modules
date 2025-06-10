@@ -545,113 +545,113 @@
        r="8.5"
        style="fill: #ff0080;" />
     <circle
-       id="D4_Jack"
-       data-name="D4 Jack"
+       id="D4_CV"
+       data-name="D4 CV"
        cx="310.84"
        cy="157.41"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="D3_Jack"
-       data-name="D3 Jack"
+       id="D3_CV"
+       data-name="D3 CV"
        cx="240.27"
        cy="157.41"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="D2_Jack"
-       data-name="D2 Jack"
+       id="D2_CV"
+       data-name="D2 CV"
        cx="169.75"
        cy="157.41"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="D1_Jack"
-       data-name="D1 Jack"
+       id="D1_CV"
+       data-name="D1 CV"
        cx="99.08"
        cy="157.41"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="C4_Jack"
-       data-name="C4 Jack"
+       id="C4_CV"
+       data-name="C4 CV"
        cx="345.99"
        cy="127.73"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="C3_Jack"
-       data-name="C3 Jack"
+       id="C3_CV"
+       data-name="C3 CV"
        cx="275.43"
        cy="127.73"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="C2_Jack"
-       data-name="C2 Jack"
+       id="C2_CV"
+       data-name="C2 CV"
        cx="204.9"
        cy="127.73"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="C1_Jack"
-       data-name="C1 Jack"
+       id="C1_CV"
+       data-name="C1 CV"
        cx="134.24"
        cy="127.73"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="B4_Jack"
-       data-name="B4 Jack"
+       id="B4_CV"
+       data-name="B4 CV"
        cx="310.84"
        cy="97.62"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="B3_Jack"
-       data-name="B3 Jack"
+       id="B3_CV"
+       data-name="B3 CV"
        cx="240.27"
        cy="97.62"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="B2_Jack"
-       data-name="B2 Jack"
+       id="B2_CV"
+       data-name="B2 CV"
        cx="169.75"
        cy="97.62"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="B1_Jack"
-       data-name="B1 Jack"
+       id="B1_CV"
+       data-name="B1 CV"
        cx="99.08"
        cy="97.62"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="A4_Jack"
-       data-name="A4 Jack"
+       id="A4_CV"
+       data-name="A4 CV"
        cx="345.99"
        cy="67.6"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="A3_Jack"
-       data-name="A3 Jack"
+       id="A3_CV"
+       data-name="A3 CV"
        cx="275.43"
        cy="67.6"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="A2_Jack"
-       data-name="A2 Jack"
+       id="A2_CV"
+       data-name="A2 CV"
        cx="204.9"
        cy="67.6"
        r="11.34"
        style="fill: lime;" />
     <circle
-       id="A1_Jack"
-       data-name="A1 Jack"
+       id="A1_CV"
+       data-name="A1 CV"
        cx="134.24"
        cy="67.6"
        r="11.34"
