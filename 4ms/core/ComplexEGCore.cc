@@ -59,7 +59,7 @@ public:
 		setOutput<SustainOut>((currentStage == e.SUSTAIN) ? MaxOutputVolts : 0);
 		setOutput<ReleaseOut>((currentStage == e.RELEASE) ? MaxOutputVolts : 0);
 
-		setOutput<EnvelopeOut>(envelopeOutput * MaxOutputVolts);
+		setOutput<EnvOut>(envelopeOutput * MaxOutputVolts);
 	}
 
 	void set_samplerate(float sr) override {

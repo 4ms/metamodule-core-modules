@@ -36,7 +36,7 @@ struct ComplexEGInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(36.45), to_mm<72>(309.84), Center, "Release Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(83.96), to_mm<72>(309.84), Center, "Sustain Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(131.96), to_mm<72>(309.84), Center, "Hold Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(179.96), to_mm<72>(309.84), Center, "Envelope Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(179.96), to_mm<72>(309.84), Center, "Env Out", ""}},
 }};
 
     enum class Elem {
@@ -60,7 +60,7 @@ struct ComplexEGInfo : ModuleInfoBase {
         ReleaseOut,
         SustainOut,
         HoldOut,
-        EnvelopeOut,
+        EnvOut,
     };
 
     // Legacy naming
@@ -98,7 +98,7 @@ struct ComplexEGInfo : ModuleInfoBase {
         OutputRelease_Out, 
         OutputSustain_Out, 
         OutputHold_Out, 
-        OutputEnvelope_Out, 
+        OutputEnv_Out, 
         NumOutJacks,
     };
     

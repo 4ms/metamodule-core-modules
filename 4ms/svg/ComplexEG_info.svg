@@ -24,14 +24,14 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="2.0760914"
-     inkscape:cx="144.02063"
-     inkscape:cy="243.00472"
-     inkscape:window-width="1200"
-     inkscape:window-height="1186"
-     inkscape:window-x="2301"
-     inkscape:window-y="145"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg155" />
+     inkscape:cx="117.04687"
+     inkscape:cy="274.07271"
+     inkscape:window-width="1680"
+     inkscape:window-height="1051"
+     inkscape:window-x="49"
+     inkscape:window-y="38"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="components" />
   <g
      id="faceplate">
     <rect
@@ -756,7 +756,7 @@
        cy="309.84"
        r="11.34"
        style="fill: blue; stroke-width: 0px;"
-       data-name="Envelope Out" />
+       data-name="Env Out" />
     <circle
        id="Hold_Out"
        data-name="Hold Out"

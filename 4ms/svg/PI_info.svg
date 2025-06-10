@@ -6,7 +6,7 @@
    version="1.1"
    id="svg226"
    sodipodi:docname="PI_info.svg"
-   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -26,11 +26,11 @@
      showgrid="false"
      inkscape:zoom="2.2519928"
      inkscape:cx="134.10345"
-     inkscape:cy="223.57976"
+     inkscape:cy="223.80178"
      inkscape:window-width="1200"
-     inkscape:window-height="1186"
-     inkscape:window-x="2240"
-     inkscape:window-y="25"
+     inkscape:window-height="1051"
+     inkscape:window-x="528"
+     inkscape:window-y="38"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
@@ -967,7 +967,7 @@
      transform="translate(0.00208206,0.005)">
     <circle
        id="Env._Out_-"
-       data-name="Envelope Negative Out"
+       data-name="Env - Out"
        cx="41.830002"
        cy="318.60999"
        r="11.34"
@@ -981,7 +981,7 @@
        style="fill:#ff00ff" />
     <circle
        id="Env._Out_"
-       data-name="Envelope Positive Out"
+       data-name="Env + Out"
        cx="19.950001"
        cy="286.07999"
        r="11.34"
@@ -1030,7 +1030,7 @@
        data-name="Audio In" />
     <circle
        id="Env._Out"
-       data-name="Envelope Out"
+       data-name="Env. Out"
        cx="86.519997"
        cy="196.1134"
        r="11.34"
@@ -1053,7 +1053,7 @@
        style="fill:#ffc080" />
     <circle
        id="Env._Decay"
-       data-name="Envelope Decay"
+       data-name="Env Decay"
        cx="30.799999"
        cy="153.17"
        r="8.5"
@@ -1073,7 +1073,7 @@
        style="fill:#ff0040" />
     <circle
        id="Env._Level"
-       data-name="Envelope Level"
+       data-name="Env Level"
        cx="86.529999"
        cy="46.580002"
        r="8.5"
