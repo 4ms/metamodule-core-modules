@@ -374,7 +374,7 @@
        style="fill: lime; stroke-width: 0px;" />
     <circle
        id="Strike_Amt"
-       data-name="Strike Amt In"
+       data-name="Strike Amt"
        cx="83.37"
        cy="119.09"
        r="17.01"

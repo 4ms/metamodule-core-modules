@@ -19,7 +19,7 @@ struct DjembeInfo : ModuleInfoBase {
 		Davies1900hBlackKnob{{to_mm<72>(31.83), to_mm<72>(57.85), Center, "Pitch", ""}, 0.25f, 20.0, 500.0, "hz"},
 		Davies1900hBlackKnob{{to_mm<72>(83.37), to_mm<72>(57.85), Center, "Sharpness", ""}, 0.5f},
 		Davies1900hBlackKnob{{to_mm<72>(31.83), to_mm<72>(119.09), Center, "Hit", ""}, 0.5f},
-		Davies1900hBlackKnob{{to_mm<72>(83.37), to_mm<72>(119.09), Center, "Strike Amt In", ""}, 0.5f},
+		Davies1900hBlackKnob{{to_mm<72>(83.37), to_mm<72>(119.09), Center, "Strike Amt", ""}, 0.5f},
 		AnalogJackInput4ms{{to_mm<72>(32.0), to_mm<72>(214.53), Center, "Pitch CV In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.2), to_mm<72>(214.53), Center, "Sharp CV In", ""}},
 		AnalogJackInput4ms{{to_mm<72>(32.0), to_mm<72>(263.25), Center, "Hit CV In", ""}},
