@@ -2814,28 +2814,28 @@
        style="fill: #ff0040; stroke-width: 0px;" />
     <circle
        id="Offset_B"
-       data-name="Offset B!-100!100!%"
+       data-name="Offset B!-10!10!V"
        cx="137.25"
        cy="138.65"
        r="8.5"
        style="fill: #ff0040; stroke-width: 0px;" />
     <circle
        id="Offset_A"
-       data-name="Offset A!-100!100!%"
+       data-name="Offset A!-10!10!V"
        cx="93.13"
        cy="138.65"
        r="8.5"
        style="fill: #ff0040; stroke-width: 0px;" />
     <circle
        id="Level_B"
-       data-name="Level B!-100!100!%"
+       data-name="Level B!-10!10!V"
        cx="137.25"
        cy="95.86"
        r="8.5"
        style="fill: #ff0080; stroke-width: 0px;" />
     <circle
        id="Level_A"
-       data-name="Level A!-100!100!%"
+       data-name="Level A!-10!10!V"
        cx="93.13"
        cy="95.86"
        r="8.5"
