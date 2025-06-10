@@ -6,7 +6,7 @@
    version="1.1"
    id="svg1179"
    sodipodi:docname="EnOsc_info.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,12 +25,12 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.1131277"
-     inkscape:cx="180.77469"
-     inkscape:cy="245.60749"
-     inkscape:window-width="1680"
-     inkscape:window-height="1051"
-     inkscape:window-x="49"
-     inkscape:window-y="38"
+     inkscape:cx="61.520182"
+     inkscape:cy="321.32464"
+     inkscape:window-width="1600"
+     inkscape:window-height="847"
+     inkscape:window-x="2160"
+     inkscape:window-y="143"
      inkscape:window-maximized="0"
      inkscape:current-layer="components" />
   <g
@@ -1790,70 +1790,70 @@
        style="fill: blue;" />
     <circle
        id="Freeze_Jack"
-       data-name="Freeze Jack"
+       data-name="Freeze CV"
        cx="171.75"
        cy="319.03"
        r="11.34"
        style="fill: #80ff80;" />
     <circle
        id="Warp_Jack"
-       data-name="Warp Jack"
+       data-name="Warp CV"
        cx="134.28"
        cy="305.93"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Twist_Jack"
-       data-name="Twist Jack"
+       data-name="Twist CV"
        cx="96.88"
        cy="305.93"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Balance_Jack"
-       data-name="Balance Jack"
+       data-name="Balance CV"
        cx="59.42"
        cy="319"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Learn_Jack"
-       data-name="Learn Jack"
+       data-name="Learn CV"
        cx="171.75"
        cy="275.86"
        r="11.34"
        style="fill: #80ff80;" />
     <circle
        id="Cross_FM_Jack"
-       data-name="Cross FM Jack"
+       data-name="Cross FM CV"
        cx="134.28"
        cy="262.78"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Spread_Jack"
-       data-name="Spread Jack"
+       data-name="Spread CV"
        cx="96.88"
        cy="262.78"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Scale_Jack"
-       data-name="Scale Jack"
+       data-name="Scale CV"
        cx="59.42"
        cy="275.86"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Root_Jack"
-       data-name="Root Jack"
+       data-name="Root 1v/Oct"
        cx="21.88"
        cy="305.91"
        r="11.34"
        style="fill: lime;" />
     <circle
        id="Pitch_Jack"
-       data-name="Pitch Jack"
+       data-name="Pitch 1v/Oct"
        cx="21.88"
        cy="262.78"
        r="11.34"
