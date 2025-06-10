@@ -37,9 +37,8 @@ struct Davies1900hBlackKnob : Knob {
 
 struct DivMultKnob_d32x16 : KnobSnapped {
 	constexpr DivMultKnob_d32x16() = default;
-	constexpr DivMultKnob_d32x16(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr DivMultKnob_d32x16(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, 0, 18}}} {
 		this->units = units;
 		num_pos = 19;
 		pos_names[0] = "/32";
@@ -66,9 +65,8 @@ struct DivMultKnob_d32x16 : KnobSnapped {
 
 struct DivMultKnob_d8x8 : KnobSnapped {
 	constexpr DivMultKnob_d8x8() = default;
-	constexpr DivMultKnob_d8x8(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr DivMultKnob_d8x8(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, 0, 14}}} {
 		this->units = units;
 		num_pos = 15;
 		pos_names[0] = "/8";
@@ -93,9 +91,8 @@ struct DivMultKnob_d8x8 : KnobSnapped {
 
 struct DivMultKnobDLD : KnobSnapped {
 	constexpr DivMultKnobDLD() = default;
-	constexpr DivMultKnobDLD(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr DivMultKnobDLD(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, 0, 16}}} {
 		this->units = units;
 		num_pos = 17;
 		pos_names[0] = "x1";
@@ -122,9 +119,8 @@ struct DivMultKnobDLD : KnobSnapped {
 
 struct DivMultKnob_d1d16 : KnobSnapped {
 	constexpr DivMultKnob_d1d16() = default;
-	constexpr DivMultKnob_d1d16(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr DivMultKnob_d1d16(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, 0, 15}}} {
 		this->units = units;
 		num_pos = 16;
 		pos_names[0] = "=";
@@ -148,9 +144,8 @@ struct DivMultKnob_d1d16 : KnobSnapped {
 
 struct DivMultKnob_x1x16 : KnobSnapped {
 	constexpr DivMultKnob_x1x16() = default;
-	constexpr DivMultKnob_x1x16(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr DivMultKnob_x1x16(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, 0, 15}}} {
 		this->units = units;
 		num_pos = 16;
 		pos_names[0] = "x1";
@@ -174,9 +169,8 @@ struct DivMultKnob_x1x16 : KnobSnapped {
 
 struct OctaveKnob : KnobSnapped {
 	constexpr OctaveKnob() = default;
-	constexpr OctaveKnob(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr OctaveKnob(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob9mm_x.png"}, defaultValue, 0, 8}}} {
 		this->units = units;
 		num_pos = 9;
 		pos_names[0] = "-4";
@@ -195,9 +189,8 @@ struct OctaveKnob : KnobSnapped {
 
 struct Knob_1_10 : KnobSnapped {
 	constexpr Knob_1_10() = default;
-	constexpr Knob_1_10(
-		BaseElement b, float defaultValue = 0.5f, float minValue = 0, float maxValue = 1, std::string_view units = "")
-		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, minValue, maxValue}}} {
+	constexpr Knob_1_10(BaseElement b, float defaultValue = 0.5f)
+		: KnobSnapped{{{{b, "4ms/comp/knob_x.png"}, defaultValue, 0, 9}}} {
 		this->units = units;
 		num_pos = 10;
 		pos_names[0] = "1";
