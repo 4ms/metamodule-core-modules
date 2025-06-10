@@ -1,5 +1,5 @@
 #pragma once
-#include "CoreModules/4ms/4ms_elements.hh"
+#include "CoreModules/4ms/helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
 #include <array>
 
@@ -23,7 +23,7 @@ struct TSPInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(259.168), Center, "Right Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(24.684), to_mm<72>(295.886), Center, "End Out", ""}},
 		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(295.886), Center, "Position", ""}},
-		DynamicGraphicDisplay{{to_mm<72>(9.234), to_mm<72>(60.753), TopLeft, "Waveform", "", to_mm<72>(67.938), to_mm<72>(66.398)}},
+		DynamicGraphicDisplay{{{{to_mm<72>(9.234), to_mm<72>(60.753), TopLeft, "Waveform", "", to_mm<72>(67.938), to_mm<72>(66.398)}}}},
 		TSPDisplay{{to_mm<72>(9.056), to_mm<72>(37.165), TopLeft, "Message", "", to_mm<72>(67.938), to_mm<72>(23.588)}},
 		RedLight{{to_mm<72>(26.196), to_mm<72>(140.68), Center, "Busy Light", ""}},
 		AltParamAction{{to_mm<72>(11.883), to_mm<72>(352.92), Center, "Load Sample...", ""}},
