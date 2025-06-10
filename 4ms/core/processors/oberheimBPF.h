@@ -1,6 +1,5 @@
 #pragma once
 #include "util/math.hh"
-#include "util/math_tables.hh"
 #include "util/parameter.hh"
 #include <algorithm>
 #include <cmath>
