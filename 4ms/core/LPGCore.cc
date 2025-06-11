@@ -26,7 +26,7 @@ public:
 	};
 
 	void update() override {
-		float in = getInput<InputIn>().value_or(0.f);
+		float in = getInput<AudioIn>().value_or(0.f);
 
 		bool pingPatched = false;
 
@@ -58,7 +58,7 @@ public:
 
 		lpg.Process(envelope.gain(), envelope.frequency(), envelope.hf_bleed(), &in, 1);
 
-		setOutput<Out>(in);
+		setOutput<AudioOut>(in);
 	}
 
 	void set_samplerate(float sr) override {

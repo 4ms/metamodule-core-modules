@@ -19,24 +19,24 @@ struct LPGInfo : ModuleInfoBase {
 		Davies1900hBlackKnob{{to_mm<72>(57.94), to_mm<72>(50.47), Center, "Level", ""}, 0.875f},
 		Davies1900hBlackKnob{{to_mm<72>(57.94), to_mm<72>(111.82), Center, "Color", ""}, 0.875f},
 		Davies1900hBlackKnob{{to_mm<72>(57.94), to_mm<72>(173.18), Center, "Decay", ""}, 0.875f},
-		AnalogJackInput4ms{{to_mm<72>(32.13), to_mm<72>(230.48), Center, "Input", ""}},
+		AnalogJackInput4ms{{to_mm<72>(32.13), to_mm<72>(230.48), Center, "Audio In", ""}},
 		GateJackInput4ms{{to_mm<72>(83.32), to_mm<72>(230.48), Center, "Ping", ""}},
 		AnalogJackInput4ms{{to_mm<72>(32.13), to_mm<72>(272.09), Center, "Level CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(83.32), to_mm<72>(272.09), Center, "Color CV", ""}},
 		AnalogJackInput4ms{{to_mm<72>(32.13), to_mm<72>(313.7), Center, "Decay CV", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(83.32), to_mm<72>(313.7), Center, "Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(83.32), to_mm<72>(313.7), Center, "Audio Out", ""}},
 }};
 
     enum class Elem {
         LevelKnob,
         ColorKnob,
         DecayKnob,
-        InputIn,
+        AudioIn,
         PingIn,
         LevelCvIn,
         ColorCvIn,
         DecayCvIn,
-        Out,
+        AudioOut,
     };
 
     // Legacy naming
@@ -50,7 +50,7 @@ struct LPGInfo : ModuleInfoBase {
     
     
     enum {
-        InputInput, 
+        AudioInInput, 
         InputPing, 
         InputLevel_Cv, 
         InputColor_Cv, 
@@ -59,7 +59,7 @@ struct LPGInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputOut, 
+        AudioOutOutput, 
         NumOutJacks,
     };
     
