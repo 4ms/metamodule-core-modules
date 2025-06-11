@@ -30,8 +30,6 @@ public:
 		stream.unload();
 	}
 
-	int ctr = 0;
-	unsigned last_frame = 0;
 	void update() override {
 		ctr++;
 		handle_load_button();
@@ -57,13 +55,7 @@ public:
 
 				if (loop_mode && current_frame == 1) {
 					end_out.start(0.010);
-					// printf("%d: eof->loop\n", ctr);
 				}
-				// if (last_frame > current_frame) {
-				// 	end_out.start(0.010);
-				// 	printf("%d: eof->loop %u %u\n", ctr, last_frame, current_frame);
-				// }
-				// last_frame = current_frame;
 
 				if (stream.frames_available()) {
 					auto left = stream.pop_sample();
@@ -74,8 +66,6 @@ public:
 					waveform.draw_sample(left);
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
-					// printf("%d: %u -> %u\n", ctr, current_frame, stream.frames_available());
-
 				} else {
 					// No frames avaiable.
 					// If we're also at the end of file, then stop or loop.
@@ -83,10 +73,8 @@ public:
 					if (stream.is_eof()) {
 						end_out.start(0.010);
 						play_state = Stopped;
-						printf("%d: eof -> Stop\n", ctr);
 					} else {
 						setLED<PlayButton>(Red);
-						//printf("%u buffer underflow\n", (unsigned)id);
 						message = "Buffer underflow";
 					}
 				}
@@ -189,11 +177,11 @@ public:
 
 			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
 
-			printf("prebuff_threshold = %u, frames avail = %u, total_frames = %u, max_frames = %u\n",
-				   prebuff_threshold,
-				   stream.frames_available(),
-				   stream.total_frames(),
-				   max_frames);
+			// printf("prebuff_threshold = %u, frames avail = %u, total_frames = %u, max_frames = %u\n",
+			// 	   prebuff_threshold,
+			// 	   stream.frames_available(),
+			// 	   stream.total_frames(),
+			// 	   max_frames);
 		}
 
 		// All other parameters:
