@@ -3,6 +3,7 @@
 #include "info/CLKM_info.hh"
 #include "processors/tools/clockPhase.h"
 #include "util/math.hh"
+#include <cmath>
 
 using namespace MathTools;
 
@@ -18,7 +19,7 @@ public:
 
 	void update() override {
 		float finalMultiply = constrain(multiplyOffset + multiplyCV, 0.0f, 1.0f);
-		cp.setMultiply(map_value(finalMultiply, 0.0f, 1.0f, 1.0f, 16.99f));
+		cp.setMultiply(std::round(map_value(finalMultiply, 0.0f, 1.0f, 1.0f, maxMultiplier)));
 		cp.update();
 		if (cp.getWrappedPhase() < pulseWidth) {
 			clockOutput = gateVoltage;
@@ -36,10 +37,8 @@ public:
 	}
 
 	float get_param(int param_id) const override {
-		switch (param_id) {
-			case Info::KnobMultiply:
-				return multiplyOffset;
-		}
+		if (param_id == Info::KnobMultiply)
+			return std::round(multiplyOffset * (maxMultiplier - 1)) / (maxMultiplier - 1);
 		return 0;
 	}
 
@@ -79,6 +78,7 @@ private:
 	ClockPhase cp;
 
 	static constexpr float gateVoltage = 8.0f;
+	static constexpr float maxMultiplier = 16.f;
 };
 
 } // namespace MetaModule

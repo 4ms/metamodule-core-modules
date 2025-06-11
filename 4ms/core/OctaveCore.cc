@@ -1,7 +1,7 @@
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/Octave_info.hh"
-#include "util/math.hh"
+#include <cmath>
 
 namespace MetaModule
 {
@@ -14,18 +14,20 @@ public:
 	OctaveCore() = default;
 
 	void update() override {
-		auto octave = static_cast<int>(octaveOffset + cvInput + 0.5f); //round
+		auto octave = std::round(octaveOffset + cvInput);
 		voltOutput = voltInput + octave;
 	}
 
 	void set_param(int param_id, float val) override {
 		if (param_id == Info::KnobOctave)
+			// 0..1 => -0.5..0.5 => -4..4
 			octaveOffset = (val - 0.5f) * KnobOctaveRange;
 	}
 
 	float get_param(int param_id) const override {
 		if (param_id == Info::KnobOctave)
-			return octaveOffset / KnobOctaveRange + .5f;
+			// -4..4 => -4 -3 -2..2 3 4 => -0.5 .. 0.5 => 0..1
+			return std::round(octaveOffset) / KnobOctaveRange + .5f;
 		return 0;
 	}
 

@@ -3,6 +3,7 @@
 #include "info/CLKD_info.hh"
 #include "processors/tools/clockPhase.h"
 #include "util/math.hh"
+#include <cmath>
 
 using namespace MathTools;
 
@@ -35,10 +36,8 @@ public:
 	}
 
 	float get_param(int param_id) const override {
-		switch (param_id) {
-			case Info::KnobDivide:
-				return clockDivideOffset;
-		}
+		if (param_id == Info::KnobDivide)
+			return std::round(clockDivideOffset * (maxDivider - 1)) / (maxDivider - 1);
 		return 0;
 	}
 
@@ -71,8 +70,9 @@ public:
 
 	void update_divider() {
 		float finalDivide = std::clamp(clockDivideOffset + clockDivideCV, 0.0f, 1.0f);
-		cp.setDivide(map_value(finalDivide, 0.0f, 1.0f, 1.0f, 16.99f));
+		cp.setDivide(std::round(map_value(finalDivide, 0.0f, 1.0f, 1.0f, maxDivider)));
 	}
+
 	// Boilerplate to auto-register in ModuleFactory
 	// clang-format off
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
@@ -89,6 +89,7 @@ private:
 	ClockPhase cp;
 
 	static constexpr float gateVoltage = 8.0f;
+	static constexpr float maxDivider = 16.f;
 };
 
 } // namespace MetaModule

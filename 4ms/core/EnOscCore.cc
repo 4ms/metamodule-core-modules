@@ -141,7 +141,7 @@ public:
 		switch (param_id) {
 			// Knobs
 			case param_index<Elem::ScaleKnob>():
-				return enosc.get_potcv(AdcInput::POT_SCALE);
+				return std::round(enosc.get_potcv(AdcInput::POT_SCALE) * 9.f) / 9.f;
 			case param_index<Elem::SpreadKnob>():
 				return enosc.get_potcv(AdcInput::POT_SPREAD);
 			case param_index<Elem::PitchKnob>():
