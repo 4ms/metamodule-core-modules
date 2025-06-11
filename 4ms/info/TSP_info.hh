@@ -15,21 +15,21 @@ struct TSPInfo : ModuleInfoBase {
     using enum Coords;
 
     static constexpr std::array<Element, 15> Elements{{
-		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(161.096), Center, "Play", ""}},
-		OrangeButton{{to_mm<72>(61.467), to_mm<72>(161.096), Center, "Loop", ""}},
-		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(210.048), Center, "Play Trig", ""}},
-		GateJackInput4ms{{to_mm<72>(61.274), to_mm<72>(210.048), Center, "Loop Gate", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(25.131), to_mm<72>(258.885), Center, "Left Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(259.168), Center, "Right Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(24.684), to_mm<72>(295.886), Center, "End Out", ""}},
-		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(295.886), Center, "Position", ""}},
-		DynamicGraphicDisplay{{{{to_mm<72>(9.234), to_mm<72>(60.753), TopLeft, "Waveform", "", to_mm<72>(67.938), to_mm<72>(66.398)}}}},
+		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(153.596), Center, "Play", ""}},
+		OrangeButton{{to_mm<72>(61.467), to_mm<72>(153.596), Center, "Loop", ""}},
+		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(198.047), Center, "Play Trig", ""}},
+		GateJackInput4ms{{to_mm<72>(61.274), to_mm<72>(198.047), Center, "Loop Gate", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(25.131), to_mm<72>(294.539), Center, "Left Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(294.822), Center, "Right Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(24.684), to_mm<72>(249.486), Center, "End Out", ""}},
+		AnalogJackOutput4ms{{to_mm<72>(61.274), to_mm<72>(249.486), Center, "Position", ""}},
+		DynamicGraphicDisplay{{to_mm<72>(9.234), to_mm<72>(60.753), TopLeft, "Waveform", "", to_mm<72>(67.938), to_mm<72>(66.398)}},
 		TSPDisplay{{to_mm<72>(9.056), to_mm<72>(37.165), TopLeft, "Message", "", to_mm<72>(67.938), to_mm<72>(23.588)}},
-		RedLight{{to_mm<72>(26.196), to_mm<72>(140.68), Center, "Busy Light", ""}},
-		AltParamAction{{to_mm<72>(11.883), to_mm<72>(352.92), Center, "Load Sample...", ""}},
-		AltParamChoiceLabeled{{{to_mm<72>(54.877), to_mm<72>(352.92), Center, "Play Retrig Mode", ""}, 2, 0}, {"Retrigger", "Stop"}},
-		AltParamContinuous{{to_mm<72>(40.235), to_mm<72>(352.92), Center, "Waveform Zoom", ""}, 0.1015625f},
-		AltParamChoiceLabeled{{{to_mm<72>(24.684), to_mm<72>(352.92), Center, "Buffer Threshold", ""}, 5, 0}, {"Minimal", "20%", "40%", "60%", "80%"}},
+		RedLight{{to_mm<72>(43.203), to_mm<72>(140.68), Center, "Busy Light", ""}},
+		AltParamAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
+		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Play Retrig Mode", ""}, 2, 0}, {"Retrigger", "Stop"}},
+		AltParamContinuous{{to_mm<72>(51.827), to_mm<72>(48.461), Center, "Waveform Zoom", ""}, 0.1015625f},
+		AltParamChoiceLabeled{{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 5, 0}, {"Minimal", "20%", "40%", "60%", "80%"}},
 }};
 
     enum class Elem {
