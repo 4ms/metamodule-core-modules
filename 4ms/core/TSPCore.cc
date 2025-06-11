@@ -31,7 +31,6 @@ public:
 	}
 
 	void update() override {
-		ctr++;
 		handle_load_button();
 		handle_play();
 		handle_loop_toggle();
