@@ -200,8 +200,10 @@ public:
 
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
-		end_out.set_update_rate_hz(sr);
-		stream.set_samplerate(sr);
+		if (auto source_sr = stream.wav_sample_rate()) {
+			resample_ratio = *source_sr / sample_rate;
+		}
+		end_out.set_update_rate_hz(sample_rate);
 	}
 
 	void load_sample(std::string_view filename) {
@@ -284,6 +286,7 @@ private:
 	};
 
 	float sample_rate = 48000.f;
+	float resample_ratio = 1;
 	unsigned prebuff_threshold = 1024;
 
 	// Size of pre-buffer. This determines how much sample data we store in RAM
