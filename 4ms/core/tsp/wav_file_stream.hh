@@ -1,6 +1,5 @@
 #pragma once
 // #include "../../medium/debug_raw.h"
-#include "dsp/resampler.hh"
 #include "tsp/dr_wav.h"
 #include "util/lockfree_fifo_spsc.hh"
 #include <cstdio>
@@ -23,8 +22,6 @@ struct WavFileStream {
 
 	void unload() {
 		reset_prebuff();
-
-		resampler.flush();
 
 		if (loaded) {
 			drwav_uninit(&wav);
@@ -58,15 +55,11 @@ struct WavFileStream {
 				frames_read = frames_to_read;
 			}
 
-			// Push samples into resampler
-			resampler.set_samplerate_in_out(wav.sampleRate, out_samplerate);
+			auto samples = std::span<const float>(read_buff.data(), frames_read * wav.channels);
 
-			auto input = std::span<const float>(read_buff.data(), frames_read * wav.channels);
-			auto output = resampler.process_block(wav.channels, input);
-
-			// Copy resampled frames to pre-buffer, one at a time
+			// Copy to pre-buffer, one sample at a time
 			unsigned frame_ctr = 0;
-			for (auto out : output) {
+			for (auto out : samples) {
 				if (!pre_buff.put(out)) {
 					printf("WavFileStream: Buffer overflow\n");
 					// TODO: Handle buffer overflow: we read too much from disk and the audio thread
@@ -82,14 +75,13 @@ struct WavFileStream {
 			}
 
 			// printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. Resmp to %zu frames. eof=%d\n",
-			// 		num_frames,
-			// 		frames_to_read,
-			// 		frames_read,
-			// 		output.size() / wav.channels,
-			// 		eof);
+			// 	   num_frames,
+			// 	   frames_to_read,
+			// 	   frames_read,
+			// 	   samples.size() / wav.channels,
+			// 	   eof);
 
-			num_frames -= output.size() / wav.channels;
-			// next_frame_to_write += output.size() / wav.channels;
+			num_frames -= frames_read;
 
 			if (eof) {
 				// printf("EOF\n");
@@ -101,13 +93,6 @@ struct WavFileStream {
 	float pop_sample() {
 		auto p = pre_buff.get().value_or(0);
 		return p;
-	}
-
-	void set_samplerate(float samplerate) {
-		out_samplerate = samplerate;
-		if (loaded) {
-			resampler.set_samplerate_in_out(wav.sampleRate, out_samplerate);
-		}
 	}
 
 	bool is_stereo() const {
@@ -127,18 +112,12 @@ struct WavFileStream {
 	}
 
 	unsigned current_playback_frame() const {
-		// if (next_frame_to_write < frames_available())
-		// 	printf("next_frame_to_write=%u, frames_available==%u, total_frames %u\n",
-		// 		   next_frame_to_write.load(),
-		// 		   frames_available(),
-		// 		   total_frames());
-
 		return next_frame_to_write > frames_available() ? next_frame_to_write - frames_available() :
 														  next_frame_to_write + total_frames() - frames_available();
 	}
 
 	unsigned total_frames() const {
-		return loaded ? ((unsigned)wav.totalPCMFrameCount * out_samplerate / (float)wav.sampleRate) : 0;
+		return loaded ? (unsigned)wav.totalPCMFrameCount : 0;
 	}
 
 	void reset_read_pos(unsigned frame_num = 0) {
@@ -153,11 +132,14 @@ struct WavFileStream {
 		// if we request to seek to a frame that's already in the prebuffer,
 		// just jump the read head to there (no need to read from disk)
 		if (frame_num < next_frame_to_write && (frames_in_prebuff + frame_num) >= next_frame_to_write) {
-			// printf("Reset without seek\n");
+			printf("Reset without seek: next_frame_to_write %g, frames_in_prebuff %u\n",
+				   next_frame_to_write.load(),
+				   frames_in_prebuff);
 		} else {
 			// Otherwise, prepare to read from disk
 			drwav_seek_to_pcm_frame(&wav, frame_num);
-			// printf("Reset\n");
+			printf(
+				"Reset: next_frame_to_write %g, frames_in_prebuff %u\n", next_frame_to_write.load(), frames_in_prebuff);
 			next_frame_to_write = frame_num;
 
 			eof = false;
@@ -183,7 +165,7 @@ private:
 	bool eof = true;
 	bool loaded = false;
 
-	std::atomic<unsigned> next_frame_to_write = 0;
+	std::atomic<float> next_frame_to_write = 0;
 
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
@@ -193,11 +175,6 @@ private:
 	// read_buff needs to be big enough to hold 4kB of any data converted to floats
 	// Worst case: 4kB of 8-bit mono data will convert to 4096 floats
 	std::array<float, ReadBlockBytes> read_buff;
-
-	static constexpr auto MaxChannels = 2; //Stereo or Mono files only
-	ResamplingInterleavedBuffer<MaxChannels, ReadBlockBytes, MaxResamplingRatio> resampler;
-
-	float out_samplerate = 48000.f;
 };
 
 } // namespace MetaModule
