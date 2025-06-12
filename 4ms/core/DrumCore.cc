@@ -160,7 +160,7 @@ public:
 			case Info::KnobPitch_Amount:
 				return pitchAmount;
 			case Info::KnobFm_Ratio:
-				return MathTools::map_value(ratio, 1.0f, 16.0f, 0.f, 1.f);
+				return ratio;
 			case Info::KnobFm_Env: // fm envelope
 				return baseFMEnvTime;
 			case Info::KnobFm_Amount:
