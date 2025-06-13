@@ -1,6 +1,7 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
+#include "dsp/resampler.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
 #include "info/TSP_info.hh"
@@ -56,9 +57,9 @@ public:
 					end_out.start(0.010);
 				}
 
-				if (stream.frames_available()) {
-					auto left = stream.pop_sample();
-					auto right = stream.is_stereo() ? stream.pop_sample() : left;
+				if (stream.frames_available() > 16) {
+					auto [left, right] = resampler.pop([this] { return stream.pop_sample(); });
+
 					setOutput<LeftOut>(left * 5.f);
 					setOutput<RightOut>(right * 5.f);
 
@@ -84,7 +85,6 @@ public:
 				setLED<PlayButton>(Off);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
-				// waveform.draw_sample(0);
 				break;
 
 			case LoadSampleInfo:
@@ -110,6 +110,8 @@ public:
 				if (!stream.load(sample_filename)) {
 					message = "Error loading file";
 				}
+				resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
+				resampler.flush();
 				play_state = Stopped;
 				break;
 
@@ -200,10 +202,12 @@ public:
 
 	void set_samplerate(float sr) override {
 		sample_rate = sr;
-		if (auto source_sr = stream.wav_sample_rate()) {
-			resample_ratio = *source_sr / sample_rate;
-		}
+
 		end_out.set_update_rate_hz(sample_rate);
+
+		if (auto source_sr = stream.wav_sample_rate()) {
+			resampler.set_samplerate_in_out(*source_sr, sample_rate);
+		}
 	}
 
 	void load_sample(std::string_view filename) {
@@ -286,7 +290,6 @@ private:
 	};
 
 	float sample_rate = 48000.f;
-	float resample_ratio = 1;
 	unsigned prebuff_threshold = 1024;
 
 	// Size of pre-buffer. This determines how much sample data we store in RAM
@@ -300,7 +303,9 @@ private:
 	// playing back at 96kHz
 	static constexpr unsigned MaxResampleRatio = (96000.f / 22050.f) + 1; // +1 to round up
 
-	WavFileStream<PreBufferSamples, MaxResampleRatio> stream;
+	WavFileStream<PreBufferSamples> stream;
+
+	ResamplingInterleaved<MaxResampleRatio> resampler;
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
