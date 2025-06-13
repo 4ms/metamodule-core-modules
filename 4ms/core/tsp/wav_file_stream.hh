@@ -74,11 +74,11 @@ struct WavFileStream {
 				}
 			}
 
-			printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. eof=%d\n",
-				   num_frames,
-				   frames_to_read,
-				   frames_read,
-				   eof);
+			// printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. eof=%d\n",
+			// 	   num_frames,
+			// 	   frames_to_read,
+			// 	   frames_read,
+			// 	   eof);
 
 			num_frames -= frames_read;
 
@@ -91,7 +91,7 @@ struct WavFileStream {
 
 	float pop_sample() {
 		auto p = pre_buff.get().value_or(0);
-		printf("pop %f\n", p);
+		// printf("pop %f\n", p);
 		return p;
 	}
 
