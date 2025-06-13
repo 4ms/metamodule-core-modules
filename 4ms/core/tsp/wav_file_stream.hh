@@ -8,7 +8,7 @@
 namespace MetaModule
 {
 
-template<uint32_t MaxSamples = 1024 * 1024, uint32_t MaxResamplingRatio = 4>
+template<uint32_t MaxSamples = 1024 * 1024>
 struct WavFileStream {
 
 	bool load(std::string_view sample_path) {
@@ -74,12 +74,11 @@ struct WavFileStream {
 				}
 			}
 
-			// printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. Resmp to %zu frames. eof=%d\n",
-			// 	   num_frames,
-			// 	   frames_to_read,
-			// 	   frames_read,
-			// 	   samples.size() / wav.channels,
-			// 	   eof);
+			printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. eof=%d\n",
+				   num_frames,
+				   frames_to_read,
+				   frames_read,
+				   eof);
 
 			num_frames -= frames_read;
 
@@ -92,6 +91,7 @@ struct WavFileStream {
 
 	float pop_sample() {
 		auto p = pre_buff.get().value_or(0);
+		printf("pop %f\n", p);
 		return p;
 	}
 
