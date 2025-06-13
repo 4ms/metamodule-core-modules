@@ -58,14 +58,13 @@ public:
 				}
 
 				if (stream.frames_available() > 16) {
-					float out[2];
-					resampler.process([this] { return stream.pop_sample(); }, out);
-					// auto [left, right] = resampler.pop([this] { return stream.pop_sample(); });
 
-					setOutput<LeftOut>(out[0] * 5.f);
-					setOutput<RightOut>(out[1] * 5.f);
+					auto [left, right] = resampler.process_stereo([this] { return stream.pop_sample(); });
 
-					waveform.draw_sample(out[0]);
+					setOutput<LeftOut>(left * 5.f);
+					setOutput<RightOut>(right * 5.f);
+
+					waveform.draw_sample(left);
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 				} else {
@@ -112,6 +111,7 @@ public:
 				if (!stream.load(sample_filename)) {
 					message = "Error loading file";
 				}
+				resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sample_rate), sample_rate);
 				resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
 				resampler.flush();
 				play_state = Stopped;
