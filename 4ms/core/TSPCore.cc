@@ -1,7 +1,7 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
-#include "dsp/resampler.hh"
+#include "dsp/resampler_one.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
 #include "info/TSP_info.hh"
@@ -58,12 +58,14 @@ public:
 				}
 
 				if (stream.frames_available() > 16) {
-					auto [left, right] = resampler.pop([this] { return stream.pop_sample(); });
+					float out[2];
+					resampler.process([this] { return stream.pop_sample(); }, out);
+					// auto [left, right] = resampler.pop([this] { return stream.pop_sample(); });
 
-					setOutput<LeftOut>(left * 5.f);
-					setOutput<RightOut>(right * 5.f);
+					setOutput<LeftOut>(out[0] * 5.f);
+					setOutput<RightOut>(out[1] * 5.f);
 
-					waveform.draw_sample(left);
+					waveform.draw_sample(out[0]);
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 				} else {
@@ -206,7 +208,7 @@ public:
 		end_out.set_update_rate_hz(sample_rate);
 
 		if (auto source_sr = stream.wav_sample_rate()) {
-			resampler.set_samplerate_in_out(*source_sr, sample_rate);
+			resampler.set_sample_rate_in_out(*source_sr, sample_rate);
 		}
 	}
 
@@ -305,7 +307,7 @@ private:
 
 	WavFileStream<PreBufferSamples> stream;
 
-	ResamplingInterleaved<MaxResampleRatio> resampler;
+	Resampler<2> resampler{2};
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
