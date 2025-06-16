@@ -27,7 +27,7 @@ struct TSPInfo : ModuleInfoBase {
 		TSPDisplay{{to_mm<72>(9.056), to_mm<72>(37.165), TopLeft, "Message", "", to_mm<72>(67.938), to_mm<72>(23.588)}},
 		RedLight{{to_mm<72>(43.203), to_mm<72>(140.68), Center, "Busy Light", ""}},
 		AltParamAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
-		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Play Retrig Mode", ""}, 2, 0}, {"Retrigger", "Stop"}},
+		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Play Retrig Mode", ""}, 3, 0}, {"Retrigger", "Stop", "Pause"}},
 		AltParamContinuous{{to_mm<72>(51.827), to_mm<72>(48.461), Center, "Waveform Zoom", ""}, 0.1015625f},
 		AltParamChoiceLabeled{{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 5, 0}, {"Minimal", "20%", "40%", "60%", "80%"}},
 }};

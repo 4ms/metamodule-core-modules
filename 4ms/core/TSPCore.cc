@@ -83,6 +83,7 @@ public:
 
 			case Reset:
 			case Stopped:
+			case Paused:
 				setLED<PlayButton>(Off);
 				setOutput<LeftOut>(0);
 				setOutput<RightOut>(0);
@@ -118,10 +119,12 @@ public:
 				break;
 
 			case Reset:
+				waveform.sync();
 				stream.seek_frame_in_file(0);
 				play_state = Buffering;
 				break;
 
+			case Paused:
 			case Buffering:
 			case Playing:
 				if (stream.frames_available() < prebuff_threshold) {
@@ -143,16 +146,22 @@ public:
 		play_jack.process(getInput<PlayTrigIn>().value_or(0));
 
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
-			waveform.sync();
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
 				play_state = PlayState::Reset;
 			}
 
+			else if (play_state == PlayState::Paused && stream.is_loaded())
+			{
+				play_state = PlayState::Playing;
+			}
+
 			else if (play_state == PlayState::Playing)
 			{
 				end_out.start(0.010);
-				play_state = getState<PlayRetrigModeAltParam>() ? PlayState::Stopped : PlayState::Reset;
+				play_state = getState<PlayRetrigModeAltParam>() == 1 ? PlayState::Stopped :
+							 getState<PlayRetrigModeAltParam>() == 2 ? PlayState::Paused :
+																	   PlayState::Reset;
 			}
 		}
 	}
@@ -264,6 +273,7 @@ private:
 		LoadSampleInfo,
 		Buffering,
 		Playing,
+		Paused,
 		Reset,
 	};
 	std::atomic<PlayState> play_state{PlayState::Stopped};
