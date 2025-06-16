@@ -134,7 +134,9 @@ public:
 							stream.seek_frame_in_file(0);
 						}
 					} else {
+						setLED<BusyLight>(1.f);
 						stream.read_frames_from_file();
+						setLED<BusyLight>(0.f);
 					}
 				}
 				break;
