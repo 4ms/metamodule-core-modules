@@ -40,14 +40,16 @@ public:
 
 		auto current_frame = stream.current_playback_frame();
 
+		setOutput<LeftOut>(0);
+		setOutput<RightOut>(0);
+
 		switch (play_state) {
 			case Buffering:
 				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold) {
+					err_message.clear();
 					play_state = Playing;
 				}
 				setLED<PlayButton>(Yellow);
-				setOutput<LeftOut>(0);
-				setOutput<RightOut>(0);
 				break;
 
 			case Playing:
@@ -68,15 +70,12 @@ public:
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 				} else {
-					// No frames avaiable.
-					// If we're also at the end of file, then stop or loop.
-					// Otherwise, we have a buffer underflow, so just wait until buffer fills up
 					if (stream.is_eof()) {
 						end_out.start(0.010);
 						play_state = Stopped;
 					} else {
 						setLED<PlayButton>(Red);
-						message = "Buffer underflow";
+						err_message = "Buffer underflow";
 					}
 				}
 				break;
@@ -85,14 +84,10 @@ public:
 			case Stopped:
 			case Paused:
 				setLED<PlayButton>(Off);
-				setOutput<LeftOut>(0);
-				setOutput<RightOut>(0);
 				break;
 
 			case LoadSampleInfo:
 				setLED<PlayButton>(Yellow);
-				setOutput<LeftOut>(0);
-				setOutput<RightOut>(0);
 				break;
 		}
 
@@ -110,12 +105,12 @@ public:
 
 			case LoadSampleInfo:
 				if (!stream.load(sample_filename)) {
-					message = "Error loading file";
+					err_message = "Error loading file";
 				}
 				resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sample_rate), sample_rate);
 				resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
 				resampler.flush();
-				play_state = Stopped;
+				play_state = Paused;
 				break;
 
 			case Reset:
@@ -190,12 +185,6 @@ public:
 			const auto max_frames = std::min<unsigned>(stream.total_frames(), PreBufferSamples / samples_per_frame);
 
 			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
-
-			// printf("prebuff_threshold = %u, frames avail = %u, total_frames = %u, max_frames = %u\n",
-			// 	   prebuff_threshold,
-			// 	   stream.frames_available(),
-			// 	   stream.total_frames(),
-			// 	   max_frames);
 		}
 
 		// All other parameters:
@@ -243,9 +232,13 @@ public:
 	}
 
 	size_t get_display_text(int display_id, std::span<char> text) override {
-		if (display_id == display_idx<MessageDisplay>)
-			return copy_text(message, text);
-		else
+		if (display_id == display_idx<MessageDisplay>) {
+			if (err_message.length() > 0)
+				return copy_text(err_message, text);
+			else
+				return copy_text(message, text);
+
+		} else
 			return 0;
 	}
 
@@ -269,6 +262,8 @@ public:
 private:
 	AsyncThread fs_thread{this};
 	StaticString<255> sample_filename = "";
+	StaticString<255> err_message = "";
+	StaticString<255> message = "Load a Sample";
 
 	enum class PlayState {
 		Stopped,
@@ -295,8 +290,6 @@ private:
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
 	static constexpr std::array<float, 3> Green = {0.1f, 1.f, 0.1f};
 	static constexpr std::array<float, 3> Off = {0, 0, 0};
-
-	StaticString<255> message = "Load a Sample";
 
 	StreamingWaveformDisplay waveform{
 		base_element(WaveformDisplay).width_mm,
