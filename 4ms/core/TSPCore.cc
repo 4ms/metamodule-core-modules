@@ -1,7 +1,7 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
-#include "dsp/resampler_one.hh"
+// #include "CoreModules/waveform_display.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
 #include "info/TSP_info.hh"
@@ -22,8 +22,8 @@ public:
 	TSPCore() {
 		fs_thread.start([this]() { async_process_filesystem(); });
 
-		waveform.set_wave_color(0x33, 0xFF, 0xBB); //teal
-		waveform.set_bar_color(0x55, 0x55, 0x55);  //dark grey
+		// waveform.set_wave_color(0x33, 0xFF, 0xBB); //teal
+		// waveform.set_bar_color(0x55, 0x55, 0x55);  //dark grey
 	}
 
 	~TSPCore() {
@@ -66,8 +66,8 @@ public:
 					setOutput<LeftOut>(left * 5.f);
 					setOutput<RightOut>(right * 5.f);
 
-					waveform.draw_sample(left);
-					waveform.set_cursor_position((float)current_frame / stream.total_frames());
+					// waveform.draw_sample(left);
+					// waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 				} else {
 					if (stream.is_eof()) {
@@ -143,6 +143,7 @@ public:
 		play_jack.process(getInput<PlayTrigIn>().value_or(0));
 
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
+			// waveform.sync();
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
 				play_state = PlayState::Reset;
@@ -166,6 +167,7 @@ public:
 	void handle_load_button() {
 		if (load_button.update(getState<LoadSampleAltParam>())) {
 			std::string_view initial_dir = "";
+
 			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
 					load_sample(path);
@@ -175,7 +177,7 @@ public:
 		}
 
 		float inc = 1.f / (300.f * getState<WaveformZoomAltParam>() + 1.f);
-		waveform.set_x_zoom(inc);
+		// waveform.set_x_zoom(inc);
 	}
 
 	void set_param(int id, float val) override {
@@ -243,20 +245,20 @@ public:
 	}
 
 	void show_graphic_display(int display_id, std::span<uint32_t> buf, unsigned width, lv_obj_t *canvas) override {
-		if (display_id == display_idx<WaveformDisplay>)
-			waveform.show_graphic_display(buf, width, canvas);
+		// if (display_id == display_idx<WaveformDisplay>)
+		// 	waveform.show_graphic_display(buf, width, canvas);
 	}
 
 	bool draw_graphic_display(int display_id) override {
-		if (display_id == display_idx<WaveformDisplay>)
-			return waveform.draw_graphic_display();
-		else
-			return false;
+		// if (display_id == display_idx<WaveformDisplay>)
+		// 	return waveform.draw_graphic_display();
+		// else
+		return false;
 	}
 
 	void hide_graphic_display(int display_id) override {
-		if (display_id == display_idx<WaveformDisplay>)
-			waveform.hide_graphic_display();
+		// if (display_id == display_idx<WaveformDisplay>)
+		// 	waveform.hide_graphic_display();
 	}
 
 private:
@@ -291,10 +293,12 @@ private:
 	static constexpr std::array<float, 3> Green = {0.1f, 1.f, 0.1f};
 	static constexpr std::array<float, 3> Off = {0, 0, 0};
 
-	StreamingWaveformDisplay waveform{
-		base_element(WaveformDisplay).width_mm,
-		base_element(WaveformDisplay).height_mm,
-	};
+	StaticString<255> message = "Load a Sample";
+
+	// StreamingWaveformDisplay waveform{
+	// 	base_element(WaveformDisplay).width_mm,
+	// 	base_element(WaveformDisplay).height_mm,
+	// };
 
 	float sample_rate = 48000.f;
 	unsigned prebuff_threshold = 1024;
