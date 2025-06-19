@@ -259,6 +259,12 @@ struct MomentaryRGB5mm : MomentaryButtonRGB {
 	}
 };
 
+struct BlackMomentary7mm : MomentaryButton {
+	constexpr BlackMomentary7mm(BaseElement b)
+		: MomentaryButton{{b, "4ms/comp/button_x.png"}, "4ms/comp/button_x.png"} {
+	}
+};
+
 //
 // Switches
 //
