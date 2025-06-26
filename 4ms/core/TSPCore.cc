@@ -24,6 +24,7 @@ public:
 
 		waveform.set_wave_color(0x33, 0xFF, 0xBB); //teal
 		waveform.set_bar_color(0x55, 0x55, 0x55);  //dark grey
+		waveform.set_cursor_width(2);
 	}
 
 	~TSPCore() {
@@ -88,6 +89,8 @@ public:
 
 			case LoadSampleInfo:
 				setLED<PlayButton>(Yellow);
+				setOutput<LeftOut>(0);
+				setOutput<RightOut>(0);
 				break;
 		}
 
@@ -304,7 +307,8 @@ private:
 	// needing to read from disk again.
 	// 512k samples is about 5.5sec of stereo or 11sec of mono and uses 512k * 4 = 2MB
 	// 1024K samples is about 11sec of stereo or 22sec of mono and uses 1M * 4 = 4MB
-	static constexpr size_t PreBufferSamples = 1024 * 1024;
+	// 2048K samples is about 22sec of stereo or 44sec of mono and uses 2M * 4 = 8MB
+	static constexpr size_t PreBufferSamples = 2 * 1024 * 1024;
 
 	// Maximum resampling ratio we support. Worse case is reading a 22k file and
 	// playing back at 96kHz
