@@ -19,7 +19,7 @@ struct DrumInfo : ModuleInfoBase {
 		Davies1900hBlackKnob{{to_mm<72>(43.5), to_mm<72>(45.83), Center, "Pitch", ""}, 0.25f, 10.0, 1000.0, "hz"},
 		Davies1900hBlackKnob{{to_mm<72>(108.0), to_mm<72>(45.83), Center, "Pitch Env", ""}, 0.25f, 10.0, 500.0, "ms"},
 		Davies1900hBlackKnob{{to_mm<72>(172.46), to_mm<72>(45.83), Center, "Pitch Amount", ""}, 0.0f},
-		Davies1900hBlackKnob{{to_mm<72>(43.5), to_mm<72>(104.39), Center, "FM Ratio", ""}, 0.5f, 1.0, 16.0, "."},
+		Davies1900hBlackKnob{{to_mm<72>(43.5), to_mm<72>(104.39), Center, "FM Ratio", ""}, 0.5f, 1.0, 16.0, ""},
 		Davies1900hBlackKnob{{to_mm<72>(108.0), to_mm<72>(104.39), Center, "FM Env", ""}, 0.25f, 10.0, 8000.0, "ms"},
 		Davies1900hBlackKnob{{to_mm<72>(172.46), to_mm<72>(104.39), Center, "FM Amount", ""}, 0.0f},
 		Davies1900hBlackKnob{{to_mm<72>(43.5), to_mm<72>(163.07), Center, "Tone Env", ""}, 0.25f, 10.0, 600.0, "ms"},
