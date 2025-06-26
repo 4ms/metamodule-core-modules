@@ -1,6 +1,7 @@
 #pragma once
-#include "CoreModules/4ms/helpers/4ms_elements.hh"
+#include "helpers/4ms_elements.hh"
 #include "CoreModules/elements/element_info.hh"
+
 #include <array>
 
 namespace MetaModule
@@ -29,7 +30,7 @@ struct TSPInfo : ModuleInfoBase {
 		AltParamAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
 		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Play Retrig Mode", ""}, 3, 0}, {"Retrigger", "Stop", "Pause"}},
 		AltParamContinuous{{to_mm<72>(51.827), to_mm<72>(48.461), Center, "Waveform Zoom", ""}, 0.1015625f},
-		AltParamChoiceLabeled{{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 5, 0}, {"Minimal", "20%", "40%", "60%", "80%"}},
+		AltParamChoiceLabeled{{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 5, 1}, {"Minimal", "20%", "40%", "60%", "80%"}},
 }};
 
     enum class Elem {
@@ -48,6 +49,43 @@ struct TSPInfo : ModuleInfoBase {
         PlayRetrigModeAltParam,
         WaveformZoomAltParam,
         BufferThresholdAltParam,
+    };
+
+    // Legacy naming
+    
+    
+    enum {
+        SwitchPlay, 
+        SwitchLoop, 
+        NumSwitches,
+    };
+    
+    enum {
+        InputPlay_Trig, 
+        InputLoop_Gate, 
+        NumInJacks,
+    };
+    
+    enum {
+        OutputLeft_Out, 
+        OutputRight_Out, 
+        OutputEnd_Out, 
+        OutputPosition, 
+        NumOutJacks,
+    };
+    
+    enum {
+        LedWaveform, 
+        LedMessage, 
+        LedBusy_Light, 
+        NumDiscreteLeds,
+    };
+    
+    enum {
+        AltParamLoad_Sample___, 
+        AltParamPlay_Retrig_Mode, 
+        AltParamWaveform_Zoom, 
+        AltParamBuffer_Threshold, 
     };
 
 };
