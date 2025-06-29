@@ -225,17 +225,17 @@
        r="11.34"
        style="fill: #ffc000; stroke-width: 0px;" />
     <circle
-       id="Button4_BlackMomentary7mm"
-       data-name="Button4#BlackMomentary7mm"
-       cx="24.87"
-       cy="165.69"
-       r="11.34"
-       style="fill: #ffc000; stroke-width: 0px;" />
-    <circle
        id="Button5_BlackMomentary7mm"
        data-name="Button5#BlackMomentary7mm"
        cx="62.31"
        cy="201.21"
+       r="11.34"
+       style="fill: #ffc000; stroke-width: 0px;" />
+    <circle
+       id="Button4_BlackMomentary7mm"
+       data-name="Button4#BlackMomentary7mm"
+       cx="24.87"
+       cy="165.69"
        r="11.34"
        style="fill: #ffc000; stroke-width: 0px;" />
     <circle
