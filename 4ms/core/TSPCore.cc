@@ -81,8 +81,12 @@ public:
 				}
 				break;
 
-			case Reset:
 			case Stopped:
+			case Reset:
+				waveform.set_cursor_position(0);
+				setLED<PlayButton>(Off);
+				break;
+
 			case Paused:
 				setLED<PlayButton>(Off);
 				break;
@@ -159,9 +163,9 @@ public:
 			else if (play_state == PlayState::Playing)
 			{
 				end_out.start(0.010);
-				play_state = getState<PlayRetrigModeAltParam>() == 1 ? PlayState::Stopped :
-							 getState<PlayRetrigModeAltParam>() == 2 ? PlayState::Paused :
-																	   PlayState::Reset;
+				play_state = getState<PlayRetrigModeAltParam>() == RetrigMode::Stop	 ? PlayState::Stopped :
+							 getState<PlayRetrigModeAltParam>() == RetrigMode::Pause ? PlayState::Paused :
+																					   PlayState::Reset;
 			}
 		}
 	}
@@ -317,6 +321,8 @@ private:
 	WavFileStream<PreBufferSamples> stream;
 
 	Resampler<2> resampler{2};
+
+	enum RetrigMode { Retrigger = 0, Stop = 1, Pause = 2 };
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
