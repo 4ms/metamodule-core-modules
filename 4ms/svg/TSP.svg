@@ -250,6 +250,13 @@
        width="67.937767"
        height="66.39827"
        style="display:inline;fill:#ffff00;stroke-width:0px" /><rect
+       id="LoadSample_LoadSample"
+       data-name="Load Sample...@action"
+       x="19.761585"
+       y="42.414013"
+       width="7.4257388"
+       height="12.094488"
+       style="fill:#808080;stroke-width:0px" /><rect
        id="BufferThreshold"
        data-name="Buffer Threshold@Minimal@20%@40%@60%@80%"
        x="31.503193"
@@ -270,11 +277,4 @@
        y="42.414013"
        width="9.8843842"
        height="12.094488"
-       style="display:inline;fill:#808080;stroke-width:0px" /><rect
-       id="LoadSample_LoadSample"
-       data-name="Load Sample...@action"
-       x="19.761585"
-       y="42.414013"
-       width="7.4257388"
-       height="12.094488"
-       style="fill:#808080;stroke-width:0px" /></g></svg>
+       style="display:inline;fill:#808080;stroke-width:0px" /></g></svg>
