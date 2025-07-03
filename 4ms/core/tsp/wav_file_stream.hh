@@ -136,12 +136,15 @@ struct WavFileStream {
 			// 	   next_frame_to_write.load(),
 			// 	   frames_in_prebuff,
 			// 	   frames_available());
+
 			pre_buff.set_read_pos(frame_num);
 		} else {
-			// Otherwise, prepare to read from disk
-			drwav_seek_to_pcm_frame(&wav, frame_num);
 			// printf(
-			// 	"Reset: next_frame_to_write %g, frames_in_prebuff %u\n", next_frame_to_write.load(), frames_in_prebuff);
+			// 	"Reset: next_frame_to_write %f, frames_in_prebuff %u\n", next_frame_to_write.load(), frames_in_prebuff);
+
+			// Otherwise, reset the buffer and prepare to read from disk
+			drwav_seek_to_pcm_frame(&wav, frame_num);
+			reset_prebuff();
 			next_frame_to_write = frame_num;
 
 			eof = false;
