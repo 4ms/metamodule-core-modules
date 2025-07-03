@@ -120,10 +120,6 @@ struct WavFileStream {
 		return loaded ? (unsigned)wav.totalPCMFrameCount : 0;
 	}
 
-	void reset_read_pos(unsigned frame_num = 0) {
-		pre_buff.set_read_pos(frame_num * wav.channels);
-	}
-
 	void seek_frame_in_file(uint64_t frame_num = 0) {
 
 		const auto frames_in_prebuff = std::min<unsigned>(MaxSamples / wav.channels, next_frame_to_write.load());
