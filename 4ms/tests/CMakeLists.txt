@@ -16,8 +16,8 @@ target_include_directories(runtests PRIVATE
 	../core
 	../../..
 	../../../cpputil
-	../../../metamodule-core-interface
-	../../../../metamodule-plugin-sdk/metamodule-core-interface
+	../../../core-interface
+	../../../../metamodule-plugin-sdk/core-interface
 )
 
 # TODO: use find_package() to locate cpputil

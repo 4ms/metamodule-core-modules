@@ -6,7 +6,7 @@ add_library(CoreModules STATIC
   moduleFactory.cc
 )
 
-target_link_libraries(CoreModules PRIVATE metamodule-core-interface cpputil)
+target_link_libraries(CoreModules PRIVATE metamodule::core-interface cpputil)
 
 target_include_directories(CoreModules
   PUBLIC
