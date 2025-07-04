@@ -12,12 +12,12 @@ add_executable(runtests
 
 target_compile_features(runtests PUBLIC cxx_std_23)
 
-#TODO: use find_package() to find metamodule-core-interface
+#TODO: use find_package() to find core-interface
 target_include_directories(runtests PRIVATE
 	../..
 	../../cpputil
-	../../metamodule-core-interface
-	../../../metamodule-plugin-sdk/metamodule-core-interface
+	../../core-interface
+	../../../metamodule-plugin-sdk/core-interface
 )
 
 
