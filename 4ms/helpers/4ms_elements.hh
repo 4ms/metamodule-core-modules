@@ -404,4 +404,10 @@ struct RedGreenBlueLight : RgbLight {
 	}
 };
 
+struct GraphicDisplay : DynamicGraphicDisplay {
+	constexpr GraphicDisplay(BaseElement b)
+		: DynamicGraphicDisplay{{{b}}} {
+	}
+};
+
 } // namespace MetaModule
