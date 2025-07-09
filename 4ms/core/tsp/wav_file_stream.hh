@@ -118,6 +118,37 @@ struct WavFileStream {
 		return loaded ? (unsigned)wav.totalPCMFrameCount : 0;
 	}
 
+	// Must only be called by audio thread
+	void reset_playback_to_frame(uint32_t frame_num) {
+		if (is_frame_in_buffer(frame_num)) {
+			pre_buff.set_read_offset((next_frame_to_write.load() - frame_num) * wav.channels);
+		} else {
+			// requested frame is not in the buffer, so we need to start pre-buffering
+			pre_buff.reset();
+		}
+		next_sample_to_read = frame_num * wav.channels;
+	}
+
+	// Called by filesystem thread:
+	void seek_frame_in_file(uint32_t frame_num = 0) {
+		if (is_frame_in_buffer(frame_num)) {
+			// do nothing: the requested frame is already in the buffer
+		} else {
+			drwav_seek_to_pcm_frame(&wav, frame_num);
+			next_frame_to_write = frame_num;
+
+			eof = false;
+		}
+	}
+
+	std::optional<uint32_t> wav_sample_rate() const {
+		if (loaded)
+			return wav.sampleRate;
+		else
+			return {};
+	}
+
+private:
 	bool is_frame_in_buffer(uint32_t frame_num) const {
 		auto first = first_frame_in_buffer();
 		auto last = next_frame_to_write.load();
@@ -135,38 +166,6 @@ struct WavFileStream {
 		return false;
 	}
 
-	// Must only be called by audio thread
-	void jump_read_head_to_frame(uint32_t frame_num) {
-		if (is_frame_in_buffer(frame_num)) {
-			pre_buff.set_read_offset((next_frame_to_write.load() - frame_num) * wav.channels);
-		} else {
-			// requested frame is not in the buffer, so we need to start pre-buffering
-			pre_buff.reset();
-		}
-		next_sample_to_read = frame_num * wav.channels;
-	}
-
-	// Called by filesystem thread:
-	void seek_frame_in_file(uint32_t frame_num = 0) {
-		if (is_frame_in_buffer(frame_num)) {
-			// do nothing: the requested frame is already in the buffer
-		} else {
-			drwav_seek_to_pcm_frame(&wav, frame_num);
-			next_frame_to_write = frame_num;
-			// TODO: what to do if frames_in_buffer is not maxed out?
-
-			eof = false;
-		}
-	}
-
-	std::optional<uint32_t> wav_sample_rate() const {
-		if (loaded)
-			return wav.sampleRate;
-		else
-			return {};
-	}
-
-private:
 	void reset_prebuff() {
 		pre_buff.set_write_pos(0);
 		pre_buff.set_read_pos(0);
@@ -188,8 +187,6 @@ private:
 	bool eof = true;
 	bool loaded = false;
 
-	// buffer contains sample file frames:
-	// [next_frame_to_write - frames_in_buffer, next_frame_to_write)
 	std::atomic<uint32_t> frames_in_buffer = 0;
 	std::atomic<uint32_t> next_frame_to_write = 0;
 
