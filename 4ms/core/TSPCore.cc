@@ -59,7 +59,7 @@ public:
 				// Loop and EndOut:
 				if (current_frame >= stream.total_frames()) {
 					end_out.start(0.010);
-					stream.jump_read_head_to_frame(0);
+					stream.reset_playback_to_frame(0);
 					if (!loop_mode)
 						play_state = Stopped;
 				}
@@ -83,7 +83,7 @@ public:
 
 			case Stopped:
 			case Restart:
-				stream.jump_read_head_to_frame(0);
+				stream.reset_playback_to_frame(0);
 				waveform.set_cursor_position(0);
 				setLED<PlayButton>(Off);
 				break;

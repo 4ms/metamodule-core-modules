@@ -156,7 +156,7 @@ TEST_CASE("Looping when wavfil fits in buffer") {
 	CHECK(stream.current_playback_frame() == 8);
 
 	// now, current_frame >= total_frames(), so we loop in the buffer
-	stream.jump_read_head_to_frame(0);
+	stream.reset_playback_to_frame(0);
 
 	CHECK(stream.current_playback_frame() == 0);
 	CHECK(stream.frames_available() == 8);
@@ -227,7 +227,7 @@ TEST_CASE("Looping when wavfile is larger than buffer") {
 
 		// Loop because current_playback_frame == total_frames
 		// Should do nothing
-		stream.jump_read_head_to_frame(0);
+		stream.reset_playback_to_frame(0);
 
 		CHECK(stream.current_playback_frame() == 0);
 		CHECK(stream.frames_available() == 0);
@@ -259,7 +259,7 @@ TEST_CASE("Looping when wavfile is larger than buffer") {
 		CHECK(stream.current_playback_frame() == 5);
 
 		// Loop because current_playback_frame == total_frames
-		stream.jump_read_head_to_frame(0);
+		stream.reset_playback_to_frame(0);
 		CHECK(stream.current_playback_frame() == 0);
 		CHECK(stream.frames_available() == 2);
 
@@ -343,7 +343,7 @@ TEST_CASE("Looping and stopping/restarting when wavfile is larger than buffer") 
 	// about to write frame 1 (sample 2)
 	// we want to set tail_ to point to start of frame 0 (sample 0)
 	// so we should set an offset of 2
-	stream.jump_read_head_to_frame(0);
+	stream.reset_playback_to_frame(0);
 	//         W
 	// |--23|40--|
 	//        R
@@ -403,7 +403,7 @@ TEST_CASE("Looping and stopping/restarting when wavfile is larger than buffer") 
 
 	/////////////////////////////////////////////////
 	// Stop and restart test for when frame 0 is not in buffer
-	stream.jump_read_head_to_frame(0);
+	stream.reset_playback_to_frame(0);
 	//              W
 	// |----|--12|34--|
 	//              R
@@ -446,7 +446,7 @@ TEST_CASE("Looping and stopping/restarting when wavfile is smaller than buffer")
 	CHECK(stream.current_playback_frame() == 2);
 
 	// Audio thread gets the stop signal
-	stream.jump_read_head_to_frame(0);
+	stream.reset_playback_to_frame(0);
 	//       W
 	// |01234-------
 	//  R
