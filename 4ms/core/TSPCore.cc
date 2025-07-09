@@ -5,11 +5,11 @@
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
 #include "info/TSP_info.hh"
-#include "tsp/wav_file_stream.hh"
 #include "util/edge_detector.hh"
 #include "util/oscs.hh"
 #include "util/schmitt_trigger.hh"
 #include "util/static_string.hh"
+#include "wav/wav_file_stream.hh"
 #include <atomic>
 
 namespace MetaModule
@@ -197,8 +197,8 @@ public:
 	void set_param(int id, float val) override {
 		// Buffer Threshold alt param: handle it only when the user changes it
 		if (id == param_idx<BufferThresholdAltParam>) {
-			const auto samples_per_frame = stream.is_stereo() ? 2 : 1;
-			const auto max_frames = std::min<unsigned>(stream.total_frames(), PreBufferSamples / samples_per_frame);
+			auto samples_per_frame = stream.is_stereo() ? 2 : 1;
+			auto max_frames = std::min(stream.total_frames(), MByteToSamples(buffer_size_mb) / samples_per_frame);
 
 			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
 		}
@@ -249,11 +249,7 @@ public:
 
 	size_t get_display_text(int display_id, std::span<char> text) override {
 		if (display_id == display_idx<MessageDisplay>) {
-			if (err_message.length() > 0)
-				return copy_text(err_message, text);
-			else
-				return copy_text(message, text);
-
+			return copy_text(err_message.length() ? err_message : message, text);
 		} else
 			return 0;
 	}
@@ -315,19 +311,22 @@ private:
 	float sample_rate = 48000.f;
 	unsigned prebuff_threshold = 1024;
 
-	// Size of pre-buffer. This determines how much sample data we store in RAM
+	// Sizes of pre-buffer. This determines how much sample data we store in RAM.
 	// The larger this is, the longer the sample we can load and re-trigger without
 	// needing to read from disk again.
-	// 512k samples is about 5.5sec of stereo or 11sec of mono and uses 512k * 4 = 2MB
-	// 1024K samples is about 11sec of stereo or 22sec of mono and uses 1M * 4 = 4MB
-	// 2048K samples is about 22sec of stereo or 44sec of mono and uses 2M * 4 = 8MB
-	static constexpr size_t PreBufferSamples = 512 * 1024;
+	// 1MB is 256k samples, or about 2.7sec of stereo or 5.5sec of mono
+	// 2MB is 512k samples, or about 5.5sec of stereo or 10.9sec of mono
+	// 4MB is 1M samples, or about 10.9sec of stereo or 21.8sec of mono
+	// 8MB is 2M samples, or about 21.8sec of stereo or 43.7sec of mono
+	// 16MB is 4M samples, or about 43.7sec of stereo or 87.4sec of mono
 
-	// Maximum resampling ratio we support. Worse case is reading a 22k file and
-	// playing back at 96kHz
-	static constexpr unsigned MaxResampleRatio = (96000.f / 22050.f) + 1; // +1 to round up
+	constexpr size_t MByteToSamples(unsigned MBytes) {
+		return MBytes * 1024 * 1024 / 4;
+	}
 
-	WavFileStream<PreBufferSamples> stream;
+	unsigned buffer_size_mb = 4;
+
+	WavFileStream stream{MByteToSamples(buffer_size_mb)};
 
 	Resampler<2> resampler{2};
 
