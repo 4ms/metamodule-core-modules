@@ -39,10 +39,10 @@ public:
 
 		using enum PlayState;
 
-		auto current_frame = stream.current_playback_frame();
-
 		setOutput<LeftOut>(0);
 		setOutput<RightOut>(0);
+
+		auto current_frame = stream.current_playback_frame();
 
 		switch (play_state) {
 			case Buffering:
@@ -56,12 +56,15 @@ public:
 			case Playing:
 				setLED<PlayButton>(Green);
 
-				if (loop_mode && current_frame == 1) {
+				// Loop and EndOut:
+				if (current_frame >= stream.total_frames()) {
 					end_out.start(0.010);
+					stream.jump_read_head_to_frame(0);
+					if (!loop_mode)
+						play_state = Stopped;
 				}
 
-				if (stream.frames_available() > 16) {
-
+				if (stream.frames_available() > 0) {
 					auto [left, right] = resampler.process_stereo([this] { return stream.pop_sample(); });
 
 					setOutput<LeftOut>(left * 5.f);
@@ -71,10 +74,7 @@ public:
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 				} else {
-					if (stream.is_eof()) {
-						end_out.start(0.010);
-						play_state = Stopped;
-					} else {
+					if (!stream.is_eof()) {
 						setLED<PlayButton>(Red);
 						err_message = "Buffer underflow";
 					}
@@ -82,7 +82,8 @@ public:
 				break;
 
 			case Stopped:
-			case Reset:
+			case Restart:
+				stream.jump_read_head_to_frame(0);
 				waveform.set_cursor_position(0);
 				setLED<PlayButton>(Off);
 				break;
@@ -120,7 +121,7 @@ public:
 				play_state = Paused;
 				break;
 
-			case Reset:
+			case Restart:
 				waveform.sync();
 				stream.seek_frame_in_file(0);
 				play_state = Buffering;
@@ -133,6 +134,7 @@ public:
 
 					if (stream.is_eof()) {
 						if (loop_mode) {
+							//TODO: try play_state = Restart;
 							stream.seek_frame_in_file(0);
 						}
 					} else {
@@ -152,7 +154,7 @@ public:
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
-				play_state = PlayState::Reset;
+				play_state = PlayState::Restart;
 			}
 
 			else if (play_state == PlayState::Paused && stream.is_loaded())
@@ -162,10 +164,17 @@ public:
 
 			else if (play_state == PlayState::Playing)
 			{
-				end_out.start(0.010);
-				play_state = getState<PlayRetrigModeAltParam>() == RetrigMode::Stop	 ? PlayState::Stopped :
-							 getState<PlayRetrigModeAltParam>() == RetrigMode::Pause ? PlayState::Paused :
-																					   PlayState::Reset;
+				if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
+					end_out.start(0.010);
+					play_state = PlayState::Stopped;
+
+				} else if (getState<PlayRetrigModeAltParam>() == RetrigMode::Retrigger) {
+					end_out.start(0.010);
+					play_state = PlayState::Restart;
+
+				} else {
+					play_state = PlayState::Paused;
+				}
 			}
 		}
 	}
@@ -181,8 +190,8 @@ public:
 			});
 		}
 
-		float inc = 1.f / (300.f * getState<WaveformZoomAltParam>() + 1.f);
-		waveform.set_x_zoom(inc);
+		float zoom = 300.f * getState<WaveformZoomAltParam>() + 1.f; //1..301
+		waveform.set_x_zoom(zoom);
 	}
 
 	void set_param(int id, float val) override {
@@ -278,7 +287,7 @@ private:
 		Buffering,
 		Playing,
 		Paused,
-		Reset,
+		Restart,
 	};
 	std::atomic<PlayState> play_state{PlayState::Stopped};
 
@@ -312,7 +321,7 @@ private:
 	// 512k samples is about 5.5sec of stereo or 11sec of mono and uses 512k * 4 = 2MB
 	// 1024K samples is about 11sec of stereo or 22sec of mono and uses 1M * 4 = 4MB
 	// 2048K samples is about 22sec of stereo or 44sec of mono and uses 2M * 4 = 8MB
-	static constexpr size_t PreBufferSamples = 2 * 1024 * 1024;
+	static constexpr size_t PreBufferSamples = 512 * 1024;
 
 	// Maximum resampling ratio we support. Worse case is reading a 22k file and
 	// playing back at 96kHz

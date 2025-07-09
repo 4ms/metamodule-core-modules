@@ -1,5 +1,4 @@
 #pragma once
-// #include "../../medium/debug_raw.h"
 #include "tsp/dr_wav.h"
 #include "util/lockfree_fifo_spsc.hh"
 #include <cstdio>
@@ -17,6 +16,7 @@ struct WavFileStream {
 		eof = false;
 
 		loaded = drwav_init_file(&wav, sample_path.data(), nullptr);
+		frames_in_buffer = 0;
 		return loaded;
 	}
 
@@ -48,7 +48,9 @@ struct WavFileStream {
 
 			auto frames_read = drwav_read_pcm_frames_f32(&wav, frames_to_read, read_buff.data());
 
-			eof = (frames_read != frames_to_read);
+			// This is not correct, if we happen to read up to the end of the file
+			// (but don't attempt to go past, then we'll be at the EOF but eof will be false
+			eof = (frames_read != frames_to_read) || (wav.readCursorInPCMFrames == wav.totalPCMFrameCount);
 
 			if (frames_read > frames_to_read) {
 				printf("WavFileStream: Internal error: drwav read more frames than requested\n");
@@ -69,21 +71,18 @@ struct WavFileStream {
 				}
 				if (++frame_ctr >= wav.channels) {
 					frame_ctr = 0;
+
 					next_frame_to_write.store(next_frame_to_write.load() + 1);
-					// printf("next_frame_to_write=%u\n", next_frame_to_write.load());
+
+					auto f = frames_in_buffer.load();
+					if (f < MaxSamples / wav.channels)
+						frames_in_buffer.store(f + 1);
 				}
 			}
-
-			// printf("requested num_frames=%d, frames_to_read=%u, frames_read=%llu. eof=%d\n",
-			// 	   num_frames,
-			// 	   frames_to_read,
-			// 	   frames_read,
-			// 	   eof);
 
 			num_frames -= frames_read;
 
 			if (eof) {
-				// printf("EOF\n");
 				break;
 			}
 		}
@@ -91,7 +90,7 @@ struct WavFileStream {
 
 	float pop_sample() {
 		auto p = pre_buff.get().value_or(0);
-		// printf("pop %f\n", p);
+		next_sample_to_read.store(next_sample_to_read.load() + 1);
 		return p;
 	}
 
@@ -112,36 +111,49 @@ struct WavFileStream {
 	}
 
 	unsigned current_playback_frame() const {
-		return next_frame_to_write > frames_available() ? next_frame_to_write - frames_available() :
-														  next_frame_to_write + total_frames() - frames_available();
+		return next_sample_to_read.load() / wav.channels;
 	}
 
 	unsigned total_frames() const {
 		return loaded ? (unsigned)wav.totalPCMFrameCount : 0;
 	}
 
-	void seek_frame_in_file(uint64_t frame_num = 0) {
+	bool is_frame_in_buffer(uint32_t frame_num) const {
+		auto first = first_frame_in_buffer();
+		auto last = next_frame_to_write.load();
 
-		const auto frames_in_prebuff = std::min<unsigned>(MaxSamples / wav.channels, next_frame_to_write.load());
-
-		// Optimization:
-		// if we request to seek to a frame that's already in the prebuffer,
-		// just jump the read head to there (no need to read from disk)
-		if (frame_num < next_frame_to_write && (frames_in_prebuff + frame_num) >= next_frame_to_write) {
-			// printf("Reset without seek: next_frame_to_write %g, frames_in_prebuff %u, frames_available %u\n",
-			// 	   next_frame_to_write.load(),
-			// 	   frames_in_prebuff,
-			// 	   frames_available());
-
-			pre_buff.set_read_pos(frame_num);
+		if (last >= first) {
+			// Not wrapping: check if it's in [F, L)
+			if (frame_num >= first && frame_num < last)
+				return true;
 		} else {
-			// printf(
-			// 	"Reset: next_frame_to_write %f, frames_in_prebuff %u\n", next_frame_to_write.load(), frames_in_prebuff);
+			// Wrapping: check [0, L) and [F, max)
+			if (frame_num < last || frame_num >= first)
+				return true;
+		}
 
-			// Otherwise, reset the buffer and prepare to read from disk
+		return false;
+	}
+
+	// Must only be called by audio thread
+	void jump_read_head_to_frame(uint32_t frame_num) {
+		if (is_frame_in_buffer(frame_num)) {
+			pre_buff.set_read_offset((next_frame_to_write.load() - frame_num) * wav.channels);
+		} else {
+			// requested frame is not in the buffer, so we need to start pre-buffering
+			pre_buff.reset();
+		}
+		next_sample_to_read = frame_num * wav.channels;
+	}
+
+	// Called by filesystem thread:
+	void seek_frame_in_file(uint32_t frame_num = 0) {
+		if (is_frame_in_buffer(frame_num)) {
+			// do nothing: the requested frame is already in the buffer
+		} else {
 			drwav_seek_to_pcm_frame(&wav, frame_num);
-			reset_prebuff();
 			next_frame_to_write = frame_num;
+			// TODO: what to do if frames_in_buffer is not maxed out?
 
 			eof = false;
 		}
@@ -159,6 +171,16 @@ private:
 		pre_buff.set_write_pos(0);
 		pre_buff.set_read_pos(0);
 		next_frame_to_write = 0;
+		next_sample_to_read = 0;
+		frames_in_buffer = 0;
+	}
+
+	uint32_t first_frame_in_buffer() const {
+		// TODO:  frames_in_buffer == 0 returns next_frame_to_write, try std::nullopt?
+		if (next_frame_to_write >= frames_in_buffer)
+			return next_frame_to_write - frames_in_buffer;
+		else
+			return next_frame_to_write + total_frames() - frames_in_buffer;
 	}
 
 	drwav wav;
@@ -166,7 +188,13 @@ private:
 	bool eof = true;
 	bool loaded = false;
 
-	std::atomic<float> next_frame_to_write = 0;
+	// buffer contains sample file frames:
+	// [next_frame_to_write - frames_in_buffer, next_frame_to_write)
+	std::atomic<uint32_t> frames_in_buffer = 0;
+	std::atomic<uint32_t> next_frame_to_write = 0;
+
+	// Note we use units of sample, not frames here!
+	std::atomic<uint32_t> next_sample_to_read = 0;
 
 	LockFreeFifoSpsc<float, MaxSamples> pre_buff;
 
