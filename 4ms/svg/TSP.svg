@@ -244,7 +244,7 @@
        height="23.58786"
        style="fill:#ffff00;stroke-width:0px" /><rect
        id="WaveformDisplay"
-       data-name="Waveform#DynamicGraphicDisplay"
+       data-name="Waveform#GraphicDisplay"
        x="9.233675"
        y="60.753025"
        width="67.937767"
