@@ -320,7 +320,7 @@ private:
 	// 8MB is 2M samples, or about 21.8sec of stereo or 43.7sec of mono
 	// 16MB is 4M samples, or about 43.7sec of stereo or 87.4sec of mono
 
-	constexpr size_t MByteToSamples(unsigned MBytes) {
+	constexpr unsigned MByteToSamples(unsigned MBytes) {
 		return MBytes * 1024 * 1024 / 4;
 	}
 
