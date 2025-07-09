@@ -414,4 +414,10 @@ struct TSPDisplay : DynamicTextDisplay {
 	}
 };
 
+struct GraphicDisplay : DynamicGraphicDisplay {
+	constexpr GraphicDisplay(BaseElement b)
+		: DynamicGraphicDisplay{{{b}}} {
+	}
+};
+
 } // namespace MetaModule
