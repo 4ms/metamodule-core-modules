@@ -1,7 +1,7 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/async_thread.hh"
 #include "CoreModules/register_module.hh"
-#include "dsp/resampler_one.hh"
+#include "dsp/stream_resampler.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
 #include "info/TSP_info.hh"
@@ -328,7 +328,7 @@ private:
 
 	WavFileStream stream{MByteToSamples(buffer_size_mb)};
 
-	Resampler<2> resampler{2};
+	StreamResampler resampler{2}; //2: stereo
 
 	enum RetrigMode { Retrigger = 0, Stop = 1, Pause = 2 };
 
