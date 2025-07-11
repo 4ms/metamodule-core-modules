@@ -4,7 +4,9 @@
 #include "dsp/stream_resampler.hh"
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
+#include "gui/notification.hh"
 #include "info/TSP_info.hh"
+#include "patch/patch_file.hh"
 #include "util/edge_detector.hh"
 #include "util/oscs.hh"
 #include "util/schmitt_trigger.hh"
@@ -76,7 +78,8 @@ public:
 				} else {
 					if (!stream.is_eof()) {
 						setLED<PlayButton>(Red);
-						err_message = "Buffer underflow";
+						Gui::notify_user("TSP: Buffer underflow", 1000);
+						err_message = "Underflow";
 					}
 				}
 				break;
@@ -186,6 +189,7 @@ public:
 				if (path) {
 					load_sample(path);
 					free(path);
+					Patch::mark_patch_modified();
 				}
 			});
 		}
