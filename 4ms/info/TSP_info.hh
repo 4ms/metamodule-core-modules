@@ -30,7 +30,7 @@ struct TSPInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Play Retrig Mode", ""}, 3, 0}, {"Retrigger", "Stop", "Pause"}},
 		AltParamContinuous{{to_mm<72>(51.827), to_mm<72>(48.461), Center, "Waveform Zoom", ""}, 0.1015625f},
 		AltParamChoiceLabeled{{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 5, 1}, {"Minimal", "20%", "40%", "60%", "80%"}},
-		AltParamAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
+		WavFileBrowseAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
 }};
 
     enum class Elem {

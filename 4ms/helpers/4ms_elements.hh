@@ -420,4 +420,10 @@ struct GraphicDisplay : DynamicGraphicDisplay {
 	}
 };
 
+struct WavFileBrowseAction : AltParamAction {
+	constexpr WavFileBrowseAction(BaseElement b)
+		: AltParamAction{{{b}}, {".wav, .WAV"}} {
+	}
+};
+
 } // namespace MetaModule
