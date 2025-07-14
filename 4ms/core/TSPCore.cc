@@ -331,7 +331,11 @@ private:
 		return MBytes * 1024 * 1024 / 4;
 	}
 
+#ifdef VCVRACK
+	unsigned buffer_size_mb = 32;
+#else
 	unsigned buffer_size_mb = 4;
+#endif
 
 	WavFileStream stream{MByteToSamples(buffer_size_mb)};
 
