@@ -184,7 +184,8 @@ public:
 	}
 
 	void handle_load_button() {
-		if (load_button.update(getState<LoadSampleAltParam>())) {
+		if (load_button != getState<LoadSampleAltParam>()) {
+			load_button = getState<LoadSampleAltParam>();
 			std::string_view initial_dir = "";
 			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
@@ -303,7 +304,7 @@ private:
 
 	OneShot end_out{48000};
 
-	RisingEdgeDetector load_button;
+	float load_button;
 
 	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
