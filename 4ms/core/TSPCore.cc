@@ -35,9 +35,9 @@ public:
 	}
 
 	void update() override {
-		handle_load_button();
 		handle_play();
 		handle_loop_toggle();
+		handle_zoom();
 
 		using enum PlayState;
 
@@ -108,6 +108,7 @@ public:
 
 	// This runs in a low-priority background task:
 	void async_process_filesystem() {
+		handle_load_button();
 		using enum PlayState;
 
 		switch (play_state) {
@@ -193,7 +194,9 @@ public:
 				}
 			});
 		}
+	}
 
+	void handle_zoom() {
 		float zoom = 300.f * getState<WaveformZoomAltParam>() + 1.f; //1..301
 		waveform.set_x_zoom(zoom);
 	}
