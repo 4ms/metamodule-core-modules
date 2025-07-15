@@ -114,6 +114,7 @@ public:
 	// This runs in a low-priority background task:
 	void async_process_filesystem() {
 		handle_load_button();
+		setLED<BusyLight>(0.f);
 		using enum PlayState;
 
 		switch (play_state) {
@@ -149,7 +150,6 @@ public:
 					} else {
 						setLED<BusyLight>(1.f);
 						stream.read_frames_from_file();
-						setLED<BusyLight>(0.f);
 					}
 				}
 				break;
