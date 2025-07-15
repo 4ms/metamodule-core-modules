@@ -45,6 +45,10 @@ public:
 		setOutput<RightOut>(0);
 
 		auto current_frame = stream.current_playback_frame();
+		// Clear error messages after a moment
+		if (err_message.length() > 0 && !error_message_hold.update()) {
+			err_message = "";
+		}
 
 		switch (play_state) {
 			case Buffering:
@@ -76,10 +80,11 @@ public:
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 				} else {
-					if (!stream.is_eof()) {
+					if (!stream.is_eof() && err_message.length() == 0) {
 						setLED<PlayButton>(Red);
 						Gui::notify_user("TSP: Buffer underflow", 1000);
 						err_message = "Underflow";
+						error_message_hold.start(1); //2 seconds
 					}
 				}
 				break;
@@ -230,6 +235,7 @@ public:
 		sample_rate = sr;
 
 		end_out.set_update_rate_hz(sample_rate);
+		error_message_hold.set_update_rate_hz(sample_rate);
 
 		if (auto source_sr = stream.wav_sample_rate()) {
 			resampler.set_sample_rate_in_out(*source_sr, sample_rate);
@@ -305,6 +311,7 @@ private:
 	OneShot end_out{48000};
 
 	float load_button;
+	OneShot error_message_hold{48000};
 
 	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
