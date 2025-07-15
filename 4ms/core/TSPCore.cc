@@ -111,7 +111,6 @@ public:
 
 	// This runs in a low-priority background task:
 	void async_process_filesystem() {
-		handle_load_button();
 
 		setLED<BusyLight>(0.f);
 
@@ -189,14 +188,10 @@ public:
 	}
 
 	void handle_load_button() {
-		// Set initial state
-		if (load_button == -1)
-			load_button = getState<LoadSampleAltParam>();
-
-		// Change of value => perform action
-		if (load_button != getState<LoadSampleAltParam>()) {
-			load_button = getState<LoadSampleAltParam>();
-
+		// First time LoadSample param is set, it's the module init, so don't run the action
+		if (ignore_first_load_button) {
+			ignore_first_load_button = false;
+		} else {
 			std::string_view initial_dir = "";
 			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
@@ -220,6 +215,10 @@ public:
 			auto max_frames = std::min(stream.total_frames(), MByteToSamples(buffer_size_mb) / samples_per_frame);
 
 			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
+		}
+
+		if (id == param_idx<LoadSampleAltParam>) {
+			handle_load_button();
 		}
 
 		// All other parameters:
@@ -311,7 +310,7 @@ private:
 
 	OneShot error_message_hold{48000};
 
-	float load_button = -1;
+	bool ignore_first_load_button = true;
 
 	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
