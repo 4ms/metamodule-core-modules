@@ -39,18 +39,22 @@ public:
 		handle_loop_toggle();
 		handle_zoom();
 
-		using enum PlayState;
+		auto current_frame = stream.current_playback_frame();
 
+		// default output values:
 		setOutput<LeftOut>(0);
 		setOutput<RightOut>(0);
 
-		auto current_frame = stream.current_playback_frame();
+		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
+		setOutput<PositionOut>(5.f * (float)current_frame / (float)stream.total_frames());
+
 		// Clear error messages after a moment
 		if (err_message.length() > 0 && !error_message_hold.update()) {
 			err_message = "";
 		}
 
 		switch (play_state) {
+			using enum PlayState;
 			case Buffering:
 				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold) {
 					err_message.clear();
@@ -60,8 +64,6 @@ public:
 				break;
 
 			case Playing:
-				setLED<PlayButton>(Green);
-
 				// Loop and EndOut:
 				if (current_frame >= stream.total_frames()) {
 					end_out.start(0.010);
@@ -71,6 +73,7 @@ public:
 				}
 
 				if (stream.frames_available() > 0) {
+					setLED<PlayButton>(Green);
 					auto [left, right] = resampler.process_stereo([this] { return stream.pop_sample(); });
 
 					setOutput<LeftOut>(left * 5.f);
@@ -102,19 +105,16 @@ public:
 
 			case LoadSampleInfo:
 				setLED<PlayButton>(Yellow);
-				setOutput<LeftOut>(0);
-				setOutput<RightOut>(0);
 				break;
 		}
-
-		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
-		setOutput<PositionOut>(5.f * (float)current_frame / (float)stream.total_frames());
 	}
 
 	// This runs in a low-priority background task:
 	void async_process_filesystem() {
 		handle_load_button();
+
 		setLED<BusyLight>(0.f);
+
 		using enum PlayState;
 
 		switch (play_state) {
@@ -246,9 +246,9 @@ public:
 		sample_filename.copy(filename);
 		play_state = PlayState::LoadSampleInfo;
 		if (auto pos = filename.find_last_of('/'); pos != filename.npos)
-			message.copy(filename.substr(pos + 1, filename.length() - pos - 5));
+			wav_name.copy(filename.substr(pos + 1, filename.length() - pos - 5));
 		else
-			message.copy(filename.substr(0, filename.length() - 4));
+			wav_name.copy(filename.substr(0, filename.length() - 4));
 	}
 
 	void load_state(std::string_view state) override {
@@ -263,7 +263,7 @@ public:
 
 	size_t get_display_text(int display_id, std::span<char> text) override {
 		if (display_id == display_idx<MessageDisplay>) {
-			return copy_text(err_message.length() ? err_message : message, text);
+			return copy_text(err_message.length() ? err_message : wav_name, text);
 		} else
 			return 0;
 	}
@@ -289,16 +289,9 @@ private:
 	AsyncThread fs_thread{this};
 	StaticString<255> sample_filename = "";
 	StaticString<255> err_message = "";
-	StaticString<255> message = "Load a Sample";
+	StaticString<255> wav_name = "Load a Sample";
 
-	enum class PlayState {
-		Stopped,
-		LoadSampleInfo,
-		Buffering,
-		Playing,
-		Paused,
-		Restart,
-	};
+	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart };
 	std::atomic<PlayState> play_state{PlayState::Stopped};
 
 	Toggler play_button;
@@ -335,15 +328,15 @@ private:
 	// 8MB is 2M samples, or about 21.8sec of stereo or 43.7sec of mono
 	// 16MB is 4M samples, or about 43.7sec of stereo or 87.4sec of mono
 
-	constexpr unsigned MByteToSamples(unsigned MBytes) {
-		return MBytes * 1024 * 1024 / 4;
-	}
-
 #ifdef VCVRACK
 	unsigned buffer_size_mb = 32;
 #else
-	unsigned buffer_size_mb = 4;
+	unsigned buffer_size_mb = 8;
 #endif
+
+	constexpr unsigned MByteToSamples(unsigned MBytes) {
+		return MBytes * 1024 * 1024 / 4;
+	}
 
 	WavFileStream stream{MByteToSamples(buffer_size_mb)};
 
