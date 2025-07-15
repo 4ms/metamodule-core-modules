@@ -189,8 +189,14 @@ public:
 	}
 
 	void handle_load_button() {
+		// Set initial state
+		if (load_button == -1)
+			load_button = getState<LoadSampleAltParam>();
+
+		// Change of value => perform action
 		if (load_button != getState<LoadSampleAltParam>()) {
 			load_button = getState<LoadSampleAltParam>();
+
 			std::string_view initial_dir = "";
 			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 				if (path) {
@@ -303,8 +309,9 @@ private:
 
 	OneShot end_out{48000};
 
-	float load_button;
 	OneShot error_message_hold{48000};
+
+	float load_button = -1;
 
 	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
