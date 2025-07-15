@@ -188,19 +188,14 @@ public:
 	}
 
 	void handle_load_button() {
-		// First time LoadSample param is set, it's the module init, so don't run the action
-		if (ignore_first_load_button) {
-			ignore_first_load_button = false;
-		} else {
-			std::string_view initial_dir = "";
-			async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
-				if (path) {
-					load_sample(path);
-					free(path);
-					Patch::mark_patch_modified();
-				}
-			});
-		}
+		std::string_view initial_dir = "";
+		async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
+			if (path) {
+				load_sample(path);
+				free(path);
+				Patch::mark_patch_modified();
+			}
+		});
 	}
 
 	void handle_zoom() {
@@ -217,12 +212,13 @@ public:
 			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
 		}
 
-		if (id == param_idx<LoadSampleAltParam>) {
-			handle_load_button();
-		}
-
 		// All other parameters:
 		SmartCoreProcessor::set_param(id, val);
+
+		if (id == param_idx<LoadSampleAltParam> && val == 1) {
+			handle_load_button();
+			SmartCoreProcessor::set_param(id, 0);
+		}
 	}
 
 	void handle_loop_toggle() {
@@ -309,8 +305,6 @@ private:
 	OneShot end_out{48000};
 
 	OneShot error_message_hold{48000};
-
-	bool ignore_first_load_button = true;
 
 	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
