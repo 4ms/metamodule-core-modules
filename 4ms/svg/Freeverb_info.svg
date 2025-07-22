@@ -1,87 +1,458 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="40.73mm" height="128.59mm" viewBox="0 0 115.45 364.5">
-  <g id="faceplate">
-    <rect x=".12" y=".12" width="115.2" height="364.25" style="fill: #ededed; stroke: #9d9d9e; stroke-miterlimit: 10; stroke-width: .25px;"/>
-    <g>
-      <path d="M100.47,316.9v-23.22h-21.54c-7.49,0-13.57,7.04-13.57,15.71v32.93h15.07s0,0,0,0h14.39c3.12,0,5.64-2.55,5.64-5.67v-19.84.08Z" style="fill: #000; stroke-width: 0px;"/>
-      <g>
-        <path d="M28.36,341.84h35.2s23.15,0,23.15,0c7.35,0,13.31-7.02,13.31-15.67v-107.66l-.06-6.64c-.29-8.35-6.12-15.02-13.28-15.02H28.32c-7.17,0-12.99,6.67-13.28,15.02l-.06,6.64v46.5l.07,61.17" style="fill: none; stroke: #000; stroke-miterlimit: 10;"/>
-        <path d="M15.04,325.21v10.96c0,3.12,2.55,5.67,5.67,5.67h12.93" style="fill: none; stroke: #231f20; stroke-miterlimit: 10;"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="40.73mm"
+   height="128.59mm"
+   viewBox="0 0 115.45 364.5"
+   version="1.1"
+   id="svg68"
+   sodipodi:docname="Freeverb_info.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs68" />
+  <sodipodi:namedview
+     id="namedview68"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.7704777"
+     inkscape:cx="66.36627"
+     inkscape:cy="381.25304"
+     inkscape:window-width="1696"
+     inkscape:window-height="831"
+     inkscape:window-x="443"
+     inkscape:window-y="59"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="faceplate" />
+  <g
+     id="faceplate">
+    <rect
+       x=".12"
+       y=".12"
+       width="115.2"
+       height="364.25"
+       style="fill: #ededed; stroke: #9d9d9e; stroke-miterlimit: 10; stroke-width: .25px;"
+       id="rect1" />
+    <g
+       id="g4">
+      <path
+         d="M100.47,316.9v-23.22h-21.54c-7.49,0-13.57,7.04-13.57,15.71v32.93h15.07s0,0,0,0h14.39c3.12,0,5.64-2.55,5.64-5.67v-19.84.08Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path1" />
+      <g
+         id="g3">
+        <path
+           d="M28.36,341.84h35.2s23.15,0,23.15,0c7.35,0,13.31-7.02,13.31-15.67v-107.66l-.06-6.64c-.29-8.35-6.12-15.02-13.28-15.02H28.32c-7.17,0-12.99,6.67-13.28,15.02l-.06,6.64v46.5l.07,61.17"
+           style="fill: none; stroke: #000; stroke-miterlimit: 10;"
+           id="path2" />
+        <path
+           d="M15.04,325.21v10.96c0,3.12,2.55,5.67,5.67,5.67h12.93"
+           style="fill: none; stroke: #231f20; stroke-miterlimit: 10;"
+           id="path3" />
       </g>
     </g>
-    <text transform="translate(32.64 357.47) scale(.82 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 11px; font-weight: 700;"><tspan x="0" y="0">FREEVERB</tspan></text>
-    <text transform="translate(76.59 239.99) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Size</tspan></text>
-    <text transform="translate(73.22 289.9) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Damp</tspan></text>
-    <text transform="translate(76.79 337.15) scale(.88 1)" style="fill: #fff; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Out</tspan></text>
-    <text transform="translate(23.14 239.99) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Input</tspan></text>
-    <text transform="translate(18.83 289.9) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Feedback</tspan></text>
-    <text transform="translate(25.8 337.15) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Mix</tspan></text>
-    <g>
-      <path d="M102.99,57.11h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M102.99,59.11c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z" style="fill: #000; stroke-width: 0px;"/>
-      <text transform="translate(23.07 85.88) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Size</tspan></text>
-      <g>
-        <path d="M40.74,40.53l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M48.32,47.38l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M21.02,41.53l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M51.46,57.11h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M30.74,38.39v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M15.16,68.84l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M42.47,74.69l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M51.46,59.11c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M12.03,59.11h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
-        <path d="M14.16,49.11l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
+    <text
+       transform="translate(32.64 357.47) scale(.82 1)"
+       style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 11px; font-weight: 700;"
+       id="text4"><tspan
+         x="0"
+         y="0"
+         id="tspan4">FREEVERB</tspan></text>
+    <text
+       transform="translate(76.59 239.99) scale(.88 1)"
+       style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+       id="text5"><tspan
+         x="0"
+         y="0"
+         id="tspan5">Size</tspan></text>
+    <text
+       transform="translate(73.22 289.9) scale(.88 1)"
+       style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+       id="text6"><tspan
+         x="0"
+         y="0"
+         id="tspan6">Damp</tspan></text>
+    <text
+       transform="translate(76.79 337.15) scale(.88 1)"
+       style="fill: #fff; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+       id="text7"><tspan
+         x="0"
+         y="0"
+         id="tspan7">Out</tspan></text>
+    <text
+       transform="translate(23.14 239.99) scale(.88 1)"
+       style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+       id="text8"><tspan
+         x="0"
+         y="0"
+         id="tspan8">Input</tspan></text>
+    <text
+       transform="translate(18.83 289.9) scale(.88 1)"
+       style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+       id="text9"><tspan
+         x="0"
+         y="0"
+         id="tspan9">Feedback</tspan></text>
+    <text
+       transform="translate(25.8 337.15) scale(.88 1)"
+       style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 8px; font-weight: 700; letter-spacing: -.04em;"
+       id="text10"><tspan
+         x="0"
+         y="0"
+         id="tspan10">Mix</tspan></text>
+    <g
+       id="g49">
+      <path
+         d="M102.99,57.11h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path10" />
+      <path
+         d="M102.99,59.11c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path11" />
+      <text
+         transform="translate(23.07 85.88) scale(.88 1)"
+         style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"
+         id="text11"><tspan
+           x="0"
+           y="0"
+           id="tspan11">Size</tspan></text>
+      <g
+         id="g21">
+        <path
+           d="M40.74,40.53l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path12" />
+        <path
+           d="M48.32,47.38l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path13" />
+        <path
+           d="M21.02,41.53l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path14" />
+        <path
+           d="M51.46,57.11h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path15" />
+        <path
+           d="M30.74,38.39v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path16" />
+        <path
+           d="M15.16,68.84l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path17" />
+        <path
+           d="M42.47,74.69l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path18" />
+        <path
+           d="M51.46,59.11c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path19" />
+        <path
+           d="M12.03,59.11h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path20" />
+        <path
+           d="M14.16,49.11l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z"
+           style="fill: #000; stroke-width: 0px;"
+           id="path21" />
       </g>
-      <text transform="translate(63.2 85.88) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Feedback</tspan></text>
-      <path d="M92.27,40.53l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M99.86,47.38l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M72.55,41.53l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M82.28,38.39v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M66.7,68.84l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M94,74.69l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M63.56,59.11h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M65.7,49.11l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
-      <text transform="translate(18.87 147.2) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Damp</tspan></text>
-      <path d="M40.74,101.93l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M48.32,108.78l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M21.02,102.93l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M51.46,118.51h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M30.74,99.79v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M15.16,130.24l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M42.47,136.09l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M51.46,120.51c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M12.03,120.51h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M14.16,110.51l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
-      <text transform="translate(75.25 147.2) scale(.88 1)" style="fill: #000; font-family: GillSans-Bold, &apos;Gill Sans&apos;; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"><tspan x="0" y="0">Mix</tspan></text>
-      <path d="M92.27,101.93l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M99.86,108.78l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M72.55,102.93l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M102.99,118.51h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M82.28,99.79v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M66.7,130.24l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M94,136.09l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M102.99,120.51c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M63.56,120.51h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
-      <path d="M65.7,110.51l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z" style="fill: #000; stroke-width: 0px;"/>
+      <text
+         transform="translate(63.2 85.88) scale(.88 1)"
+         style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"
+         id="text21"><tspan
+           x="0"
+           y="0"
+           id="tspan21">Feedback</tspan></text>
+      <path
+         d="M92.27,40.53l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path22" />
+      <path
+         d="M99.86,47.38l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path23" />
+      <path
+         d="M72.55,41.53l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path24" />
+      <path
+         d="M82.28,38.39v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path25" />
+      <path
+         d="M66.7,68.84l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path26" />
+      <path
+         d="M94,74.69l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path27" />
+      <path
+         d="M63.56,59.11h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path28" />
+      <path
+         d="M65.7,49.11l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path29" />
+      <text
+         transform="translate(18.87 147.2) scale(.88 1)"
+         style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"
+         id="text29"><tspan
+           x="0"
+           y="0"
+           id="tspan29">Damp</tspan></text>
+      <path
+         d="M40.74,101.93l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path30" />
+      <path
+         d="M48.32,108.78l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path31" />
+      <path
+         d="M21.02,102.93l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path32" />
+      <path
+         d="M51.46,118.51h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path33" />
+      <path
+         d="M30.74,99.79v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path34" />
+      <path
+         d="M15.16,130.24l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path35" />
+      <path
+         d="M42.47,136.09l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path36" />
+      <path
+         d="M51.46,120.51c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path37" />
+      <path
+         d="M12.03,120.51h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path38" />
+      <path
+         d="M14.16,110.51l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path39" />
+      <text
+         transform="translate(75.25 147.2) scale(.88 1)"
+         style="fill: #000; font-family: GillSans-Bold, 'Gill Sans'; font-size: 10px; font-weight: 700; letter-spacing: -.04em;"
+         id="text39"><tspan
+           x="0"
+           y="0"
+           id="tspan39">Mix</tspan></text>
+      <path
+         d="M92.27,101.93l1.13-1.95c-2.75-1.43-5.84-2.3-9.12-2.44v2.26c2.87.14,5.57.89,7.99,2.14Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path40" />
+      <path
+         d="M99.86,108.78l1.95-1.13c-1.72-2.68-4-4.96-6.68-6.68l-1.13,1.95c2.34,1.52,4.33,3.51,5.85,5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path41" />
+      <path
+         d="M72.55,102.93l-1.13-1.95c-2.68,1.72-4.96,4-6.68,6.68l1.95,1.13c1.52-2.34,3.51-4.33,5.85-5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path42" />
+      <path
+         d="M102.99,118.51h2.26c-.15-3.28-1.01-6.37-2.44-9.12l-1.95,1.13c1.24,2.42,1.99,5.13,2.14,8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path43" />
+      <path
+         d="M82.28,99.79v-2.26c-3.28.15-6.37,1.01-9.12,2.44l1.13,1.95c2.42-1.24,5.13-1.99,8-2.14Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path44" />
+      <path
+         d="M66.7,130.24l-1.95,1.13c1.72,2.68,4,4.96,6.68,6.68l1.13-1.95c-2.34-1.52-4.33-3.51-5.85-5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path45" />
+      <path
+         d="M94,136.09l1.13,1.95c2.68-1.72,4.96-4,6.68-6.68l-1.95-1.13c-1.52,2.34-3.51,4.33-5.85,5.85Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path46" />
+      <path
+         d="M102.99,120.51c-.14,2.87-.89,5.57-2.14,8l1.95,1.13c1.43-2.75,2.3-5.84,2.44-9.12h-2.26Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path47" />
+      <path
+         d="M63.56,120.51h-2.26c.15,3.28,1.01,6.37,2.44,9.12l1.95-1.13c-1.24-2.42-1.99-5.13-2.14-8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path48" />
+      <path
+         d="M65.7,110.51l-1.95-1.13c-1.43,2.75-2.3,5.84-2.44,9.12h2.26c.14-2.87.89-5.57,2.14-8Z"
+         style="fill: #000; stroke-width: 0px;"
+         id="path49" />
     </g>
-    <g>
-      <path d="M63.34,8.16s-3.5,4.44-5.53,7.03v-6.03c0-.52-.25-.98-.64-1.18-.39-.19-.84-.08-1.13.29l-7.28,9.25c-.4.5-.38,1.3.03,1.79.41.48,1.06.47,1.46-.03,0,0,3.47-4.41,5.5-6.99v6.03c0,.52.26.98.65,1.17.39.19.84.08,1.13-.29,0,0,3.49-4.44,5.53-7.03v6.15c0,.7.46,1.27,1.03,1.27s1.03-.57,1.03-1.27v-9.29c0-.52-.26-.98-.65-1.17-.39-.19-.84-.08-1.13.3Z" style="fill: #000; stroke: #000; stroke-width: .6px;"/>
-      <path d="M48.76,8.09l-4.82,6.13c-.4.5-.38,1.3.02,1.79.41.48,1.06.47,1.46-.03,0,0,1.62-2.07,3.05-3.87v6.31c0,.7.46,1.27,1.03,1.27s1.03-.57,1.03-1.27v-9.44c0-.52-.26-.98-.65-1.17-.39-.19-.84-.08-1.13.3Z" style="fill: #000; stroke: #000; stroke-width: .6px;"/>
-      <path d="M71.71,12.61c-.16-.47-.53-.77-.95-.77h-2.11l1.54-1.95s.8-1.17.09-1.82c-.7-.64-1.58.06-1.58.06l-3.22,4.1c-.29.37-.37.91-.21,1.37.16.47.54.77.95.77h2.11l-2.5,3.17s-1.03,1.13-.27,1.89c.76.76,1.76-.14,1.76-.14l4.18-5.32c.29-.36.37-.91.21-1.37Z" style="fill: #000; stroke: #000; stroke-width: .6px;"/>
+    <g
+       id="g42"
+       transform="matrix(0.99998057,0,0,0.99998057,28.712722,-7.3320635)">
+      <path
+         id="path40-6"
+         d="m 20.6,26.79 c -0.37,0 -0.71,-0.17 -0.97,-0.47 -0.51,-0.6 -0.52,-1.54 -0.04,-2.16 l 6.97,-8.88 c 0.38,-0.48 1.05,-0.65 1.57,-0.39 0.52,0.26 0.79,0.82 0.79,1.45 v 4.77 l 4.64,-5.85 c 0.38,-0.48 1.01,-0.64 1.53,-0.38 0.5,0.25 0.83,0.81 0.83,1.44 v 8.82 c 0,0.86 -0.61,1.57 -1.36,1.57 -0.75,0 -1.36,-0.7 -1.36,-1.57 v -4.79 l -4.64,5.85 c -0.38,0.48 -1.01,0.64 -1.54,0.38 -0.5,-0.24 -0.83,-0.81 -0.83,-1.44 v -4.67 l -4.61,5.8 c -0.26,0.32 -0.62,0.51 -1,0.51 h 0.02 z"
+         style="fill:#2cabe1" />
+      <path
+         id="path41-9"
+         d="m 20.6,26.79 c -0.75,0 -1.35,-0.7 -1.35,-1.57 v -4.93 l -2.26,2.84 c -0.5,0.63 -1.44,0.65 -1.97,0.04 -0.51,-0.6 -0.52,-1.53 -0.03,-2.15 l 4.61,-5.76 c 0.26,-0.32 0.63,-0.5 1,-0.5 0.18,0 0.37,0.04 0.54,0.12 0.5,0.25 0.82,0.81 0.82,1.44 v 8.89 c 0,0.86 -0.61,1.57 -1.36,1.57 v 0 z"
+         style="fill:#ea2228" />
+      <path
+         id="path42-0"
+         d="m 37.2,26.81 v 0 c -0.35,0 -0.68,-0.15 -0.94,-0.42 -0.76,-0.78 -0.14,-1.84 0.29,-2.3 L 38.5,21.73 37.24,21.71 C 36.68,21.7 36.2,21.31 36,20.71 35.81,20.15 35.93,19.5 36.29,19.07 l 3.16,-3.83 c 0.23,-0.28 0.55,-0.48 1.13,-0.47 0.33,0 0.67,0.17 0.92,0.4 0.71,0.66 0.29,1.7 -0.07,2.2 l -1.04,1.26 1.26,0.02 c 0.56,0.01 1.04,0.4 1.24,1 0.19,0.56 0.07,1.21 -0.29,1.64 l -4.1,4.97 c -0.35,0.35 -0.65,0.55 -1.3,0.54 v 0 z"
+         style="fill:#00a650" />
     </g>
   </g>
-  <g id="components">
-    <text id="slug" transform="translate(79.15 362.67)" style="fill: #000; font-family: MyriadPro-Regular, &apos;Myriad Pro&apos;; font-size: 3px;"><tspan x="0" y="0" style="letter-spacing: -.03em;">F</tspan><tspan x="1.38" y="0" style="letter-spacing: -.01em;">r</tspan><tspan x="2.33" y="0">ee</tspan><tspan x="5.34" y="0" style="letter-spacing: -.01em;">v</tspan><tspan x="6.75" y="0">e</tspan><tspan x="8.26" y="0" style="letter-spacing: 0em;">r</tspan><tspan x="9.25" y="0">b</tspan></text>
-    <text id="modulename" transform="translate(94.66 362.67)" style="fill: #000; font-family: MyriadPro-Regular, &apos;Myriad Pro&apos;; font-size: 3px;"><tspan x="0" y="0" style="letter-spacing: 0em;">R</tspan><tspan x="1.63" y="0">e</tspan><tspan x="3.13" y="0" style="letter-spacing: -.01em;">v</tspan><tspan x="4.54" y="0">e</tspan><tspan x="6.04" y="0" style="letter-spacing: 0em;">r</tspan><tspan x="7.04" y="0">b E</tspan><tspan x="10.86" y="0" style="letter-spacing: -.01em;">ff</tspan><tspan x="12.57" y="0">e</tspan><tspan x="14.07" y="0" style="letter-spacing: .01em;">c</tspan><tspan x="15.45" y="0" style="letter-spacing: 0em;">t</tspan></text>
-    <circle id="Out" cx="83.32" cy="312.1" r="11.34" style="fill: blue; stroke-width: 0px;"/>
-    <circle id="Mix_CV" data-name="Mix CV" cx="32.13" cy="312.1" r="11.34" style="fill: lime; stroke-width: 0px;"/>
-    <circle id="Damp_CV" data-name="Damp CV" cx="83.32" cy="263.38" r="11.34" style="fill: lime; stroke-width: 0px;"/>
-    <circle id="Feedback_CV" data-name="Feedback CV" cx="32.13" cy="263.38" r="11.34" style="fill: lime; stroke-width: 0px;"/>
-    <circle id="Size_CV" data-name="Size CV" cx="83.32" cy="214.66" r="11.34" style="fill: lime; stroke-width: 0px;"/>
-    <circle id="Input" cx="32.13" cy="214.66" r="11.34" style="fill: lime; stroke-width: 0px;"/>
-    <circle id="Mix" cx="83.49" cy="119.21" r="17.01" style="fill: #ff0070; stroke-width: 0px;"/>
-    <circle id="Damp" cx="31.96" cy="119.21" r="17.01" style="fill: #ff0020; stroke-width: 0px;"/>
-    <circle id="Feedback" cx="83.49" cy="57.97" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
-    <circle id="Size" cx="31.96" cy="57.97" r="17.01" style="fill: #ff0040; stroke-width: 0px;"/>
+  <g
+     id="components">
+    <text
+       id="slug"
+       transform="translate(79.15 362.67)"
+       style="fill: #000; font-family: MyriadPro-Regular, 'Myriad Pro'; font-size: 3px;"><tspan
+         x="0"
+         y="0"
+         style="letter-spacing: -.03em;"
+         id="tspan52">F</tspan><tspan
+         x="1.38"
+         y="0"
+         style="letter-spacing: -.01em;"
+         id="tspan53">r</tspan><tspan
+         x="2.33"
+         y="0"
+         id="tspan54">ee</tspan><tspan
+         x="5.34"
+         y="0"
+         style="letter-spacing: -.01em;"
+         id="tspan55">v</tspan><tspan
+         x="6.75"
+         y="0"
+         id="tspan56">e</tspan><tspan
+         x="8.26"
+         y="0"
+         style="letter-spacing: 0em;"
+         id="tspan57">r</tspan><tspan
+         x="9.25"
+         y="0"
+         id="tspan58">b</tspan></text>
+    <text
+       id="modulename"
+       transform="translate(94.66 362.67)"
+       style="fill: #000; font-family: MyriadPro-Regular, 'Myriad Pro'; font-size: 3px;"><tspan
+         x="0"
+         y="0"
+         style="letter-spacing: 0em;"
+         id="tspan59">R</tspan><tspan
+         x="1.63"
+         y="0"
+         id="tspan60">e</tspan><tspan
+         x="3.13"
+         y="0"
+         style="letter-spacing: -.01em;"
+         id="tspan61">v</tspan><tspan
+         x="4.54"
+         y="0"
+         id="tspan62">e</tspan><tspan
+         x="6.04"
+         y="0"
+         style="letter-spacing: 0em;"
+         id="tspan63">r</tspan><tspan
+         x="7.04"
+         y="0"
+         id="tspan64">b E</tspan><tspan
+         x="10.86"
+         y="0"
+         style="letter-spacing: -.01em;"
+         id="tspan65">ff</tspan><tspan
+         x="12.57"
+         y="0"
+         id="tspan66">e</tspan><tspan
+         x="14.07"
+         y="0"
+         style="letter-spacing: .01em;"
+         id="tspan67">c</tspan><tspan
+         x="15.45"
+         y="0"
+         style="letter-spacing: 0em;"
+         id="tspan68">t</tspan></text>
+    <circle
+       id="Out"
+       cx="83.32"
+       cy="312.1"
+       r="11.34"
+       style="fill: blue; stroke-width: 0px;" />
+    <circle
+       id="Mix_CV"
+       data-name="Mix CV"
+       cx="32.13"
+       cy="312.1"
+       r="11.34"
+       style="fill: lime; stroke-width: 0px;" />
+    <circle
+       id="Damp_CV"
+       data-name="Damp CV"
+       cx="83.32"
+       cy="263.38"
+       r="11.34"
+       style="fill: lime; stroke-width: 0px;" />
+    <circle
+       id="Feedback_CV"
+       data-name="Feedback CV"
+       cx="32.13"
+       cy="263.38"
+       r="11.34"
+       style="fill: lime; stroke-width: 0px;" />
+    <circle
+       id="Size_CV"
+       data-name="Size CV"
+       cx="83.32"
+       cy="214.66"
+       r="11.34"
+       style="fill: lime; stroke-width: 0px;" />
+    <circle
+       id="Input"
+       cx="32.13"
+       cy="214.66"
+       r="11.34"
+       style="fill: lime; stroke-width: 0px;" />
+    <circle
+       id="Mix"
+       cx="83.49"
+       cy="119.21"
+       r="17.01"
+       style="fill: #ff0070; stroke-width: 0px;" />
+    <circle
+       id="Damp"
+       cx="31.96"
+       cy="119.21"
+       r="17.01"
+       style="fill: #ff0020; stroke-width: 0px;" />
+    <circle
+       id="Feedback"
+       cx="83.49"
+       cy="57.97"
+       r="17.01"
+       style="fill: #ff0040; stroke-width: 0px;" />
+    <circle
+       id="Size"
+       cx="31.96"
+       cy="57.97"
+       r="17.01"
+       style="fill: #ff0040; stroke-width: 0px;" />
   </g>
 </svg>
