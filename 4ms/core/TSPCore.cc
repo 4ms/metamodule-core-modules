@@ -188,7 +188,8 @@ public:
 	}
 
 	void handle_load_button() {
-		std::string_view initial_dir = "";
+		std::string_view initial_dir{sample_filename};
+		initial_dir = initial_dir.substr(0, initial_dir.find_last_of("/"));
 		async_open_file(initial_dir, ".wav, .WAV", "Load sample:", [this](char *path) {
 			if (path) {
 				load_sample(path);
