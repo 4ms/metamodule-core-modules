@@ -205,20 +205,27 @@ public:
 	}
 
 	void set_param(int id, float val) override {
+		SmartCoreProcessor::set_param(id, val);
+
 		// Buffer Threshold alt param: handle it only when the user changes it
 		if (id == param_idx<BufferThresholdAltParam>) {
 			auto samples_per_frame = stream.is_stereo() ? 2 : 1;
-			auto max_frames = std::min(stream.total_frames(), MByteToSamples(buffer_size_mb) / samples_per_frame);
+			auto max_frames = std::min(stream.total_frames(), stream.size() / samples_per_frame);
 
 			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
 		}
 
-		// All other parameters:
-		SmartCoreProcessor::set_param(id, val);
+		if (id == param_idx<MaxBufferSizeAltParam>) {
+			if (unsigned new_size_idx = getState<MaxBufferSizeAltParam>(); new_size_idx < BufferSizes.size()) {
+				auto new_size_mb = BufferSizes[new_size_idx];
+				auto new_size_samples = MByteToSamples(new_size_mb);
+				stream.resize(new_size_samples);
+			}
 
-		if (id == param_idx<LoadSampleAltParam> && val == 1) {
-			handle_load_button();
-			SmartCoreProcessor::set_param(id, 0);
+			if (id == param_idx<LoadSampleAltParam> && val == 1) {
+				handle_load_button();
+				SmartCoreProcessor::set_param(id, 0);
+			}
 		}
 	}
 
@@ -320,26 +327,17 @@ private:
 	float sample_rate = 48000.f;
 	unsigned prebuff_threshold = 1024;
 
-	// Sizes of pre-buffer. This determines how much sample data we store in RAM.
-	// The larger this is, the longer the sample we can load and re-trigger without
-	// needing to read from disk again.
-	// 1MB is 256k samples, or about 2.7sec of stereo or 5.5sec of mono
-	// 2MB is 512k samples, or about 5.5sec of stereo or 10.9sec of mono
-	// 4MB is 1M samples, or about 10.9sec of stereo or 21.8sec of mono
-	// 8MB is 2M samples, or about 21.8sec of stereo or 43.7sec of mono
-	// 16MB is 4M samples, or about 43.7sec of stereo or 87.4sec of mono
+	static constexpr unsigned MByteToSamples(unsigned MBytes) {
+		return MBytes * 1024u * 1024 / 4;
+	}
+	static constexpr std::array<unsigned, 12> BufferSizes{1, 2, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128};
 
 #ifdef VCVRACK
-	unsigned buffer_size_mb = 32;
+	unsigned default_buffer_size_mb = 32;
 #else
-	unsigned buffer_size_mb = 8;
+	unsigned default_buffer_size_mb = 8;
 #endif
-
-	constexpr unsigned MByteToSamples(unsigned MBytes) {
-		return MBytes * 1024 * 1024 / 4;
-	}
-
-	WavFileStream stream{MByteToSamples(buffer_size_mb)};
+	WavFileStream stream{MByteToSamples(default_buffer_size_mb)};
 
 	StreamResampler resampler{2}; //2: stereo
 
