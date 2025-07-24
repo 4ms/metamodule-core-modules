@@ -129,6 +129,7 @@ public:
 				resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sample_rate), sample_rate);
 				resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
 				resampler.flush();
+				display_sample_name();
 				play_state = Paused;
 				break;
 
@@ -256,10 +257,19 @@ public:
 	void load_sample(std::string_view filename) {
 		sample_filename.copy(filename);
 		play_state = PlayState::LoadSampleInfo;
+	}
+
+	void display_sample_name() {
+		std::string_view filename{sample_filename};
 		if (auto pos = filename.find_last_of('/'); pos != filename.npos)
 			wav_name.copy(filename.substr(pos + 1, filename.length() - pos - 5));
 		else
 			wav_name.copy(filename.substr(0, filename.length() - 4));
+
+		snprintf(wav_name._data + wav_name.length(),
+				 wav_name.capacity - wav_name.length(),
+				 " - %us",
+				 (unsigned)std::round(stream.sample_seconds()));
 	}
 
 	void load_state(std::string_view state) override {
