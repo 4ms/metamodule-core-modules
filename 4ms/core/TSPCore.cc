@@ -37,7 +37,7 @@ public:
 	void update() override {
 		handle_play();
 		handle_loop_toggle();
-		handle_zoom();
+		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
 
 		auto current_frame = stream.current_playback_frame();
 
@@ -198,11 +198,6 @@ public:
 		});
 	}
 
-	void handle_zoom() {
-		float zoom = 300.f * getState<WaveformZoomAltParam>() + 1.f; //1..301
-		waveform.set_x_zoom(zoom);
-	}
-
 	void set_param(int id, float val) override {
 		SmartCoreProcessor::set_param(id, val);
 
@@ -236,7 +231,6 @@ public:
 		setLED<LoopButton>(loop_mode ? 1.f : 0.f);
 	}
 
-	// Buffer Threshold alt param: handle it only when the user changes it
 	unsigned prebuff_threshold() {
 		auto samples_per_frame = stream.is_stereo() ? 2 : 1;
 		auto max_frames = stream.buffer_size() / samples_per_frame;
@@ -266,10 +260,11 @@ public:
 		else
 			wav_name.copy(filename.substr(0, filename.length() - 4));
 
-		snprintf(wav_name._data + wav_name.length(),
-				 wav_name.capacity - wav_name.length(),
-				 " - %us",
-				 (unsigned)std::round(stream.sample_seconds()));
+		auto secs = static_cast<unsigned>(std::round(stream.sample_seconds()));
+		if (secs < 60)
+			snprintf(wav_name.end(), wav_name.available(), " (%us)", secs);
+		else
+			snprintf(wav_name.end(), wav_name.available(), " (%um%us)", secs / 60, secs % 60);
 	}
 
 	void load_state(std::string_view state) override {
