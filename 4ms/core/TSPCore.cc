@@ -56,7 +56,7 @@ public:
 		switch (play_state) {
 			using enum PlayState;
 			case Buffering:
-				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold) {
+				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold()) {
 					err_message.clear();
 					play_state = Playing;
 				}
@@ -114,6 +114,8 @@ public:
 
 		setLED<BusyLight>(0.f);
 
+		handle_resize_buffer();
+
 		using enum PlayState;
 
 		switch (play_state) {
@@ -139,7 +141,7 @@ public:
 			case Paused:
 			case Buffering:
 			case Playing:
-				if (stream.frames_available() < prebuff_threshold) {
+				if (stream.frames_available() < prebuff_threshold()) {
 
 					if (stream.is_eof()) {
 						if (loop_mode) {
@@ -163,15 +165,11 @@ public:
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
 				play_state = PlayState::Restart;
-			}
 
-			else if (play_state == PlayState::Paused && stream.is_loaded())
-			{
+			} else if (play_state == PlayState::Paused && stream.is_loaded()) {
 				play_state = PlayState::Playing;
-			}
 
-			else if (play_state == PlayState::Playing)
-			{
+			} else if (play_state == PlayState::Playing) {
 				if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
 					end_out.start(0.010);
 					play_state = PlayState::Stopped;
@@ -207,24 +205,21 @@ public:
 	void set_param(int id, float val) override {
 		SmartCoreProcessor::set_param(id, val);
 
-		// Buffer Threshold alt param: handle it only when the user changes it
-		if (id == param_idx<BufferThresholdAltParam>) {
-			auto samples_per_frame = stream.is_stereo() ? 2 : 1;
-			auto max_frames = std::min(stream.total_frames(), stream.size() / samples_per_frame);
-
-			prebuff_threshold = std::max<unsigned>(val * 0.8f * max_frames, 1024);
+		// Load Sample: process it and then set the param back to 0
+		if (id == param_idx<LoadSampleAltParam> && val == 1) {
+			handle_load_button();
+			SmartCoreProcessor::set_param(id, 0);
 		}
+	}
 
-		if (id == param_idx<MaxBufferSizeAltParam>) {
-			if (unsigned new_size_idx = getState<MaxBufferSizeAltParam>(); new_size_idx < BufferSizes.size()) {
-				auto new_size_mb = BufferSizes[new_size_idx];
-				auto new_size_samples = MByteToSamples(new_size_mb);
-				stream.resize(new_size_samples);
-			}
-
-			if (id == param_idx<LoadSampleAltParam> && val == 1) {
-				handle_load_button();
-				SmartCoreProcessor::set_param(id, 0);
+	void handle_resize_buffer() {
+		if (unsigned new_size_idx = getState<MaxBufferSizeAltParam>(); new_size_idx < BufferSizes.size()) {
+			auto new_size_mb = BufferSizes[new_size_idx];
+			auto new_size_samples = MByteToSamples(new_size_mb);
+			if (new_size_samples != stream.max_size()) {
+				if (stream.resize(new_size_samples)) {
+					play_state = PlayState::Restart;
+				}
 			}
 		}
 	}
@@ -238,6 +233,13 @@ public:
 		}
 
 		setLED<LoopButton>(loop_mode ? 1.f : 0.f);
+	}
+
+	// Buffer Threshold alt param: handle it only when the user changes it
+	unsigned prebuff_threshold() {
+		auto samples_per_frame = stream.is_stereo() ? 2 : 1;
+		auto max_frames = stream.buffer_size() / samples_per_frame;
+		return std::max<unsigned>(getState<BufferThresholdAltParam>() / 5.f * max_frames, 1024);
 	}
 
 	void set_samplerate(float sr) override {
@@ -325,7 +327,6 @@ private:
 	};
 
 	float sample_rate = 48000.f;
-	unsigned prebuff_threshold = 1024;
 
 	static constexpr unsigned MByteToSamples(unsigned MBytes) {
 		return MBytes * 1024u * 1024 / 4;
