@@ -85,9 +85,9 @@ public:
 				} else {
 					if (!stream.is_eof() && err_message.length() == 0) {
 						setLED<PlayButton>(Red);
-						Gui::notify_user("TSP: Buffer underflow", 1000);
+						Gui::notify_user("TSP: Buffer underflow", 3000);
 						err_message = "Underflow";
-						error_message_hold.start(1); //2 seconds
+						error_message_hold.start(4.f); //4 seconds
 					}
 				}
 				break;
