@@ -24,8 +24,8 @@ public:
 	TSPCore() {
 		fs_thread.start([this]() { async_process_filesystem(); });
 
-		waveform.set_wave_color(0x33, 0xFF, 0xBB); //teal
-		waveform.set_bar_color(0x55, 0x55, 0x55);  //dark grey
+		waveform.set_wave_color(Teal);
+		waveform.set_bar_color(0x55, 0x55, 0x55); //dark grey
 		waveform.set_cursor_width(2);
 	}
 
@@ -46,11 +46,6 @@ public:
 		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
 		setOutput<PositionOut>(5.f * (float)current_frame / (float)stream.total_frames());
 
-		// Clear error messages after a moment
-		if (err_message.length() > 0 && !error_message_hold.update()) {
-			err_message = "";
-		}
-
 		switch (play_state) {
 			using enum PlayState;
 			case Buffering:
@@ -58,7 +53,6 @@ public:
 					err_message.clear();
 					play_state = Playing;
 				}
-				setLED<PlayButton>(Yellow);
 				break;
 
 			case Playing:
@@ -71,7 +65,6 @@ public:
 				}
 
 				if (stream.frames_available() > 0) {
-					setLED<PlayButton>(Green);
 					auto [left, right] = resampler.process_stereo([this] { return stream.pop_sample(); });
 
 					setOutput<LeftOut>(left * 5.f);
@@ -80,56 +73,69 @@ public:
 					waveform.draw_sample(left);
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
+					err_message = "";
+
 				} else {
 					if (!stream.is_eof() && err_message.length() == 0) {
 						setLED<PlayButton>(Red);
+						waveform.set_wave_color(Red);
 						Gui::notify_user("TSP: Buffer underflow", 3000);
 						err_message = "Underflow";
-						error_message_hold.start(4.f); //4 seconds
 					}
 				}
+
 				break;
 
 			case Stopped:
 			case Restart:
 				stream.reset_playback_to_frame(0);
 				waveform.set_cursor_position(0);
-				setLED<PlayButton>(Off);
 				break;
 
 			case Paused:
-				setLED<PlayButton>(Off);
+			case LoadSampleInfo:
 				break;
 
-			case LoadSampleInfo:
-				setLED<PlayButton>(Yellow);
+			case FileError:
+				if (file_error_retry.update() == false) {
+					play_state = LoadSampleInfo;
+					immediate_play = true;
+				}
 				break;
 		}
 	}
 
 	// This runs in a low-priority background task:
 	void async_process_filesystem() {
+		using enum PlayState;
 
 		setLED<BusyLight>(0.f);
 
 		handle_loop_toggle();
 		handle_resize_buffer();
 		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
-		using enum PlayState;
 
 		switch (play_state) {
 			case Stopped:
+			case FileError:
 				break;
 
 			case LoadSampleInfo:
 				if (!stream.load(sample_filename)) {
 					err_message = "Error loading file";
+					play_state = FileError;
+					file_error_retry.start(0.5f);
+				} else {
+					resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sample_rate), sample_rate);
+					resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
+					resampler.flush();
+					display_sample_name();
+					if (immediate_play) {
+						immediate_play = false;
+						play_state = Playing;
+					} else
+						play_state = Paused;
 				}
-				resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sample_rate), sample_rate);
-				resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
-				resampler.flush();
-				display_sample_name();
-				play_state = Paused;
 				break;
 
 			case Restart:
@@ -145,7 +151,6 @@ public:
 
 					if (stream.is_eof()) {
 						if (loop_mode) {
-							//TODO: try play_state = Restart;
 							stream.seek_frame_in_file(0);
 						}
 					} else {
@@ -155,6 +160,37 @@ public:
 				}
 				break;
 		};
+
+		if (stream.is_file_error()) {
+			err_message = "Disk Error";
+			stream.unload();
+			play_state = FileError;
+			file_error_retry.start(0.5f);
+		}
+
+		if (play_state == Playing) {
+			setLED<PlayButton>(Green);
+			waveform.set_wave_color(Teal);
+
+		} else if (play_state == Paused) {
+			setLED<PlayButton>(Off);
+			waveform.set_wave_color(Teal);
+
+		} else if (play_state == FileError) {
+			setLED<PlayButton>(Red);
+			waveform.set_wave_color(Red);
+
+		} else if (play_state == LoadSampleInfo) {
+			setLED<PlayButton>(Yellow);
+			waveform.set_wave_color(Red);
+
+		} else if (play_state == Buffering) {
+			setLED<PlayButton>(Yellow);
+			waveform.set_wave_color(Yellow);
+
+		} else if (play_state == Stopped || play_state == Restart) {
+			setLED<PlayButton>(Off);
+		}
 	}
 
 	void handle_play() {
@@ -213,7 +249,8 @@ public:
 			auto new_size_samples = MByteToSamples(new_size_mb);
 			if (new_size_samples != stream.max_size()) {
 				if (stream.resize(new_size_samples)) {
-					play_state = PlayState::Restart;
+					if (play_state == PlayState::Playing)
+						play_state = PlayState::Restart;
 				}
 			}
 		}
@@ -240,7 +277,7 @@ public:
 		sample_rate = sr;
 
 		end_out.set_update_rate_hz(sample_rate);
-		error_message_hold.set_update_rate_hz(sample_rate);
+		file_error_retry.set_update_rate_hz(sample_rate);
 
 		if (auto source_sr = stream.wav_sample_rate()) {
 			resampler.set_sample_rate_in_out(*source_sr, sample_rate);
@@ -250,6 +287,7 @@ public:
 	void load_sample(std::string_view filename) {
 		sample_filename.copy(filename);
 		play_state = PlayState::LoadSampleInfo;
+		immediate_play = false;
 	}
 
 	void display_sample_name() {
@@ -306,8 +344,9 @@ private:
 	StaticString<255> err_message = "";
 	StaticString<255> wav_name = "Load a Sample";
 
-	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart };
+	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart, FileError };
 	std::atomic<PlayState> play_state{PlayState::Stopped};
+	bool immediate_play = false;
 
 	Toggler play_button;
 	cpputil::SchmittTrigger play_jack{0.2f, 0.5f};
@@ -318,9 +357,10 @@ private:
 
 	OneShot end_out{48000};
 
-	OneShot error_message_hold{48000};
+	OneShot file_error_retry{48000};
 
-	static constexpr std::array<float, 3> Yellow = {0.9f, 1.f, 0};
+	static constexpr std::array<float, 3> Teal = {0.2f, 1.f, 0.73f};
+	static constexpr std::array<float, 3> Yellow = {0.9f, 0.8f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
 	static constexpr std::array<float, 3> Green = {0.1f, 1.f, 0.1f};
 	static constexpr std::array<float, 3> Off = {0, 0, 0};
@@ -338,7 +378,7 @@ private:
 	static constexpr std::array<unsigned, 12> BufferSizes{1, 2, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128};
 
 #ifdef VCVRACK
-	unsigned default_buffer_size_mb = 32;
+	unsigned default_buffer_size_mb = 128;
 #else
 	unsigned default_buffer_size_mb = 8;
 #endif
