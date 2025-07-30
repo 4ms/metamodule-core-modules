@@ -36,8 +36,6 @@ public:
 
 	void update() override {
 		handle_play();
-		handle_loop_toggle();
-		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
 
 		auto current_frame = stream.current_playback_frame();
 
@@ -114,8 +112,9 @@ public:
 
 		setLED<BusyLight>(0.f);
 
+		handle_loop_toggle();
 		handle_resize_buffer();
-
+		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
 		using enum PlayState;
 
 		switch (play_state) {
