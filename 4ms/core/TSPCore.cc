@@ -201,6 +201,7 @@ public:
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
 				play_state = PlayState::Restart;
+				restart_playback();
 
 			} else if (play_state == PlayState::Paused && stream.is_loaded()) {
 				play_state = PlayState::Playing;
@@ -213,6 +214,7 @@ public:
 				} else if (getState<PlayRetrigModeAltParam>() == RetrigMode::Retrigger) {
 					end_out.start(0.010);
 					play_state = PlayState::Restart;
+					restart_playback();
 
 				} else {
 					play_state = PlayState::Paused;
@@ -233,6 +235,12 @@ public:
 		});
 	}
 
+	void restart_playback() {
+		play_state = PlayState::Restart;
+		stream.reset_playback_to_frame(0);
+		waveform.set_cursor_position(0);
+	}
+
 	void set_param(int id, float val) override {
 		SmartCoreProcessor::set_param(id, val);
 
@@ -249,8 +257,10 @@ public:
 			auto new_size_samples = MByteToSamples(new_size_mb);
 			if (new_size_samples != stream.max_size()) {
 				if (stream.resize(new_size_samples)) {
-					if (play_state == PlayState::Playing)
+					if (play_state == PlayState::Playing) {
 						play_state = PlayState::Restart;
+						restart_playback();
+					}
 				}
 			}
 		}
