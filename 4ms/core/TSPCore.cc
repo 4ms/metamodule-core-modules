@@ -25,8 +25,8 @@ public:
 		fs_thread.start([this]() { async_process_filesystem(); });
 
 		waveform.set_wave_color(Teal);
-		waveform.set_bar_color(0x22, 0x22, 0x22);		//dark grey
-		waveform.set_highlight_color(0xff, 0x80, 0x00); //yellow
+		waveform.set_bar_color(0x22, 0x22, 0x22);		// dark grey
+		waveform.set_highlight_color(0xff, 0x80, 0x00); // orange
 		waveform.set_cursor_width(2);
 	}
 
@@ -192,8 +192,8 @@ public:
 		}
 
 		float total = stream.total_frames();
-		waveform.set_highlighted_begin_end((float)stream.first_frame_in_buffer() / total,
-										   (float)stream.latest_buffered_frame() / total);
+		waveform.set_highlighted_begin_end(total ? (float)stream.first_frame_in_buffer() / total : 0,
+										   total ? (float)stream.latest_buffered_frame() / total : 0);
 	}
 
 	void handle_play() {
