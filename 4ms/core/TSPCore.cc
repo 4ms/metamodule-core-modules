@@ -25,8 +25,8 @@ public:
 		fs_thread.start([this]() { async_process_filesystem(); });
 
 		waveform.set_wave_color(Teal);
-		waveform.set_bar_color(0x22, 0x22, 0x22);		// dark grey
-		waveform.set_highlight_color(0xff, 0x80, 0x00); // orange
+		waveform.set_bar_color(Grey);
+		waveform.set_highlight_color(Orange);
 		waveform.set_cursor_width(2);
 	}
 
@@ -378,12 +378,6 @@ private:
 
 	OneShot file_error_retry{48000};
 
-	static constexpr std::array<float, 3> Teal = {0.2f, 1.f, 0.73f};
-	static constexpr std::array<float, 3> Yellow = {0.9f, 0.8f, 0};
-	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
-	static constexpr std::array<float, 3> Green = {0.1f, 1.f, 0.1f};
-	static constexpr std::array<float, 3> Off = {0, 0, 0};
-
 	StreamingWaveformDisplay waveform{
 		base_element(WaveformDisplay).width_mm,
 		base_element(WaveformDisplay).height_mm,
@@ -406,6 +400,14 @@ private:
 	StreamResampler resampler{2}; //2: stereo
 
 	enum RetrigMode { Retrigger = 0, Stop = 1, Pause = 2 };
+
+	static constexpr std::array<float, 3> Teal = {0.2f, 1.f, 0.73f};
+	static constexpr std::array<float, 3> Yellow = {0.9f, 0.8f, 0};
+	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
+	static constexpr std::array<float, 3> Green = {0.0f, 1.f, 0.0f};
+	static constexpr std::array<float, 3> Grey = {0.13f, 0.13f, 0.13f};
+	static constexpr std::array<float, 3> Orange = {1.0f, 0.5f, 0.1f};
+	static constexpr std::array<float, 3> Off = {0, 0, 0};
 
 	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
 };
