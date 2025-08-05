@@ -386,7 +386,7 @@ private:
 	float sample_rate = 48000.f;
 
 	static constexpr unsigned MByteToSamples(unsigned MBytes) {
-		return MBytes * 1024u * 1024 / 4;
+		return MBytes * 1024u * 1024 / 2; //assume 16-bit samples
 	}
 	static constexpr std::array<unsigned, 12> BufferSizes{1, 2, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128};
 

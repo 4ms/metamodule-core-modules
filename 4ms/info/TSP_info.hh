@@ -30,7 +30,7 @@ struct TSPInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Play Retrig Mode", ""}, 3, 0}, {"Retrigger", "Stop", "Pause"}},
 		AltParamContinuous{{to_mm<72>(51.827), to_mm<72>(48.461), Center, "Waveform Zoom", ""}, 0.1015625f},
 		AltParamChoiceLabeled{{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 5, 1}, {"Minimal", "20%", "40%", "60%", "80%"}},
-		AltParamChoiceLabeled{{{to_mm<72>(30.276), to_mm<72>(48.461), Center, "Max Buffer Size", ""}, 12, 3}, {"1MB (2s 48kHz)", "2MB (5s 48kHz)", "4MB (10s 48kHz)", "8MB (21s 48kHz)", "16MB (43s 48kHz)", "24MB (1m5s 48kHz)", "32MB (1m27s 48kHz)", "48MB (2m11s 48kHz)", "64MB (2m54s 48kHz)", "80MB (3m38s 48kHz)", "96MB (4m22s 48kHz)", "128MB (5m49s 48kHz)"}},
+		AltParamChoiceLabeled{{{to_mm<72>(30.276), to_mm<72>(48.461), Center, "Max Buffer Size", ""}, 12, 3}, {"1MB (5s 48kHz)", "2MB (10s 48kHz)", "4MB (21s 48kHz)", "8MB (43s 48kHz)", "16MB (1m27s 48kHz)", "24MB (2m11s 48kHz)", "32MB (2m54s 48kHz)", "48MB (4m22s 48kHz)", "64MB (5m49s 48kHz)", "80MB (7m16s 48kHz)", "96MB (8m44s 48kHz)", "128MB (13m58s 48kHz)"}},
 		WavFileBrowseAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
 }};
 
