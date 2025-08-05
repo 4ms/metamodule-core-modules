@@ -147,7 +147,6 @@ public:
 			case Buffering:
 			case Playing:
 				if (stream.frames_available() < prebuff_threshold()) {
-
 					if (stream.is_eof()) {
 						if (loop_mode) {
 							stream.seek_frame_in_file(0);
@@ -203,7 +202,6 @@ public:
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
 
 			if (play_state == PlayState::Stopped && stream.is_loaded()) {
-				play_state = PlayState::Restart;
 				restart_playback();
 
 			} else if (play_state == PlayState::Paused && stream.is_loaded()) {
@@ -216,7 +214,6 @@ public:
 
 				} else if (getState<PlayRetrigModeAltParam>() == RetrigMode::Retrigger) {
 					end_out.start(0.010);
-					play_state = PlayState::Restart;
 					restart_playback();
 
 				} else {
@@ -255,16 +252,20 @@ public:
 	}
 
 	void handle_resize_buffer() {
+		using enum PlayState;
 		if (unsigned new_size_idx = getState<MaxBufferSizeAltParam>(); new_size_idx < BufferSizes.size()) {
-			auto new_size_mb = BufferSizes[new_size_idx];
-			auto new_size_samples = MByteToSamples(new_size_mb);
+
+			auto new_size_samples = MByteToSamples(BufferSizes[new_size_idx]);
 			if (new_size_samples != stream.max_size()) {
-				if (stream.resize(new_size_samples)) {
-					if (play_state == PlayState::Playing) {
-						play_state = PlayState::Restart;
-						restart_playback();
-					}
-				}
+				// Stop playback before changing buffer size to avoid race conditions
+				auto prev_state = play_state.load(std::memory_order_acquire);
+				play_state.store(Stopped, std::memory_order_release);
+
+				stream.resize(new_size_samples);
+
+				// Restart playback if we were playing before changing buffer size
+				if (prev_state == Playing || prev_state == Buffering)
+					restart_playback();
 			}
 		}
 	}
