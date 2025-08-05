@@ -264,8 +264,12 @@ public:
 				stream.resize(new_size_samples);
 
 				// Restart playback if we were playing before changing buffer size
-				if (prev_state == Playing || prev_state == Buffering)
+				if (prev_state == LoadSampleInfo) {
+					play_state = LoadSampleInfo;
+
+				} else if (prev_state == Playing || prev_state == Buffering) {
 					restart_playback();
+				}
 			}
 		}
 	}
@@ -319,6 +323,7 @@ public:
 	}
 
 	void load_state(std::string_view state) override {
+		handle_resize_buffer();
 		if (state.length()) {
 			load_sample(state);
 		}
