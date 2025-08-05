@@ -25,7 +25,8 @@ public:
 		fs_thread.start([this]() { async_process_filesystem(); });
 
 		waveform.set_wave_color(Teal);
-		waveform.set_bar_color(0x55, 0x55, 0x55); //dark grey
+		waveform.set_bar_color(0x22, 0x22, 0x22);		//dark grey
+		waveform.set_highlight_color(0xff, 0x80, 0x00); //yellow
 		waveform.set_cursor_width(2);
 	}
 
@@ -189,6 +190,10 @@ public:
 		} else if (play_state == Stopped || play_state == Restart) {
 			setLED<PlayButton>(Off);
 		}
+
+		float total = stream.total_frames();
+		waveform.set_highlighted_begin_end((float)stream.first_frame_in_buffer() / total,
+										   (float)stream.latest_buffered_frame() / total);
 	}
 
 	void handle_play() {
