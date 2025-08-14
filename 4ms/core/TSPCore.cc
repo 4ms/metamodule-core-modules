@@ -180,11 +180,11 @@ public:
 
 		} else if (play_state == LoadSampleInfo) {
 			setLED<PlayButton>(Yellow);
-			waveform.set_wave_color(Red);
+			waveform.set_wave_color(Yellow);
 
 		} else if (play_state == Buffering) {
 			setLED<PlayButton>(Yellow);
-			waveform.set_wave_color(Yellow);
+			waveform.set_wave_color(Teal);
 
 		} else if (play_state == Stopped || play_state == Restart) {
 			setLED<PlayButton>(Off);
@@ -205,9 +205,12 @@ public:
 				restart_playback();
 
 			} else if (play_state == PlayState::Paused && stream.is_loaded()) {
-				play_state = PlayState::Playing;
+				if (stream.samples_available() > prebuff_threshold())
+					play_state = PlayState::Playing;
+				else
+					play_state = PlayState::Buffering;
 
-			} else if (play_state == PlayState::Playing) {
+			} else if (play_state == PlayState::Playing || play_state == PlayState::Buffering) {
 				if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
 					end_out.start(0.010);
 					play_state = PlayState::Stopped;
