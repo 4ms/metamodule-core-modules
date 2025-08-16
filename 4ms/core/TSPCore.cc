@@ -205,10 +205,7 @@ public:
 				restart_playback();
 
 			} else if (play_state == PlayState::Paused && stream.is_loaded()) {
-				if (stream.samples_available() > prebuff_threshold())
-					play_state = PlayState::Playing;
-				else
-					play_state = PlayState::Buffering;
+				play_state = PlayState::Buffering;
 
 			} else if (play_state == PlayState::Playing || play_state == PlayState::Buffering) {
 				if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
@@ -291,7 +288,20 @@ public:
 	unsigned prebuff_threshold() {
 		auto samples_per_frame = stream.is_stereo() ? 2 : 1;
 		auto max_frames = stream.buffer_size() / samples_per_frame;
-		return std::max<unsigned>(getState<BufferThresholdAltParam>() / 5.f * max_frames, 1024);
+		if (max_frames <= 1024)
+			return max_frames;
+
+		auto threshold = getState<BufferThresholdAltParam>() * max_frames;
+
+		// Don't allow making threshold at or near 100% if the sample cannot be
+		// fully buffered, or else we get too many frequent small disk reads
+		if (threshold > (max_frames - 1024)) {
+			auto buffer_frames = stream.buffer_size() / (stream.is_stereo() ? 2 : 1);
+			if (stream.total_frames() > buffer_frames) {
+				threshold = max_frames - 1024;
+			}
+		}
+		return std::max<unsigned>(threshold, 1024);
 	}
 
 	void set_samplerate(float sr) override {
