@@ -49,6 +49,7 @@ public:
 
 		switch (play_state) {
 			using enum PlayState;
+
 			case Buffering:
 				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold_frames()) {
 					err_message.clear();
@@ -87,19 +88,17 @@ public:
 
 				break;
 
-			case Stopped:
-			case Restart:
-				break;
-
-			case Paused:
-			case LoadSampleInfo:
-				break;
-
 			case FileError:
 				if (file_error_retry.update() == false) {
 					play_state = LoadSampleInfo;
 					immediate_play = true;
 				}
+				break;
+
+			case Stopped:
+			case Restart:
+			case Paused:
+			case LoadSampleInfo:
 				break;
 		}
 	}
