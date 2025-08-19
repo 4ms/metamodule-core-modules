@@ -26,7 +26,7 @@ public:
 
 		waveform.set_wave_color(Teal);
 		waveform.set_bar_color(Grey);
-		waveform.set_highlight_color(Orange);
+		waveform.set_highlight_color(Yellow);
 		waveform.set_cursor_width(2);
 	}
 
@@ -50,7 +50,7 @@ public:
 		switch (play_state) {
 			using enum PlayState;
 			case Buffering:
-				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold()) {
+				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold_frames()) {
 					err_message.clear();
 					play_state = Playing;
 				}
@@ -146,7 +146,7 @@ public:
 			case Paused:
 			case Buffering:
 			case Playing:
-				if (stream.frames_available() < prebuff_threshold()) {
+				if (stream.frames_available() < prebuff_threshold_frames()) {
 					if (stream.is_eof()) {
 						if (loop_mode) {
 							stream.seek_frame_in_file(0);
@@ -156,6 +156,11 @@ public:
 						stream.read_frames_from_file();
 					}
 				}
+				// Set highlight color, add 1024 frames to reduce flickering
+				if ((stream.frames_available() + 1024) < prebuff_threshold_frames())
+					waveform.set_highlight_color(Yellow);
+				else
+					waveform.set_highlight_color(DarkGreen);
 				break;
 		};
 
@@ -285,7 +290,7 @@ public:
 		setLED<LoopButton>(loop_mode ? 1.f : 0.f);
 	}
 
-	unsigned prebuff_threshold() {
+	unsigned prebuff_threshold_frames() {
 		auto samples_per_frame = stream.is_stereo() ? 2 : 1;
 		auto max_frames = stream.buffer_size() / samples_per_frame;
 		if (max_frames <= 1024)
@@ -414,6 +419,7 @@ private:
 	enum RetrigMode { Retrigger = 0, Stop = 1, Pause = 2 };
 
 	static constexpr std::array<float, 3> Teal = {0.2f, 1.f, 0.73f};
+	static constexpr std::array<float, 3> DarkGreen = {0.1f, 0.5f, 0.35f};
 	static constexpr std::array<float, 3> Yellow = {0.9f, 0.8f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
 	static constexpr std::array<float, 3> Green = {0.0f, 1.f, 0.0f};
