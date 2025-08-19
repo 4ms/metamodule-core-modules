@@ -296,8 +296,7 @@ public:
 		// Don't allow making threshold at or near 100% if the sample cannot be
 		// fully buffered, or else we get too many frequent small disk reads
 		if (threshold > (max_frames - 1024)) {
-			auto buffer_frames = stream.buffer_size() / (stream.is_stereo() ? 2 : 1);
-			if (stream.total_frames() > buffer_frames) {
+			if (stream.total_frames() > max_frames) {
 				threshold = max_frames - 1024;
 			}
 		}
