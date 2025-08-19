@@ -159,6 +159,8 @@ public:
 				// Set highlight color, add 1024 frames to reduce flickering
 				if ((stream.frames_available() + 1024) < prebuff_threshold_frames())
 					waveform.set_highlight_color(Yellow);
+				else if (stream.total_frames() <= (stream.buffer_size() / (stream.is_stereo() ? 2 : 1)))
+					waveform.set_highlight_color(Teal);
 				else
 					waveform.set_highlight_color(DarkGreen);
 				break;
@@ -291,8 +293,7 @@ public:
 	}
 
 	unsigned prebuff_threshold_frames() {
-		auto samples_per_frame = stream.is_stereo() ? 2 : 1;
-		auto max_frames = stream.buffer_size() / samples_per_frame;
+		auto max_frames = stream.buffer_size() / (stream.is_stereo() ? 2 : 1);
 		if (max_frames <= 1024)
 			return max_frames;
 
