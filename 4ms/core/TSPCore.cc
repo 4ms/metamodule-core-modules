@@ -131,7 +131,7 @@ public:
 					display_sample_name();
 					if (immediate_play) {
 						immediate_play = false;
-						play_state = Playing;
+						play_state = Buffering;
 					} else
 						play_state = Paused;
 				}
@@ -323,8 +323,8 @@ public:
 
 	void load_sample(std::string_view filename) {
 		sample_filename.copy(filename);
+		immediate_play = (play_state == PlayState::Playing);
 		play_state = PlayState::LoadSampleInfo;
-		immediate_play = false;
 	}
 
 	void display_sample_name() {
