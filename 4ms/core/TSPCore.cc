@@ -25,8 +25,8 @@ public:
 		fs_thread.start([this]() { async_process_filesystem(); });
 
 		waveform.set_wave_color(Teal);
-		waveform.set_bar_color(Grey);
-		waveform.set_highlight_color(Yellow);
+		waveform.set_bar_bg_color(Black);
+		waveform.set_bar_fg_color(LightGrey);
 		waveform.set_cursor_width(2);
 	}
 
@@ -80,7 +80,7 @@ public:
 					if (!stream.is_eof() && err_message.length() == 0) {
 						setLED<PlayButton>(Red);
 						waveform.set_wave_color(Red);
-						Gui::notify_user("TSP: Buffer underflow", 3000);
+						Gui::notify_user("Sample buffer underflow", 3000);
 						err_message = "Underflow";
 					}
 				}
@@ -156,15 +156,16 @@ public:
 						stream.read_frames_from_file();
 					}
 				}
-				// Set highlight color, add 1024 frames to reduce flickering
-				if ((stream.frames_available() + 1024) < prebuff_threshold_frames())
-					waveform.set_highlight_color(Yellow);
-				else if (stream.total_frames() <= (stream.buffer_size() / (stream.is_stereo() ? 2 : 1)))
-					waveform.set_highlight_color(Teal);
-				else
-					waveform.set_highlight_color(DarkGreen);
+
 				break;
 		};
+
+		if (stream.is_eof())
+			waveform.set_bar_fg_color(DarkGreen);
+		else if ((stream.frames_available() + 1024) < prebuff_threshold_frames())
+			waveform.set_bar_fg_color(LightGrey);
+		else
+			waveform.set_bar_fg_color(Blue);
 
 		if (stream.is_file_error()) {
 			err_message = "Disk Error";
@@ -198,8 +199,8 @@ public:
 		}
 
 		float total = stream.total_frames();
-		waveform.set_highlighted_begin_end(total ? (float)stream.first_frame_in_buffer() / total : 0,
-										   total ? (float)stream.latest_buffered_frame() / total : 0);
+		waveform.set_bar_begin_end(total ? (float)stream.first_frame_in_buffer() / total : 0,
+								   total ? (float)stream.latest_buffered_frame() / total : 0);
 	}
 
 	void handle_play() {
@@ -293,11 +294,11 @@ public:
 	}
 
 	unsigned prebuff_threshold_frames() {
-		auto max_frames = stream.buffer_size() / (stream.is_stereo() ? 2 : 1);
+		auto max_frames = stream.buffer_frames();
 		if (max_frames <= 1024)
 			return max_frames;
 
-		auto threshold = getState<BufferThresholdAltParam>() * max_frames;
+		uint32_t threshold = getState<BufferThresholdAltParam>() * max_frames;
 
 		// Don't allow making threshold at or near 100% if the sample cannot be
 		// fully buffered, or else we get too many frequent small disk reads
@@ -420,11 +421,13 @@ private:
 	enum RetrigMode { Retrigger = 0, Stop = 1, Pause = 2 };
 
 	static constexpr std::array<float, 3> Teal = {0.2f, 1.f, 0.73f};
-	static constexpr std::array<float, 3> DarkGreen = {0.1f, 0.5f, 0.35f};
 	static constexpr std::array<float, 3> Yellow = {0.9f, 0.8f, 0};
 	static constexpr std::array<float, 3> Red = {1.0f, 0, 0};
 	static constexpr std::array<float, 3> Green = {0.0f, 1.f, 0.0f};
-	static constexpr std::array<float, 3> Grey = {0.13f, 0.13f, 0.13f};
+	static constexpr std::array<float, 3> Blue = {0.f, 0.3f, 0.85f};
+	static constexpr std::array<float, 3> DarkGreen = {0.1f, 0.7f, 0.35f};
+	static constexpr std::array<float, 3> LightGrey = {0.5f, 0.5f, 0.5f};
+	static constexpr std::array<float, 3> Black = {0.f, 0.f, 0.f};
 	static constexpr std::array<float, 3> Orange = {1.0f, 0.5f, 0.1f};
 	static constexpr std::array<float, 3> Off = {0, 0, 0};
 
