@@ -7,12 +7,15 @@
 #include "gui/notification.hh"
 #include "info/TSP_info.hh"
 #include "patch/patch_file.hh"
+#include "system/time.hh"
 #include "util/edge_detector.hh"
 #include "util/oscs.hh"
 #include "util/schmitt_trigger.hh"
 #include "util/static_string.hh"
 #include "wav/wav_file_stream.hh"
 #include <atomic>
+
+#include "medium/debug_raw.h"
 
 namespace MetaModule
 {
@@ -51,7 +54,7 @@ public:
 			using enum PlayState;
 
 			case Buffering:
-				if (stream.is_eof() || stream.frames_available() >= prebuff_threshold_frames()) {
+				if (stream.is_eof() || stream.frames_available() >= playback_threshold_frames()) {
 					err_message.clear();
 					play_state = Playing;
 				}
@@ -68,7 +71,6 @@ public:
 
 				if (stream.frames_available() > 0) {
 					auto [left, right] = resampler.process_stereo([this] { return stream.pop_sample(); });
-
 					setOutput<LeftOut>(left * 5.f);
 					setOutput<RightOut>(right * 5.f);
 
@@ -111,7 +113,6 @@ public:
 
 		handle_loop_toggle();
 		handle_resize_buffer();
-		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
 
 		switch (play_state) {
 			case Stopped:
@@ -145,26 +146,21 @@ public:
 			case Paused:
 			case Buffering:
 			case Playing:
-				if (stream.frames_available() < prebuff_threshold_frames()) {
-					if (stream.is_eof()) {
-						if (loop_mode) {
-							stream.seek_frame_in_file(0);
+				if (delayed_start_time <= System::get_ticks()) {
+					if (stream.frames_available() < prebuff_threshold_frames()) {
+						if (stream.is_eof()) {
+							if (loop_mode) {
+								stream.seek_frame_in_file(0);
+							}
+						} else {
+							setLED<BusyLight>(1.f);
+							stream.read_frames_from_file();
 						}
-					} else {
-						setLED<BusyLight>(1.f);
-						stream.read_frames_from_file();
 					}
 				}
 
 				break;
 		};
-
-		if (stream.is_eof())
-			waveform.set_bar_fg_color(DarkGreen);
-		else if ((stream.frames_available() + 1024) < prebuff_threshold_frames())
-			waveform.set_bar_fg_color(LightGrey);
-		else
-			waveform.set_bar_fg_color(Blue);
 
 		if (stream.is_file_error()) {
 			err_message = "Disk Error";
@@ -173,7 +169,21 @@ public:
 			file_error_retry.start(0.5f);
 		}
 
-		if (play_state == Playing) {
+		// Draw waveform and buffer bar
+
+		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
+
+		if (stream.is_eof())
+			waveform.set_bar_fg_color(DarkGreen);
+		else if ((stream.frames_available() + 1024) < playback_threshold_frames())
+			waveform.set_bar_fg_color(LightGrey);
+		else
+			waveform.set_bar_fg_color(Blue);
+
+		if (delayed_start_time > System::get_ticks())
+			waveform.set_wave_color(Blue);
+
+		else if (play_state == Playing) {
 			setLED<PlayButton>(Green);
 			waveform.set_wave_color(Teal);
 
@@ -256,6 +266,16 @@ public:
 			handle_load_button();
 			SmartCoreProcessor::set_param(id, 0);
 		}
+		// Startup Delay
+		if (id == param_idx<StartupDelayAltParam> && delayed_start_time == 0) {
+			auto delayed_param = getState<StartupDelayAltParam>();
+			delayed_start_time = delayed_param <= 5 ? delayed_param * 1000 :
+								 delayed_param <= 8 ? (delayed_param - 2) * 2000 : //8, 10, 12
+													  (delayed_param - 6) * 5000; //15, 20, 25, 30
+
+			delayed_start_time += System::get_ticks();
+			printf("Module %u delayed %u\n", this->id, delayed_start_time);
+		}
 	}
 
 	void handle_resize_buffer() {
@@ -292,7 +312,7 @@ public:
 		setLED<LoopButton>(loop_mode ? 1.f : 0.f);
 	}
 
-	unsigned prebuff_threshold_frames() {
+	unsigned playback_threshold_frames() {
 		auto max_frames = stream.buffer_frames();
 		if (max_frames <= 1024)
 			return max_frames;
@@ -307,6 +327,10 @@ public:
 			}
 		}
 		return std::max<unsigned>(threshold, 1024);
+	}
+
+	unsigned prebuff_threshold_frames() {
+		return getState<InitialBufferAltParam>() == 0 ? playback_threshold_frames() : stream.buffer_frames();
 	}
 
 	void set_samplerate(float sr) override {
@@ -384,6 +408,7 @@ private:
 	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart, FileError };
 	std::atomic<PlayState> play_state{PlayState::Stopped};
 	bool immediate_play = false;
+	uint32_t delayed_start_time = 0;
 
 	Toggler play_button;
 	cpputil::SchmittTrigger play_jack{0.2f, 0.5f};

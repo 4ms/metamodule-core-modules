@@ -15,7 +15,7 @@ struct TSPInfo : ModuleInfoBase {
 
     using enum Coords;
 
-    static constexpr std::array<Element, 16> Elements{{
+    static constexpr std::array<Element, 18> Elements{{
 		MomentaryRGB7mm{{to_mm<72>(26.196), to_mm<72>(153.596), Center, "Play", ""}},
 		OrangeButton{{to_mm<72>(61.467), to_mm<72>(153.596), Center, "Loop", ""}},
 		GateJackInput4ms{{to_mm<72>(25.131), to_mm<72>(198.047), Center, "Play Trig", ""}},
@@ -32,6 +32,9 @@ struct TSPInfo : ModuleInfoBase {
 		AltParamContinuous{{to_mm<72>(36.276), to_mm<72>(48.461), Center, "Buffer Threshold", ""}, 0.25f},
 		AltParamChoiceLabeled{{{to_mm<72>(30.276), to_mm<72>(48.461), Center, "Max Buffer Size", ""}, 12, 3}, {"1MB (5s 48kHz)", "2MB (10s 48kHz)", "4MB (21s 48kHz)", "8MB (43s 48kHz)", "16MB (1m27s 48kHz)", "24MB (2m11s 48kHz)", "32MB (2m54s 48kHz)", "48MB (4m22s 48kHz)", "64MB (5m49s 48kHz)", "80MB (7m16s 48kHz)", "96MB (8m44s 48kHz)", "128MB (11m38s 48kHz)"}},
 		WavFileBrowseAction{{to_mm<72>(23.474), to_mm<72>(48.461), Center, "Load Sample...", ""}},
+
+		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Buffer Target", ""}, 2, 0}, {"Fill to threshold", "Fill completely"}},
+		AltParamChoiceLabeled{{{to_mm<72>(66.469), to_mm<72>(48.461), Center, "Startup Delay (sec)", ""}, 13, 0}, {"0", "1", "2", "3", "4", "5", "8", "10", "12", "15", "20", "25", "30"}},
 }};
 
     enum class Elem {
@@ -51,6 +54,8 @@ struct TSPInfo : ModuleInfoBase {
         BufferThresholdAltParam,
         MaxBufferSizeAltParam,
         LoadSampleAltParam,
+        InitialBufferAltParam,
+        StartupDelayAltParam,
     };
 
 };
