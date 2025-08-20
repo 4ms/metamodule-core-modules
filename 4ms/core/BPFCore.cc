@@ -1,5 +1,5 @@
 #include "CoreModules/CoreProcessor.hh"
-#include "CoreModules/moduleFactory.hh"
+#include "CoreModules/register_module.hh"
 #include "info/BPF_info.hh"
 #include "processors/bpf.h"
 #include "processors/oberheimBPF.h"
@@ -77,11 +77,7 @@ public:
 		return mode;
 	}
 
-	// Boilerplate to auto-register in ModuleFactory
-	// clang-format off
-	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
-	static inline bool s_registered = ModuleFactory::registerModuleType(Info::slug, create, ModuleInfoView::makeView<Info>(), Info::png_filename);
-	// clang-format on
+	static inline bool was_registered = register_module<ThisCore, Info>("4msCompany");
 
 private:
 	int mode = 0;
