@@ -274,7 +274,6 @@ public:
 													  (delayed_param - 6) * 5000; //15, 20, 25, 30
 
 			delayed_start_time += System::get_ticks();
-			printf("Module %u delayed %u\n", this->id, delayed_start_time);
 		}
 	}
 
