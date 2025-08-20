@@ -5,7 +5,6 @@
 #include "filesystem/async_filebrowser.hh"
 #include "graphics/waveform_display.hh"
 #include "gui/notification.hh"
-#include "info/TSP_info.hh"
 #include "patch/patch_file.hh"
 #include "system/time.hh"
 #include "util/edge_detector.hh"
@@ -15,7 +14,7 @@
 #include "wav/wav_file_stream.hh"
 #include <atomic>
 
-#include "medium/debug_raw.h"
+#include "info/TSP_info.hh"
 
 namespace MetaModule
 {
@@ -267,8 +266,8 @@ public:
 			SmartCoreProcessor::set_param(id, 0);
 		}
 		// Startup Delay
-		if (id == param_idx<StartupDelayAltParam> && delayed_start_time == 0) {
-			auto delayed_param = getState<StartupDelayAltParam>();
+		if (id == param_idx<StartupDelay_Sec_AltParam> && delayed_start_time == 0) {
+			auto delayed_param = getState<StartupDelay_Sec_AltParam>();
 			delayed_start_time = delayed_param <= 5 ? delayed_param * 1000 :
 								 delayed_param <= 8 ? (delayed_param - 2) * 2000 : //8, 10, 12
 													  (delayed_param - 6) * 5000; //15, 20, 25, 30
@@ -316,7 +315,7 @@ public:
 		if (max_frames <= 1024)
 			return max_frames;
 
-		uint32_t threshold = getState<BufferThresholdAltParam>() * max_frames;
+		uint32_t threshold = getState<PlaybackBufferThresholdAltParam>() * max_frames;
 
 		// Don't allow making threshold at or near 100% if the sample cannot be
 		// fully buffered, or else we get too many frequent small disk reads
@@ -329,7 +328,7 @@ public:
 	}
 
 	unsigned prebuff_threshold_frames() {
-		return getState<InitialBufferAltParam>() == 0 ? playback_threshold_frames() : stream.buffer_frames();
+		return getState<BufferStrategyAltParam>() == 0 ? playback_threshold_frames() : stream.buffer_frames();
 	}
 
 	void set_samplerate(float sr) override {
