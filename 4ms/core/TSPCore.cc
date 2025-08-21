@@ -366,14 +366,8 @@ public:
 	void load_state(std::string_view state) override {
 		handle_resize_buffer();
 		if (state.length()) {
-			printf("path %s\n", state.data());
-			if (Filesystem::is_local_path(state)) {
-				printf("Is local\n");
-				load_sample(state);
-			} else {
-				printf("Not local, looking in %s\n", Filesystem::translate_path_to_patchdir(state).c_str());
-				load_sample(Filesystem::translate_path_to_patchdir(state));
-			}
+			auto local_path = Filesystem::translate_path_to_local(state, Patch::get_dir());
+			load_sample(local_path);
 		}
 	}
 
