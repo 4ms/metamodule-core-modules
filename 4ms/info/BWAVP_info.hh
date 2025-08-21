@@ -6,12 +6,12 @@
 
 namespace MetaModule
 {
-struct TSPInfo : ModuleInfoBase {
-    static constexpr std::string_view slug{"TSP"};
-    static constexpr std::string_view description{"Sample Player"};
+struct BWAVPInfo : ModuleInfoBase {
+    static constexpr std::string_view slug{"BWAVP"};
+    static constexpr std::string_view description{"Basic WAV Player"};
     static constexpr uint32_t width_hp = 6;
-    static constexpr std::string_view svg_filename{"res/modules/TSP_artwork.svg"};
-    static constexpr std::string_view png_filename{"4ms/fp/TSP.png"};
+    static constexpr std::string_view svg_filename{"res/modules/BWAVP_artwork.svg"};
+    static constexpr std::string_view png_filename{"4ms/fp/BWAVP.png"};
 
     using enum Coords;
 

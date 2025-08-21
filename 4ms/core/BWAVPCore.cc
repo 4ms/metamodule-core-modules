@@ -15,16 +15,16 @@
 #include "wav/wav_file_stream.hh"
 #include <atomic>
 
-#include "info/TSP_info.hh"
+#include "info/BWAVP_info.hh"
 
 namespace MetaModule
 {
 
-class TSPCore : public SmartCoreProcessor<TSPInfo> {
-	using enum TSPInfo::Elem;
+class BWAVPCore : public SmartCoreProcessor<BWAVPInfo> {
+	using enum BWAVPInfo::Elem;
 
 public:
-	TSPCore() {
+	BWAVPCore() {
 		fs_thread.start([this]() { async_process_filesystem(); });
 
 		waveform.set_wave_color(Teal);
@@ -33,7 +33,7 @@ public:
 		waveform.set_cursor_width(2);
 	}
 
-	~TSPCore() {
+	~BWAVPCore() {
 		fs_thread.stop();
 		stream.unload();
 	}
@@ -455,7 +455,7 @@ private:
 	static constexpr std::array<float, 3> Orange = {1.0f, 0.5f, 0.1f};
 	static constexpr std::array<float, 3> Off = {0, 0, 0};
 
-	static inline bool was_registered = register_module<TSPCore, TSPInfo>("4msCompany");
+	static inline bool was_registered = register_module<BWAVPCore, BWAVPInfo>("4msCompany");
 };
 
 } // namespace MetaModule

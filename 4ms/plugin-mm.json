@@ -171,19 +171,19 @@
 	},
 	{
 		"slug": "Switch14",
-		"name": "Switch 1>4"
+		"name": "Switch 1 to 4"
 	},
 	{
 		"slug": "Switch41",
-		"name": "Switch 4>1"
+		"name": "Switch 4 to 1"
 	},
 	{
 		"slug": "Tapo",
 		"name": "Tapographic Delay"
 	},
 	{
-		"slug": "TSP",
-		"name": "Sample Player"
+		"slug": "BWAVP",
+		"name": "Basic WAV Player"
 	},
 	{
 		"slug": "VCAM",
