@@ -116,6 +116,9 @@ static ModuleRegistry *find_module(std::string_view combined_slug) {
 	auto [brand, module_name] = brand_module(combined_slug);
 
 	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
+		if (module_name.starts_with("TSP")) {
+			return &brand_reg->modules[std::string("BWAVP")];
+		}
 		if (brand_reg->modules.contains(std::string(module_name)))
 			return &brand_reg->modules[std::string(module_name)];
 	}
