@@ -640,14 +640,18 @@ public:
 
 	// Hardware model setters:
 
-	static constexpr auto t = Float{u0_16::inclusive(f(1_f))}.repr();
+	// static constexpr auto t = Float{u0_16::inclusive(f(1_f))}.repr();
 
 	void set_potcv(AdcInput chan, float val) {
-		adc_.set(chan, u0_16::inclusive(f(val).clip(0._f, 1._f)));
+		// convert [0, 1] => [0, 65535]
+		auto val_12bit = static_cast<unsigned>(val * 65535.f);
+		// val_12bit = std::clamp(val_12bit, 0u, 65535u);
+		adc_.set(chan, val_12bit);
 	}
 
 	float get_potcv(AdcInput chan) const {
-		return Float{adc_.get(chan)}.repr();
+		//convert [0, 65535] => [0, 1]
+		return adc_.get_unsigned(chan) / 65535.f;
 	}
 
 	void set_pitchroot_cv(SpiAdcInput chan, float val) {

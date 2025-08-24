@@ -35,11 +35,23 @@ public:
 			values[i] = v;
 	}
 
+	void set(AdcInput i, unsigned v) {
+		if (i < ADC_INPUT_MAX && i >= 0)
+			values[i] = u0_16::of_repr(v);
+	}
+
 	u0_16 get(AdcInput i) const {
 		if (i < ADC_INPUT_MAX && i >= 0)
 			return values[i];
 
 		return 0._u0_16;
+	}
+
+	unsigned get_unsigned(AdcInput i) const {
+		if (i < ADC_INPUT_MAX && i >= 0)
+			return values[i].repr();
+
+		return 0;
 	}
 };
 
