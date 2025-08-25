@@ -66,7 +66,7 @@ public:
 					end_out.start(0.010);
 					stream.reset_playback_to_frame(0);
 					if (!loop_mode)
-						play_state = Stopped;
+						play_state = Paused;
 				}
 
 				if (stream.frames_available() > 0) {
@@ -227,7 +227,9 @@ public:
 			} else if (play_state == PlayState::Playing || play_state == PlayState::Buffering) {
 				if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
 					end_out.start(0.010);
-					play_state = PlayState::Stopped;
+					stream.reset_playback_to_frame(0);
+					waveform.set_cursor_position(0);
+					play_state = PlayState::Paused;
 
 				} else if (getState<PlayRetrigModeAltParam>() == RetrigMode::Retrigger) {
 					end_out.start(0.010);
@@ -406,7 +408,7 @@ private:
 	StaticString<255> wav_name = "Load a Sample";
 
 	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart, FileError };
-	std::atomic<PlayState> play_state{PlayState::Stopped};
+	std::atomic<PlayState> play_state{PlayState::Paused};
 	bool immediate_play = false;
 	uint32_t delayed_start_time = 0;
 
