@@ -433,11 +433,7 @@ private:
 	}
 	static constexpr std::array<unsigned, 12> BufferSizes{1, 2, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128};
 
-#ifdef VCVRACK
-	unsigned default_buffer_size_mb = 128;
-#else
 	unsigned default_buffer_size_mb = 8;
-#endif
 	WavFileStream stream{MByteToSamples(default_buffer_size_mb)};
 
 	StreamResampler resampler{2}; //2: stereo
