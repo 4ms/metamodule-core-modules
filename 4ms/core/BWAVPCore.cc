@@ -166,8 +166,8 @@ public:
 
 		if (stream.is_file_error()) {
 			err_message = "Disk Error";
+			play_state.store(FileError, std::memory_order_seq_cst);
 			stream.unload();
-			play_state = FileError;
 			file_error_retry.start(0.5f);
 		}
 
@@ -290,8 +290,8 @@ public:
 			auto new_size_samples = MByteToSamples(BufferSizes[new_size_idx]);
 			if (new_size_samples != stream.max_size()) {
 				// Stop playback before changing buffer size to avoid race conditions
-				auto prev_state = play_state.load(std::memory_order_acquire);
-				play_state.store(Stopped, std::memory_order_release);
+				auto prev_state = play_state.load(std::memory_order_seq_cst);
+				play_state.store(Stopped, std::memory_order_seq_cst);
 
 				stream.resize(new_size_samples);
 
