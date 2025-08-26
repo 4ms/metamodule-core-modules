@@ -125,8 +125,9 @@ public:
 					play_state = FileError;
 					file_error_retry.start(0.5f);
 				} else {
-					resampler.set_sample_rate_in_out(stream.wav_sample_rate().value_or(sample_rate), sample_rate);
-					resampler.set_num_channels(stream.is_stereo() ? 2 : 1);
+					auto sr = stream.wav_sample_rate();
+					resampler.set_sample_rate_in_out(sr ? sr : sample_rate, sample_rate);
+					resampler.set_num_channels(stream.num_channels());
 					resampler.flush();
 					display_sample_name();
 					if (immediate_play) {
@@ -340,8 +341,8 @@ public:
 		end_out.set_update_rate_hz(sample_rate);
 		file_error_retry.set_update_rate_hz(sample_rate);
 
-		if (auto source_sr = stream.wav_sample_rate()) {
-			resampler.set_sample_rate_in_out(*source_sr, sample_rate);
+		if (auto source_sr = stream.wav_sample_rate(); source_sr > 0) {
+			resampler.set_sample_rate_in_out(source_sr, sample_rate);
 		}
 	}
 
