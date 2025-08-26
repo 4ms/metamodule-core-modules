@@ -94,8 +94,8 @@ public:
 
 			case FileError:
 				if (file_error_retry.update() == false) {
+					next_play_state = Buffering;
 					play_state = LoadSampleInfo;
-					immediate_play = true;
 				}
 				break;
 
@@ -135,11 +135,7 @@ public:
 					resampler.set_num_channels(stream.num_channels());
 					resampler.flush();
 					display_sample_name();
-					if (immediate_play) {
-						immediate_play = false;
-						play_state = Buffering;
-					} else
-						play_state = Paused;
+					play_state.store(next_play_state);
 				}
 				break;
 
@@ -301,6 +297,7 @@ public:
 
 				// Restart playback if we were playing before changing buffer size
 				if (prev_state == LoadSampleInfo) {
+					next_play_state = Paused;
 					play_state = LoadSampleInfo;
 
 				} else if (prev_state == Playing || prev_state == Buffering) {
@@ -355,7 +352,7 @@ public:
 
 	void load_sample(std::string_view filename) {
 		sample_filename.copy(filename);
-		immediate_play = (play_state == PlayState::Playing);
+		next_play_state = (play_state == PlayState::Playing) ? PlayState::Buffering : PlayState::Paused;
 		play_state = PlayState::LoadSampleInfo;
 	}
 
@@ -418,7 +415,6 @@ private:
 	std::atomic<PlayState> play_state{PlayState::Paused};
 	std::atomic<PlayState> next_play_state{PlayState::Paused};
 
-	bool immediate_play = false;
 	uint32_t delayed_start_time = 0;
 
 	Toggler play_button;
