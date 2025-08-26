@@ -22,6 +22,7 @@ namespace MetaModule
 
 class BWAVPCore : public SmartCoreProcessor<BWAVPInfo> {
 	using enum BWAVPInfo::Elem;
+	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart, FileError };
 
 public:
 	BWAVPCore() {
@@ -65,8 +66,9 @@ public:
 				if (current_frame >= stream.total_frames()) {
 					end_out.start(0.010);
 					stream.reset_playback_to_frame(0);
-					if (!loop_mode)
-						play_state = Paused;
+					if (!loop_mode) {
+						play_state = Stopped;
+					}
 				}
 
 				if (stream.frames_available() > 0) {
@@ -141,7 +143,7 @@ public:
 			case Restart:
 				waveform.sync();
 				stream.seek_frame_in_file(0);
-				play_state = Buffering;
+				play_state.store(next_play_state.load());
 				break;
 
 			case Paused:
@@ -174,7 +176,7 @@ public:
 
 		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
 
-		if (stream.is_eof())
+		if (stream.is_eof() && stream.first_frame_in_buffer() == 0)
 			waveform.set_bar_fg_color(DarkGreen);
 		else if ((stream.frames_available() + 1024) < playback_threshold_frames())
 			waveform.set_bar_fg_color(LightGrey);
@@ -218,26 +220,26 @@ public:
 		play_jack.process(getInput<PlayTrigIn>().value_or(0));
 
 		if (play_button.just_went_high() || play_jack.just_went_high()) {
+			if (stream.is_loaded()) {
 
-			if (play_state == PlayState::Stopped && stream.is_loaded()) {
-				restart_playback();
+				if (play_state == PlayState::Stopped) {
+					restart_playback(PlayState::Buffering);
 
-			} else if (play_state == PlayState::Paused && stream.is_loaded()) {
-				play_state = PlayState::Buffering;
+				} else if (play_state == PlayState::Paused) {
+					play_state = PlayState::Buffering;
 
-			} else if (play_state == PlayState::Playing || play_state == PlayState::Buffering) {
-				if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
-					end_out.start(0.010);
-					stream.reset_playback_to_frame(0);
-					waveform.set_cursor_position(0);
-					play_state = PlayState::Paused;
+				} else if (play_state == PlayState::Playing || play_state == PlayState::Buffering) {
+					if (getState<PlayRetrigModeAltParam>() == RetrigMode::Stop) {
+						end_out.start(0.010);
+						restart_playback(PlayState::Paused);
 
-				} else if (getState<PlayRetrigModeAltParam>() == RetrigMode::Retrigger) {
-					end_out.start(0.010);
-					restart_playback();
+					} else if (getState<PlayRetrigModeAltParam>() == RetrigMode::Retrigger) {
+						end_out.start(0.010);
+						restart_playback(PlayState::Buffering);
 
-				} else {
-					play_state = PlayState::Paused;
+					} else { // RetrigMode::Pause
+						play_state = PlayState::Paused;
+					}
 				}
 			}
 		}
@@ -255,8 +257,10 @@ public:
 		});
 	}
 
-	void restart_playback() {
+	void restart_playback(PlayState next) {
+		// Tell async thread to seek frame 0, and then move to the next play state
 		play_state = PlayState::Restart;
+		next_play_state = next;
 		stream.reset_playback_to_frame(0);
 		waveform.set_cursor_position(0);
 	}
@@ -297,7 +301,7 @@ public:
 					play_state = LoadSampleInfo;
 
 				} else if (prev_state == Playing || prev_state == Buffering) {
-					restart_playback();
+					restart_playback(PlayState::Buffering);
 				}
 			}
 		}
@@ -408,8 +412,9 @@ private:
 	StaticString<255> err_message = "";
 	StaticString<255> wav_name = "Load a Sample";
 
-	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart, FileError };
 	std::atomic<PlayState> play_state{PlayState::Paused};
+	std::atomic<PlayState> next_play_state{PlayState::Paused};
+
 	bool immediate_play = false;
 	uint32_t delayed_start_time = 0;
 
