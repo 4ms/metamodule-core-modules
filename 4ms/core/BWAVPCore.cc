@@ -49,7 +49,7 @@ public:
 		setOutput<RightOut>(0);
 
 		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
-		setOutput<PositionOut>(5.f * (float)current_frame / (float)stream.total_frames());
+		setOutput<PlayGateOut>(play_state == PlayState::Playing ? 5 : 0);
 
 		switch (play_state) {
 			using enum PlayState;

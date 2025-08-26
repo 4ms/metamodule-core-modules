@@ -131,7 +131,7 @@
          x="47.61216"
          y="260.00638"
          id="tspan5-3"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">Position</tspan></text><text
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.00053px;font-family:GillSans-Bold, 'Gill Sans';-inkscape-font-specification:'GillSans-Bold, Gill Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ededed;fill-opacity:1;stroke-width:0.938083">Playing</tspan></text><text
        transform="scale(0.93808314,1.0660036)"
        style="font-weight:700;font-size:8.44275px;font-family:GillSans-Bold, 'Gill Sans';letter-spacing:-0.04em;stroke-width:0.938083"
        id="text33-8"
@@ -194,8 +194,8 @@
        cy="134.10773"
        r="4.25"
        style="fill:#ff00ff;stroke-width:0px" /><circle
-       id="Position"
-       data-name="Position"
+       id="Play Gate Out"
+       data-name="Play Gate Out"
        cx="61.274387"
        cy="249.48567"
        r="11.34"
