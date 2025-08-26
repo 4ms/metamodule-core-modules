@@ -177,7 +177,7 @@ public:
 
 		if (stream.is_eof() && stream.first_frame_in_buffer() == 0)
 			waveform.set_bar_fg_color(DarkGreen);
-		else if ((stream.frames_available() + 1024) < playback_threshold_frames())
+		else if (!stream.is_eof() && (stream.frames_available() + 1024) < playback_threshold_frames())
 			waveform.set_bar_fg_color(LightGrey);
 		else
 			waveform.set_bar_fg_color(Blue);
