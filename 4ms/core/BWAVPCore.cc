@@ -45,8 +45,8 @@ public:
 		auto current_frame = stream.current_playback_frame();
 
 		// default output values:
-		setOutput<LeftOut>(0);
-		setOutput<RightOut>(0);
+		float outL = 0;
+		float outR = 0;
 
 		setOutput<EndOut>(end_out.update() ? 5.f : 0.f);
 		setOutput<PlayGateOut>(play_state == PlayState::Playing ? 5 : 0);
@@ -73,8 +73,8 @@ public:
 
 				if (stream.frames_available() > 0) {
 					auto [left, right] = resampler.process_stereo([this] { return stream.pop_sample(); });
-					setOutput<LeftOut>(left * 5.f);
-					setOutput<RightOut>(right * 5.f);
+					outL = left * 5.f;
+					outR = right * 5.f;
 
 					waveform.draw_sample(left);
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
@@ -105,6 +105,9 @@ public:
 			case LoadSampleInfo:
 				break;
 		}
+
+		setOutput<LeftOut>(outL);
+		setOutput<RightOut>(outR);
 	}
 
 	// This runs in a low-priority background task:
