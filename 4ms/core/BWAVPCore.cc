@@ -140,6 +140,9 @@ public:
 				break;
 
 			case Restart:
+				// Playback is disabled, audio thread is not touching any shared data
+				stream.reset_playback_to_frame(0);
+				waveform.set_cursor_position(0);
 				waveform.sync();
 				stream.seek_frame_in_file(0);
 				play_state.store(next_play_state.load());
@@ -258,10 +261,10 @@ public:
 
 	void restart_playback(PlayState next) {
 		// Tell async thread to seek frame 0, and then move to the next play state
-		play_state = PlayState::Restart;
 		next_play_state = next;
-		stream.reset_playback_to_frame(0);
-		waveform.set_cursor_position(0);
+		play_state = PlayState::Restart;
+		// stream.reset_playback_to_frame(0);
+		// waveform.set_cursor_position(0);
 	}
 
 	void set_param(int id, float val) override {
