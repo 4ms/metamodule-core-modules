@@ -278,11 +278,7 @@ public:
 		// Startup Delay
 		if (id == param_idx<StartupDelay_Sec_AltParam> && delayed_start_time == 0) {
 			auto delayed_param = getState<StartupDelay_Sec_AltParam>();
-			delayed_start_time = delayed_param <= 5 ? delayed_param * 1000 :
-								 delayed_param <= 8 ? (delayed_param - 2) * 2000 : //8, 10, 12
-													  (delayed_param - 6) * 5000; //15, 20, 25, 30
-
-			delayed_start_time += System::get_ticks();
+			delayed_start_time = System::get_ticks() + (StartupDelaySecs[delayed_param] * 1000);
 		}
 	}
 
@@ -442,6 +438,8 @@ private:
 		return MBytes * 1024u * 1024 / 2; //assume 16-bit samples
 	}
 	static constexpr std::array<unsigned, 12> BufferSizes{1, 2, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128};
+	static constexpr std::array<unsigned, 21> StartupDelaySecs{0,  1,  2,  3,  4,  5,	8,	 10,  12,  15, 20,
+															   25, 30, 45, 60, 90, 120, 150, 180, 240, 300};
 
 	unsigned default_buffer_size_mb = 8;
 	WavFileStream stream{MByteToSamples(default_buffer_size_mb)};
