@@ -16,125 +16,224 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ### Controls 
 * **Cutoff:**
-
 * **Q:**
-
 * **Mode:**
-
 * **CV:** 
-
 * **Input:**
-
 * **Out:** 
 
 ## CLKD
 
+>Description placeholder
+
 ### Controls 
+
+* **Divide:**
+* **CV:**
+* **Clk In:**
+* **Clock:**
 
 ## CLKM
 
+>Description placeholder
+
+### Controls 
+* **Multiply:**
+* **CV:**
+* **Clk In:**
+* **Clock:**
+
+## Complex EG
+
+>Description placeholder
+
+### Controls 
+* **Attack:**
+* **Decay:** 
+* **Release:**
+* **A Curve:**
+* **D Curve:**
+* **R Curve:**
+* **Sustain:**
+* **Loop:**
+* **Hold:**
+* **Gate In:**
+* **Attack CV In:**
+* **Decay CV In:**
+* **Release CV In:**
+* **Sustain CV In:**
+* **Hold CV In:**
+* **Attack Out:**
+* **Decay Out:**
+* **Release Out:**
+* **Sustain Out:**
+* **Hold Out:**
+* **Envelope Out:** 
+
+## Detune 
+
+>Description placeholder
+
+### Controls 
+* **W Speed:**
+* **F Speed:**
+* **W Depth:**
+* **F Depth:**
+* **Input:**
+* **Detune CV In:**
+* **Depth CV In:**
+* **Output:** 
+
+## Djembe
+
+>Description placeholder
+
+### Controls 
+* **Pitch:**
+* **Sharpness:**
+* **Hit:**
+* **Strike Amount:**
+* **Pitch CV In:**
+* **Sharp CV In:**
+* **Hit CV In:**
+* **Strike CV In:**
+* **Trigger In:**
+* **Out:**
+
+## Drum 
+
+>Description placeholder
+
 ### Controls 
 
-##Complex EG
+## FM
 
-###Controls 
+>Description placeholder
 
-##Detune 
+### Controls 
 
-###Controls 
+## FLW 
 
-##Djembe
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##Drum 
+## Freeverb
 
-###Controls 
+>Description placeholder
 
-##FM
+### Controls 
 
-###Controls 
+## Gate 
 
-##FLW 
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##Freeverb
+## HPF
 
-###Controls 
+>Description placeholder
 
-##Gate 
+### Controls 
 
-###Controls 
+## KPLS
 
-##HPF
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##KPLS
+## LPG
 
-###Controls 
+>Description placeholder
 
-##LPG
+### Controls 
 
-###Controls 
+## MNMX
 
-##MNMX
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##Multi LFO 
+## Multi LFO 
 
-###Controls 
+>Description placeholder
 
-##NSE 
+### Controls 
 
-###Controls 
+## NSE 
 
-##OCT 
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##Pan
+## OCT 
 
-###Controls 
+>Description placeholder
 
-##Pitch Shift
+### Controls 
 
-###Controls 
+## Pan
 
-##Prob 8
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##S&H
+## Pitch Shift
 
-###Controls 
+>Description placeholder
 
-##SEQ 8
+### Controls 
 
-###Controls 
+## Prob 8
 
-##SLW
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##SRC
+## S&H
 
-###Controls 
+>Description placeholder
 
-##Stereo Mixer 
+### Controls 
 
-###Controls 
+## SEQ 8
 
-##Switch 1:4
+>Description placeholder
 
-###Controls 
+### Controls 
 
-##Switch 4:1
+## SLW
 
-###Controls 
+>Description placeholder
 
-##Verb 
+### Controls 
 
-###Controls 
+## SRC
+
+>Description placeholder
+
+### Controls 
+
+## Stereo Mixer 
+
+>Description placeholder
+
+### Controls 
+
+## Switch 1:4
+
+>Description placeholder
+
+### Controls 
+
+## Switch 4:1
+
+>Description placeholder
+
+### Controls 
+
+## Verb 
+
+>Description placeholder
+
+### Controls 
