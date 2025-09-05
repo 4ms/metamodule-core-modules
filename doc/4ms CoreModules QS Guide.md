@@ -53,7 +53,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Complex EG
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Complex%20EG.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Complex%20EG.png" width ="168">
 
 >Description placeholder
 
