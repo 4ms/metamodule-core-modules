@@ -1,22 +1,20 @@
-#4ms VCV Rack Core Modules User Guide
+# 4ms VCV Rack Core Modules User Guide
 
-##Atvert
+## Atvert
 
 >Atvert is a 2-channel attenuverter.
 It lets you scale or invert two input signals using two knobs. If no input is connected, it uses a default +5V offset.
 
-###Controls
+### Controls
 
 * **2 knobs (one per channel):**
 Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
-##
-
-##BPF
+## BPF
 
 >BPF is a 12db per octave resonant bandpass filter with two filter types: "Standard" which is based on a Korg style sallen-key topology, and "Oberheim" which is based on the filter in the SEM.
 
-###Controls 
+### Controls 
 * **Cutoff:**
 
 * **Q:**
@@ -29,13 +27,13 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 * **Out:** 
 
-##CLKD
+## CLKD
 
-###Controls 
+### Controls 
 
-##CLKM
+## CLKM
 
-###Controls 
+### Controls 
 
 ##Complex EG
 
