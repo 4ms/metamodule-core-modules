@@ -341,7 +341,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Prob 8
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width =96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="96">
 
 >Description placeholder
 
