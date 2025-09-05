@@ -7,19 +7,23 @@
 	"MetaModuleIncludedModules": [
 	{
 		"slug": "Atvert2",
-		"name": "Atvert2"
+		"name": "Attenuverter 2"
 	},
 	{
 		"slug": "BPF",
 		"name": "BPF"
 	},
 	{
+		"slug": "BWAVP",
+		"name": "Basic WAV Player"
+	},
+	{
 		"slug": "CLKD",
-		"name": "CLKD"
+		"name": "CLK Divider"
 	},
 	{
 		"slug": "CLKM",
-		"name": "CLKM"
+		"name": "CLK Multiplier"
 	},
 	{
 		"slug": "ComplexEG",
@@ -27,11 +31,11 @@
 	},
 	{
 		"slug": "DEV",
-		"name": "DEV"
+		"name": "Dual EnvVCA"
 	},
 	{
 		"slug": "DLD",
-		"name": "DLD"
+		"name": "Dual Looping Delay"
 	},
 	{
 		"slug": "Detune",
@@ -47,15 +51,15 @@
 	},
 	{
 		"slug": "ENVVCA",
-		"name": "ENVVCA"
+		"name": "EnvVCA"
 	},
 	{
 		"slug": "EnOsc",
-		"name": "EnOsc"
+		"name": "Ensemble Oscillator"
 	},
 	{
 		"slug": "FM",
-		"name": "FM"
+		"name": "FM VCO"
 	},
 	{
 		"slug": "Follow",
@@ -75,11 +79,11 @@
 	},
 	{
 		"slug": "KPLS",
-		"name": "KPLS"
+		"name": "Karplus"
 	},
 	{
 		"slug": "L4",
-		"name": "L4"
+		"name": "Listen 4"
 	},
 	{
 		"slug": "LPG",
@@ -87,11 +91,11 @@
 	},
 	{
 		"slug": "MNMX",
-		"name": "MNMX"
+		"name": "MinMax"
 	},
 	{
 		"slug": "MPEG",
-		"name": "MPEG"
+		"name": "Mini PEG"
 	},
 	{
 		"slug": "MultiLFO",
@@ -111,7 +115,7 @@
 	},
 	{
 		"slug": "PI",
-		"name": "PI"
+		"name": "Percussion Interface"
 	},
 	{
 		"slug": "Pan",
@@ -119,7 +123,7 @@
 	},
 	{
 		"slug": "PitchShift",
-		"name": "Pitch Shift"
+		"name": "PitchShift"
 	},
 	{
 		"slug": "Prob8",
@@ -135,19 +139,19 @@
 	},
 	{
 		"slug": "RCD",
-		"name": "RCD"
+		"name": "Rotating Clock Divider"
 	},
 	{
 		"slug": "SCM",
-		"name": "SCM"
+		"name": "Shuffling Clock Multiplier"
 	},
 	{
 		"slug": "SHEV",
-		"name": "Shaped EnvVCA"
+		"name": "Shaped Dual EnvVCA"
 	},
 	{
 		"slug": "SH",
-		"name": "SH"
+		"name": "Sample/Hold"
 	},
 	{
 		"slug": "SISM",
@@ -169,7 +173,7 @@
 		"slug": "StMix",
 		"name": "Stereo Mixer"
 	},
-	{
+		{
 		"slug": "Switch14",
 		"name": "Switch 1 to 4"
 	},
@@ -182,17 +186,13 @@
 		"name": "Tapographic Delay"
 	},
 	{
-		"slug": "BWAVP",
-		"name": "Basic WAV Player"
-	},
-	{
 		"slug": "VCAM",
-		"name": "VCA Matrix"
+		"name": "VCAMatrix"
 	},
 	{
 		"slug": "Verb",
 		"name": "Verb"
-	},
+	}
 	]
 }
 
