@@ -14,6 +14,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## BPF
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BPF.png" width ="48">
+
 >BPF is a 12db per octave resonant bandpass filter with two filter types: "Standard" which is based on a Korg style sallen-key topology, and "Oberheim" which is based on the filter in the SEM.
 
 ### Controls 
@@ -26,6 +28,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## CLKD
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/CLKD.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -37,6 +41,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## CLKM
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/CLKM.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -46,6 +52,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Clock:**
 
 ## Complex EG
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Complex%20EG.png" width ="48">
 
 >Description placeholder
 
@@ -74,6 +82,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Detune 
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Detune.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -87,6 +97,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Output:** 
 
 ## Djembe
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Djembe.png" width ="48">
 
 >Description placeholder
 
@@ -103,6 +115,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Out:**
 
 ## Drum 
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Drum.png" width ="48">
 
 >Description placeholder
 
@@ -131,6 +145,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## FM
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FM.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -151,6 +167,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## FLW 
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FLW.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -162,6 +180,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Env Out:**
 
 ## Freeverb
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Freeverb.png" width ="48">
 
 >Description placeholder
 
@@ -179,6 +199,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Gate 
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Gate.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -190,6 +212,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Out:** 
 
 ## HPF
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/HPF.png" width ="48">
 
 >Description placeholder
 
@@ -203,6 +227,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## KPLS
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/KPLS.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -214,6 +240,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Out:** 
 
 ## LPG
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/LPG.png" width ="48">
 
 >Description placeholder
 
@@ -230,6 +258,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## MNMX
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/MNMX.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -239,6 +269,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Max Out:**
 
 ## Multi LFO 
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Multi%20LFO.png" width ="48">
 
 >Description placeholder
 
@@ -257,6 +289,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## NSE 
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/NSE.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -264,6 +298,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Pink:**
 
 ## OCT 
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/OCT.png" width ="48">
 
 >Description placeholder
 
@@ -275,6 +311,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Pan
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Pan.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -285,6 +323,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Out 2:** 
 
 ## Pitch Shift
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Pitch%20Shift.png" width ="48">
 
 >Description placeholder
 
@@ -301,6 +341,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Prob 8
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -311,6 +353,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Out:**  
 
 ## S&H
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/S%26H.png" width ="48">
 
 >Description placeholder
 
@@ -323,6 +367,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## SEQ 8
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/SEQ8.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -334,6 +380,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## SLW
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Slew.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -344,6 +392,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## SRC
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Source.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -353,6 +403,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **2 Out:** 
 
 ## Stereo Mixer 
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Stereo%20Mixer.png" width ="48">
 
 >Description placeholder
 
@@ -366,6 +418,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Switch 1:4
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%201-4.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -377,6 +431,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 ## Switch 4:1
 
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%204-1.png" width ="48">
+
 >Description placeholder
 
 ### Controls 
@@ -387,6 +443,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Out:** 
 
 ## Verb 
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Verb.png" width ="48">
 
 >Description placeholder
 
