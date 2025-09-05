@@ -2,6 +2,8 @@
 
 ## Atvert
 
+![](https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Atvert.png)
+
 >Atvert is a 2-channel attenuverter.
 It lets you scale or invert two input signals using two knobs. If no input is connected, it uses a default +5V offset.
 
