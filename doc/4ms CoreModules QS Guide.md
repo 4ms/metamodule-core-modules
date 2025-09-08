@@ -329,137 +329,138 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 >Pitch shift is a buffer based pitch shifter that takes audio and changes the pitch of it. 
 
 ### Controls 
-* **Coarse:**
-* **Fine:**
-* **Window:**
-* **Mix:**
-* **Input:**
-* **Pitch CV In:**
-* **Window CV In:**
-* **Mix CV In:**
-* **Out:** 
+* **Coarse:** semitone shift, -12 to +12 semitones.
+* **Fine:** fine tune adjustment for pitch shift, -1 to 1 semitone.
+* **Window:** buffersize, 0.42ms - 200ms.
+* **Mix:** dry/wet crossfader for effect.
+* **Input:** audio input.
+* **Pitch CV In:** CV input for pitch, -5/+5v.
+* **Window CV In:** CV input for window, -5/+5v.
+* **Mix CV In:** CV input for mix, -5/+5.
+* **Out:** audio output.
 
 ## Prob 8
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="96">
 
->Description placeholder
+>Prob 8 is an 8 step CV sequencer with probability per step. 
 
 ### Controls 
-* **Knobs 1-8:**
-* **Clock CV In:**
-* **Reset CV In:**
-* **Inv Out:**
-* **Out:**  
+* **Knobs 1-8:** probability (the likelihood the step will occur), 0-100%.
+* **Clock Gate In:** the main clock input for the module. Can accept gates or triggers. 
+* **Reset Gate In:** reset input, sets the sequence to step 0 when high. 
+* **Inv Out:** inverted version of the sequence output. 
+* **Out:** CV output for the sequencer; a sum of all 8 steps. 
 
 ## S&H
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/S%26H.png" width ="48">
 
->Description placeholder
+>S&H is a simple dual sample and hold module, where control voltages are sampled and held when processed.
 
 ### Controls 
-* **Sam:**
-* **In 1:**
-* **Samp:**
-* **Out 1:**
-* **Out 2:** 
+* **Sam:** channel 1 source input to be sampled and held.
+* **In 1:** channel 1 clock gate input to initiate the sample and holding effect. 
+* **Samp:** channel 2 source input to be sampled and held.
+* **In 2:** channel 2 clock gate input to initiate the sample and holding effect. 
+* **Out 1:** channel 1 output.
+* **Out 2:** channel 2 output. 
 
 ## SEQ 8
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/SEQ8.png" width ="96">
 
->Description placeholder
+>SEQ8 is a basic 8 step sequencer. 
 
 ### Controls 
-* **Knobs 1-8:**
-* **Clock CV In:**
-* **Reset CV In:**
-* **Gate Out:**
-* **Out:** 
+* **Knobs 1-8:** 0-10v offset.
+* **Clock Gate In:** the main clock input for the module. Can accept gates or triggers.
+* **Reset Gate In:** reset input, sets the sequence to step 0 when high.
+* **Gate Out:** fires a step on step 1 of the sequence.
+* **Out:** CV output for the sequencer; a sum of all 8 steps. 
 
 ## SLW
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Slew.png" width ="48">
 
->Description placeholder
+>SLW is a simple attack/release slew generator for processing incoming CV or audio.
 
 ### Controls 
-* **Rise:**
-* **Fall:** 
-* **Input:**
-* **Out:** 
+* **Rise:** the rise time of the slew limiter, 1ms - 2sec.
+* **Fall:** the fall time of the slew limiter, 1ms - 2sec.
+* **Input:** CV or audio input.
+* **Out:** slewed output. 
 
 ## SRC
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Source.png" width ="48">
 
->Description placeholder
+>SRC is a dual bipolar offset generator.
 
 ### Controls 
-* **1:**
-* **2:**
-* **1 Out:**
-* **2 Out:** 
+* **1:** offset 1, -10v to 10v.
+* **2:** offset 2, -10v to 10v.
+* **1 Out:** offset 1 output.
+* **2 Out:** offset 2 output. 
 
 ## Stereo Mixer 
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Stereo%20Mixer.png" width ="216">
 
->Description placeholder
+>Stereo Mixer is a four channel stereo audio mixer with pan per channel.
 
 ### Controls 
-* **Level 1-4:**
-* **Pan 1-4:**
-* **In L 1-4:**
-* **In R 1-4:**
-* **L Out:**
-* **R Out:** 
+* **Level 1-4:** volume for each associated channel.
+* **Pan 1-4:** pan for each associated channel, shifting the signal left or right in the stereo field.
+* **In L 1-4:** audio left input per channel.
+* **In R 1-4:** audio right input per channel.
+* **L Out:** mixed output sum left channel.
+* **R Out:** mixed output sum right channel. 
 
 ## Switch 1:4
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%201-4.png" width ="96">
 
->Description placeholder
+>Switch 1:4 is a sequential switch module that takes in a signal and routes it to 1 of 4 destinations.
 
 ### Controls 
-* **Input:**
-* **Reset In:**
-* **Clock In:**
-* **Cv In:**
-* **Out 1-4:** 
+* **Input:** the signal to be routed.
+* **Reset Gate In:** gate input that resets the sequential switch to step 1.
+* **Clock Gate In:** the main clock input that advances the switch to the next step.
+* **Cv In:** CV input to crossfade between the 4 outputs instead of stepping, 0-5v.
+* **Out 1-4:** the four outputs of the switch. 
 
 ## Switch 4:1
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%204-1.png" width ="96">
 
->Description placeholder
+>Switch 4:1 is a sequential switch module that takes 4 signals and routes them to a single destination.
 
 ### Controls 
-* **In 1-4**:
-* **Clock In:**
-* **CV In:**
-* **Reset In:**
-* **Out:** 
+* **In 1-4**: the signals to be routed.
+* **Clock In:** the main clock input that advances the switch to the next step.
+* **CV In:** CV input to crossfade between the 4 inputs instead of stepping, 0-5v.
+* **Reset In:** gate input that resets the sequential switch to step 1.
+* **Out:** the output of the switch. 
 
 ## Verb 
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Verb.png" width ="120">
 
->Description placeholder
+>A simple reverb module. 
 
 ### Controls 
-* **Size:**
-* **Time:**
-* **Damp:**
-* **AP Ratio:**
-* **Comb:**
-* **Mix:**
-* **Input:**
-* **Size CV In:**
-* **Time CV In:**
-* **Damp CV In:**
-* **Ratio CV In:**
-* **Comb CV In:**
-* **Mix CV In:**
-* **Out:** 
+* **Size:** the size of the "room."
+* **Time:** decay time of the reverb.
+* **Damp:** the amount of high frequencies that decay in the reverb.
+* **AP Ratio:** diffusion of the reverb in the space, making the tail feel more natural. 
+* **Comb:** changes the pre-delay of the reverb algorithm, making the distance of the "walls" greater.
+* **Mix:** dry/wet control for reverb amount.
+* **Input:** audio input.
+* **Size CV In:** CV input for size, -5v/+5v.
+* **Time CV In:** CV input for time, -5v/+5v.
+* **Damp CV In:** CV input for damp, -5v/+5v.
+* **Ratio CV In:** CV input for ratio, -5v/+5v.
+* **Comb CV In:** CV input for comb, -5v/+5v.
+* **Mix CV In:** CV input for mix, -5v/+5v.
+* **Out:**  Audio output. 
