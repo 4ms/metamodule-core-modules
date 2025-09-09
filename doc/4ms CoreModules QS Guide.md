@@ -46,7 +46,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 >CLKM is a simple clock multiplier that takes in incoming gates and multiplies their timing by a given amount. 
 
 ### Controls 
-* **Multiply:** from "x1" (no multiplication) to x16, stepped
+* **Multiply:** from "x1" (no multiplication) to "x16", stepped
 * **CV:** CV input for clock multiplication, -5v/+5v 
 * **Clk In:** Clock input
 * **Clock:** Clock output 
@@ -60,7 +60,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 ### Controls 
 * **Attack:** The attack phase (rise time) of the envelope, 1ms - 1sec
 * **Decay:** The decay phase (amount of time from attack to release stage) of the envelope, 1ms - 1sec
-* **Release:** The release phase (amount of time after the sustain stage for signal to fall to 0) of the envelope, 1ms - 1 sec 
+* **Release:** The release phase (amount of time after the sustain stage for signal to fall to 0v) of the envelope, 1ms - 1 sec 
 * **A Curve:** Change the time scaling of the attack curve continously from linear to logarithmic 
 * **D Curve:** Change the time scaling of the decay curve continously from linear to logarithmic 
 * **R Curve:** Change the time scaling of the release curve continously from linear to logarithmic 
@@ -73,11 +73,11 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Release CV In:** CV input for release time, -5v/+5v
 * **Sustain CV In:** CV input for sustain volume, -5v/+5v
 * **Hold CV In:** CV input for hold time, -5v/+5v
-* **Attack Out:** CV output for attack stage
-* **Decay Out:** CV output for decay stage
-* **Release Out:** CV output for release stage
-* **Sustain Out:** CV output for sustain stage
-* **Hold Out:** CV output for Hold stage 
+* **Attack Out:** an 8v logic output for when Attack stage is active
+* **Decay Out:** an 8v logic output for when Decay stage is active
+* **Release Out:** an 8v logic output for when Release stage is active
+* **Sustain Out:** an 8v logic output for when Sustain stage is active
+* **Hold Out:** an 8v logic output for when Hold stage is active
 * **Envelope Out:** Full Envelope output 
 
 ## Detune 
@@ -343,14 +343,14 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="96">
 
->Prob 8 is an 8 step CV sequencer with probability per step. 
+>Prob 8 is an 8 step trigger/gate sequencer with probability per step. 
 
 ### Controls 
 * **Knobs 1-8:** probability (the likelihood the step will occur), 0-100%
 * **Clock Gate In:** the main clock input for the module. Can accept gates or triggers
 * **Reset Gate In:** reset input, sets the sequence to step 0 when high
 * **Inv Out:** inverted version of the sequence output
-* **Out:** CV output for the sequencer; a sum of all 8 steps
+* **Out:** gate output for the sequencer; a sum of all 8 steps
 
 ## S&H
 
