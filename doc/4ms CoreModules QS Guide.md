@@ -156,7 +156,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Index CV:** An attenuverter for the Index parameter + CV 
 * **Ratio C:** Coarse frequency adjustment for modulator pitch ratio 
 * **Ratio F:** Fine frequency adjustment for modulator pitch ratio 
-* **Shape:** Blend from continously from sine to square
+* **Shape:** Blend continously from sine to square
 * **Shape CV:** An attenuverter for shape parameter + CV 
 * **V/Oct C CV In:** 1v/Oct pitch input for carrier
 * **V/Oct M CV In:** 1v/Oct pitch input for modulator
@@ -215,7 +215,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/HPF.png" width ="48">
 
->HPF is a 12db/Oct resonant highpass filter with two modes, "standard" and "Korg" which mimicks the Korg sallen-key style highpass of the MS20. 
+>HPF is a 12db/Oct resonant highpass filter with two modes, "standard" and "Korg" which mimics the Korg sallen-key style highpass of the MS20. 
 
 ### Controls 
 * **Cutoff:** Filter cutoff, 130hz - 2093hz
@@ -229,7 +229,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/KPLS.png" width ="48">
 
->KPLS is a drum module based on the Karplus Strong synthesis model, a simple method of pinging a filtered delay line to mimick string sounds.
+>KPLS is a drum module based on the Karplus Strong synthesis model, a simple method of pinging a filtered delay line to mimic string sounds.
 
 ### Controls 
 * **Pitch:** Pitch of the sound, 40hz - 200hz
