@@ -343,14 +343,14 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="96">
 
->Prob 8 is an 8 step trigger/gate sequencer with probability per step. 
+>Prob 8 is an 8 step gate sequencer with probability per step. 
 
 ### Controls 
 * **Knobs 1-8:** probability (the likelihood the step will occur), 0-100%
-* **Clock Gate In:** the main clock input for the module. Can accept gates or triggers
+* **Clock Gate In:** the main clock input for the module. Can accept gates or triggers.
 * **Reset Gate In:** reset input, sets the sequence to step 0 when high
-* **Inv Out:** inverted version of the sequence output
-* **Out:** gate output for the sequencer; a sum of all 8 steps
+* **Inv Out:** inverted version of the gate sequence output
+* **Out:** gate sequence output for the module. Gates are 0-8v with a fixed 50% pulse width.
 
 ## S&H
 
@@ -370,7 +370,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/SEQ8.png" width ="96">
 
->SEQ8 is a basic 8 step sequencer. 
+>SEQ8 is a basic 8 step CV sequencer. 
 
 ### Controls 
 * **Knobs 1-8:** 0-10v offset
@@ -389,7 +389,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 * **Rise:** the rise time of the slew limiter, 1ms - 2sec
 * **Fall:** the fall time of the slew limiter, 1ms - 2sec
 * **Input:** CV or audio input
-* **Out:** slewed output
+* **Out:** slewed voltage output
 
 ## SRC
 
