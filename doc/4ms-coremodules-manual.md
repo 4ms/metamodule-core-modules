@@ -4,8 +4,9 @@
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Atvert.png" width ="48">
 
->Atvert is a 2-channel attenuverter.
-It lets you scale or invert two input signals using two knobs. If no input is connected, it uses a default -5v/+5V offset.
+Atvert is a 2-channel attenuverter that lets you scale or invert two input
+signals using two knobs. If no input is connected to a channel, it uses a
++5V offset for the input (the resulting output will be -5V to +5V).
 
 ### Controls
 
@@ -16,12 +17,14 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BPF.png" width ="48">
 
->BPF is a 12db per octave resonant bandpass filter with two filter types: "Standard" which is based on a Korg style sallen-key topology, and "Oberheim" which is based on the filter in the SEM.
+BPF is a 12db per octave resonant bandpass filter with two filter types:
+"Standard" which is based on a Korg style sallen-key topology, and "Oberheim"
+which is based on the filter in the SEM.
 
 ### Controls 
 * **Cutoff:** filter cutoff frequency, 261hz - 1041hz
 * **Q:** filter resonance, 1-20x
-* **Mode:** toggle between Korg and Oberheim mode
+* **Mode:** toggle between Korg (left) and Oberheim (right) mode
 * **CV:** CV Input for filter cutoff, -5v/+5v.
 * **Input:** Audio input 
 * **Out:** Audio output 
@@ -30,7 +33,8 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/CLKD.png" width ="48">
 
->CLKD is a simple clock divider that takes in incoming gates and divides their timing by a given amount. 
+CLKD is a simple clock divider that takes in incoming gates and divides their
+timing by a given amount. 
 
 ### Controls 
 
@@ -43,7 +47,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/CLKM.png" width ="48">
 
->CLKM is a simple clock multiplier that takes in incoming gates and multiplies their timing by a given amount. 
+CLKM is a simple clock multiplier that takes in incoming gates and multiplies their timing by a given amount. 
 
 ### Controls 
 * **Multiply:** from "x1" (no multiplication) to "x16", stepped
@@ -55,18 +59,21 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Complex%20EG.png" width ="168">
 
->Complex EG is an ADSHR envelope generator with control over curve shape for attack, decay, and release time. This envelope is particularly useful with a keyboard, where long note holds can control complex changes of a sound over time.
+Complex EG is an ADSHR envelope generator with control over curve shape for
+attack, decay, and release time. This envelope is particularly useful with a
+keyboard, where long note holds can control complex changes of a sound over
+time.
 
 ### Controls 
-* **Attack:** The attack phase (rise time) of the envelope, 1ms - 1sec
-* **Decay:** The decay phase (amount of time from attack to release stage) of the envelope, 1ms - 1sec
-* **Release:** The release phase (amount of time after the sustain stage for signal to fall to 0v) of the envelope, 1ms - 1 sec 
-* **A Curve:** Change the time scaling of the attack curve continously from linear to logarithmic 
-* **D Curve:** Change the time scaling of the decay curve continously from linear to logarithmic 
-* **R Curve:** Change the time scaling of the release curve continously from linear to logarithmic 
-* **Sustain:** The sustain phase (volume at which sound is held after decay stage) of the envelope, 0-8v 
+* **Attack:** The attack phase of the envelope (rise time), 1ms - 1sec
+* **Decay:** The decay phase of the envelope (amount of time from attack to release stage), 1ms - 1sec
+* **Release:** The release phase of the envelope (amount of time after the sustain stage for signal to fall to 0v), 1ms - 1 sec 
+* **A Curve:** Change the time scaling of the attack curve continously from exponential (0%) to linear (50%) to logarithmic (100%)
+* **D Curve:** Change the time scaling of the decay curve continously from exponential (0%) to linear (50%) to logarithmic (100%)
+* **R Curve:** Change the time scaling of the release curve continously from exponential (0%) to linear (50%) to logarithmic (100%)
+* **Sustain:** The sustain phase (volume at which sound is held after decay stage), 0-8v 
 * **Loop:** Toggle for engaging looping behavior of the envelope. If off, envelope needs external gate  
-* **Hold:** The hold phase (amount of time after note off for release phase to begin) of the envelope, 1ms-1sec 
+* **Hold:** The hold phase of the envelope (amount of time after the incoming gate goes off before the release phase begins), 1ms-1sec 
 * **Gate In:** Gate input for beginning the envelope generator 
 * **Attack CV In:** CV input for attack time, -5v/+5v
 * **Decay CV In:** CV input for decay time, -5v/+5v
@@ -84,7 +91,9 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Detune.png" width ="96">
 
->Detune is a "Wow and flutter" tape simulator in which the incoming signal is slowly modulated by a pseudo random pitch shifter. The purpose of this effect is to mimic the behavior of a poorly calibrated tape machine. 
+Detune is a "Wow and flutter" tape simulator in which the incoming signal is
+slowly modulated by a pseudo random pitch shifter. The purpose of this effect
+is to mimic the behavior of a poorly calibrated tape machine. 
 
 ### Controls 
 * **W Speed:** "Wow" speed (slower pitch modulation), 0.1hz - 5.33hz
@@ -100,7 +109,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Djembe.png" width ="96">
 
->Djembe is a drum module based on the sonic characteristic of a real acoustic Djembe. It uses a simple exciter with resonant filters. 
+Djembe is a drum module based on the sonic characteristic of a real acoustic Djembe. It uses a simple exciter with resonant filters. 
 
 ### Controls 
 * **Pitch:** The overall pitch of the drum 20hz - 500hz
@@ -118,18 +127,18 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Drum.png" width ="156">
 
->Drum is a drum module based on a simple two operator FM oscillator core and a noise source. 
+Drum is a drum module based on a simple two operator FM oscillator core and a noise source. 
 
 ### Controls 
 * **Pitch:** The base pitch of the carrier and modulator. 10hz - 1000hz
 * **Pitch Env:** A decay envelope that controls the pitch of the carrier 
 * **Pitch Amt:** The amount the decay envelope modulates the pitch of the carrier
-* **Ratio:** The frequency ratio for the modulator. Ratio is based on carrier frequency
-* **FM Env:** The decay time for an envelope that controls the depth of FM
-* **FM Amt:** The overall amount of FM present in the sound
-* **Tone Env:** The decay time for the modulated carrier
-* **Noise Env:** The decay time for the noise portion of the signal
-* **Noise Blend:** A crossfader that fades between the oscillators and noise source
+* **Ratio:** The frequency of the modulating oscillator, with respect to the frequency of the carrier oscillator
+* **FM Env:** The duration of envelope that controls the amount of frequency modulation
+* **FM Amt:** The overall amount of FM present in the sound (amplitude of the FM envelope)
+* **Tone Env:** The decay time for the FM portion of the drum
+* **Noise Env:** The decay time for the noise portion of the drum
+* **Noise Blend:** A crossfader that fades between the FM and noise portions
 * **Trigger In:** Trigger input for all decay envelopes
 * **V/Oct CV In:** 1v/oct pitch input for carrier and modulator
 * **P Env CV In:** CV input for pitch envelope -5v/+5v
@@ -147,7 +156,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FM.png" width ="96">
 
->FM is a two operator FM oscillator with variable waveshape. 
+FM is a two operator FM oscillator with variable waveshape. 
 
 ### Controls 
 * **Pitch:** Base frequency of carrier and modulator, 20hz - 20khz
@@ -169,7 +178,7 @@ Adjust from -100% (inverted) to +100% (normal). Center = 0% (no output)
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FLW.png" width ="48">
 
->FLW is a two stage follower that generates an envelope based on the followed signal. An audio or CV input is fed in and a variable ramp CV is created based on the incoming signal. 
+FLW is a two stage follower that generates an envelope based on the followed signal. An audio or CV input is fed in and a variable ramp CV is created based on the incoming signal. 
 
 ### Controls 
 * **Rise:** Rise time for the envelope, 1ms - 2sec
