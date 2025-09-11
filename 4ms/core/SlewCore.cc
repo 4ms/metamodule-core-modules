@@ -24,10 +24,10 @@ public:
 
 		switch (param_id) {
 			case Info::KnobRise:
-				slew.attackTime = MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f);
+				slew.set_attack_ms(MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f));
 				break;
 			case Info::KnobFall:
-				slew.decayTime = MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f);
+				slew.set_decay_ms(MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f));
 				break;
 		}
 	}
@@ -35,9 +35,9 @@ public:
 	float get_param(int param_id) const override {
 		switch (param_id) {
 			case Info::KnobRise:
-				return MathTools::map_value(slew.attackTime, 1.f, 2000.f, .0f, CvRangeVolts);
+				return MathTools::map_value(slew.attack_ms(), 1.f, 2000.f, .0f, CvRangeVolts);
 			case Info::KnobFall:
-				return MathTools::map_value(slew.decayTime, 1.f, 2000.f, .0f, CvRangeVolts);
+				return MathTools::map_value(slew.decay_ms(), 1.f, 2000.f, .0f, CvRangeVolts);
 		}
 		return 0;
 	}

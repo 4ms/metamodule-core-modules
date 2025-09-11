@@ -41,10 +41,10 @@ public:
 				wc.setLowThreshhold(bottomThresh);
 			} break;
 			case Info::KnobRise: //rise
-				slew.attackTime = MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.f);
+				slew.set_attack_ms(MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.f));
 				break;
 			case Info::KnobFall: //fall
-				slew.decayTime = MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.0f);
+				slew.set_decay_ms(MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.0f));
 				break;
 		}
 	}
@@ -54,9 +54,9 @@ public:
 			case Info::KnobThreshold: //threshold
 				return wc.getLowThreshold();
 			case Info::KnobRise: //rise
-				return MathTools::map_value(slew.attackTime, 1.f, 2000.f, 0.f, 1.f);
+				return MathTools::map_value(slew.attack_ms(), 1.f, 2000.f, 0.f, 1.f);
 			case Info::KnobFall: //fall
-				return MathTools::map_value(slew.decayTime, 1.f, 2000.f, 0.f, 1.f);
+				return MathTools::map_value(slew.decay_ms(), 1.f, 2000.f, 0.f, 1.f);
 		}
 		return 0;
 	}
