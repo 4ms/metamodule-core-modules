@@ -386,7 +386,7 @@ SEQ8 is a basic 8 step CV sequencer.
 * **Clock Gate In:** the main clock input for the module. Can accept gates or triggers
 * **Reset Gate In:** reset input, sets the sequence to step 0 when high
 * **Gate Out:** fires a step on step 1 of the sequence
-* **Out:** CV output for the sequencer; a sum of all 8 steps 
+* **Out:** CV output for the active step.
 
 ## SLW
 
