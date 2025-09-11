@@ -192,12 +192,12 @@ FLW is an envelope follower that generates an exponential/logarithmic envelope b
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Freeverb.png" width ="96">
 
-Freeverb is a light-weight reverb effect based on the popular public domain Freeverb algorithm. 
+Freeverb is a light-weight reverb effect based on the popular public domain Freeverb algorithm. It uses a collection of all-pass and comb filters.
 
 ### Controls 
-* **Size:** The size of the room
-* **Feedback:** The amount the reverberated signal is fed back into itself. (Interrelated with overall decay time)
-* **Damp:** The cutoff filter and decay time for the fedback signal. (Interrelated with overall decay time)
+* **Size:** The size of the room (length of delays)
+* **Feedback:** The amount the reverberated signal is fed back into itself
+* **Damp:** Low-pass filtering for the reverberated signal
 * **Mix:** Dry/Wet for reverb mix  
 * **Input:** Audio input
 * **Size CV In:** CV input for size, -5v/+5v
@@ -210,11 +210,11 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Gate.png" width ="48">
 
->Gate is a modifier for gate signals. It can extend the pulse width of a gate and also apply delay to the signal. 
+Gate is a modifier for gate signals. It has one-shot pulse generator with a variable pulse width an delay. 
 
 ### Controls 
 * **Length:** Adjusts on time of gate, 1ms - 1sec
-* **Delay:** Delays on time of gate, 0ms - 1sec
+* **Delay:** Delay time between input gate and output gate, 0ms - 1sec
 * **Length CV In:** Length CV input, -5v/+5v
 * **Delay CV In:** Delay CV input, -5v/+5v
 * **Input:** Gate input
@@ -224,12 +224,12 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/HPF.png" width ="48">
 
->HPF is a 12db/Oct resonant highpass filter with two modes, "standard" and "Korg" which mimics the Korg sallen-key style highpass of the MS20. 
+HPF is a 12db/Oct resonant highpass filter with two modes, "standard" and "Korg" which mimics the Korg sallen-key style highpass of the MS20. 
 
 ### Controls 
 * **Cutoff:** Filter cutoff, 130hz - 2093hz
 * **Q:** Filter resonance, 1x-20x
-* **Mode:** Highpass filter style, Standard/Korg
+* **Mode:** Highpass filter style, Standard (left) or Korg (right)
 * **CV Input:** CV input for filter cutoff, -5v/+5v
 * **Input:** Audio input
 * **Out:** Audio output 
@@ -238,7 +238,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/KPLS.png" width ="48">
 
->KPLS is a drum module based on the Karplus Strong synthesis model, a simple method of pinging a filtered delay line to mimic string sounds.
+KPLS is a percussive module based on the Karplus Strong synthesis model, a simple method of pinging a filtered delay line to mimic string sounds. There are 6 delay lines, each at a different frequency.
 
 ### Controls 
 * **Pitch:** Pitch of the sound, 40hz - 200hz
@@ -252,14 +252,14 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/LPG.png" width ="96">
 
->LPG is a lowpass gate. A lowpass gate is a combination of a 6db/Oct non resonant filter and a VCA. You can "ping" the module with a trigger for a subtle drum sound. 
+LPG is a lowpass gate. A lowpass gate is a combination of a resonant low-pass filter and a VCA. You can "ping" the module with a trigger for a subtle drum sound. 
 
 ### Controls 
-* **Level:** Drive amount for the LPG 
-* **Color:** Filter cutoff
-* **Decay:** Decay time for the amplitude envelope applied when "ping" is triggered
+* **Level:** Combination VCA level and LPF cutoff. No effect when Ping is patched, and otherwise effects the overall volume.
+* **Color:** Tonal characteristic of LPG
+* **Decay:** Decay time for the amplitude envelope applied when Ping is triggered or when Level is changed.
 * **Input:** Audio input
-* **Ping Gate In:** A gate or trigger input to "ping" the envelope. This input doesn't respond to pulsewidth changes 
+* **Ping Gate In:** A gate or trigger input to "ping" the envelope. The rising edge will trigger a decay envelope that effectively controls the Level parameter.
 * **Level CV In:** CV input for level, -5v/+5v
 * **Color CV In:** CV input for color, -5v/+5v
 * **Decay CV In:** CV input for decay, -5v/+5v 
@@ -269,25 +269,25 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/MNMX.png" width ="48">
 
->MNMX is a rectifier module that splits one or two voltages into their positive and negative counterparts. 
+MNMX (Min/Max) outputs the minimum and maximum values of two signals.
 
 ### Controls 
 * **In A:** CV or audio input A
 * **In B:** CV or audio input B
-* **Min Out:** The positive output of one or both voltages
-* **Max Out:** The negative output of one or both voltages
+* **Min Out:** The voltage level of A or B, whichever is greater
+* **Max Out:** The voltage level of A or B, whichever is less
 
 ## Multi LFO 
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Multi%20LFO.png" width ="96">
 
->Multi LFO is an LFO with four waveshape outputs, variable pulse width, and variable phase. 
+Multi LFO is an LFO with four waveshape outputs, variable pulse width, and variable phase. 
 
 ### Controls 
-* **Rate:** The speed of the LFO (dependent on range switch). Slow: 0.0003hz - 0.67hz. Fast: 0.01hz - 20hz
-* **Phase:** A skew control for the symmetry of the waveform
-* **PW:** The pulsewidth of the period of the pulse output (on time vs. off time)
-* **Reset Gate In:** A gate input that resets the phase of the LFO to zero when applied
+* **Rate:** The speed of the LFO (dependent on range switch). Slow: 0.0003Hz - 0.67Hz. Fast: 0.01Hz - 20Hz
+* **Phase:** The phase offset for the LFO
+* **PW:** The pulsewidth of the pulse output (on time vs. off time)
+* **Reset Gate In:** A gate input that resets the LFO to the phase set by the Phase parameter
 * **PW CV In:** CV input for PW, -5v/+5v
 * **Rate CV In:** CV input for rate, -5v/+5v
 * **Phase CV In:** CV input for phase, -5/+5v
@@ -300,7 +300,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/NSE.png" width ="48">
 
->NSE is a noise generator with two outputs: white and pink. White noise is all frequencies of the audio spectrum at random amplitudes. Pink noise is all frequencies of the audio spectrum at the same amplitude. 
+NSE is a noise generator with two outputs: white and pink.
 
 ### Controls 
 * **White:** White noise output
@@ -310,19 +310,19 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/OCT.png" width ="48">
 
->OCT is an octave transpose tool for 1v/Oct pitch information. Incoming notes can be shifted to different octaves. 
+OCT is an octave transpose tool for 1V/oct pitch information. Incoming notes can be shifted up or down by an exact number of octaves.
 
 ### Controls 
 * **Octave:** Octave tranpose from -4 (four octaves below) to +4 (four octaves above) the current pitch
 * **CV In:** CV input for octave parameter, -5v/+5v
-* **Input:** Note information input
-* **Out:** Transposed note information output 
+* **Input:** Note CV signal
+* **Out:** Transposed Note CV signal
 
 ## Pan
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Pan.png" width ="48">
 
->Pan is a simple utility for panning signals around the stereo field. 
+Pan is a simple utility for panning signals around the stereo field. 
 
 ### Controls 
 * **Pan:** Move the sound from left to right in the stereo field
@@ -335,12 +335,12 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Pitch%20Shift.png" width ="84">
 
->Pitch shift is a buffer based pitch shifter that takes audio and changes the pitch of it. 
+Pitch shift is a simple pitch shifter.
 
 ### Controls 
 * **Coarse:** semitone shift, -12 to +12 semitones
 * **Fine:** fine tune adjustment for pitch shift, -1 to 1 semitone
-* **Window:** buffersize, 0.42ms - 200ms
+* **Window:** buffer size, 0.42ms - 200ms
 * **Mix:** dry/wet crossfader for effect
 * **Input:** audio input
 * **Pitch CV In:** CV input for pitch, -5v/+5v
@@ -352,7 +352,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="96">
 
->Prob 8 is an 8 step gate sequencer with probability per step. 
+Prob 8 is an 8 step gate sequencer with probability per step. 
 
 ### Controls 
 * **Knobs 1-8:** probability (the likelihood the step will occur), 0-100%
@@ -365,13 +365,13 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/S%26H.png" width ="48">
 
->S&H is a simple dual sample and hold module, where control voltages are sampled and held when processed.
+S&H is a simple dual sample and hold module.
 
 ### Controls 
 * **Sam:** channel 1 source input to be sampled and held
-* **In 1:** channel 1 clock gate input to initiate the sample and holding effect
+* **In 1:** channel 1 clock gate input to initiate the sample and holding 
 * **Samp:** channel 2 source input to be sampled and held
-* **In 2:** channel 2 clock gate input to initiate the sample and holding effect
+* **In 2:** channel 2 clock gate input to initiate the sample and holding
 * **Out 1:** channel 1 output
 * **Out 2:** channel 2 output 
 
@@ -379,7 +379,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/SEQ8.png" width ="96">
 
->SEQ8 is a basic 8 step CV sequencer. 
+SEQ8 is a basic 8 step CV sequencer. 
 
 ### Controls 
 * **Knobs 1-8:** 0-10v offset
@@ -392,7 +392,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Slew.png" width ="48">
 
->SLW is a simple attack/release slew generator for processing incoming CV or audio.
+SLW is a simple attack/release slew limiter for processing incoming CV or audio.
 
 ### Controls 
 * **Rise:** the rise time of the slew limiter, 1ms - 2sec
@@ -404,7 +404,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Source.png" width ="48">
 
->SRC is a dual bipolar offset generator.
+SRC is a dual bipolar DC offset generator.
 
 ### Controls 
 * **1:** offset 1, -10v/10v
@@ -416,7 +416,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Stereo%20Mixer.png" width ="216">
 
->Stereo Mixer is a four channel stereo audio mixer with pan per channel.
+Stereo Mixer is a four channel stereo audio mixer with pan per channel.
 
 ### Controls 
 * **Level 1-4:** volume for each associated channel
@@ -430,7 +430,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%201-4.png" width ="96">
 
->Switch 1:4 is a sequential switch module that takes in a signal and routes it to 1 of 4 destinations.
+Switch 1:4 is a sequential switch module that takes in a signal and routes it to 1 of 4 destinations.
 
 ### Controls 
 * **Input:** the signal to be routed
@@ -443,7 +443,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%204-1.png" width ="96">
 
->Switch 4:1 is a sequential switch module that takes 4 signals and routes them to a single destination.
+Switch 4:1 is a sequential switch module that takes 4 signals and routes them to a single destination.
 
 ### Controls 
 * **In 1-4**: the signals to be routed
@@ -456,14 +456,14 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Verb.png" width ="120">
 
->A simple reverb module. 
+An experimental reverb module based on the Freeverb algorithm but with extra controls. Often noisy, harsh, and unpredictable.
 
 ### Controls 
 * **Size:** the size of the "room"
 * **Time:** decay time of the reverb
 * **Damp:** the amount of high frequencies that decay in the reverb
-* **AP Ratio:** diffusion of the reverb in the space, making the tail feel more natural
-* **Comb:** changes the pre-delay of the reverb algorithm, making the distance of the "walls" greater
+* **AP Ratio:** Ratio of all-pass filter sizes
+* **Comb:** Ratio of comb filter sizes
 * **Mix:** dry/wet control for reverb amount
 * **Input:** audio input
 * **Size CV In:** CV input for size, -5v/+5v
