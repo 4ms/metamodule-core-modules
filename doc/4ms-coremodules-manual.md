@@ -178,21 +178,21 @@ FM is a two operator FM oscillator with variable waveshape.
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FLW.png" width ="48">
 
-FLW is a two stage follower that generates an envelope based on the followed signal. An audio or CV input is fed in and a variable ramp CV is created based on the incoming signal. 
+FLW is an envelope follower that generates an exponential/logarithmic envelope based on the amplitude of an audio or CV signal. Additionally, there is comparator output.
 
 ### Controls 
-* **Rise:** Rise time for the envelope, 1ms - 2sec
-* **Fall:** Fall time for the envelope, 1ms - 2sec 
-* **Thresh:** The voltage threshold at which the envelope follower is triggered, 0-8v
+* **Rise:** Rise time for the envelope, 1ms - 2sec. The rise is non-linear: it rises quickly at first, then slows.
+* **Fall:** Fall time for the envelope, 1ms - 2sec. The fall is non-linear: it falls quickly at first, then slows.
+* **Thresh:** The voltage threshold at which a gate is output. When the envelope signal is higher than this voltage, the gate will be high; when it's lower, the gate will be low.
 * **Input:** CV or audio input
-* **Gate Out:** A gate output that flips high and low when input signal crosses the threshold
-* **Env Out:** Envelope output for the follower
+* **Gate Out:** A gate output that's high when the envelope is above the threshold.
+* **Env Out:** Envelope output for the follower.
 
 ## Freeverb
 
 <img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Freeverb.png" width ="96">
 
->Freeverb is a reverb module based on the popular public domain Freeverb algorithm that has been around since the year 2000. 
+Freeverb is a light-weight reverb effect based on the popular public domain Freeverb algorithm. 
 
 ### Controls 
 * **Size:** The size of the room
