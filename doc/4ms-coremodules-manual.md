@@ -31,7 +31,7 @@ which is based on the filter in the SEM.
 
 ## Basic Wav Player
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BWAVP.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BWAVP.png" width ="80">
 
 Basic Wav Player is a simple module designed to play .wav files. It
 streams the .wav file, which means it can play large files without needing to
