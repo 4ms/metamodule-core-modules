@@ -79,6 +79,15 @@ player since only a small portion of the file is loaded at a time.
   green). Also, since this is expressed as a percentage of the buffer size,
   changing the buffer size will effect the latency and stall protection. The
   default value of 25% is a good choice if you don't know what to pick.
+- **Max Buffer Size:** This sets the maximum amount of memory (in MB) the
+  module is allowed use. If the sample is smaller than the buffer, then only
+  the memory needed will be used. In that case, the sample can be "fully buffered",
+  which means once it's been played once it can be played again without any
+  additional disk access or latency. 
+  On the other hand, if the sample data is larger than the max buffer size,
+  then the sample cannot be fully loaded into memory. In this case it will 
+  always be streamed from disk. Setting the Max Buffer Size can be helpful
+  in patches with lots of sample player modules.
 - **Buffer Strategy**: This is an advanced option. When set to Fill To
   Threshold (default), the sample data will stop being loaded from disk when
   the buffer is filled up to the threshold (See previous option). As the sample
