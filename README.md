@@ -4,7 +4,7 @@ This repo contains the modules from 4ms Company, which are in the CoreModule for
 
 ## User Manual
 
-[User Manual for modules](docs/4ms-coremodules-manual.md)
+[User Manual for modules](doc/4ms-coremodules-manual.md)
 
 ## Building
 

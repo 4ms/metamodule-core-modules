@@ -23,11 +23,80 @@ which is based on the filter in the SEM.
 
 ### Controls 
 * **Cutoff:** filter cutoff frequency, 261hz - 1041hz
-* **Q:** filter resonance, 1-20x
+* **Q:** filter resonance
 * **Mode:** toggle between Korg (left) and Oberheim (right) mode
 * **CV:** CV Input for filter cutoff, -5v/+5v.
 * **Input:** Audio input 
 * **Out:** Audio output 
+
+## Basic Wav Player
+
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BWAVP.png" width ="48">
+
+Basic Wav Player is a simple module designed to play .wav files. It
+streams the .wav file, which means it can play large files without needing to
+wait to load the entire file. It also consumes less memory than a non-streaming
+player since only a small portion of the file is loaded at a time.
+
+### Controls 
+
+* **Play:** Button to start playback. When the sample is already playing, pressing it can stop, restart, or pause playback (selectable by the Retrigger option)
+* **Loop:** Button to toggle looping mode. In looping mode, the sample will play back from the beginning after reaching the end.
+
+### Jacks
+
+* **Play Jack:**  A trigger or rising edge of a gate has the same effect as pressing the Play button.
+* **Loop Jack:**  A trigger or rising edge of a gate toggles looping mode.
+* **Play Gate:** Gate output which high when the sample is playing, and low
+  when it's stopped or paused. When re-triggering, the gate will go low
+  briefly. The Play Gate will not go low when a looping sample loops.
+* **End:** Trigger output which fires when the sample ends or stops. An End
+  trigger will fire when the sample loops, when re-triggered, or playback
+  stops. No trigger fires when the sample is paused.
+* **Out Left:** Left channel of sample
+* **Out Right:** Right channel of sample (or left channel if sample is mono)
+
+### Settings
+
+* **Play Retrig Mode:** Behavoir when a play trigger or button press happens while the sample is playing:
+      - Retrigger: The sample starts over at the beginning. An End trigger
+        fires and the Play Gate dips low briefly before going high again.
+      - Stop: The sample stops playing and is reset to the beginning. An End
+        trigger fires and Play Gate goes low.
+      - Pause: The sample pauses (stops playback). Pressing play again will
+        resume from the current position. No End trigger fires, and Play Gate
+        goes low when paused.
+- **Waveform Zoom:** How much of the sample's time to display on the screen.
+  A Zoom setting of 0% displays the last 2ms on the screen, and a Zoom setting
+  of 100% displays the last ~750ms.
+- **Playback Buffer Threshold:** This is an advanced option that controls how
+  much of the buffer should be filled before playback is allowed to begin.
+  Setting this lower will result in less latency from the time a trigger fires
+  to the time the sample starts. Setting this higher will mean that if the SD
+  Card or USB drive stalls momentarily, then there's less chance of the audio
+  glitching. Keep in mind that if the sample data can fit in the buffer, then
+  this setting has no effect once the sample is full buffered (progress bar is
+  green). Also, since this is expressed as a percentage of the buffer size,
+  changing the buffer size will effect the latency and stall protection. The
+  default value of 25% is a good choice if you don't know what to pick.
+- **Buffer Strategy**: This is an advanced option. When set to Fill To
+  Threshold (default), the sample data will stop being loaded from disk when
+  the buffer is filled up to the threshold (See previous option). As the sample
+  is played, more data will be read from disk. When set to Fill Completely, the
+  sample data will keep being read until the buffer is full. When this option
+  is selected, then the Playback Buffer Threshold option only sets the minimum
+  amount of sample data required in the buffer before audio can be played.
+- **Startup Delay:** This sets an amount of time in seconds that the module
+  will not access disk after the patch is initially loaded. This is useful if
+  you have a lot of sample playback modules in a patch and want certain ones to
+  load from disk first after the patch is loaded.
+- **Load Sample:** This brings up a file choose dialog box to let you pick a
+  .wav file. Stereo or mono files are acceptable. The audio will be resampled
+  to the current sample rate.
+
+### Lights
+
+* **Disk:** Red light is one when the disk is being accessed
 
 ## CLKD
 
