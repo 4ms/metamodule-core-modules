@@ -40,16 +40,19 @@ player since only a small portion of the file is loaded at a time.
 
 ### Controls 
 
-* **Play:** Button to start playback. When the sample is already playing, pressing it can stop, restart, or pause playback (selectable by the Retrigger option)
-* **Loop:** Button to toggle looping mode. In looping mode, the sample will play back from the beginning after reaching the end.
+* **Play:** Button to start playback. When the sample is already playing,
+  pressing it can stop, restart, or pause playback (selectable by the Play
+  Retrig Mode setting)
+* **Loop:** Button to toggle looping mode. In looping mode, the sample will
+  play back from the beginning after reaching the end.
 
 ### Jacks
 
-* **Play Jack:**  A trigger or rising edge of a gate has the same effect as pressing the Play button.
-* **Loop Jack:**  A trigger or rising edge of a gate toggles looping mode.
-* **Play Gate:** Gate output which high when the sample is playing, and low
+* **Play Jack:**  A trigger or rising edge of a gate on this jack has the same effect as pressing the Play button.
+* **Loop Jack:**  A trigger or rising edge of a gate on this jack toggles looping mode.
+* **Play Gate:** Gate output which goes high when the sample is playing, and low
   when it's stopped or paused. When re-triggering, the gate will go low
-  briefly. The Play Gate will not go low when a looping sample loops.
+  briefly. The Play Gate will not go low when a sample loops.
 * **End:** Trigger output which fires when the sample ends or stops. An End
   trigger will fire when the sample loops, when re-triggered, or playback
   stops. No trigger fires when the sample is paused.
@@ -58,14 +61,19 @@ player since only a small portion of the file is loaded at a time.
 
 ### Settings
 
-* **Play Retrig Mode:** Behavoir when a play trigger or button press happens while the sample is playing:
+* **Play Retrig Mode:** Behavior when a play trigger or button press happens
+  while the sample is playing:
+
       - Retrigger: The sample starts over at the beginning. An End trigger
         fires and the Play Gate dips low briefly before going high again.
+
       - Stop: The sample stops playing and is reset to the beginning. An End
         trigger fires and Play Gate goes low.
+
       - Pause: The sample pauses (stops playback). Pressing play again will
         resume from the current position. No End trigger fires, and Play Gate
         goes low when paused.
+
 - **Waveform Zoom:** How much of the sample's time to display on the screen.
   A Zoom setting of 0% displays the last 2ms on the screen, and a Zoom setting
   of 100% displays the last ~750ms.
