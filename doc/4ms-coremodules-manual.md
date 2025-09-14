@@ -63,16 +63,15 @@ player since only a small portion of the file is loaded at a time.
 
 * **Play Retrig Mode:** Behavior when a play trigger or button press happens
   while the sample is playing:
+    - Retrigger: The sample starts over at the beginning. An End trigger
+       fires and the Play Gate dips low briefly before going high again.
 
-      - Retrigger: The sample starts over at the beginning. An End trigger
-        fires and the Play Gate dips low briefly before going high again.
+    - Stop: The sample stops playing and is reset to the beginning. An End
+       trigger fires and Play Gate goes low.
 
-      - Stop: The sample stops playing and is reset to the beginning. An End
-        trigger fires and Play Gate goes low.
-
-      - Pause: The sample pauses (stops playback). Pressing play again will
-        resume from the current position. No End trigger fires, and Play Gate
-        goes low when paused.
+    - Pause: The sample pauses (stops playback). Pressing play again will
+       resume from the current position. No End trigger fires, and Play Gate
+       goes low when paused.
 
 - **Waveform Zoom:** How much of the sample's time to display on the screen.
   A Zoom setting of 0% displays the last 2ms on the screen, and a Zoom setting
@@ -114,6 +113,19 @@ player since only a small portion of the file is loaded at a time.
 ### Lights
 
 * **Disk:** Red light is one when the disk is being accessed
+* **Progress bar:** The bar below the sample waveform tells you about the status of playback and buffering:
+   - Grey: Sample is being read from disk, not ready to play (buffer has not been filled to the Playback Threshold yet)
+   - Blue: Ready to play (buffer is filled past the Playback Threshold)
+   - Green: Sample is fully loaded into the buffer
+* **Waveform color:**
+   - Teal: Normal playback
+   - Blue: Startup delay is in effect
+   - Red: File or disk error
+- **Play Button light:**
+   - Off: not playing
+   - Green: playing
+   - Red: File or disk error
+   - Yellow: Buffer underrun
 
 ## CLKD
 
