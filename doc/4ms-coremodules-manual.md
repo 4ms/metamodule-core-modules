@@ -37,6 +37,9 @@ Basic Wav Player is a simple module designed to play .wav files. It
 streams the .wav file, which means it can play large files without needing to
 wait to load the entire file. It also consumes less memory than a non-streaming
 player since only a small portion of the file is loaded at a time.
+Stereo and mono .wav files are allowed, and the audio will be resampled to the
+MetaModule's current sample rate.
+
 
 ### Controls 
 
@@ -44,15 +47,15 @@ player since only a small portion of the file is loaded at a time.
   pressing it can stop, restart, or pause playback (selectable by the Play
   Retrig Mode setting)
 * **Loop:** Button to toggle looping mode. In looping mode, the sample will
-  play back from the beginning after reaching the end.
+  play from the beginning after reaching the end.
 
 ### Jacks
 
 * **Play Jack:**  A trigger or rising edge of a gate on this jack has the same effect as pressing the Play button.
 * **Loop Jack:**  A trigger or rising edge of a gate on this jack toggles looping mode.
 * **Play Gate:** Gate output which goes high when the sample is playing, and low
-  when it's stopped or paused. When re-triggering, the gate will go low
-  briefly. The Play Gate will not go low when a sample loops.
+  when it's stopped or paused (but not when the sample loops). When Play Retrig
+  Mode is set to Re-trigger, the gate will go low briefly when re-triggered. 
 * **End:** Trigger output which fires when the sample ends or stops. An End
   trigger will fire when the sample loops, when re-triggered, or playback
   stops. No trigger fires when the sample is paused.
@@ -63,15 +66,13 @@ player since only a small portion of the file is loaded at a time.
 
 * **Play Retrig Mode:** Behavior when a play trigger or button press happens
   while the sample is playing:
-    - Retrigger: The sample starts over at the beginning. An End trigger
-       fires and the Play Gate dips low briefly before going high again.
-
-    - Stop: The sample stops playing and is reset to the beginning. An End
-       trigger fires and Play Gate goes low.
-
-    - Pause: The sample pauses (stops playback). Pressing play again will
-       resume from the current position. No End trigger fires, and Play Gate
-       goes low when paused.
+   - Retrigger: The sample starts over at the beginning. An End trigger
+     fires and the Play Gate dips low briefly.
+   - Stop: The sample stops playing and is reset to the beginning. An End
+     trigger fires and Play Gate goes low.
+   - Pause: The sample pauses playback. Pressing play again will resume from
+     the current position. No End trigger fires, and Play Gate goes low when
+     paused.
 
 - **Waveform Zoom:** How much of the sample's time to display on the screen.
   A Zoom setting of 0% displays the last 2ms on the screen, and a Zoom setting
@@ -81,15 +82,16 @@ player since only a small portion of the file is loaded at a time.
   Setting this lower will result in less latency from the time a trigger fires
   to the time the sample starts. Setting this higher will mean that if the SD
   Card or USB drive stalls momentarily, then there's less chance of the audio
-  glitching. Keep in mind that if the sample data can fit in the buffer, then
-  this setting has no effect once the sample is full buffered (progress bar is
-  green). Also, since this is expressed as a percentage of the buffer size,
-  changing the buffer size will effect the latency and stall protection. The
-  default value of 25% is a good choice if you don't know what to pick.
+  glitching. Keep in mind that if the Max Buffer Size is large enough to hold
+  the entire sample, then this setting has no effect once the sample is fully
+  buffered (i.e., the progress bar is green). Also, since this is expressed as
+  a percentage of the buffer size, changing the buffer size will effect the
+  latency and stall protection. The default value of 25% is a good choice if
+  you don't know what to pick.
 - **Max Buffer Size:** This sets the maximum amount of memory (in MB) the
   module is allowed use. If the sample is smaller than the buffer, then only
   the memory needed will be used. In that case, the sample can be "fully buffered",
-  which means once it's been played once it can be played again without any
+  which means after it's been played once it can be played again without any
   additional disk access or latency. 
   On the other hand, if the sample data is larger than the max buffer size,
   then the sample cannot be fully loaded into memory. In this case it will 
@@ -106,14 +108,15 @@ player since only a small portion of the file is loaded at a time.
   will not access disk after the patch is initially loaded. This is useful if
   you have a lot of sample playback modules in a patch and want certain ones to
   load from disk first after the patch is loaded.
-- **Load Sample:** This brings up a file choose dialog box to let you pick a
-  .wav file. Stereo or mono files are acceptable. The audio will be resampled
-  to the current sample rate.
+- **Load Sample:** This brings up a file chooser dialog box to let you pick a
+  .wav file.
 
 ### Lights
 
-* **Disk:** Red light is one when the disk is being accessed
-* **Progress bar:** The bar below the sample waveform tells you about the status of playback and buffering:
+* **Disk:** Red light is on when the disk is being accessed
+* **Progress bar:** The bar below the sample waveform tells you about the
+  status of playback and buffering. The white box indicates the position of the
+  play head. The background color of the bar indicates the status:
    - Grey: Sample is being read from disk, not ready to play (buffer has not been filled to the Playback Threshold yet)
    - Blue: Ready to play (buffer is filled past the Playback Threshold)
    - Green: Sample is fully loaded into the buffer
@@ -125,7 +128,7 @@ player since only a small portion of the file is loaded at a time.
    - Off: not playing
    - Green: playing
    - Red: File or disk error
-   - Yellow: Buffer underrun
+   - Yellow: Buffer underrun (re-buffering)
 
 ## CLKD
 
