@@ -397,6 +397,9 @@ KPLS is a percussive module based on the Karplus Strong synthesis model, a simpl
 * **Pitch:** Pitch of the sound, 40hz - 200hz
 * **Decay:** Amplitude decay time, 200ms - 1sec
 * **Spread:** Detune amount for multiple instances of the delay line. This creates a chorusing effect
+
+### Jacks
+
 * **V/Oct CV In:** 1v/Oct input for the pitch 
 * **Trig In:** Trigger in
 * **Out:** Audio output
@@ -490,9 +493,12 @@ OCT is an octave transpose tool for 1V/oct pitch information. Incoming notes can
 
 Pan is a simple utility for panning signals around the stereo field. 
 
-### Controls 
+### Control 
 
 * **Pan:** Move the sound from left to right in the stereo field
+
+### Jacks
+
 * **CV In:** CV input for pan, -5v/+5v
 * **Input:** Audio input
 * **Out 1:** Left audio output
