@@ -1,14 +1,24 @@
 ## 4ms CoreModules
 
 This repo contains the modules from 4ms Company, which are in the CoreModule format.
-The companion repo to this one, [metamodule-core-interface](https://github.com/4ms/metamodule-core-interface) 
-defines the base class for these modules. The SVG files which can be used to generate the info files, is
-defined in SPECS.md.
 
-Also, this repo contains the module registry.
+Documentation on the CoreModule format and the CoreProcess base class is in the [metamodule-plugin-sdk README](https://github.com/4ms/metamodule-plugin-sdk/blob/main/README.md).
 
-TODO: add the scripts used to convert SVGs to info files (svgextract)
+## User Manual
 
-### Dependencies
+[User Manual for modules](doc/4ms-coremodules-manual.md)
 
-This depends on 4ms cpputil, and metamodule-core-interface
+## Building
+
+This is a library intended to be a included in a larger framework such as the
+MetaModule firmware or a VCV Rack plugin.
+
+If you want to build these modules into a different framework, you should study these examples:
+
+- MetaModule: https://github.com/4ms/metamodule/tree/main/firmware
+
+- 4ms VCV Rack plugin: https://github.com/4ms/4ms-vcv
+
+This requires the [4ms cpputil library](https://github.com/4ms/cpputil), and
+the [metamodule-plugin-sdk](https://github.com/4ms/metamodule-plugin-sdk)
+(just the metamodule-core-interface library).
