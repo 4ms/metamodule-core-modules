@@ -2,7 +2,7 @@
 
 ## Atvert
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Atvert.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Atvert.png" width ="48">
 
 Atvert is a 2-channel attenuverter that lets you scale and invert two input
 signals using two knobs. If no input is connected to a channel, it uses a
@@ -19,7 +19,7 @@ signals using two knobs. If no input is connected to a channel, it uses a
 
 ## BPF
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BPF.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/BPF.png" width ="48">
 
 BPF is a 12db per octave resonant bandpass filter with two filter types:
 "Standard" which is based on a Korg style sallen-key topology, and "Oberheim"
@@ -39,7 +39,7 @@ which is based on the filter in the SEM.
 
 ## Basic Wav Player
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/BWAVP.png" width ="80">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/BWAVP.png" width ="80">
 
 Basic Wav Player is a simple module designed to play .wav files. It
 streams the .wav file, which means it can play large files without needing to
@@ -140,7 +140,7 @@ MetaModule's current sample rate.
 
 ## CLKD
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/CLKD.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/CLKD.png" width ="48">
 
 CLKD is a simple clock divider that takes in incoming gates and divides their
 timing by a given amount. 
@@ -157,7 +157,7 @@ timing by a given amount.
 
 ## CLKM
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/CLKM.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/CLKM.png" width ="48">
 
 CLKM is a simple clock multiplier that takes in incoming gates and multiplies their timing by a given amount. 
 
@@ -173,7 +173,7 @@ CLKM is a simple clock multiplier that takes in incoming gates and multiplies th
 
 ## Complex EG
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Complex%20EG.png" width ="168">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Complex%20EG.png" width ="168">
 
 Complex EG is an ADSHR envelope generator with control over curve shape for
 attack, decay, and release time. This envelope is particularly useful with a
@@ -209,7 +209,7 @@ time.
 
 ## Detune 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Detune.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Detune.png" width ="96">
 
 Detune is a "Wow and flutter" tape simulator in which the incoming signal is
 slowly modulated by a pseudo random pitch shifter. The purpose of this effect
@@ -231,7 +231,7 @@ is to mimic the behavior of a poorly calibrated tape machine.
 
 ## Djembe
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Djembe.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Djembe.png" width ="96">
 
 Djembe is a drum module based on the sonic characteristic of a real acoustic Djembe. It uses a simple exciter with resonant filters. 
 
@@ -253,7 +253,7 @@ Djembe is a drum module based on the sonic characteristic of a real acoustic Dje
 
 ## Drum 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Drum.png" width ="156">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Drum.png" width ="156">
 
 Drum is a drum module based on a simple two operator FM oscillator core and a noise source. 
 
@@ -286,7 +286,7 @@ Drum is a drum module based on a simple two operator FM oscillator core and a no
 
 ## FM
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FM.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/FM.png" width ="96">
 
 FM is a two operator FM oscillator with variable waveshape. 
 
@@ -312,7 +312,7 @@ FM is a two operator FM oscillator with variable waveshape.
 
 ## FLW 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/FLW.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/FLW.png" width ="48">
 
 FLW is an envelope follower that generates an exponential/logarithmic envelope based on the amplitude of an audio or CV signal. Additionally, there is comparator output.
 
@@ -330,7 +330,7 @@ FLW is an envelope follower that generates an exponential/logarithmic envelope b
 
 ## Freeverb
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Freeverb.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Freeverb.png" width ="96">
 
 Freeverb is a light-weight reverb effect based on the popular public domain Freeverb algorithm. It uses a collection of all-pass and comb filters.
 
@@ -352,7 +352,7 @@ Freeverb is a light-weight reverb effect based on the popular public domain Free
 
 ## Gate 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Gate.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Gate.png" width ="48">
 
 Gate is a modifier for gate signals. It has one-shot pulse generator with a variable pulse width an delay. 
 
@@ -370,7 +370,7 @@ Gate is a modifier for gate signals. It has one-shot pulse generator with a vari
 
 ## HPF
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/HPF.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/HPF.png" width ="48">
 
 HPF is a 12db/Oct resonant highpass filter with two modes, "standard" and "Korg" which mimics the Korg sallen-key style highpass of the MS20. 
 
@@ -388,7 +388,7 @@ HPF is a 12db/Oct resonant highpass filter with two modes, "standard" and "Korg"
 
 ## KPLS
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/KPLS.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/KPLS.png" width ="48">
 
 KPLS is a percussive module based on the Karplus Strong synthesis model, a simple method of pinging a filtered delay line to mimic string sounds. There are 6 delay lines, each at a different frequency.
 
@@ -406,7 +406,7 @@ KPLS is a percussive module based on the Karplus Strong synthesis model, a simpl
 
 ## LPG
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/LPG.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/LPG.png" width ="96">
 
 LPG is a lowpass gate. A lowpass gate is a combination of a resonant low-pass filter and a VCA. You can "ping" the module with a trigger for a subtle drum sound. 
 
@@ -427,7 +427,7 @@ LPG is a lowpass gate. A lowpass gate is a combination of a resonant low-pass fi
 
 ## MNMX
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/MNMX.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/MNMX.png" width ="48">
 
 MNMX (Min/Max) outputs the minimum and maximum values of two signals.
 
@@ -439,7 +439,7 @@ MNMX (Min/Max) outputs the minimum and maximum values of two signals.
 
 ## Multi LFO 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Multi%20LFO.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Multi%20LFO.png" width ="96">
 
 Multi LFO is an LFO with four waveshape outputs, variable pulse width, and variable phase. 
 
@@ -462,7 +462,7 @@ Multi LFO is an LFO with four waveshape outputs, variable pulse width, and varia
 
 ## NSE 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/NSE.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/NSE.png" width ="48">
 
 NSE is a noise generator with two outputs: white and pink.
 
@@ -473,7 +473,7 @@ NSE is a noise generator with two outputs: white and pink.
 
 ## OCT 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/OCT.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/OCT.png" width ="48">
 
 OCT is an octave transpose tool for 1V/oct pitch information. Incoming notes can be shifted up or down by an exact number of octaves.
 
@@ -489,7 +489,7 @@ OCT is an octave transpose tool for 1V/oct pitch information. Incoming notes can
 
 ## Pan
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Pan.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Pan.png" width ="48">
 
 Pan is a simple utility for panning signals around the stereo field. 
 
@@ -506,7 +506,7 @@ Pan is a simple utility for panning signals around the stereo field.
 
 ## Pitch Shift
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Pitch%20Shift.png" width ="84">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Pitch%20Shift.png" width ="84">
 
 Pitch shift is a simple pitch shifter.
 
@@ -527,7 +527,7 @@ Pitch shift is a simple pitch shifter.
 
 ## Prob 8
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Prob%208.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Prob%208.png" width ="96">
 
 Prob 8 is an 8 step gate sequencer with probability per step. 
 
@@ -544,7 +544,7 @@ Prob 8 is an 8 step gate sequencer with probability per step.
 
 ## S&H
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/S%26H.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/S%26H.png" width ="48">
 
 S&H is a simple dual sample and hold module.
 
@@ -558,7 +558,7 @@ S&H is a simple dual sample and hold module.
 
 ## SEQ 8
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/SEQ8.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/SEQ8.png" width ="96">
 
 SEQ8 is a basic 8 step CV sequencer. 
 
@@ -575,7 +575,7 @@ SEQ8 is a basic 8 step CV sequencer.
 
 ## SLW
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Slew.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Slew.png" width ="48">
 
 SLW is a simple attack/release slew limiter for processing incoming CV or audio.
 
@@ -591,7 +591,7 @@ SLW is a simple attack/release slew limiter for processing incoming CV or audio.
 
 ## SRC
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Source.png" width ="48">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Source.png" width ="48">
 
 SRC is a dual bipolar DC offset generator.
 
@@ -607,7 +607,7 @@ SRC is a dual bipolar DC offset generator.
 
 ## Stereo Mixer 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Stereo%20Mixer.png" width ="216">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Stereo%20Mixer.png" width ="216">
 
 Stereo Mixer is a four channel stereo audio mixer with pan per channel.
 
@@ -625,7 +625,7 @@ Stereo Mixer is a four channel stereo audio mixer with pan per channel.
 
 ## Switch 1:4
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%201-4.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Switch%201-4.png" width ="96">
 
 Switch 1:4 is a sequential switch module that takes in a signal and routes it to 1 of 4 destinations.
 
@@ -639,7 +639,7 @@ Switch 1:4 is a sequential switch module that takes in a signal and routes it to
 
 ## Switch 4:1
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Switch%204-1.png" width ="96">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Switch%204-1.png" width ="96">
 
 Switch 4:1 is a sequential switch module that takes 4 signals and routes them to a single destination.
 
@@ -653,7 +653,7 @@ Switch 4:1 is a sequential switch module that takes 4 signals and routes them to
 
 ## Verb 
 
-<img src ="https://github.com/4ms/metamodule-core-modules/blob/quickstart-guide/doc/res/Verb.png" width ="120">
+<img src ="https://github.com/4ms/metamodule-core-modules/blob/main/doc/res/Verb.png" width ="120">
 
 An experimental reverb module based on the Freeverb algorithm but with extra controls. Often noisy, harsh, and unpredictable.
 
