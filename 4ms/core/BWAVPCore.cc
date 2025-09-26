@@ -134,6 +134,7 @@ public:
 					resampler.set_sample_rate_in_out(sr ? sr : sample_rate, sample_rate);
 					resampler.set_num_channels(stream.num_channels());
 					resampler.flush();
+					err_message.clear();
 					display_sample_name();
 					play_state.store(next_play_state);
 				}
