@@ -219,6 +219,10 @@ bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view 
 	return false;
 }
 
+bool ModuleFactory::isValidBrand(std::string_view brand) {
+	return brand_registry(brand) != registry().end();
+}
+
 std::vector<std::string_view> ModuleFactory::getAllModuleSlugs(std::string_view brand_slug) {
 	std::vector<std::string_view> slugs;
 
