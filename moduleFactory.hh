@@ -35,7 +35,7 @@ public:
 	// Returns true if slug is valid and registered.
 	static bool isValidSlug(std::string_view combined_slug);
 	static bool isValidBrandModule(std::string_view brand, std::string_view module_name);
-	static bool isValidBrand(std::string_view brand);
+	static bool isRegisteredBrand(std::string_view brand);
 
 	static std::vector<std::string_view> getAllModuleSlugs(std::string_view brand);
 	static std::vector<std::string_view> getAllBrands();

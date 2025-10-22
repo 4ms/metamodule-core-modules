@@ -220,7 +220,7 @@ bool ModuleFactory::isValidBrandModule(std::string_view brand, std::string_view 
 	return false;
 }
 
-bool ModuleFactory::isValidBrand(std::string_view brand) {
+bool ModuleFactory::isRegisteredBrand(std::string_view brand) {
 	return brand_registry(brand) != registry().end();
 }
 
