@@ -53,6 +53,8 @@ public:
 	static bool unregisterBrand(std::string_view brand_name);
 
 	static bool unregisterModule(std::string_view brand, std::string_view module_name);
+
+	static std::string cleanupBrandName(std::string_view brand_name);
 };
 
 } // namespace MetaModule

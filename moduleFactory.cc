@@ -116,6 +116,7 @@ static ModuleRegistry *find_module(std::string_view combined_slug) {
 	auto [brand, module_name] = brand_module(combined_slug);
 
 	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
+		// Special-case: TSP became BWAVP
 		if (module_name.starts_with("TSP")) {
 			return &brand_reg->modules[std::string("BWAVP")];
 		}
@@ -288,6 +289,7 @@ bool ModuleFactory::unregisterBrand(std::string_view brand_name) {
 
 void ModuleFactory::registerBrandAlias(std::string_view brand_name, std::string_view alias) {
 	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
+		pr_dbg("\t\tBrandAlias{\"%s\", \"%s\"},\n", brand_name.data(), alias.data());
 		brand_reg->aliases.emplace_back(alias);
 	}
 }
@@ -300,5 +302,26 @@ bool register_module(std::string_view brand_name,
 
 	return ModuleFactory::registerModuleType(brand_name, typeslug, funcCreate, info, faceplate_filename);
 }
+
+std::string ModuleFactory::cleanupBrandName(std::string_view brand_name) {
+	struct BrandAlias {
+		std::string_view to;
+		std::string_view from;
+	};
+
+	// Manually created list of known aliases
+	static constexpr auto fixups = std::array{
+		BrandAlias{"4ms-XOXDrums", "4msDrums"},
+		BrandAlias{"4ms-XOXDrums", "XOXDrums"},
+		BrandAlias{"JWModules", "JW-Modules"},
+		BrandAlias{"NANOModules", "NanoModules"},
+		BrandAlias{"PhaseOscillator", "InfrasonicAudio"},
+	};
+
+	if (auto f = std::ranges::find(fixups, brand_name, &BrandAlias::from); f != fixups.end())
+		return std::string{f->to};
+	else
+		return std::string{brand_name};
+};
 
 } // namespace MetaModule
