@@ -3,6 +3,8 @@
 #include "CoreModules/elements/element_info_view.hh"
 #include <functional>
 #include <memory>
+#include <span>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -48,6 +50,11 @@ public:
 	static std::string_view getBrandDisplayName(std::string_view brand_name);
 	static std::vector<std::string_view> getBrandSlugsWithDisplayName(std::string_view display_name);
 	static std::string_view getModuleSlug(std::string_view brand_slug, std::string_view display_name);
+
+	static void setModuleDescription(std::string_view combined_slug, std::string_view description);
+	static void setModuleTags(std::string_view combined_slug, const std::vector<std::string> &tags);
+	static std::span<const std::string> getModuleTags(std::string_view combined_slug);
+	static std::string_view getModuleDescription(std::string_view combined_slug);
 
 	static void registerBrandAlias(std::string_view brand, std::string_view alias);
 	static bool unregisterBrand(std::string_view brand_name);

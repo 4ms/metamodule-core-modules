@@ -25,6 +25,9 @@ struct ModuleRegistry {
 	ModuleInfoView info;
 	std::string faceplate;
 	std::string display_name;
+	// Metadata from plugin.json
+	std::string description;
+	std::vector<std::string> tags;
 };
 
 struct BrandRegistry {
@@ -345,4 +348,30 @@ bool register_module(std::string_view brand_name,
 	return ModuleFactory::registerModuleType(brand_name, typeslug, funcCreate, info, faceplate_filename);
 }
 
+
+void ModuleFactory::setModuleDescription(std::string_view combined_slug, std::string_view description) {
+	if (auto mod = find_module(combined_slug)) {
+		mod->description = std::string(description);
+	}
+}
+
+void ModuleFactory::setModuleTags(std::string_view combined_slug, const std::vector<std::string> &tags) {
+	if (auto mod = find_module(combined_slug)) {
+		mod->tags = tags;
+	}
+}
+
+std::span<const std::string> ModuleFactory::getModuleTags(std::string_view combined_slug) {
+	if (auto mod = find_module(combined_slug)) {
+		return mod->tags;
+	}
+	return {};
+}
+
+std::string_view ModuleFactory::getModuleDescription(std::string_view combined_slug) {
+	if (auto mod = find_module(combined_slug)) {
+		return mod->description;
+	} else
+		return "";
+}
 } // namespace MetaModule
