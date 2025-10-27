@@ -355,10 +355,20 @@ void ModuleFactory::setModuleDescription(std::string_view combined_slug, std::st
 	}
 }
 
-void ModuleFactory::setModuleTags(std::string_view combined_slug, const std::vector<std::string> &tags) {
+void ModuleFactory::setModuleTags(std::string_view combined_slug, std::span<const std::string> tags) {
 	if (auto mod = find_module(combined_slug)) {
-		mod->tags = tags;
+		for (auto const &t : tags)
+			mod->tags.push_back(t);
 	}
+}
+
+std::span<const std::string> ModuleFactory::getModuleTags(std::string_view brand, std::string_view module_name) {
+
+	if (auto brand_reg = brand_registry(brand); brand_reg != registry().end()) {
+		if (brand_reg->modules.contains(std::string(module_name)))
+			return brand_reg->modules[std::string(module_name)].tags;
+	}
+	return {};
 }
 
 std::span<const std::string> ModuleFactory::getModuleTags(std::string_view combined_slug) {
