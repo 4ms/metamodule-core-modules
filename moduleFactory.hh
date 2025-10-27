@@ -52,8 +52,9 @@ public:
 	static std::string_view getModuleSlug(std::string_view brand_slug, std::string_view display_name);
 
 	static void setModuleDescription(std::string_view combined_slug, std::string_view description);
-	static void setModuleTags(std::string_view combined_slug, const std::vector<std::string> &tags);
+	static void setModuleTags(std::string_view combined_slug, std::span<const std::string> tags);
 	static std::span<const std::string> getModuleTags(std::string_view combined_slug);
+	static std::span<const std::string> getModuleTags(std::string_view brand, std::string_view module_name);
 	static std::string_view getModuleDescription(std::string_view combined_slug);
 
 	static void registerBrandAlias(std::string_view brand, std::string_view alias);
