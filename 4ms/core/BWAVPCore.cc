@@ -177,7 +177,8 @@ public:
 
 		// Draw waveform and buffer bar
 
-		waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
+		// waveform.set_x_zoom(300.f * getState<WaveformZoomAltParam>() + 1.f);
+		waveform.set_x_zoom(1.f);
 
 		if (stream.is_eof() && stream.first_frame_in_buffer() == 0)
 			waveform.set_bar_fg_color(DarkGreen);
