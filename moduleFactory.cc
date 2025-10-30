@@ -30,7 +30,6 @@ struct ModuleRegistry {
 struct BrandRegistry {
 	std::string brand_name; //brand slug
 	std::string display_name;
-	std::vector<std::string> aliases;
 
 	std::map<std::string, ModuleRegistry> modules; //module slug => registry
 
@@ -44,13 +43,44 @@ auto &registry() {
 	return _registry;
 }
 
+struct BrandAlias {
+	std::string to;
+	std::string from;
+};
+
+// Manually created list of known brand aliases.
+// More will be added at startup from the user settings
+// which gets populated when the user opens a plugin with brand aliases
+auto &brand_aliases() {
+	static auto _brand_aliases = std::vector<BrandAlias>{
+		BrandAlias{"4ms-XOXDrums", "4msDrums"},
+		BrandAlias{"4ms-XOXDrums", "XOXDrums"},
+		BrandAlias{"JWModules", "JW-Modules"},
+		BrandAlias{"NANOModules", "NanoModules"},
+		BrandAlias{"PhaseOscillator", "InfrasonicAudio"},
+		BrandAlias{"StellareModular-TuringMachine", "StellareModular"},
+	};
+
+	return _brand_aliases;
+}
+
 ModuleInfoView nullinfo{};
 
 } // namespace
 
+std::string ModuleFactory::cleanupBrandName(std::string_view brand_name) {
+	if (auto f = std::ranges::find(brand_aliases(), brand_name, &BrandAlias::from); f != brand_aliases().end())
+		return std::string{f->to};
+	else
+		return std::string{brand_name};
+};
+
 // returns a list iterator
-static auto brand_registry(std::string_view brand) {
-	// First, try to match on brand_name:
+static auto brand_registry(std::string_view brand_name) {
+	// Resolve aliases:
+	auto brand = ModuleFactory::cleanupBrandName(brand_name);
+
+	// Try to match on brand_name:
 	auto found = std::ranges::find(registry(), brand, &BrandRegistry::brand_name);
 
 	// If not found, match case-insensitive
@@ -59,12 +89,6 @@ static auto brand_registry(std::string_view brand) {
 			registry(), [&brand](std::string_view a) { return equal_ci(a, brand); }, &BrandRegistry::brand_name);
 	}
 
-	// If still not found, match on alias
-	if (found == registry().end()) {
-		found = std::ranges::find_if(registry(), [=](BrandRegistry const &reg) {
-			return std::ranges::find(reg.aliases, std::string(brand)) != reg.aliases.end();
-		});
-	}
 	return found;
 }
 
@@ -291,12 +315,18 @@ void ModuleFactory::registerBrandAlias(std::string_view brand_name, std::string_
 	if (alias.empty() || alias == brand_name)
 		return;
 
-	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
-		if (std::ranges::find(brand_reg->aliases, alias) != brand_reg->aliases.end())
+	if (auto b = std::ranges::find(brand_aliases(), alias, &BrandAlias::from); b != brand_aliases().end()) {
+		// Do nothing if this alias already exists
+		if (b->to == brand_name)
 			return;
-
-		pr_dbg("\t\tBrandAlias{\"%s\", \"%s\"},\n", brand_name.data(), alias.data());
-		brand_reg->aliases.emplace_back(alias);
+		else {
+			// Replace the alias if we provide a different brand name to resolve to
+			b->to = brand_name;
+		}
+	} else {
+		// Create a new alias entry
+		pr_dbg("Found new BrandAlias{\"%s\", \"%s\"},\n", brand_name.data(), alias.data());
+		brand_aliases().emplace_back(std::string(brand_name), std::string(alias));
 	}
 }
 
@@ -308,27 +338,5 @@ bool register_module(std::string_view brand_name,
 
 	return ModuleFactory::registerModuleType(brand_name, typeslug, funcCreate, info, faceplate_filename);
 }
-
-std::string ModuleFactory::cleanupBrandName(std::string_view brand_name) {
-	struct BrandAlias {
-		std::string_view to;
-		std::string_view from;
-	};
-
-	// Manually created list of known aliases
-	static constexpr auto fixups = std::array{
-		BrandAlias{"4ms-XOXDrums", "4msDrums"},
-		BrandAlias{"4ms-XOXDrums", "XOXDrums"},
-		BrandAlias{"JWModules", "JW-Modules"},
-		BrandAlias{"NANOModules", "NanoModules"},
-		BrandAlias{"PhaseOscillator", "InfrasonicAudio"},
-		BrandAlias{"StellareModular-TuringMachine", "StellareModular"},
-	};
-
-	if (auto f = std::ranges::find(fixups, brand_name, &BrandAlias::from); f != fixups.end())
-		return std::string{f->to};
-	else
-		return std::string{brand_name};
-};
 
 } // namespace MetaModule
