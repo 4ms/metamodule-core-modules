@@ -288,7 +288,13 @@ bool ModuleFactory::unregisterBrand(std::string_view brand_name) {
 }
 
 void ModuleFactory::registerBrandAlias(std::string_view brand_name, std::string_view alias) {
+	if (alias.empty() || alias == brand_name)
+		return;
+
 	if (auto brand_reg = brand_registry(brand_name); brand_reg != registry().end()) {
+		if (std::ranges::find(brand_reg->aliases, alias) != brand_reg->aliases.end())
+			return;
+
 		pr_dbg("\t\tBrandAlias{\"%s\", \"%s\"},\n", brand_name.data(), alias.data());
 		brand_reg->aliases.emplace_back(alias);
 	}
