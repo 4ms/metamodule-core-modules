@@ -316,6 +316,7 @@ std::string ModuleFactory::cleanupBrandName(std::string_view brand_name) {
 		BrandAlias{"JWModules", "JW-Modules"},
 		BrandAlias{"NANOModules", "NanoModules"},
 		BrandAlias{"PhaseOscillator", "InfrasonicAudio"},
+		BrandAlias{"StellareModular-TuringMachine", "StellareModular"},
 	};
 
 	if (auto f = std::ranges::find(fixups, brand_name, &BrandAlias::from); f != fixups.end())
