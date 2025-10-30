@@ -42,6 +42,10 @@ struct PanelDef {
 
 	};
 
+	static constexpr bool is_encoder(uint32_t) {
+		return false;
+	}
+
 	static constexpr std::string_view get_map_param_name(uint32_t id) {
 		if (id < KnobNames.size())
 			return KnobNames[id];
