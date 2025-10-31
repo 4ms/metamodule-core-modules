@@ -312,7 +312,8 @@ bool ModuleFactory::unregisterModule(std::string_view brand, std::string_view mo
 }
 
 bool ModuleFactory::unregisterBrand(std::string_view brand_name) {
-	auto removed = registry().remove_if([=](BrandRegistry &reg) { return reg.brand_name == brand_name; });
+	auto clean_brandname = cleanupBrandName(brand_name);
+	auto removed = registry().remove_if([=](BrandRegistry &reg) { return reg.brand_name == clean_brandname; });
 	return removed > 0;
 }
 
