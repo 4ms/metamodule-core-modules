@@ -69,6 +69,11 @@ ModuleInfoView nullinfo{};
 } // namespace
 
 std::string ModuleFactory::cleanupBrandName(std::string_view brand_name) {
+
+	if (auto colon = brand_name.find_first_of(':'); colon != std::string_view::npos) {
+		brand_name = brand_name.substr(0, colon);
+	}
+
 	if (auto f = std::ranges::find(brand_aliases(), brand_name, &BrandAlias::from); f != brand_aliases().end())
 		return std::string{f->to};
 	else
@@ -116,7 +121,7 @@ bool ModuleFactory::registerModuleType(std::string_view typeslug,
 }
 
 // brand_module(combined_slug)
-// Splits the slug into brand:module
+// Splits the slug into brand:module. Does not resolve brand aliases
 // If no brand: is given, then searches all brands for a matching module slug
 static std::pair<std::string_view, std::string_view> brand_module(std::string_view combined_slug) {
 	auto colon = combined_slug.find_first_of(':');
