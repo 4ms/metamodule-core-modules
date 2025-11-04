@@ -20,6 +20,13 @@
 namespace MetaModule
 {
 
+#ifdef VCVRACK
+namespace Async
+{
+void start_module_threads();
+}
+#endif
+
 class BWAVPCore : public SmartCoreProcessor<BWAVPInfo> {
 	using enum BWAVPInfo::Elem;
 	enum class PlayState { Stopped, LoadSampleInfo, Buffering, Playing, Paused, Restart, FileError };
@@ -32,6 +39,10 @@ public:
 		waveform.set_bar_bg_color(Black);
 		waveform.set_bar_fg_color(LightGrey);
 		waveform.set_cursor_width(2);
+#ifdef VCVRACK
+		// Lazy init threads to reduce impact on Rack app startup/quit
+		Async::start_module_threads();
+#endif
 	}
 
 	~BWAVPCore() {
