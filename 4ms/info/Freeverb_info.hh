@@ -62,11 +62,11 @@ struct FreeverbInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputOut, 
+        OutputOut,
         NumOutJacks,
     };
-    
-    
+
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputInput, OutputOut}}};
 
 };
 } // namespace MetaModule

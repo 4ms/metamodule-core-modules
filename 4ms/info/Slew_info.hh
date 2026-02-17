@@ -44,11 +44,11 @@ struct SlewInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputSlewed_Out, 
+        OutputSlewed_Out,
         NumOutJacks,
     };
-    
-    
+
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputSignal_In, OutputSlewed_Out}}};
 
 };
 } // namespace MetaModule

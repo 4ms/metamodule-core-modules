@@ -56,11 +56,11 @@ struct DetuneInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputAudio_Out, 
+        OutputAudio_Out,
         NumOutJacks,
     };
-    
-    
+
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputAudio_Out}}};
 
 };
 } // namespace MetaModule

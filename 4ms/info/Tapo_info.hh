@@ -141,8 +141,10 @@ struct TapoInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputAudio_Out_1}}};
+
     enum {
-        AltParamVelocity, 
+        AltParamVelocity,
         AltParamBank, 
         AltParamPan, 
         AltParamMode, 
