@@ -93,6 +93,12 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			drumOutput = 0;
+			tenv = 0;
+			return;
+		}
+
 		float pitchAmt = std::clamp(pitchAmount + pitchAmountCV, 0.f, 1.f);
 		auto freqCalc = baseFrequency + (envelopes[pitchEnvelope].update(gateIn) * 4000.0f * (pitchAmt * pitchAmt));
 

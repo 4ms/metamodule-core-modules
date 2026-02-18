@@ -19,6 +19,11 @@ public:
 	}
 
 	void set_param(int param_id, float val) override {
+		if (bypassed) {
+			signalOutput = signalInput;
+			return;
+		}
+
 		if (val < 0)
 			val = 0.f;
 

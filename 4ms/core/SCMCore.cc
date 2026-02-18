@@ -24,6 +24,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		uint32_t rotate_adc = convert_param(getState<RotateKnob>() + getInput<RotateJackIn>().value_or(0) / 5.f, 7.99f);
 		uint32_t slippage_adc = convert_param(getState<SlipKnob>() + getInput<SlipJackIn>().value_or(0) / 5.f, 255);
 		uint32_t shuffle_adc = convert_param(getState<ShuffleKnob>() + getInput<ShuffleJackIn>().value_or(0) / 5.f, 255);

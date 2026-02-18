@@ -14,6 +14,12 @@ public:
 	NoiseCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			whiteNoise = 0;
+			pinkNoise = 0;
+			return;
+		}
+
 		whiteNoise = MathTools::randomNumber(-1.f * MaxOutputVolts, MaxOutputVolts);
 		b0 = 0.99765 * b0 + whiteNoise * 0.0990460;
 		b1 = 0.96300 * b1 + whiteNoise * 0.2965164;

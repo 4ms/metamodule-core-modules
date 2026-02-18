@@ -70,7 +70,6 @@ private:
 	template <class Mapping>
 	class Channel
 	{
-	private:
 		SSI2162 vca;
 		TriangleOscillator osc;
 
@@ -79,7 +78,6 @@ private:
 
 		FollowInput followInput;
 
-	private:
 		float cycleLED;
 		float riseCV;
 		float fallCV;
@@ -89,13 +87,10 @@ private:
 		enum TriggerMode_t {CYCLE, ASR, AR};
 		TriggerMode_t triggerMode;
 
-	private:
 		float timeStepInS = 1.f / 48000.f;
 
-	private:
 		SHEVCore* parent;
 
-	private:
 		static constexpr float followInputHysteresisInV = 0.01f;
 		float previousFollowInputValue;
 
@@ -372,10 +367,14 @@ friend Channel<MappingB>;
 public:
 	SHEVCore()
 		: channelA(this), channelB(this){
-		
 	}
 
 	void update() override {
+
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
 
 		auto inputA = getInput<MappingA::AudioIn>();
 		channelA.update(inputA);
@@ -421,8 +420,6 @@ public:
 	static inline bool s_registered = ModuleFactory::registerModuleType(Info::slug, create, ModuleInfoView::makeView<Info>(), Info::png_filename);
 	// clang-format on
 
-private:
-	
 
 };
 

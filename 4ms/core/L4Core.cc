@@ -24,6 +24,11 @@ public:
 	};
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		float outputLeft = 0.f;
 		float outputRight = 0.f;
 

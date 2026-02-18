@@ -15,6 +15,11 @@ public:
 	PitchShiftCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			signalOutput = signalInput;
+			return;
+		}
+
 		auto finalWindow = MathTools::constrain(windowOffset + windowCV, 0.0f, 1.0f);
 		p.windowSize = MathTools::map_value(finalWindow, 0.0f, 1.0f, 20.0f, static_cast<float>(maxWindowSize));
 		p.shiftAmount = coarseShift + fineShift + shiftCV * 12.f;

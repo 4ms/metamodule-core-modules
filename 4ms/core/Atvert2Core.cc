@@ -14,6 +14,12 @@ public:
 	Atvert2Core() = default;
 
 	void update() override {
+		if (bypassed) {
+			out1 = in1;
+			out2 = in2;
+			return;
+		}
+
 		out1 = (in1Connected ? in1 : defaultVoltage) * level1;
 		out2 = (in2Connected ? in2 : defaultVoltage) * level2;
 	}

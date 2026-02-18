@@ -106,6 +106,10 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
 
 		auto pingButton = getState<PingButton>() == MomentaryButton::State_t::PRESSED;
 		auto pingJack = getInput<PingJackIn>().value_or(0) > TriggerThresholdInVolt;

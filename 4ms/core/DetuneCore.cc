@@ -46,6 +46,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			signalOutput = signalInput;
+			return;
+		}
+
 		float addWow = 0;
 		float addFlutter = 0;
 		float finalWow = 0;

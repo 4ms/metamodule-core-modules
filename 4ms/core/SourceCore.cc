@@ -49,6 +49,9 @@ public:
 	}
 
 	float get_output(const int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		switch (output_id) {
 			case Info::OutputCh__1_Out: {
 				float out = output1 * OutputVoltageRange;

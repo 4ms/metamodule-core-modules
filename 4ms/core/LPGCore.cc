@@ -26,6 +26,11 @@ public:
 	};
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		float in = getInput<AudioIn>().value_or(0.f);
 
 		bool pingPatched = false;

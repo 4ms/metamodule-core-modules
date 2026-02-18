@@ -22,6 +22,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		tickCounter += ticksPerSample;
 		while (tickCounter >= 1.0f) {
 			mod.doTick();

@@ -15,6 +15,11 @@ public:
 	HPFCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			signalOutput = signalInput;
+			return;
+		}
+
 		float filterFreq = setPitchMultiple(constrain(cutoffOffset + cutoffCV, -1.0f, 1.0f)) * 523.25f;
 		if (mode == 0) {
 			hpf.cutoff.setValue(filterFreq);

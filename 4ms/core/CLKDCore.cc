@@ -18,6 +18,11 @@ public:
 	CLKDCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			clockOutput = 0;
+			return;
+		}
+
 		cp.update();
 		if ((cp.getWrappedPhase() < pulseWidth) && clockInit) {
 			clockOutput = gateVoltage;

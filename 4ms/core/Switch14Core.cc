@@ -15,6 +15,9 @@ public:
 	Switch14Core() = default;
 
 	void update() override {
+		if (bypassed)
+			return;
+
 		cp.update();
 		stepNum = cp.getCount() % NumThrows;
 
@@ -59,6 +62,9 @@ public:
 	}
 
 	void set_input(int input_id, float val) override {
+		if (bypassed)
+			return;
+
 		switch (input_id) {
 			case Info::InputClock: // clock
 				cp.updateClock(val / CvRangeVolts);
@@ -76,6 +82,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		// Output jacks must be sequential
 		// or else our logic doesn't work:
 		static_assert(Info::OutputCh__1_Out + 1 == Info::OutputCh__2_Out);

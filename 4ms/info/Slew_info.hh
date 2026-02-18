@@ -48,7 +48,8 @@ struct SlewInfo : ModuleInfoBase {
         NumOutJacks,
     };
 
-    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputSignal_In, OutputSlewed_Out}}};
+	// Not used:
+    // static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputSignal_In, OutputSlewed_Out}}};
 
 };
 } // namespace MetaModule

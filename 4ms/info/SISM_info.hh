@@ -143,5 +143,11 @@ struct SISMInfo : ModuleInfoBase {
     };
     
 
+    static constexpr std::array<BypassRoute, 4> bypass_routes{{
+		{InputCh__1_In, OutputCh__1_Out},
+		{InputCh__2_In, OutputCh__2_Out},
+		{InputCh__3_In, OutputCh__3_Out},
+		{InputCh__4_In, OutputCh__4_Out},
+	}};
 };
 } // namespace MetaModule

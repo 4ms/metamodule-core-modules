@@ -18,6 +18,11 @@ public:
 	CLKMCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			clockOutput = 0;
+			return;
+		}
+
 		float finalMultiply = constrain(multiplyOffset + multiplyCV, 0.0f, 1.0f);
 		cp.setMultiply(std::round(map_value(finalMultiply, 0.0f, 1.0f, 1.0f, maxMultiplier)));
 		cp.update();

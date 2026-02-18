@@ -57,7 +57,8 @@ struct BPFInfo : ModuleInfoBase {
         NumOutJacks,
     };
 
-    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputBandpass_Out}}};
+	// Not used:
+    // static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputBandpass_Out}}};
 
 };
 } // namespace MetaModule

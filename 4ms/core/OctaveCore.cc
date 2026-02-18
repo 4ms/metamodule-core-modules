@@ -14,6 +14,11 @@ public:
 	OctaveCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			voltOutput = voltInput;
+			return;
+		}
+
 		auto octave = std::round(octaveOffset + cvInput);
 		voltOutput = voltInput + octave;
 	}

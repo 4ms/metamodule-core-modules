@@ -35,6 +35,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			signalOut = signalIn;
+			return;
+		}
+
 		update_params();
 
 		float wetSignal = 0;

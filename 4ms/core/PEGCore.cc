@@ -109,6 +109,10 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
 
 		timerPhase += timerPhaseIncrement;
 		while (timerPhase > 1.0f) {

@@ -15,6 +15,12 @@ public:
 	PanCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			leftOut = signalInput;
+			rightOut = signalInput;
+			return;
+		}
+
 		float finalPan = MathTools::constrain(panPosition + panCV, 0.0f, 1.0f);
 		leftOut = signalInput * (1.0f - finalPan);
 		rightOut = signalInput * finalPan;

@@ -16,6 +16,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		if(auto channel1InputValue = getInput<Ch_1In>(); channel1InputValue) {
 			inputValue[0] = *channel1InputValue;
 		} else {

@@ -27,6 +27,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			karpOut = 0;
+			return;
+		}
+
 		auto noiseOut = MathTools::randomNumber(-1.0f, 1.0f);
 		auto noiseBurst = noiseOut * e.update(gateInput);
 		k.set_frequency(basePitch * exp5Table.interp(MathTools::constrain(pitchInput, 0.0f, 1.0f)));

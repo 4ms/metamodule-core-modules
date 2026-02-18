@@ -17,6 +17,11 @@ public:
 	ComplexEGCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		isLooping = getState<LoopSwitch>() == 1 ? true : false;
 
 		float finalAttack =

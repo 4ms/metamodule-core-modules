@@ -508,6 +508,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		auto tapClock = tapOut();
 
 		auto clockInA = getInput<MappingA::ClkInIn>();

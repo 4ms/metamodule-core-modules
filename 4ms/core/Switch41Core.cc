@@ -15,6 +15,9 @@ public:
 	Switch41Core() = default;
 
 	void update() override {
+		if (bypassed)
+			return;
+
 		cp.update();
 		stepNum = cp.getCount() % 4;
 
@@ -57,6 +60,9 @@ public:
 	}
 
 	void set_input(int input_id, float val) override {
+		if (bypassed)
+			return;
+
 		if (input_id == Info::InputClock) {
 			cp.updateClock(val);
 		} else if (input_id == Info::InputReset) {
@@ -70,6 +76,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		if (output_id != Info::OutputOut)
 			return 0;
 

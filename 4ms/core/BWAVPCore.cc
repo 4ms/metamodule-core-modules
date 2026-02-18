@@ -51,6 +51,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		handle_play();
 
 		auto current_frame = stream.current_playback_frame();
