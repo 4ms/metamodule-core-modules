@@ -46,12 +46,12 @@ struct PanInfo : ModuleInfoBase {
     };
     
     enum {
-        OutputCh__1_Out, 
-        OutputCh__2_Out, 
+        OutputCh__1_Out,
+        OutputCh__2_Out,
         NumOutJacks,
     };
-    
-    
+
+    static constexpr std::array<BypassRoute, 2> bypass_routes{{{InputAudio_In, OutputCh__1_Out}, {InputAudio_In, OutputCh__2_Out}}};
 
 };
 } // namespace MetaModule

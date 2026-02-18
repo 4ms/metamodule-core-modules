@@ -194,8 +194,10 @@ struct DLDInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+    static constexpr std::array<BypassRoute, 2> bypass_routes{{{InputIn_A, OutputOut_A}, {InputIn_B, OutputOut_B}}};
+
     enum {
-        AltParamSoft_Clip_A, 
+        AltParamSoft_Clip_A,
         AltParamSoft_Clip_B, 
         AltParamAutomute_A, 
         AltParamAutomute_B, 

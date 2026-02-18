@@ -59,11 +59,11 @@ struct LPGInfo : ModuleInfoBase {
     };
     
     enum {
-        AudioOutOutput, 
+        AudioOutOutput,
         NumOutJacks,
     };
-    
-    
+
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{AudioInInput, AudioOutOutput}}};
 
 };
 } // namespace MetaModule
