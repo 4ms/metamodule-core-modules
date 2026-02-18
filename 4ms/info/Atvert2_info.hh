@@ -53,8 +53,10 @@ struct Atvert2Info : ModuleInfoBase {
         OutputCh__2_Out, 
         NumOutJacks,
     };
-    
-    
+
+    // Only used in VCV, not in MM firmware
+    static constexpr std::array<BypassRoute, 2> bypass_routes{{{InputCh__1_In, OutputCh__1_Out}, {InputCh__2_In, OutputCh__2_Out}}};
+
 
 };
 } // namespace MetaModule

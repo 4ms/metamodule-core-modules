@@ -48,8 +48,8 @@ struct SlewInfo : ModuleInfoBase {
         NumOutJacks,
     };
 
-	// Not used:
-    // static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputSignal_In, OutputSlewed_Out}}};
+	// Only used in VCV, not in MM firmware
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputSignal_In, OutputSlewed_Out}}};
 
 };
 } // namespace MetaModule

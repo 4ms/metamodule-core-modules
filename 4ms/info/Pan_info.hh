@@ -51,8 +51,8 @@ struct PanInfo : ModuleInfoBase {
         NumOutJacks,
     };
 
-	// Not used:
-    // static constexpr std::array<BypassRoute, 2> bypass_routes{{{InputAudio_In, OutputCh__1_Out}, {InputAudio_In, OutputCh__2_Out}}};
+	// Only used in VCV, not in MM firmware
+    static constexpr std::array<BypassRoute, 2> bypass_routes{{{InputAudio_In, OutputCh__1_Out}, {InputAudio_In, OutputCh__2_Out}}};
 
 };
 } // namespace MetaModule

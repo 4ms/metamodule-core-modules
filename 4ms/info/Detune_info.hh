@@ -60,8 +60,8 @@ struct DetuneInfo : ModuleInfoBase {
         NumOutJacks,
     };
 
-	// Not used:
-    // static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputAudio_Out}}};
+    // Only used in VCV, not in MM firmware
+    static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputAudio_Out}}};
 
 };
 } // namespace MetaModule
