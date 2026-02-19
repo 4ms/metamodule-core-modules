@@ -15,15 +15,14 @@ public:
 	SlewCore() = default;
 
 	void update() override {
-		signalOutput = slew.update(signalInput);
-	}
-
-	void set_param(int param_id, float val) override {
 		if (bypassed) {
 			signalOutput = signalInput;
 			return;
 		}
+		signalOutput = slew.update(signalInput);
+	}
 
+	void set_param(int param_id, float val) override {
 		if (val < 0)
 			val = 0.f;
 
