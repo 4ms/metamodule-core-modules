@@ -15,6 +15,11 @@ public:
 	VCAMCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		channelA1.pot(getState<A1LevelKnob>());
 		channelA2.pot(getState<A2LevelKnob>());
 		channelA3.pot(getState<A3LevelKnob>());

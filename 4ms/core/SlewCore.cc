@@ -15,6 +15,10 @@ public:
 	SlewCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			signalOutput = signalInput;
+			return;
+		}
 		signalOutput = slew.update(signalInput);
 	}
 

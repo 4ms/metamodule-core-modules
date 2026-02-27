@@ -15,6 +15,9 @@ public:
 	Seq8Core() = default;
 
 	void update() override {
+		if (bypassed)
+			return;
+
 		seq.update();
 	}
 
@@ -40,6 +43,9 @@ public:
 	}
 
 	void set_input(int input_id, float val) override {
+		if (bypassed)
+			return;
+
 		switch (input_id) {
 			case Info::InputClock:
 				seq.updateClock(val);
@@ -51,6 +57,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		switch (output_id) {
 			case Info::OutputGate:
 				return seq.endOutput * GateOutVolts;

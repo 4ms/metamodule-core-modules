@@ -25,6 +25,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		auto [riseCV, fallCV] = getRiseAndFallCV();
 
 		// Convert voltage to time without dealing with details of transistor core

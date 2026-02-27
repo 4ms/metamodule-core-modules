@@ -70,6 +70,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			signalOut = 0;
+			return;
+		}
+
 		if (paramsNeedUpdating) {
 			update_params();
 			paramsNeedUpdating = false;

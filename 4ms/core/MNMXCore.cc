@@ -32,6 +32,10 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed) {
+			return 0.f;
+		}
+
 		if (output_id == Info::OutputMin)
 			return MathTools::min<float>(inA, inB);
 

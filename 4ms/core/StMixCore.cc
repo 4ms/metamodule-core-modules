@@ -15,6 +15,12 @@ public:
 	StMixCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			leftOut = 0;
+			rightOut = 0;
+			return;
+		}
+
 		float tempLeft = 0;
 		float tempRight = 0;
 		for (int i = 0; i < 4; i++) {

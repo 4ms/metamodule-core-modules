@@ -16,6 +16,12 @@ public:
 	FollowCore() = default;
 
 	void update(void) override {
+		if (bypassed) {
+			envOutput = 0;
+			gateOutput = 0;
+			return;
+		}
+
 		float rectSignal = signalInput;
 		if (rectSignal < 0)
 			rectSignal *= -1.0f;

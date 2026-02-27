@@ -17,6 +17,10 @@ public:
 	MultiLFOCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			return;
+		}
+
 		if (rateChanged) {
 			combineKnobCVFreq();
 			rateChanged = false;
@@ -92,6 +96,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		switch (output_id) {
 			case Info::OutputSine:
 				return sinTable.interp_wrap(modPhase) * MaxOutputVolts;

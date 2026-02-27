@@ -18,6 +18,11 @@ public:
 	}
 
 	void update(void) override {
+		if (bypassed) {
+			mainOutput = 0;
+			return;
+		}
+
 		fm.set_frequency(0, basePitch * MathTools::setPitchMultiple(pitchInput));
 		if (secondPitchConnected == false) {
 			fm.set_frequency(1, basePitch * ratioFine * ratioCoarse);

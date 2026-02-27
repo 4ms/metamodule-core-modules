@@ -15,6 +15,10 @@ public:
 	Prob8Core() = default;
 
 	void update() override {
+		if (bypassed) {
+			return;
+		}
+
 		cp.update();
 		lastStep = currentStep;
 		currentStep = cp.getCount() % 8;
@@ -51,6 +55,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		if (output_id == Info::OutputProbability_Output)
 			return gateOutput * MaxOutputVolts;
 

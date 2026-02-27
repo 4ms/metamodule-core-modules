@@ -17,6 +17,11 @@ public:
 	GateCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			gateOutput = 0;
+			return;
+		}
+
 		lastGate = currentGate;
 		currentGate = wc.output();
 		if (currentGate && !lastGate) {

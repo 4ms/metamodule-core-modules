@@ -30,6 +30,10 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
 
 		auto add_cv_and_pot = [](std::optional<float> cv, float pot) {
 			const float cv_val = cv.value_or(0.f) / 5.f; // range: -1 .. 1 for CV -5V .. +5V

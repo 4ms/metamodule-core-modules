@@ -22,6 +22,10 @@ public:
 	EnOscCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			return;
+		}
+
 		// Low-priority thread
 		// in while loop:
 		if (ui_process_ctr++ > ui_process_throttle) {
@@ -254,6 +258,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		s9_23 sample = output_id == 0 ? out_block_[block_ctr].l : out_block_[block_ctr].r;
 
 		//hardware EnOssc is about 4.5Vpp for one osc, we make it 2x as loud to match other virtual VCOs

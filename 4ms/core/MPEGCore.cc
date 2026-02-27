@@ -36,6 +36,11 @@ public:
 	};
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		sideloadDrivers();
 		sideloadSystemSettings();
 

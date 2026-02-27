@@ -16,6 +16,11 @@ public:
 	BPFCore() = default;
 
 	void update() override {
+		if (bypassed) {
+			signalOutput = signalInput;
+			return;
+		}
+
 		float filterFreq = 523.25f * setPitchMultiple(constrain(cutoffCV + cutoffOffset, -1.0f, 1.0f));
 		if (mode == 0) {
 			bpf.q = map_value(filterQ, 0.0f, 1.0f, 1.0f, 20.0f);

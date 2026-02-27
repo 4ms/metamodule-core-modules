@@ -76,6 +76,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		if (uiSampleCounter++ >= (float(currentSampleRateInHz) / TickFreqHz)) {
 			uiSampleCounter = 0;
 

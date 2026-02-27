@@ -62,6 +62,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			signalOut = 0;
+			return;
+		}
+
 		//1038us
 		if (paramsNeedUpdating) {
 			update_params();

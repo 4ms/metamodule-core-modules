@@ -43,7 +43,6 @@ public:
 private:
 	template<class Mapping>
 	class Channel {
-	private:
 		SSI2162 vca;
 		TriangleOscillator osc;
 
@@ -52,7 +51,6 @@ private:
 
 		FollowInput followInput;
 
-	private:
 		float cycleLED;
 		float riseCV;
 		float fallCV;
@@ -60,10 +58,8 @@ private:
 		float fScaleLEDs = 0.f;
 		float envOut;
 
-	private:
 		float timeStepInS = 1.f / 48000.f;
 
-	private:
 		DEVCore *parent;
 
 	public:
@@ -278,6 +274,11 @@ public:
 	}
 
 	void update() override {
+		if (bypassed) {
+			handle_bypass();
+			return;
+		}
+
 		bool cycleTriggerIn = CVToBool(getInput<CycleGateIn>().value_or(0.0f));
 
 		auto inputA = getInput<MappingA::AudioIn>();
@@ -326,8 +327,6 @@ public:
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
 	static inline bool s_registered = ModuleFactory::registerModuleType(Info::slug, create, ModuleInfoView::makeView<Info>(), Info::png_filename);
 	// clang-format on
-
-private:
 };
 
 } // namespace MetaModule

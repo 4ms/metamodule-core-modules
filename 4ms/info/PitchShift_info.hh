@@ -63,6 +63,7 @@ struct PitchShiftInfo : ModuleInfoBase {
         NumOutJacks,
     };
 
+	// Only used in VCV, not in MM firmware
     static constexpr std::array<BypassRoute, 1> bypass_routes{{{InputAudio_In, OutputAudio_Out}}};
 
 };

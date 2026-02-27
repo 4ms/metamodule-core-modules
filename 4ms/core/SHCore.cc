@@ -27,6 +27,9 @@ public:
 	}
 
 	void set_input(int input_id, float val) override {
+		if (bypassed)
+			return;
+
 		switch (input_id) {
 			case Info::InputCh__1_Clock_In:
 				input[0] = val;
@@ -51,6 +54,9 @@ public:
 	}
 
 	float get_output(int output_id) const override {
+		if (bypassed)
+			return 0;
+
 		if (output_id < 0 || output_id > 1)
 			return 0;
 
