@@ -350,10 +350,10 @@ private:
 	static constexpr float triggerLengthMinimumInS = 0.005f;
 
 	static constexpr uint32_t maxIndexDivisions = 9;
-	static constexpr std::array<factorType_t, 19> clockFactor = {{
+	static constexpr std::array<factorType_t, 19> clockFactor{{
 		{DIV, 32, 0},  {DIV, 16, 1},  {DIV, 8, 2},	 {DIV, 7, 3},	 {DIV, 6, 4},	 {DIV, 5, 5},	{DIV, 4, 6},
 		{DIV, 3, 7},   {DIV, 2, 8},	  {MULT, 1, 9},	 {MULT, 2, 10},	 {MULT, 3, 11},	 {MULT, 4, 12}, {MULT, 5, 13},
-		{MULT, 6, 14}, {MULT, 7, 16}, {MULT, 8, 16}, {MULT, 12, 17}, {MULT, 16, 18},
+		{MULT, 6, 14}, {MULT, 7, 15}, {MULT, 8, 16}, {MULT, 12, 17}, {MULT, 16, 18},
 	}};
 
 private:
