@@ -155,6 +155,11 @@ namespace easiglib
 
 template<typename T, size_t SIZE>
 class RingBuffer {
+	static_assert(SIZE > 0);
+	static_assert((SIZE & (SIZE - 1)) == 0, "RingBuffer SIZE must be a power of 2");
+
+	static constexpr size_t SIZE_MASK = (SIZE - 1);
+
 	T buffer_[SIZE];
 	size_t cursor_ = SIZE;
 
@@ -164,20 +169,19 @@ public:
 	}
 	void Write(T &x) {
 		++cursor_;
-		buffer_[cursor_ % SIZE] = x;
+		buffer_[cursor_ & SIZE_MASK] = x;
 	}
 	//FIXME: Dangerous if n > cursor_!
 	T &Read(int n) {
-		// TODO specialized version when SIZE is 2^n
-		return buffer_[(cursor_ - n) % SIZE];
+		return buffer_[(cursor_ - n) & SIZE_MASK];
 	}
 	T &ReadLast() {
-		return buffer_[(cursor_ + 1) % SIZE];
+		return buffer_[(cursor_ + 1) & SIZE_MASK];
 	}
 
 	// drops top element
 	void Drop() {
-		cursor_ = (cursor_ + (SIZE - 1)) % SIZE;
+		cursor_ = (cursor_ + (SIZE - 1)) & SIZE_MASK;
 	}
 };
 
