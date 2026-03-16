@@ -26,13 +26,6 @@ public:
 			return;
 		}
 
-		// Low-priority thread
-		// in while loop:
-		if (ui_process_ctr++ > ui_process_throttle) {
-			ui_process_ctr = 0;
-			enosc.Process(); //EventHandler::Process
-		}
-
 		if (ui_update_ctr++ > ui_update_throttle) {
 			ui_update_ctr = 0;
 			enosc.Update(); //LED update
@@ -41,6 +34,11 @@ public:
 		if (ui_poll_ctr++ > ui_poll_throttle) {
 			ui_poll_ctr = 0;
 			enosc.Poll();
+		}
+
+		if (ui_process_ctr++ > ui_process_throttle) {
+			ui_process_ctr = 0;
+			enosc.Process(); //EventHandler::Process
 		}
 
 		// SampleRate / BlockRate (6kHz for 48k)
