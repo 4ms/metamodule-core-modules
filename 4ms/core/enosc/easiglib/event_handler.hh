@@ -5,7 +5,7 @@
 namespace easiglib
 {
 
-constexpr int kEventBufferSize = 64;
+constexpr int kEventBufferSize = 128;
 
 template<class Event>
 struct EventSource : Nocopy {
