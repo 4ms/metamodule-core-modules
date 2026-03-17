@@ -561,6 +561,7 @@ public:
 
 		if (sr != sampleRate) {
 			tapPeriod = tapPeriod * (sr / sampleRate);
+			sampleRate = sr;
 		}
 
 		channelA.set_samplerate(sr);
@@ -581,12 +582,15 @@ public:
 	}
 
 	std::string save_state() override {
+		// Normalize to 48kHz reference rate so load_state + set_samplerate works correctly
+		uint32_t normalizedPeriod = (uint32_t)(tapPeriod * (48000.0 / sampleRate) + 0.5);
+
 		std::vector<uint8_t> bytes;
 		bytes.resize(4);
-		bytes[0] = tapPeriod & 0xFF;
-		bytes[1] = (tapPeriod >> 8) & 0xFF;
-		bytes[2] = (tapPeriod >> 16) & 0xFF;
-		bytes[3] = (tapPeriod >> 24) & 0xFF;
+		bytes[0] = normalizedPeriod & 0xFF;
+		bytes[1] = (normalizedPeriod >> 8) & 0xFF;
+		bytes[2] = (normalizedPeriod >> 16) & 0xFF;
+		bytes[3] = (normalizedPeriod >> 24) & 0xFF;
 
 		return Base64::encode({bytes.data(), bytes.size()});
 	}
