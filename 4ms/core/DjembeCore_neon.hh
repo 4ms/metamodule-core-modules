@@ -83,7 +83,8 @@ public:
 
 		// 90ns:
 		// StrikeModel:
-		const auto tnoise = (1103515245 * noise) + 12345;
+		// signed integer overflow is OK here:
+		const int32_t tnoise = (1103515245 * noise) + 12345;
 		const auto tnoise_hp = (4.65661287e-10f * float(tnoise)) -
 							   (fSlowStrike1 * ((fSlowStrike3 * noise_hp[prev]) + (fSlowStrike4 * noise_hp[slot])));
 
@@ -267,7 +268,7 @@ private:
 	float gainKnob;
 	float strikeCV;
 	float strikeKnob;
-	int noise{};
+	int32_t noise{};
 	float noise_hp[2]{};
 	float noise_hp_lp[2]{};
 	float sharpCV;
