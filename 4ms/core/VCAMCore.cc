@@ -1,15 +1,25 @@
-#include "CoreModules/SmartCoreProcessor.hh"
+#include "CoreModules/SmartCoreProcessorPoly.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/VCAM_info.hh"
-#include "vcam/vcam_channel.h"
+#include "vcam/Tables.h"
+
+#include <algorithm>
+#include <array>
+#include <optional>
 
 namespace MetaModule
 {
 
-class VCAMCore : public SmartCoreProcessor<VCAMInfo> {
+// Polyphonic: the four outputs are as wide as the widest of the four signal
+// inputs. Each input's highest channel feeds its upper voices, and the
+// per-node control jacks map per voice the same way (defaulting to 5V when
+// unpatched). Button LEDs show the first channel's gain.
+class VCAMCore : public SmartCoreProcessorPoly<VCAMInfo> {
 	using Info = VCAMInfo;
 	using ThisCore = VCAMCore;
 	using enum Info::Elem;
+
+	static constexpr unsigned MaxChans = MaxPolyChannels;
 
 public:
 	VCAMCore() = default;
@@ -20,151 +30,31 @@ public:
 			return;
 		}
 
-		channelA1.pot(getState<A1LevelKnob>());
-		channelA2.pot(getState<A2LevelKnob>());
-		channelA3.pot(getState<A3LevelKnob>());
-		channelA4.pot(getState<A4LevelKnob>());
+		const unsigned nv = std::max(
+			{numChannels<InAIn>(), numChannels<InBIn>(), numChannels<InCIn>(), numChannels<InDIn>(), 1u});
 
-		channelB1.pot(getState<B1LevelKnob>());
-		channelB2.pot(getState<B2LevelKnob>());
-		channelB3.pot(getState<B3LevelKnob>());
-		channelB4.pot(getState<B4LevelKnob>());
+		setChannels<Out1Out>(nv);
+		setChannels<Out2Out>(nv);
+		setChannels<Out3Out>(nv);
+		setChannels<Out4Out>(nv);
 
-		channelC1.pot(getState<C1LevelKnob>());
-		channelC2.pot(getState<C2LevelKnob>());
-		channelC3.pot(getState<C3LevelKnob>());
-		channelC4.pot(getState<C4LevelKnob>());
+		std::array<std::array<float, MaxChans>, 4> outputs{};
 
-		channelD1.pot(getState<D1LevelKnob>());
-		channelD2.pot(getState<D2LevelKnob>());
-		channelD3.pot(getState<D3LevelKnob>());
-		channelD4.pot(getState<D4LevelKnob>());
+		processRow<InAIn, A1LevelKnob, A1JackIn, A1Button, A2LevelKnob, A2JackIn, A2Button,
+				   A3LevelKnob, A3JackIn, A3Button, A4LevelKnob, A4JackIn, A4Button>(nv, outputs);
+		processRow<InBIn, B1LevelKnob, B1JackIn, B1Button, B2LevelKnob, B2JackIn, B2Button,
+				   B3LevelKnob, B3JackIn, B3Button, B4LevelKnob, B4JackIn, B4Button>(nv, outputs);
+		processRow<InCIn, C1LevelKnob, C1JackIn, C1Button, C2LevelKnob, C2JackIn, C2Button,
+				   C3LevelKnob, C3JackIn, C3Button, C4LevelKnob, C4JackIn, C4Button>(nv, outputs);
+		processRow<InDIn, D1LevelKnob, D1JackIn, D1Button, D2LevelKnob, D2JackIn, D2Button,
+				   D3LevelKnob, D3JackIn, D3Button, D4LevelKnob, D4JackIn, D4Button>(nv, outputs);
 
-		channelA1.control(getInput<A1JackIn>().value_or(5.f));
-		channelA2.control(getInput<A2JackIn>().value_or(5.f));
-		channelA3.control(getInput<A3JackIn>().value_or(5.f));
-		channelA4.control(getInput<A4JackIn>().value_or(5.f));
-
-		channelB1.control(getInput<B1JackIn>().value_or(5.f));
-		channelB2.control(getInput<B2JackIn>().value_or(5.f));
-		channelB3.control(getInput<B3JackIn>().value_or(5.f));
-		channelB4.control(getInput<B4JackIn>().value_or(5.f));
-
-		channelC1.control(getInput<C1JackIn>().value_or(5.f));
-		channelC2.control(getInput<C2JackIn>().value_or(5.f));
-		channelC3.control(getInput<C3JackIn>().value_or(5.f));
-		channelC4.control(getInput<C4JackIn>().value_or(5.f));
-
-		channelD1.control(getInput<D1JackIn>().value_or(5.f));
-		channelD2.control(getInput<D2JackIn>().value_or(5.f));
-		channelD3.control(getInput<D3JackIn>().value_or(5.f));
-		channelD4.control(getInput<D4JackIn>().value_or(5.f));
-
-		channelA1.mute(getState<A1Button>() == LatchingButton::State_t::UP);
-		channelA2.mute(getState<A2Button>() == LatchingButton::State_t::UP);
-		channelA3.mute(getState<A3Button>() == LatchingButton::State_t::UP);
-		channelA4.mute(getState<A4Button>() == LatchingButton::State_t::UP);
-
-		channelB1.mute(getState<B1Button>() == LatchingButton::State_t::UP);
-		channelB2.mute(getState<B2Button>() == LatchingButton::State_t::UP);
-		channelB3.mute(getState<B3Button>() == LatchingButton::State_t::UP);
-		channelB4.mute(getState<B4Button>() == LatchingButton::State_t::UP);
-
-		channelC1.mute(getState<C1Button>() == LatchingButton::State_t::UP);
-		channelC2.mute(getState<C2Button>() == LatchingButton::State_t::UP);
-		channelC3.mute(getState<C3Button>() == LatchingButton::State_t::UP);
-		channelC4.mute(getState<C4Button>() == LatchingButton::State_t::UP);
-
-		channelD1.mute(getState<D1Button>() == LatchingButton::State_t::UP);
-		channelD2.mute(getState<D2Button>() == LatchingButton::State_t::UP);
-		channelD3.mute(getState<D3Button>() == LatchingButton::State_t::UP);
-		channelD4.mute(getState<D4Button>() == LatchingButton::State_t::UP);
-
-		setLED<A1Button>(channelA1.getLEDbrightness());
-		setLED<A2Button>(channelA2.getLEDbrightness());
-		setLED<A3Button>(channelA3.getLEDbrightness());
-		setLED<A4Button>(channelA4.getLEDbrightness());
-
-		setLED<B1Button>(channelB1.getLEDbrightness());
-		setLED<B2Button>(channelB2.getLEDbrightness());
-		setLED<B3Button>(channelB3.getLEDbrightness());
-		setLED<B4Button>(channelB4.getLEDbrightness());
-
-		setLED<C1Button>(channelC1.getLEDbrightness());
-		setLED<C2Button>(channelC2.getLEDbrightness());
-		setLED<C3Button>(channelC3.getLEDbrightness());
-		setLED<C4Button>(channelC4.getLEDbrightness());
-
-		setLED<D1Button>(channelD1.getLEDbrightness());
-		setLED<D2Button>(channelD2.getLEDbrightness());
-		setLED<D3Button>(channelD3.getLEDbrightness());
-		setLED<D4Button>(channelD4.getLEDbrightness());
-
-		float output1 = 0.f;
-		float output2 = 0.f;
-		float output3 = 0.f;
-		float output4 = 0.f;
-
-		if (auto input = getInput<InAIn>(); input) {
-			channelA1.input(*input);
-			output1 += channelA1.output();
-
-			channelA2.input(*input);
-			output2 += channelA2.output();
-
-			channelA3.input(*input);
-			output3 += channelA3.output();
-
-			channelA4.input(*input);
-			output4 += channelA4.output();
+		for (unsigned v = 0; v < nv; v++) {
+			setOutput<Out1Out>(std::clamp(outputs[0][v], -10.f, 10.f), v);
+			setOutput<Out2Out>(std::clamp(outputs[1][v], -10.f, 10.f), v);
+			setOutput<Out3Out>(std::clamp(outputs[2][v], -10.f, 10.f), v);
+			setOutput<Out4Out>(std::clamp(outputs[3][v], -10.f, 10.f), v);
 		}
-
-		if (auto input = getInput<InBIn>(); input) {
-			channelB1.input(*input);
-			output1 += channelB1.output();
-
-			channelB2.input(*input);
-			output2 += channelB2.output();
-
-			channelB3.input(*input);
-			output3 += channelB3.output();
-
-			channelB4.input(*input);
-			output4 += channelB4.output();
-		}
-
-		if (auto input = getInput<InCIn>(); input) {
-			channelC1.input(*input);
-			output1 += channelC1.output();
-
-			channelC2.input(*input);
-			output2 += channelC2.output();
-
-			channelC3.input(*input);
-			output3 += channelC3.output();
-
-			channelC4.input(*input);
-			output4 += channelC4.output();
-		}
-
-		if (auto input = getInput<InDIn>(); input) {
-			channelD1.input(*input);
-			output1 += channelD1.output();
-
-			channelD2.input(*input);
-			output2 += channelD2.output();
-
-			channelD3.input(*input);
-			output3 += channelD3.output();
-
-			channelD4.input(*input);
-			output4 += channelD4.output();
-		}
-
-		setOutput<Out1Out>(std::clamp(output1, -10.f, 10.f));
-		setOutput<Out2Out>(std::clamp(output2, -10.f, 10.f));
-		setOutput<Out3Out>(std::clamp(output3, -10.f, 10.f));
-		setOutput<Out4Out>(std::clamp(output4, -10.f, 10.f));
 	}
 
 	void set_samplerate(float sr) override {
@@ -177,25 +67,49 @@ public:
 	// clang-format on
 
 private:
-	Channel channelA1;
-	Channel channelA2;
-	Channel channelA3;
-	Channel channelA4;
+	// One VCA node: gain = lookup(pot * control * mute), per voice
+	template<Info::Elem PotE, Info::Elem CtrlE, Info::Elem ButtonE>
+	void processNode(unsigned nv, bool inPatched, std::array<float, MaxChans> const &inVals,
+					 std::array<float, MaxChans> &outAccum) {
+		const float potMute = getState<PotE>() * (getState<ButtonE>() == LatchingButton::State_t::UP ? 0.f : 1.f);
 
-	Channel channelB1;
-	Channel channelB2;
-	Channel channelB3;
-	Channel channelB4;
+		setLED<ButtonE>(VoltageToGainTable.lookup(potMute * controlOr5V<CtrlE>(0)));
 
-	Channel channelC1;
-	Channel channelC2;
-	Channel channelC3;
-	Channel channelC4;
+		if (!inPatched)
+			return;
 
-	Channel channelD1;
-	Channel channelD2;
-	Channel channelD3;
-	Channel channelD4;
+		for (unsigned v = 0; v < nv; v++)
+			outAccum[v] += inVals[v] * VoltageToGainTable.lookup(potMute * controlOr5V<CtrlE>(v));
+	}
+
+	template<Info::Elem InE,
+			 Info::Elem P1, Info::Elem C1, Info::Elem B1,
+			 Info::Elem P2, Info::Elem C2, Info::Elem B2,
+			 Info::Elem P3, Info::Elem C3, Info::Elem B3,
+			 Info::Elem P4, Info::Elem C4, Info::Elem B4>
+	void processRow(unsigned nv, std::array<std::array<float, MaxChans>, 4> &outputs) {
+		const bool inPatched = isPatched<InE>();
+		std::array<float, MaxChans> inVals{};
+		if (inPatched) {
+			const auto chans = numChannels<InE>();
+			for (unsigned v = 0; v < MaxChans; v++)
+				inVals[v] = getInput<InE>(std::min(v, chans - 1)).value_or(0.f);
+		}
+
+		processNode<P1, C1, B1>(nv, inPatched, inVals, outputs[0]);
+		processNode<P2, C2, B2>(nv, inPatched, inVals, outputs[1]);
+		processNode<P3, C3, B3>(nv, inPatched, inVals, outputs[2]);
+		processNode<P4, C4, B4>(nv, inPatched, inVals, outputs[3]);
+	}
+
+	// Control jack value per voice; defaults to 5V when unpatched
+	template<Info::Elem EL>
+	float controlOr5V(unsigned chan) {
+		const auto chans = numChannels<EL>();
+		if (chans == 0)
+			return 5.f;
+		return getInput<EL>(std::min(chan, chans - 1)).value_or(5.f);
+	}
 };
 
 } // namespace MetaModule

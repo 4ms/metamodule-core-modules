@@ -1,12 +1,14 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/MNMX_info.hh"
 #include "util/math.hh"
 
 namespace MetaModule
 {
 
-class MNMXCore : public CoreProcessor {
+// Polyphonic: the output channel count is the wider of the two inputs; each
+// input's highest channel feeds its upper voices.
+class MNMXCore : public PolyCoreProcessor<MNMXInfo::NumInJacks, MNMXInfo::NumOutJacks> {
 	using Info = MNMXInfo;
 	using ThisCore = MNMXCore;
 
@@ -14,6 +16,27 @@ public:
 	MNMXCore() = default;
 
 	void update() override {
+		auto &inA = ins[Info::InputIn_A];
+		auto &inB = ins[Info::InputIn_B];
+		auto &outMin = outs[Info::OutputMin];
+		auto &outMax = outs[Info::OutputMax];
+
+		const unsigned nv = std::clamp<unsigned>(std::max(inA.chans, inB.chans), 1, MaxVoices);
+		outMin.chans = nv;
+		outMax.chans = nv;
+
+		if (bypassed) {
+			outMin.values = {};
+			outMax.values = {};
+			return;
+		}
+
+		for (unsigned v = 0; v < nv; v++) {
+			float a = inA.or_last(v);
+			float b = inB.or_last(v);
+			outMin.values[v] = MathTools::min<float>(a, b);
+			outMax.values[v] = MathTools::max<float>(a, b);
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -21,28 +44,6 @@ public:
 
 	float get_param(int param_id) const override {
 		return 0;
-	}
-
-	void set_input(int input_id, float val) override {
-		if (input_id == Info::InputIn_A)
-			inA = val;
-
-		if (input_id == Info::InputIn_B)
-			inB = val;
-	}
-
-	float get_output(int output_id) const override {
-		if (bypassed) {
-			return 0.f;
-		}
-
-		if (output_id == Info::OutputMin)
-			return MathTools::min<float>(inA, inB);
-
-		if (output_id == Info::OutputMax)
-			return MathTools::max<float>(inA, inB);
-
-		return 0.f;
 	}
 
 	void set_samplerate(float sr) override {
@@ -57,10 +58,6 @@ public:
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
 	static inline bool s_registered = ModuleFactory::registerModuleType(Info::slug, create, ModuleInfoView::makeView<Info>(), Info::png_filename);
 	// clang-format on
-
-private:
-	float inA = 0;
-	float inB = 0;
 };
 
 } // namespace MetaModule

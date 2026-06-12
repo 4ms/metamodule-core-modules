@@ -1,4 +1,4 @@
-#include "CoreModules/SmartCoreProcessor.hh"
+#include "CoreModules/SmartCoreProcessorPoly.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/PEG_info.hh"
 #include "patch-serial/base64.hh"
@@ -8,34 +8,39 @@
 #include <algorithm>
 #include <alpaca/alpaca.h>
 #include <array>
+#include <optional>
 
 namespace MetaModule
 {
 
-class PEGCore : public SmartCoreProcessor<PEGInfo> {
+class PEGCore : public SmartCoreProcessorPoly<PEGInfo> {
 public:
 	using Info = PEGInfo;
 	using ThisCore = PEGCore;
 	using enum Info::Elem;
 
 	template<Info::Elem EL>
-	void setOutput(auto val) {
-		return SmartCoreProcessor<Info>::setOutput<EL>(val);
+	void setOutput(auto val, unsigned voice = 0) {
+		return SmartCoreProcessorPoly<Info>::setOutput<EL>(val, voice);
 	}
 
+	// Voice-mapped input: highest channel feeds upper voices; nullopt if unpatched
 	template<Info::Elem EL>
-	auto getInput() {
-		return SmartCoreProcessor<Info>::getInput<EL>();
+	std::optional<float> getInput(unsigned voice = 0) {
+		const auto chans = SmartCoreProcessorPoly<Info>::numChannels<EL>();
+		if (chans == 0)
+			return std::nullopt;
+		return SmartCoreProcessorPoly<Info>::getInput<EL>(std::min(voice, chans - 1));
 	}
 
 	template<Info::Elem EL, typename VAL>
 	void setLED(const VAL &value) {
-		return SmartCoreProcessor<Info>::setLED<EL>(value);
+		return SmartCoreProcessorPoly<Info>::setLED<EL>(value);
 	}
 
 	template<Info::Elem EL>
 	auto getState() {
-		return SmartCoreProcessor<Info>::getState<EL>();
+		return SmartCoreProcessorPoly<Info>::getState<EL>();
 	}
 
 private:
@@ -94,17 +99,34 @@ private:
 		const static Info::Elem SkewLimitAltParam = SkewLimitBlueAltParam;
 	};
 
-	PEGChannel<PEGCore, MappingA> channelA;
-	PEGChannel<PEGCore, MappingB> channelB;
+	static constexpr unsigned MaxChans = MaxPolyChannels;
+
+	// One PEGChannel per poly voice per side
+	std::array<PEGChannel<PEGCore, MappingA>, MaxChans> channelA{{{this, 0}, {this, 1}, {this, 2}, {this, 3}}};
+	std::array<PEGChannel<PEGCore, MappingB>, MaxChans> channelB{{{this, 0}, {this, 1}, {this, 2}, {this, 3}}};
 
 	friend PEGChannel<PEGCore, MappingA>;
 	friend PEGChannel<PEGCore, MappingB>;
 
+	// Each side's voice count follows the widest of its Ping, QNT, and Async
+	// jacks (the trigger/clock sources)
+	unsigned numVoicesA() {
+		return std::max({SmartCoreProcessorPoly<Info>::numChannels<PingRedJackIn>(),
+						 SmartCoreProcessorPoly<Info>::numChannels<QntRedIn>(),
+						 SmartCoreProcessorPoly<Info>::numChannels<AsyncRedIn>(),
+						 1u});
+	}
+
+	unsigned numVoicesB() {
+		return std::max({SmartCoreProcessorPoly<Info>::numChannels<PingBlueJackIn>(),
+						 SmartCoreProcessorPoly<Info>::numChannels<QntBlueIn>(),
+						 SmartCoreProcessorPoly<Info>::numChannels<AsyncBlueIn>(),
+						 1u});
+	}
+
 public:
 	PEGCore()
-		: channelA(this)
-		, channelB(this)
-		, timerPhase(0)
+		: timerPhase(0)
 		, timerPhaseIncrement(1.0f) {
 	}
 
@@ -114,89 +136,85 @@ public:
 			return;
 		}
 
+		const unsigned nvA = numVoicesA();
+		const unsigned nvB = numVoicesB();
+
+		setChannels<EnvRedOut>(nvA);
+		setChannels<P5VEnvRedOut>(nvA);
+		setChannels<EofRedOut>(nvA);
+		setChannels<EorOut>(nvA);
+		setChannels<EnvBlueOut>(nvB);
+		setChannels<P5VEnvBlueOut>(nvB);
+		setChannels<EofBlueOut>(nvB);
+		setChannels<HalfROut>(nvB);
+		setChannels<OrOut>(std::max(nvA, nvB));
+
 		timerPhase += timerPhaseIncrement;
 		while (timerPhase > 1.0f) {
-			channelA.doDACUpdate();
-			channelB.doDACUpdate();
+			for (unsigned v = 0; v < nvA; v++)
+				channelA[v].doDACUpdate();
+			for (unsigned v = 0; v < nvB; v++)
+				channelB[v].doDACUpdate();
 			timerPhase -= 1.0f;
 		}
 
-		channelA.update();
-		channelB.update();
+		for (unsigned v = 0; v < nvA; v++)
+			channelA[v].update();
+		for (unsigned v = 0; v < nvB; v++)
+			channelB[v].update();
 
 		if (isPatched<ToggleIn>()) {
-			auto toggleIn = getInput<ToggleIn>();
-			channelA.toggleInput(toggleIn);
-			channelB.toggleInput(toggleIn);
+			for (unsigned v = 0; v < nvA; v++)
+				channelA[v].toggleInput(getInput<ToggleIn>(v));
+			for (unsigned v = 0; v < nvB; v++)
+				channelB[v].toggleInput(getInput<ToggleIn>(v));
 		};
 
-		switch (getState<EofRedModeAltParam>()) {
-			case 0:
-				channelA.setMainMode(channelA.MainMode::EOF_GATE);
-				break;
-			case 1:
-				channelA.setMainMode(channelA.MainMode::EOF_TRIG);
-				break;
-			case 2:
-				channelA.setMainMode(channelA.MainMode::TAP_GATE);
-				break;
-			case 3:
-				channelA.setMainMode(channelA.MainMode::TAP_TRIG);
-				break;
-		}
+		using ChannelA_t = PEGChannel<PEGCore, MappingA>;
+		using ChannelB_t = PEGChannel<PEGCore, MappingB>;
 
-		switch (getState<EofBlueModeAltParam>()) {
-			case 0:
-				channelB.setMainMode(channelB.MainMode::EOF_GATE);
-				break;
-			case 1:
-				channelB.setMainMode(channelB.MainMode::EOF_TRIG);
-				break;
-			case 2:
-				channelB.setMainMode(channelB.MainMode::TAP_GATE);
-				break;
-			case 3:
-				channelB.setMainMode(channelB.MainMode::TAP_TRIG);
-				break;
-			default:
-				return;
-		}
+		static constexpr std::array<ChannelA_t::MainMode, 4> MainModesA{
+			ChannelA_t::MainMode::EOF_GATE,
+			ChannelA_t::MainMode::EOF_TRIG,
+			ChannelA_t::MainMode::TAP_GATE,
+			ChannelA_t::MainMode::TAP_TRIG};
+		if (auto mode = getState<EofRedModeAltParam>(); mode < MainModesA.size())
+			for (unsigned v = 0; v < nvA; v++)
+				channelA[v].setMainMode(MainModesA[mode]);
 
-		switch (getState<EorRedModeAltParam>()) {
-			case 0:
-				channelA.setSecondaryMode(channelA.SecondaryMode::EOR_GATE);
-				break;
-			case 1:
-				channelA.setSecondaryMode(channelA.SecondaryMode::EOR_TRIG);
-				break;
-			case 2:
-				channelA.setSecondaryMode(channelA.SecondaryMode::HR_GATE);
-				break;
-			case 3:
-				channelA.setSecondaryMode(channelA.SecondaryMode::HR_TRIG);
-				break;
-			default:
-				return;
-		}
+		static constexpr std::array<ChannelB_t::MainMode, 4> MainModesB{
+			ChannelB_t::MainMode::EOF_GATE,
+			ChannelB_t::MainMode::EOF_TRIG,
+			ChannelB_t::MainMode::TAP_GATE,
+			ChannelB_t::MainMode::TAP_TRIG};
+		if (auto mode = getState<EofBlueModeAltParam>(); mode < MainModesB.size())
+			for (unsigned v = 0; v < nvB; v++)
+				channelB[v].setMainMode(MainModesB[mode]);
 
-		switch (getState<HalfNRBlueModeAltParam>()) {
-			case 0:
-				channelB.setSecondaryMode(channelB.SecondaryMode::HR_GATE);
-				break;
-			case 1:
-				channelB.setSecondaryMode(channelB.SecondaryMode::HR_TRIG);
-				break;
-			case 2:
-				channelB.setSecondaryMode(channelB.SecondaryMode::EOR_GATE);
-				break;
-			case 3:
-				channelB.setSecondaryMode(channelB.SecondaryMode::EOR_TRIG);
-				break;
-			default:
-				return;
-		}
+		static constexpr std::array<ChannelA_t::SecondaryMode, 4> SecondaryModesA{
+			ChannelA_t::SecondaryMode::EOR_GATE,
+			ChannelA_t::SecondaryMode::EOR_TRIG,
+			ChannelA_t::SecondaryMode::HR_GATE,
+			ChannelA_t::SecondaryMode::HR_TRIG};
+		if (auto mode = getState<EorRedModeAltParam>(); mode < SecondaryModesA.size())
+			for (unsigned v = 0; v < nvA; v++)
+				channelA[v].setSecondaryMode(SecondaryModesA[mode]);
 
-		setOutput<OrOut>(std::max(getOutput<EnvBlueOut>(), getOutput<EnvRedOut>()));
+		static constexpr std::array<ChannelB_t::SecondaryMode, 4> SecondaryModesB{
+			ChannelB_t::SecondaryMode::HR_GATE,
+			ChannelB_t::SecondaryMode::HR_TRIG,
+			ChannelB_t::SecondaryMode::EOR_GATE,
+			ChannelB_t::SecondaryMode::EOR_TRIG};
+		if (auto mode = getState<HalfNRBlueModeAltParam>(); mode < SecondaryModesB.size())
+			for (unsigned v = 0; v < nvB; v++)
+				channelB[v].setSecondaryMode(SecondaryModesB[mode]);
+
+		// Or Out: per-channel max of both sides' envelope outputs
+		for (unsigned ch = 0; ch < std::max(nvA, nvB); ch++) {
+			auto red = SmartCoreProcessorPoly<Info>::getOutput<EnvRedOut>(std::min(ch, nvA - 1));
+			auto blue = SmartCoreProcessorPoly<Info>::getOutput<EnvBlueOut>(std::min(ch, nvB - 1));
+			setOutput<OrOut>(std::max(red, blue), ch);
+		}
 	}
 
 	void set_samplerate(float sr) override {
@@ -228,21 +246,25 @@ public:
 			saveState = newSaveState;
 		}
 
-		channelA.peg.settings.start_clk_time = saveState.clk_timeA;
-		channelA.peg.settings.start_cycle_on = saveState.cyclingA;
-		channelA.peg.apply_settings();
+		for (auto &chan : channelA) {
+			chan.peg.settings.start_clk_time = saveState.clk_timeA;
+			chan.peg.settings.start_cycle_on = saveState.cyclingA;
+			chan.peg.apply_settings();
+		}
 
-		channelB.peg.settings.start_clk_time = saveState.clk_timeB;
-		channelB.peg.settings.start_cycle_on = saveState.cyclingB;
-		channelB.peg.apply_settings();
+		for (auto &chan : channelB) {
+			chan.peg.settings.start_clk_time = saveState.clk_timeB;
+			chan.peg.settings.start_cycle_on = saveState.cyclingB;
+			chan.peg.apply_settings();
+		}
 	}
 
 	std::string save_state() override {
-		saveState.cyclingA = channelA.peg.settings.start_cycle_on;
-		saveState.clk_timeA = channelA.peg.settings.start_clk_time;
+		saveState.cyclingA = channelA[0].peg.settings.start_cycle_on;
+		saveState.clk_timeA = channelA[0].peg.settings.start_clk_time;
 
-		saveState.cyclingB = channelB.peg.settings.start_cycle_on;
-		saveState.clk_timeB = channelB.peg.settings.start_clk_time;
+		saveState.cyclingB = channelB[0].peg.settings.start_cycle_on;
+		saveState.clk_timeB = channelB[0].peg.settings.start_clk_time;
 
 		std::vector<uint8_t> bytes;
 		alpaca::serialize<alpaca::options::with_version>(saveState, bytes);

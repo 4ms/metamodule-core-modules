@@ -1,4 +1,4 @@
-#include "CoreModules/SmartCoreProcessor.hh"
+#include "CoreModules/SmartCoreProcessorPoly.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "info/MPEG_info.hh"
 #include "mpeg/envelope_calcs.hh"
@@ -12,27 +12,30 @@ using namespace MetaModule::PEG;
 #include <algorithm>
 #include <alpaca/alpaca.h>
 #include <array>
+#include <optional>
 
 namespace MetaModule
 {
 
-class MPEGCore : public SmartCoreProcessor<MPEGInfo> {
+// Polyphonic: voice count follows the widest of the Ping, Trigger, and Cycle
+// jacks; each voice has its own envelope core. The CV inputs map per voice,
+// with their highest channels feeding all upper voices. LEDs show voice 0.
+class MPEGCore : public SmartCoreProcessorPoly<MPEGInfo> {
 	using Info = MPEGInfo;
 	using ThisCore = MPEGCore;
 	using enum Info::Elem;
 
+	static constexpr unsigned MaxChans = MaxPolyChannels;
+
 public:
-	MPEGCore()
-		: pingIn(1.f, 2.f)
-		, cycleIn(1.f, 2.f)
-		, triggerIn(1.f, 2.f)
-		, timerPhase(0)
-		, timerPhaseIncrement(1.0f) {
-		// TODO: maybe calling these is not required
-		sideloadDrivers();
-		sideloadSystemSettings();
-		peg.apply_settings();
-		peg.update_all_envelopes();
+	MPEGCore() {
+		for (unsigned v = 0; v < MaxChans; v++) {
+			// TODO: maybe calling these is not required
+			sideloadDrivers(v);
+			sideloadSystemSettings(v);
+			voices[v].peg.apply_settings();
+			voices[v].peg.update_all_envelopes();
+		}
 	};
 
 	void update() override {
@@ -41,16 +44,25 @@ public:
 			return;
 		}
 
-		sideloadDrivers();
-		sideloadSystemSettings();
+		const unsigned nv = numVoices();
+		setChannels<EofOut>(nv);
+		setChannels<EnvOut>(nv);
+		setChannels<_5VEnvOut>(nv);
+
+		for (unsigned v = 0; v < nv; v++) {
+			sideloadDrivers(v);
+			sideloadSystemSettings(v);
+		}
 
 		timerPhase += timerPhaseIncrement;
 		while (timerPhase > 1.0f) {
-			peg.update_all_envelopes();
+			for (unsigned v = 0; v < nv; v++)
+				voices[v].peg.update_all_envelopes();
 			timerPhase -= 1.0f;
 		}
 
-		peg.update();
+		for (unsigned v = 0; v < nv; v++)
+			voices[v].peg.update();
 	}
 
 	void set_samplerate(float sr) override {
@@ -66,7 +78,8 @@ public:
 	void load_state(std::string_view state_data) override {
 		if (state_data.length() == 0) {
 			saveState = SaveState_t{};
-			peg.apply_settings();
+			for (auto &voice : voices)
+				voice.peg.apply_settings();
 			return;
 		}
 
@@ -77,15 +90,17 @@ public:
 		if (!ec) {
 			saveState = newSaveState;
 
-			peg.settings.start_clk_time = saveState.clk_time;
-			peg.settings.start_cycle_on = saveState.cycling;
-			peg.apply_settings();
+			for (auto &voice : voices) {
+				voice.peg.settings.start_clk_time = saveState.clk_time;
+				voice.peg.settings.start_cycle_on = saveState.cycling;
+				voice.peg.apply_settings();
+			}
 		}
 	}
 
 	std::string save_state() override {
-		saveState.cycling = peg.settings.start_cycle_on;
-		saveState.clk_time = peg.settings.start_clk_time;
+		saveState.cycling = voices[0].peg.settings.start_cycle_on;
+		saveState.clk_time = voices[0].peg.settings.start_clk_time;
 
 		std::vector<uint8_t> bytes;
 		alpaca::serialize<alpaca::options::with_version>(saveState, bytes);
@@ -93,14 +108,33 @@ public:
 	}
 
 private:
-	void sideloadDrivers() {
+	unsigned numVoices() {
+		return std::max({SmartCoreProcessorPoly<Info>::numChannels<PingJackIn>(),
+						 SmartCoreProcessorPoly<Info>::numChannels<TriggerIn>(),
+						 SmartCoreProcessorPoly<Info>::numChannels<CycleTrigIn>(),
+						 1u});
+	}
+
+	// Voice-mapped input: highest channel feeds upper voices; nullopt if unpatched
+	template<Info::Elem EL>
+	std::optional<float> getInput(unsigned voice) {
+		const auto chans = SmartCoreProcessorPoly<Info>::numChannels<EL>();
+		if (chans == 0)
+			return std::nullopt;
+		return SmartCoreProcessorPoly<Info>::getInput<EL>(std::min(voice, chans - 1));
+	}
+
+	void sideloadDrivers(unsigned v) {
+		auto &voice = voices[v];
+		auto &peg = voice.peg;
+
 		auto MapOutputFunc = [](auto val) -> uint16_t {
 			auto result = val / CVInputFullScaleInV + 0.5f;
 			return uint16_t(std::clamp(result, 0.f, 1.f) * 4095.f);
 		};
 
-		peg.adc_dma_buffer[CV_SHAPE] = MapOutputFunc(getInput<ShapeCvIn>().value_or(0.f));
-		peg.adc_dma_buffer[CV_DIVMULT] = MapOutputFunc(getInput<Div_MultCvIn>().value_or(0.f));
+		peg.adc_dma_buffer[CV_SHAPE] = MapOutputFunc(getInput<ShapeCvIn>(v).value_or(0.f));
+		peg.adc_dma_buffer[CV_DIVMULT] = MapOutputFunc(getInput<Div_MultCvIn>(v).value_or(0.f));
 
 		auto MapKnobFunc = [](auto val) -> uint16_t {
 			return uint16_t(val * 4095.f);
@@ -114,23 +148,26 @@ private:
 		peg.digio.PingBut.sideload_set(getState<PingButton>() == MomentaryButton::State_t::PRESSED);
 		peg.digio.CycleBut.sideload_set(getState<CycleButton>() == MomentaryButton::State_t::PRESSED);
 
-		peg.digio.CycleJack.sideload_set(cycleIn(getInput<CycleTrigIn>().value_or(0.f)));
-		peg.digio.TrigJack.sideload_set(triggerIn(getInput<TriggerIn>().value_or(0.f)));
+		peg.digio.CycleJack.sideload_set(voice.cycleIn(getInput<CycleTrigIn>(v).value_or(0.f)));
+		peg.digio.TrigJack.sideload_set(voice.triggerIn(getInput<TriggerIn>(v).value_or(0.f)));
 
 		// TODO: ping input originall has internal lowpass filtering
-		// peg.digio.PingJack.sideload_set(pingIn(getInput<PingJackIn>().value_or(0.f)));
-		if (pingEdge(pingIn(getInput<PingJackIn>().value_or(0.f)))) {
+		if (voice.pingEdge(voice.pingIn(getInput<PingJackIn>(v).value_or(0.f)))) {
 			peg.pingEdgeIn();
 		}
 
-		setOutput<EofOut>(peg.digio.EOJack.sideload_get() ? TriggerOutputInV : 0.f);
+		setOutput<EofOut>(peg.digio.EOJack.sideload_get() ? TriggerOutputInV : 0.f, v);
 
 		auto MapDACFunc = [](auto val) -> float {
 			return float(val) / 4095.f;
 		};
 
-		setOutput<EnvOut>(MapDACFunc(peg.dac_vals[0]) * EnvelopeOutFullScaleInV + EnvelopeOutOffsetInV);
-		setOutput<_5VEnvOut>(MapDACFunc(peg.dac_vals[1]) * 5.f);
+		setOutput<EnvOut>(MapDACFunc(peg.dac_vals[0]) * EnvelopeOutFullScaleInV + EnvelopeOutOffsetInV, v);
+		setOutput<_5VEnvOut>(MapDACFunc(peg.dac_vals[1]) * 5.f, v);
+
+		// Panel LEDs show the first voice
+		if (v != 0)
+			return;
 
 		auto PWMToFloatFunc = [](uint16_t pwm_val) -> float {
 			return float(pwm_val) / float(4095);
@@ -151,7 +188,9 @@ private:
 		setLED<EofLight>(PWMToFloatFunc(peg.pwm_vals[PWM_EOF_LED]));
 	}
 
-	void sideloadSystemSettings() {
+	void sideloadSystemSettings(unsigned v) {
+		auto &peg = voices[v].peg;
+
 		peg.settings.limit_skew = getState<SkewLimitAltParam>() == 1 ? 1 : 0;
 		peg.settings.free_running_ping = getState<FreeNRunningPingAltParam>() == 0 ? 1 : 0;
 		peg.settings.trigout_is_trig = getState<EofJackTypeAltParam>() == 1 ? 1 : 0;
@@ -183,18 +222,20 @@ private:
 	static constexpr float EnvelopeOutOffsetInV = 10.0f;
 
 private:
-	PEG::MiniPEGEnvelopeCalcs env_calcs;
-	PEG::PEGBase peg{&env_calcs};
+	struct Voice {
+		PEG::MiniPEGEnvelopeCalcs env_calcs;
+		PEG::PEGBase peg{&env_calcs};
+
+		FlipFlop pingIn{1.f, 2.f};
+		FlipFlop cycleIn{1.f, 2.f};
+		FlipFlop triggerIn{1.f, 2.f};
+		EdgeDetector pingEdge;
+	};
+	std::array<Voice, MaxChans> voices{};
 
 private:
-	FlipFlop pingIn;
-	FlipFlop cycleIn;
-	FlipFlop triggerIn;
-	EdgeDetector pingEdge;
-
-private:
-	float timerPhase;
-	float timerPhaseIncrement;
+	float timerPhase = 0;
+	float timerPhaseIncrement = 1.0f;
 
 public:
 	// Boilerplate to auto-register in ModuleFactory

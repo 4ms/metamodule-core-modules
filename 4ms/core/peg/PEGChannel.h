@@ -12,8 +12,10 @@ using namespace MetaModule::PEG;
 namespace MetaModule
 {
 
+// One poly voice of a PEG channel: all jack I/O routes through the parent
+// using this voice's channel index (LEDs only follow voice 0).
 template<class Parent, class Mapping>
-class PEGChannel 
+class PEGChannel
 {
 	friend Parent;
 
@@ -21,19 +23,20 @@ private:
     template<typename Parent::Info::Elem EL>
 	void setOutput(auto val)
 	{
-		return parent->template setOutput<EL>(val);
+		return parent->template setOutput<EL>(val, voice);
 	}
 
 	template<typename Parent::Info::Elem EL>
 	auto getInput()
 	{
-		return parent->template getInput<EL>();
+		return parent->template getInput<EL>(voice);
 	}
 
 	template<typename Parent::Info::Elem EL, typename VAL>
 	void setLED(const VAL &value)
 	{
-		return parent->template setLED<EL>(value);
+		if (voice == 0)
+			parent->template setLED<EL>(value);
 	}
 
 	template<typename Parent::Info::Elem EL>
@@ -44,10 +47,11 @@ private:
 
 private:
     Parent* parent;
+    unsigned voice;
 
 public:
-    PEGChannel(Parent* parent_)
-        : parent(parent_), pingIn(1.f, 2.f)
+    PEGChannel(Parent* parent_, unsigned voice_)
+        : parent(parent_), voice(voice_), pingIn(1.f, 2.f)
         , cycleIn(1.f, 2.f)
         , triggerIn(1.f, 2.f)
         , qntIn(1.f, 2.f)

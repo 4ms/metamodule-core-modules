@@ -1,4 +1,4 @@
-#include "CoreModules/SmartCoreProcessor.hh"
+#include "CoreModules/SmartCoreProcessorPoly.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "helpers/envelope_follower.hh"
 #include "info/PI_info.hh"
@@ -6,13 +6,21 @@
 #include "l4/DCBlock.h"
 #include "l4/PeakDetector.h"
 
+#include <algorithm>
+#include <array>
+#include <optional>
+
 namespace MetaModule
 {
 
-class PICore : public SmartCoreProcessor<PIInfo> {
+// Polyphonic: voice count follows the Audio In jack; each voice has its own
+// follower, gate, and DC blocker. The panel LEDs show the first channel.
+class PICore : public SmartCoreProcessorPoly<PIInfo> {
 	using Info = PIInfo;
 	using ThisCore = PICore;
 	using enum Info::Elem;
+
+	static constexpr unsigned MaxChans = MaxPolyChannels;
 
 private:
 	enum GainRange_t { LOW = 0, MEDIUM = 1, HIGH = 2 };
@@ -20,13 +28,9 @@ private:
 	enum Mode_t { FOLLOW, GEN };
 
 public:
-	PICore()
-		: ticks(0)
-		, sampleRate(48000.f)
-		, mode(FOLLOW)
-		, gateState(IDLE)
-		, dcBlocker(DCBlockerFactor) {
-		envelope.setAttack(0.005f);
+	PICore() {
+		for (auto &voice : voices)
+			voice.envelope.setAttack(0.005f);
 	}
 
 	void update() override {
@@ -37,43 +41,62 @@ public:
 
 		ticks++;
 
-		auto scaledInput = 0.f;
+		const unsigned nv = std::max(numChannels<AudioIn>(), 1u);
+		setChannels<GateOut>(nv);
+		setChannels<EnvPOut>(nv);
+		setChannels<EnvNOut>(nv);
+		setChannels<Env_Out>(nv);
+		setChannels<InvertedOut>(nv);
+		setChannels<AudioOut>(nv);
 
-		if (auto input = getInput<AudioIn>(); input) {
-			auto filteredInput = dcBlocker(*input);
-			auto maximumGain = readMaximumGain();
-			scaledInput = std::clamp(filteredInput * (getState<SensitivityKnob>() * maximumGain), -12.f, 12.f);
-
-			checkGateTrigger(scaledInput);
-		}
-
-		updateGate(ticks);
-
-		setDecayTime();
+		const bool audioPatched = isPatched<AudioIn>();
+		const auto maximumGain = readMaximumGain();
+		const auto sensitivity = getState<SensitivityKnob>();
+		const auto envLevel = getState<EnvLevelKnob>();
+		const auto invertedLevel = getState<InvertedLevelKnob>();
+		const auto decayTime =
+			getState<EnvDecayKnob>() * (maximumDecayTimeInS - minimumDecayTimeInS) + minimumDecayTimeInS;
 		readEnvelopeMode();
 
-		auto envelopePOut = 0.f;
+		for (unsigned v = 0; v < nv; v++) {
+			auto &voice = voices[v];
 
-		envelopePOut = generateEnvelope(mode == FOLLOW		   ? scaledInput :
-										gateState == TRIGGERED ? gateOutHighVoltage :
-																 gateOutLowVoltage);
+			auto scaledInput = 0.f;
 
-		auto envelopeNOut = envelopeHighVoltage - envelopePOut;
+			if (audioPatched) {
+				auto filteredInput = voice.dcBlocker(getInput<AudioIn>(v).value_or(0.f));
+				scaledInput = std::clamp(filteredInput * (sensitivity * maximumGain), -12.f, 12.f);
 
-		setLED<GateLight>(gateState == TRIGGERED ? 1.f : 0.f);
-		setOutput<GateOut>(gateState == TRIGGERED ? gateOutHighVoltage : gateOutLowVoltage);
+				checkGateTrigger(voice, scaledInput);
+			}
 
-		setOutput<EnvPOut>(envelopePOut);
-		setLED<EnvPLight>(envelopePOut / envelopeHighVoltage);
-		setOutput<EnvNOut>(envelopeNOut);
-		setLED<EnvNLight>(envelopeNOut / envelopeHighVoltage);
+			updateGate(voice, ticks);
 
-		setOutput<Env_Out>(envelopePOut * getState<EnvLevelKnob>());
-		setOutput<InvertedOut>(envelopeNOut * getState<InvertedLevelKnob>());
+			voice.envelope.setDecay(decayTime);
 
-		setOutput<AudioOut>(scaledInput);
-		auto sensLight = senseEnvelope(scaledInput);
-		setLED<Sens_Light>(std::array<float, 3>{(sensLight - 6.f) / 3.f, 0.f, sensLight / 3.5f});
+			auto envelopePOut = generateEnvelope(voice,
+												 mode == FOLLOW				 ? scaledInput :
+												 voice.gateState == TRIGGERED ? gateOutHighVoltage :
+																			   gateOutLowVoltage);
+
+			auto envelopeNOut = envelopeHighVoltage - envelopePOut;
+
+			setOutput<GateOut>(voice.gateState == TRIGGERED ? gateOutHighVoltage : gateOutLowVoltage, v);
+			setOutput<EnvPOut>(envelopePOut, v);
+			setOutput<EnvNOut>(envelopeNOut, v);
+			setOutput<Env_Out>(envelopePOut * envLevel, v);
+			setOutput<InvertedOut>(envelopeNOut * invertedLevel, v);
+			setOutput<AudioOut>(scaledInput, v);
+
+			// Panel LEDs show the first channel
+			if (v == 0) {
+				setLED<GateLight>(voice.gateState == TRIGGERED ? 1.f : 0.f);
+				setLED<EnvPLight>(envelopePOut / envelopeHighVoltage);
+				setLED<EnvNLight>(envelopeNOut / envelopeHighVoltage);
+				auto sensLight = voice.senseEnvelope(scaledInput);
+				setLED<Sens_Light>(std::array<float, 3>{(sensLight - 6.f) / 3.f, 0.f, sensLight / 3.5f});
+			}
+		}
 	}
 
 	float readMaximumGain() {
@@ -88,26 +111,6 @@ public:
 		}
 	}
 
-	void checkGateTrigger(float input) {
-		if (gateState == IDLE) {
-			if (input >= gateThresholdInV) {
-				gateState = TRIGGERED;
-				lastGateTriggerInTicks = ticks;
-			}
-		}
-	}
-
-	void updateGate(uint32_t now) {
-		if (gateState == TRIGGERED) {
-			auto gateLengthInTicks = getState<SustainKnob>() * (maximumGateLengthInTicks - minimumGateLengthInTicks) +
-									 minimumGateLengthInTicks;
-
-			if (now > lastGateTriggerInTicks + gateLengthInTicks) {
-				gateState = IDLE;
-			}
-		}
-	}
-
 	void readEnvelopeMode() {
 		auto envMode = getState<EnvModeSwitch>();
 
@@ -118,25 +121,11 @@ public:
 		}
 	}
 
-	void setDecayTime() {
-		envelope.setDecay(getState<EnvDecayKnob>() * (maximumDecayTimeInS - minimumDecayTimeInS) + minimumDecayTimeInS);
-	}
-
-	float generateEnvelope(float input) {
-		static constexpr float envelopeInputGain = 3.2f;
-		static constexpr float envelopeInputOffset = -0.29f;
-
-		input *= envelopeInputGain;
-		input += envelopeInputOffset;
-
-		auto envelopeOutput = envelope(std::clamp(input, 0.f, envelopeHighVoltage));
-
-		return envelopeOutput;
-	}
-
 	void set_samplerate(float sr) override {
-		envelope.setSamplerate(sr);
-		senseEnvelope.setSamplerate(sr);
+		for (auto &voice : voices) {
+			voice.envelope.setSamplerate(sr);
+			voice.senseEnvelope.setSamplerate(sr);
+		}
 		sampleRate = sr;
 		minimumGateLengthInTicks = minimumGateLengthInS * sampleRate;
 		maximumGateLengthInTicks = maximumGateLengthInS * sampleRate;
@@ -164,22 +153,55 @@ private:
 
 	static constexpr std::array<float, 3> maximumGains{2.f, 20.f, 500.f};
 
-private:
-	uint32_t ticks;
-	float sampleRate;
-	Mode_t mode;
-	GateState_t gateState;
-
-	uint32_t minimumGateLengthInTicks;
-	uint32_t maximumGateLengthInTicks;
-	uint32_t lastGateTriggerInTicks;
-
-private:
 	static constexpr float DCBlockerFactor = 0.9995f;
-	DCBlock dcBlocker;
 
-	EnvelopeFollower envelope;
-	PeakDetector senseEnvelope;
+private:
+	struct Voice {
+		DCBlock dcBlocker{DCBlockerFactor};
+		EnvelopeFollower envelope;
+		PeakDetector senseEnvelope;
+		GateState_t gateState = IDLE;
+		uint32_t lastGateTriggerInTicks = 0;
+	};
+
+	void checkGateTrigger(Voice &voice, float input) {
+		if (voice.gateState == IDLE) {
+			if (input >= gateThresholdInV) {
+				voice.gateState = TRIGGERED;
+				voice.lastGateTriggerInTicks = ticks;
+			}
+		}
+	}
+
+	void updateGate(Voice &voice, uint32_t now) {
+		if (voice.gateState == TRIGGERED) {
+			auto gateLengthInTicks = getState<SustainKnob>() * (maximumGateLengthInTicks - minimumGateLengthInTicks) +
+									 minimumGateLengthInTicks;
+
+			if (now > voice.lastGateTriggerInTicks + gateLengthInTicks) {
+				voice.gateState = IDLE;
+			}
+		}
+	}
+
+	static float generateEnvelope(Voice &voice, float input) {
+		static constexpr float envelopeInputGain = 3.2f;
+		static constexpr float envelopeInputOffset = -0.29f;
+
+		input *= envelopeInputGain;
+		input += envelopeInputOffset;
+
+		return voice.envelope(std::clamp(input, 0.f, envelopeHighVoltage));
+	}
+
+	uint32_t ticks = 0;
+	float sampleRate = 48000.f;
+	Mode_t mode = FOLLOW;
+
+	uint32_t minimumGateLengthInTicks = minimumGateLengthInS * 48000;
+	uint32_t maximumGateLengthInTicks = maximumGateLengthInS * 48000;
+
+	std::array<Voice, MaxChans> voices{};
 };
 
 } // namespace MetaModule
