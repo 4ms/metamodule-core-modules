@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Switch14_info.hh"
 #include "processors/tools/clockPhase.h"
 #include "util/math.hh"
@@ -7,7 +7,9 @@
 namespace MetaModule
 {
 
-class Switch14Core : public CoreProcessor {
+// Polyphonic: all four outputs follow the Signal In jack's channel count.
+// The Clock, Reset, and CV controls are mono and switch all voices together.
+class Switch14Core : public PolyCoreProcessor<Switch14Info::NumInJacks, Switch14Info::NumOutJacks> {
 	using Info = Switch14Info;
 	using ThisCore = Switch14Core;
 
@@ -18,10 +20,13 @@ public:
 		if (bypassed)
 			return;
 
+		cp.updateClock(ins[Info::InputClock].values[0] / CvRangeVolts);
+		cp.updateReset(ins[Info::InputReset].values[0] / CvRangeVolts);
 		cp.update();
 		stepNum = cp.getCount() % NumThrows;
 
 		if (cvMode) {
+			float cvSignal = MathTools::constrain(ins[Info::InputCv].values[0] / CvRangeVolts, 0.0f, 1.0f);
 			float position = cvSignal * 3.0f;
 			float fade = position - (int)position;
 
@@ -52,38 +57,6 @@ public:
 					break;
 			}
 		}
-	}
-
-	void set_param(int param_id, float val) override {
-	}
-
-	float get_param(int param_id) const override {
-		return 0;
-	}
-
-	void set_input(int input_id, float val) override {
-		if (bypassed)
-			return;
-
-		switch (input_id) {
-			case Info::InputClock: // clock
-				cp.updateClock(val / CvRangeVolts);
-				break;
-			case Info::InputReset: // reset
-				cp.updateReset(val / CvRangeVolts);
-				break;
-			case Info::InputSignal_In: // signal
-				inputSignal = val;
-				break;
-			case Info::InputCv:
-				cvSignal = MathTools::constrain(val / CvRangeVolts, 0.0f, 1.0f);
-				break;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		if (bypassed)
-			return 0;
 
 		// Output jacks must be sequential
 		// or else our logic doesn't work:
@@ -91,13 +64,25 @@ public:
 		static_assert(Info::OutputCh__2_Out + 1 == Info::OutputCh__3_Out);
 		static_assert(Info::OutputCh__3_Out + 1 == Info::OutputCh__4_Out);
 
-		if (output_id < (int)NumThrows) {
-			if (cvMode)
-				return panSignals[output_id] * inputSignal;
+		const unsigned nv = num_voices(Info::InputSignal_In);
+		auto &in = ins[Info::InputSignal_In];
 
-			if (output_id == stepNum + Info::OutputCh__1_Out)
-				return inputSignal;
+		for (unsigned k = 0; k < NumThrows; k++) {
+			auto &out = outs[Info::OutputCh__1_Out + k];
+			out.chans = nv;
+			for (unsigned v = 0; v < nv; v++) {
+				if (cvMode)
+					out.values[v] = panSignals[k] * in.values[v];
+				else
+					out.values[v] = (k == (unsigned)stepNum) ? in.values[v] : 0.f;
+			}
 		}
+	}
+
+	void set_param(int param_id, float val) override {
+	}
+
+	float get_param(int param_id) const override {
 		return 0;
 	}
 
@@ -109,11 +94,13 @@ public:
 	}
 
 	void mark_input_unpatched(const int input_id) override {
+		PolyCoreProcessor::mark_input_unpatched(input_id);
 		if (input_id == Info::InputCv)
 			cvMode = false;
 	}
 
 	void mark_input_patched(const int input_id) override {
+		PolyCoreProcessor::mark_input_patched(input_id);
 		if (input_id == Info::InputCv)
 			cvMode = true;
 	}
@@ -128,10 +115,8 @@ private:
 	static constexpr size_t NumThrows = 4;
 	ClockPhase cp;
 	float panSignals[NumThrows]{};
-	float cvSignal = 0;
 	bool cvMode = false;
 	int stepNum = 0;
-	float inputSignal = 0;
 };
 
 } // namespace MetaModule

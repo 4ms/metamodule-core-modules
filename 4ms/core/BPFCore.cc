@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/register_module.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/BPF_info.hh"
 #include "processors/bpf.h"
 #include "processors/oberheimBPF.h"
@@ -8,7 +8,9 @@
 namespace MetaModule
 {
 
-class BPFCore : public CoreProcessor {
+// Polyphonic: voice count follows the Audio In jack; each voice has its own
+// filter state. The Cutoff CV's highest channel feeds all upper voices.
+class BPFCore : public PolyCoreProcessor<BPFInfo::NumInJacks, BPFInfo::NumOutJacks> {
 	using Info = BPFInfo;
 	using ThisCore = BPFCore;
 
@@ -16,20 +18,30 @@ public:
 	BPFCore() = default;
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputAudio_In);
+		auto &in = ins[Info::InputAudio_In];
+		auto &out = outs[Info::OutputBandpass_Out];
+		out.chans = nv;
+
 		if (bypassed) {
-			signalOutput = signalInput;
+			out.values = in.values;
 			return;
 		}
 
-		float filterFreq = 523.25f * setPitchMultiple(constrain(cutoffCV + cutoffOffset, -1.0f, 1.0f));
-		if (mode == 0) {
-			bpf.q = map_value(filterQ, 0.0f, 1.0f, 1.0f, 20.0f);
-			bpf.cutoff.setValue(filterFreq);
-			signalOutput = bpf.update(signalInput);
-		} else if (mode == 1) {
-			ober.q = map_value(filterQ, 0.0f, 1.0f, 1.0f, 20.0f);
-			ober.cutoff.setValue(audioFreqToNorm(filterFreq));
-			signalOutput = ober.update(signalInput);
+		auto &cutoff = ins[Info::InputCutoff_Cv_In];
+
+		for (unsigned v = 0; v < nv; v++) {
+			float cutoffCV = cutoff.or_last(v) / CvRangeVolts;
+			float filterFreq = 523.25f * setPitchMultiple(constrain(cutoffCV + cutoffOffset, -1.0f, 1.0f));
+			if (mode == 0) {
+				bpf[v].q = map_value(filterQ, 0.0f, 1.0f, 1.0f, 20.0f);
+				bpf[v].cutoff.setValue(filterFreq);
+				out.values[v] = bpf[v].update(in.values[v]);
+			} else if (mode == 1) {
+				ober[v].q = map_value(filterQ, 0.0f, 1.0f, 1.0f, 20.0f);
+				ober[v].cutoff.setValue(audioFreqToNorm(filterFreq));
+				out.values[v] = ober[v].update(in.values[v]);
+			}
 		}
 	}
 
@@ -60,22 +72,8 @@ public:
 	}
 
 	void set_samplerate(const float sr) override {
-		bpf.sampleRate.setValue(sr);
-	}
-
-	void set_input(const int input_id, const float val) override {
-		switch (input_id) {
-			case Info::InputAudio_In:
-				signalInput = val;
-				break;
-			case Info::InputCutoff_Cv_In:
-				cutoffCV = val / CvRangeVolts;
-				break;
-		}
-	}
-
-	float get_output(const int output_id) const override {
-		return signalOutput;
+		for (auto &f : bpf)
+			f.sampleRate.setValue(sr);
 	}
 
 	float get_led_brightness(const int led_id) const override {
@@ -87,12 +85,9 @@ public:
 private:
 	int mode = 0;
 	float filterQ = 1;
-	BandPassFilter bpf;
-	OberBPF ober;
-	float cutoffCV = 0;
+	std::array<BandPassFilter, MaxVoices> bpf{};
+	std::array<OberBPF, MaxVoices> ober{};
 	float cutoffOffset = 0;
-	float signalInput = 0;
-	float signalOutput = 0;
 };
 
 } // namespace MetaModule

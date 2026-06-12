@@ -14,6 +14,7 @@ target_compile_features(runtests PUBLIC cxx_std_23)
 target_include_directories(runtests PRIVATE
     ..
 	../core
+	../core/tapo
 	../../..
 	../../../cpputil
 	../../../core-interface

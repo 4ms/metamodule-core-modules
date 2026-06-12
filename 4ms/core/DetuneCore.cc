@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Detune_info.hh"
 #include "processors/pitchShift.h"
 #include "util/math.hh"
@@ -35,37 +35,55 @@ private:
 	float outputValue = 0;
 };
 
-class DetuneCore : public CoreProcessor {
+// Polyphonic: voice count follows the Audio In jack; each voice has its own
+// pitch shifter. The wow/flutter modulators are shared by all voices (one
+// "tape machine"), but the Detune CV scales the depths per voice, with its
+// highest channel feeding all upper voices.
+class DetuneCore : public PolyCoreProcessor<DetuneInfo::NumInJacks, DetuneInfo::NumOutJacks> {
 	using Info = DetuneInfo;
 	using ThisCore = DetuneCore;
 
 public:
 	DetuneCore() {
-		p.mix = 1.0f;
-		p.windowSize = 240;
+		for (auto &shifter : p) {
+			shifter.mix = 1.0f;
+			shifter.windowSize = 240;
+		}
 	}
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputAudio_In);
+		auto &in = ins[Info::InputAudio_In];
+		auto &out = outs[Info::OutputAudio_Out];
+		out.chans = nv;
+
 		if (bypassed) {
-			signalOutput = signalInput;
+			out.values = in.values;
 			return;
 		}
 
-		float addWow = 0;
-		float addFlutter = 0;
-		float finalWow = 0;
-		float finalFlutter = 0;
-		if (detuneCvConnected == false) {
-			finalWow = wowDepth;
-			finalFlutter = flutterDepth;
-		} else {
-			finalWow = MathTools::constrain(wowDepth + cvAmount, 0.0f, 1.0f);
-			finalFlutter = MathTools::constrain(flutterDepth + cvAmount, 0.0f, 1.0f);
+		auto &cv = ins[Info::InputDetune_Cv_In];
+		const bool cvConnected = cv.is_patched();
+
+		const float wowOut = wowGen.update();
+		const float flutterOut = flutterGen.update();
+
+		for (unsigned v = 0; v < nv; v++) {
+			float finalWow;
+			float finalFlutter;
+			if (cvConnected == false) {
+				finalWow = wowDepth;
+				finalFlutter = flutterDepth;
+			} else {
+				float cvAmount = cv.or_last(v) / CvRangeVolts;
+				finalWow = MathTools::constrain(wowDepth + cvAmount, 0.0f, 1.0f);
+				finalFlutter = MathTools::constrain(flutterDepth + cvAmount, 0.0f, 1.0f);
+			}
+			float addWow = wowOut * (finalWow * finalWow);
+			float addFlutter = flutterOut * (finalFlutter * finalFlutter);
+			p[v].shiftAmount = addWow + addFlutter;
+			out.values[v] = p[v].update(in.values[v]);
 		}
-		addWow = wowGen.update() * (finalWow * finalWow);
-		addFlutter = flutterGen.update() * (finalFlutter * finalFlutter);
-		p.shiftAmount = addWow + addFlutter;
-		signalOutput = p.update(signalInput);
 	}
 
 	void set_param(const int param_id, const float val) override {
@@ -100,36 +118,10 @@ public:
 	}
 
 	void set_samplerate(const float sr) override {
-		p.setSampleRate(sr);
+		for (auto &shifter : p)
+			shifter.setSampleRate(sr);
 		flutterGen.set_samplerate(sr);
 		wowGen.set_samplerate(sr);
-	}
-
-	void set_input(const int input_id, const float val) override {
-		switch (input_id) {
-			case Info::InputAudio_In:
-				signalInput = val;
-				break;
-			case Info::InputDetune_Cv_In:
-				cvAmount = val / CvRangeVolts;
-				break;
-		}
-	}
-
-	float get_output(const int output_id) const override {
-		if (output_id == Info::OutputAudio_Out)
-			return signalOutput;
-		return 0.f;
-	}
-
-	void mark_input_unpatched(const int input_id) override {
-		if (input_id == Info::InputDetune_Cv_In)
-			detuneCvConnected = false;
-	}
-
-	void mark_input_patched(const int input_id) override {
-		if (input_id == Info::InputDetune_Cv_In)
-			detuneCvConnected = true;
 	}
 
 	float get_led_brightness(const int led_id) const override {
@@ -143,15 +135,9 @@ public:
 	// clang-format on
 
 private:
-	PitchShift<9600> p;
+	std::array<PitchShift<9600>, MaxVoices> p{};
 	float flutterDepth = 0;
 	float wowDepth = 0;
-
-	float signalInput = 0;
-	float signalOutput = 0;
-
-	bool detuneCvConnected = false;
-	float cvAmount = 0;
 
 	InterpRandomGenerator flutterGen;
 	InterpRandomGenerator wowGen;

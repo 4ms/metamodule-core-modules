@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Follow_info.hh"
 #include "processors/tools/expDecay.h"
 #include "processors/tools/schmittTrigger.h"
@@ -8,7 +8,9 @@
 namespace MetaModule
 {
 
-class FollowCore : public CoreProcessor {
+// Polyphonic: voice count follows the Signal In jack; each voice has its own
+// follower state. Both outputs carry one channel per voice.
+class FollowCore : public PolyCoreProcessor<FollowInfo::NumInJacks, FollowInfo::NumOutJacks> {
 	using Info = FollowInfo;
 	using ThisCore = FollowCore;
 
@@ -16,18 +18,28 @@ public:
 	FollowCore() = default;
 
 	void update(void) override {
+		const unsigned nv = num_voices(Info::InputSignal_In);
+		auto &in = ins[Info::InputSignal_In];
+		auto &env = outs[Info::OutputEnvelope_Out];
+		auto &gate = outs[Info::OutputGate_Out];
+		env.chans = nv;
+		gate.chans = nv;
+
 		if (bypassed) {
-			envOutput = 0;
-			gateOutput = 0;
+			env.values = {};
+			gate.values = {};
 			return;
 		}
 
-		float rectSignal = signalInput;
-		if (rectSignal < 0)
-			rectSignal *= -1.0f;
-		envOutput = slew.update(rectSignal);
-		wc.update(envOutput);
-		gateOutput = wc.output();
+		for (unsigned v = 0; v < nv; v++) {
+			float rectSignal = in.values[v] / maxOutputVolts;
+			if (rectSignal < 0)
+				rectSignal *= -1.0f;
+			float envOut = slew[v].update(rectSignal);
+			wc[v].update(envOut);
+			env.values[v] = envOut * maxOutputVolts;
+			gate.values[v] = wc[v].output() * maxOutputVolts;
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -43,14 +55,18 @@ public:
 				bottomThresh = val - errorAmount;
 				if (bottomThresh < 0)
 					bottomThresh = 0;
-				wc.setHighThreshold(topThresh);
-				wc.setLowThreshhold(bottomThresh);
+				for (auto &w : wc) {
+					w.setHighThreshold(topThresh);
+					w.setLowThreshhold(bottomThresh);
+				}
 			} break;
 			case Info::KnobRise: //rise
-				slew.set_attack_ms(MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.f));
+				for (auto &s : slew)
+					s.set_attack_ms(MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.f));
 				break;
 			case Info::KnobFall: //fall
-				slew.set_decay_ms(MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.0f));
+				for (auto &s : slew)
+					s.set_decay_ms(MathTools::map_value(val, 0.0f, 1.0f, 1.0f, 2000.0f));
 				break;
 		}
 	}
@@ -58,29 +74,13 @@ public:
 	float get_param(int param_id) const override {
 		switch (param_id) {
 			case Info::KnobThreshold: //threshold
-				return wc.getLowThreshold();
+				return wc[0].getLowThreshold();
 			case Info::KnobRise: //rise
-				return MathTools::map_value(slew.attack_ms(), 1.f, 2000.f, 0.f, 1.f);
+				return MathTools::map_value(slew[0].attack_ms(), 1.f, 2000.f, 0.f, 1.f);
 			case Info::KnobFall: //fall
-				return MathTools::map_value(slew.decay_ms(), 1.f, 2000.f, 0.f, 1.f);
+				return MathTools::map_value(slew[0].decay_ms(), 1.f, 2000.f, 0.f, 1.f);
 		}
 		return 0;
-	}
-
-	void set_input(int input_id, float val) override {
-		if (input_id == Info::InputSignal_In)
-			signalInput = val / maxOutputVolts;
-	}
-
-	float get_output(int output_id) const override {
-		switch (output_id) {
-			case Info::OutputEnvelope_Out:
-				return envOutput * maxOutputVolts;
-			case Info::OutputGate_Out:
-				return gateOutput * maxOutputVolts;
-			default:
-				return 0.f;
-		}
 	}
 
 	void set_samplerate(float sr) override {
@@ -97,13 +97,9 @@ public:
 	// clang-format on
 
 private:
-	float signalInput = 0;
-	float envOutput = 0;
-	float gateOutput = 0;
-	SchmittTrigger wc;
-	ExpDecay slew;
+	std::array<SchmittTrigger, MaxVoices> wc{};
+	std::array<ExpDecay, MaxVoices> slew{};
 
-	static constexpr float cvRangeVolts = 5.0f;
 	static constexpr float maxOutputVolts = 8.0f;
 };
 

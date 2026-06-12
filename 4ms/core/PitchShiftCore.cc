@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/PitchShift_info.hh"
 #include "processors/pitchShift.h"
 #include "util/math.hh"
@@ -7,7 +7,9 @@
 namespace MetaModule
 {
 
-class PitchShiftCore : public CoreProcessor {
+// Polyphonic: voice count follows the Audio In jack; each voice has its own
+// pitch shifter. The CV inputs' highest channels feed all upper voices.
+class PitchShiftCore : public PolyCoreProcessor<PitchShiftInfo::NumInJacks, PitchShiftInfo::NumOutJacks> {
 	using Info = PitchShiftInfo;
 	using ThisCore = PitchShiftCore;
 
@@ -15,16 +17,31 @@ public:
 	PitchShiftCore() = default;
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputAudio_In);
+		auto &in = ins[Info::InputAudio_In];
+		auto &out = outs[Info::OutputAudio_Out];
+		out.chans = nv;
+
 		if (bypassed) {
-			signalOutput = signalInput;
+			out.values = in.values;
 			return;
 		}
 
-		auto finalWindow = MathTools::constrain(windowOffset + windowCV, 0.0f, 1.0f);
-		p.windowSize = MathTools::map_value(finalWindow, 0.0f, 1.0f, 20.0f, static_cast<float>(maxWindowSize));
-		p.shiftAmount = coarseShift + fineShift + shiftCV * 12.f;
-		p.mix = MathTools::constrain(mixOffset + mixCV, 0.0f, 1.0f);
-		signalOutput = p.update(signalInput);
+		auto &pitchCv = ins[Info::InputPitch_Cv];
+		auto &windowCv = ins[Info::InputWindow_Cv];
+		auto &mixCv = ins[Info::InputMix_Cv];
+
+		for (unsigned v = 0; v < nv; v++) {
+			float shiftCV = MathTools::constrain(pitchCv.or_last(v), -5.f, +5.f);
+			float windowCV = windowCv.or_last(v) / CvRangeVolts;
+			float mixCV = mixCv.or_last(v) / CvRangeVolts;
+
+			auto finalWindow = MathTools::constrain(windowOffset + windowCV, 0.0f, 1.0f);
+			p[v].windowSize = MathTools::map_value(finalWindow, 0.0f, 1.0f, 20.0f, static_cast<float>(maxWindowSize));
+			p[v].shiftAmount = coarseShift + fineShift + shiftCV * 12.f;
+			p[v].mix = MathTools::constrain(mixOffset + mixCV, 0.0f, 1.0f);
+			out.values[v] = p[v].update(in.values[v]);
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -58,29 +75,9 @@ public:
 		return 0;
 	}
 
-	void set_input(int input_id, float val) override {
-		switch (input_id) {
-			case Info::InputAudio_In:
-				signalInput = val;
-				break;
-			case Info::InputPitch_Cv:
-				shiftCV = MathTools::constrain(val, -5.f, +5.f);
-				break;
-			case Info::InputWindow_Cv:
-				windowCV = val / CvRangeVolts;
-				break;
-			case Info::InputMix_Cv:
-				mixCV = val / CvRangeVolts;
-				break;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		return signalOutput;
-	}
-
 	void set_samplerate(float sr) override {
-		p.setSampleRate(sr);
+		for (auto &shifter : p)
+			shifter.setSampleRate(sr);
 	}
 
 	float get_led_brightness(int led_id) const override {
@@ -95,13 +92,8 @@ public:
 
 private:
 	constexpr static int maxWindowSize = 9600;
-	PitchShift<maxWindowSize> p;
+	std::array<PitchShift<maxWindowSize>, MaxVoices> p{};
 
-	float signalInput = 0;
-	float shiftCV = 0;
-	float windowCV = 0;
-	float mixCV = 0;
-	float signalOutput = 0;
 	float coarseShift = 0;
 	float fineShift = 0;
 	float mixOffset = 0;

@@ -1,12 +1,14 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Octave_info.hh"
 #include <cmath>
 
 namespace MetaModule
 {
 
-class OctaveCore : public CoreProcessor {
+// Polyphonic: voice count follows the Input jack; the CV input's highest
+// channel feeds all upper voices.
+class OctaveCore : public PolyCoreProcessor<OctaveInfo::NumInJacks, OctaveInfo::NumOutJacks> {
 	using Info = OctaveInfo;
 	using ThisCore = OctaveCore;
 
@@ -14,13 +16,21 @@ public:
 	OctaveCore() = default;
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputInput);
+		auto &in = ins[Info::InputInput];
+		auto &out = outs[Info::OutputOut];
+		out.chans = nv;
+
 		if (bypassed) {
-			voltOutput = voltInput;
+			out.values = in.values;
 			return;
 		}
 
-		auto octave = std::round(octaveOffset + cvInput);
-		voltOutput = voltInput + octave;
+		alignas(16) std::array<float, MaxVoices> cv;
+		ins[Info::InputCv].expand(cv); //Note: volts!
+
+		for (unsigned v = 0; v < MaxVoices; v++)
+			out.values[v] = in.values[v] + std::round(octaveOffset + cv[v]);
 	}
 
 	void set_param(int param_id, float val) override {
@@ -34,18 +44,6 @@ public:
 			// -4..4 => -4 -3 -2..2 3 4 => -0.5 .. 0.5 => 0..1
 			return std::round(octaveOffset) / KnobOctaveRange + .5f;
 		return 0;
-	}
-
-	void set_input(int input_id, float val) override {
-		if (input_id == Info::InputInput)
-			voltInput = val;
-
-		if (input_id == Info::InputCv)
-			cvInput = val; //Note: volts!
-	}
-
-	float get_output(int output_id) const override {
-		return output_id == Info::OutputOut ? voltOutput : 0.f;
 	}
 
 	void set_samplerate(float sr) override {
@@ -63,9 +61,6 @@ public:
 
 private:
 	float octaveOffset = 0;
-	float cvInput = 0;
-	float voltInput = 0;
-	float voltOutput = 0;
 
 	static constexpr float KnobOctaveRange = 8.f;
 };

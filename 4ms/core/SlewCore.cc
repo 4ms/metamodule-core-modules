@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Slew_info.hh"
 #include "processors/tools/expDecay.h"
 #include "util/math.hh"
@@ -7,7 +7,9 @@
 namespace MetaModule
 {
 
-class SlewCore : public CoreProcessor {
+// Polyphonic: voice count follows the Signal In jack; each voice has its own
+// slew state, sharing the Rise/Fall settings.
+class SlewCore : public PolyCoreProcessor<SlewInfo::NumInJacks, SlewInfo::NumOutJacks> {
 	using Info = SlewInfo;
 	using ThisCore = SlewCore;
 
@@ -15,11 +17,18 @@ public:
 	SlewCore() = default;
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputSignal_In);
+		auto &in = ins[Info::InputSignal_In];
+		auto &out = outs[Info::OutputSlewed_Out];
+		out.chans = nv;
+
 		if (bypassed) {
-			signalOutput = signalInput;
+			out.values = in.values;
 			return;
 		}
-		signalOutput = slew.update(signalInput);
+
+		for (unsigned v = 0; v < nv; v++)
+			out.values[v] = slew[v].update(in.values[v]);
 	}
 
 	void set_param(int param_id, float val) override {
@@ -28,10 +37,12 @@ public:
 
 		switch (param_id) {
 			case Info::KnobRise:
-				slew.set_attack_ms(MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f));
+				for (auto &s : slew)
+					s.set_attack_ms(MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f));
 				break;
 			case Info::KnobFall:
-				slew.set_decay_ms(MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f));
+				for (auto &s : slew)
+					s.set_decay_ms(MathTools::map_value(val, 0.0f, CvRangeVolts, 1.0f, 2000.0f));
 				break;
 		}
 	}
@@ -39,26 +50,16 @@ public:
 	float get_param(int param_id) const override {
 		switch (param_id) {
 			case Info::KnobRise:
-				return MathTools::map_value(slew.attack_ms(), 1.f, 2000.f, .0f, CvRangeVolts);
+				return MathTools::map_value(slew[0].attack_ms(), 1.f, 2000.f, .0f, CvRangeVolts);
 			case Info::KnobFall:
-				return MathTools::map_value(slew.decay_ms(), 1.f, 2000.f, .0f, CvRangeVolts);
+				return MathTools::map_value(slew[0].decay_ms(), 1.f, 2000.f, .0f, CvRangeVolts);
 		}
 		return 0;
 	}
 
-	void set_input(int input_id, float val) override {
-		if (input_id == Info::InputSignal_In)
-			signalInput = val;
-	}
-
-	float get_output(int output_id) const override {
-		if (output_id == Info::OutputSlewed_Out)
-			return signalOutput;
-		return 0.f;
-	}
-
 	void set_samplerate(float sr) override {
-		slew.set_samplerate(sr);
+		for (auto &s : slew)
+			s.set_samplerate(sr);
 	}
 
 	float get_led_brightness(int led_id) const override {
@@ -72,9 +73,7 @@ public:
 	// clang-format on
 
 private:
-	ExpDecay slew;
-	float signalInput = 0;
-	float signalOutput = 0;
+	std::array<ExpDecay, MaxVoices> slew{};
 };
 
 } // namespace MetaModule

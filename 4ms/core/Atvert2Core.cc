@@ -1,12 +1,14 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/register_module.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Atvert2_info.hh"
 #include "util/math.hh"
 
 namespace MetaModule
 {
 
-class Atvert2Core : public CoreProcessor {
+// Polyphonic: each of the two attenuverter channels is independently poly,
+// with its voice count following its own input jack.
+class Atvert2Core : public PolyCoreProcessor<Atvert2Info::NumInJacks, Atvert2Info::NumOutJacks> {
 	using Info = Atvert2Info;
 	using ThisCore = Atvert2Core;
 
@@ -14,14 +16,32 @@ public:
 	Atvert2Core() = default;
 
 	void update() override {
+		auto &in1 = ins[Info::InputCh__1_In];
+		auto &in2 = ins[Info::InputCh__2_In];
+		auto &out1 = outs[Info::OutputCh__1_Out];
+		auto &out2 = outs[Info::OutputCh__2_Out];
+		out1.chans = num_voices(Info::InputCh__1_In);
+		out2.chans = num_voices(Info::InputCh__2_In);
+
 		if (bypassed) {
-			out1 = in1;
-			out2 = in2;
+			out1.values = in1.values;
+			out2.values = in2.values;
 			return;
 		}
 
-		out1 = (in1Connected ? in1 : defaultVoltage) * level1;
-		out2 = (in2Connected ? in2 : defaultVoltage) * level2;
+		if (in1.is_patched()) {
+			for (unsigned v = 0; v < MaxVoices; v++)
+				out1.values[v] = in1.values[v] * level1;
+		} else {
+			out1.values[0] = defaultVoltage * level1;
+		}
+
+		if (in2.is_patched()) {
+			for (unsigned v = 0; v < MaxVoices; v++)
+				out2.values[v] = in2.values[v] * level2;
+		} else {
+			out2.values[0] = defaultVoltage * level2;
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -40,10 +60,8 @@ public:
 		switch (param_id) {
 			case Info::KnobCh__1:
 				return level1 / 2.f + 0.5f;
-				break;
 			case Info::KnobCh__2:
 				return level2 / 2.f + 0.5f;
-				break;
 		}
 		return 0;
 	}
@@ -51,57 +69,11 @@ public:
 	void set_samplerate(const float sr) override {
 	}
 
-	void set_input(int input_id, float val) override {
-		switch (input_id) {
-			case Info::InputCh__1_In:
-				in1 = val;
-				break;
-			case Info::InputCh__2_In:
-				in2 = val;
-				break;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		switch (output_id) {
-			case Info::OutputCh__1_Out:
-				return out1;
-				break;
-			case Info::OutputCh__2_Out:
-				return out2;
-				break;
-			default:
-				return 0;
-				break;
-		}
-	}
-
-	void mark_input_unpatched(int input_id) override {
-		if (input_id == Info::InputCh__1_In)
-			in1Connected = false;
-		else if (input_id == Info::InputCh__2_In)
-			in2Connected = false;
-	}
-
-	void mark_input_patched(int input_id) override {
-		if (input_id == Info::InputCh__1_In)
-			in1Connected = true;
-		else if (input_id == Info::InputCh__2_In)
-			in2Connected = true;
-	}
-
 	static inline bool was_registered = register_module<ThisCore, Info>("4msCompany");
 
 private:
-	float in1 = 0;
-	float in2 = 0;
-	float out1 = 0;
-	float out2 = 0;
 	float level1 = 0;
 	float level2 = 0;
-
-	bool in1Connected = false;
-	bool in2Connected = false;
 
 	static constexpr float defaultVoltage = 5.f;
 };

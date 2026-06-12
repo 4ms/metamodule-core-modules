@@ -1,4 +1,5 @@
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/HPF_info.hh"
 #include "processors/hpf.h"
 #include "processors/korgHPF.h"
@@ -7,7 +8,9 @@
 namespace MetaModule
 {
 
-class HPFCore : public CoreProcessor {
+// Polyphonic: voice count follows the Audio In jack; each voice has its own
+// filter state. The Cutoff CV's highest channel feeds all upper voices.
+class HPFCore : public PolyCoreProcessor<HPFInfo::NumInJacks, HPFInfo::NumOutJacks> {
 	using Info = HPFInfo;
 	using ThisCore = HPFCore;
 
@@ -15,18 +18,28 @@ public:
 	HPFCore() = default;
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputAudio_In);
+		auto &in = ins[Info::InputAudio_In];
+		auto &out = outs[Info::OutputAudio_Out];
+		out.chans = nv;
+
 		if (bypassed) {
-			signalOutput = signalInput;
+			out.values = in.values;
 			return;
 		}
 
-		float filterFreq = setPitchMultiple(constrain(cutoffOffset + cutoffCV, -1.0f, 1.0f)) * 523.25f;
-		if (mode == 0) {
-			hpf.cutoff.setValue(filterFreq);
-			signalOutput = hpf.update(signalInput);
-		} else if (mode == 1) {
-			korg.cutoff.setValue(audioFreqToNorm(filterFreq));
-			signalOutput = korg.update(signalInput);
+		auto &cutoff = ins[Info::InputCutoff_Cv_In];
+
+		for (unsigned v = 0; v < nv; v++) {
+			float cutoffCV = cutoff.or_last(v) / CvRangeVolts;
+			float filterFreq = setPitchMultiple(constrain(cutoffOffset + cutoffCV, -1.0f, 1.0f)) * 523.25f;
+			if (mode == 0) {
+				hpf[v].cutoff.setValue(filterFreq);
+				out.values[v] = hpf[v].update(in.values[v]);
+			} else if (mode == 1) {
+				korg[v].cutoff.setValue(audioFreqToNorm(filterFreq));
+				out.values[v] = korg[v].update(in.values[v]);
+			}
 		}
 	}
 
@@ -37,9 +50,11 @@ public:
 				break;
 			case Info::KnobQ:
 				if (mode == 0) {
-					hpf.q = map_value(val, 0.0f, 1.0f, 1.0f, 20.0f);
+					for (auto &f : hpf)
+						f.q = map_value(val, 0.0f, 1.0f, 1.0f, 20.0f);
 				} else if (mode == 1) {
-					korg.q = map_value(val, 0.0f, 1.0f, 0.0f, 10.0f);
+					for (auto &f : korg)
+						f.q = map_value(val, 0.0f, 1.0f, 0.0f, 10.0f);
 				}
 				break;
 			case (Info::SwitchMode + 2): //Info::NumKnobs
@@ -54,9 +69,9 @@ public:
 				return map_value(cutoffOffset, -1.f, 1.f, 0.f, 1.f);
 			case Info::KnobQ:
 				if (mode == 0)
-					return map_value(hpf.q, 1.f, 20.f, 0.f, 1.f);
+					return map_value(hpf[0].q, 1.f, 20.f, 0.f, 1.f);
 				else if (mode == 1)
-					return map_value(korg.q, 0.f, 10.f, 0.f, 1.f);
+					return map_value(korg[0].q, 0.f, 10.f, 0.f, 1.f);
 				break;
 			case (Info::SwitchMode + 2): //Info::NumKnobs
 				return mode == 1 ? 1.f : 0.f;
@@ -64,25 +79,9 @@ public:
 		return 0;
 	}
 
-	void set_input(int input_id, float val) override {
-		switch (input_id) {
-			case Info::InputAudio_In:
-				signalInput = val;
-				break;
-			case Info::InputCutoff_Cv_In:
-				cutoffCV = val / CvRangeVolts;
-				break;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		if (output_id == Info::OutputAudio_Out)
-			return signalOutput;
-		return 0.f;
-	}
-
 	void set_samplerate(float sr) override {
-		hpf.sampleRate.setValue(sr);
+		for (auto &f : hpf)
+			f.sampleRate.setValue(sr);
 	}
 
 	float get_led_brightness(int led_id) const override {
@@ -97,12 +96,9 @@ public:
 
 private:
 	int mode = 0;
-	HighPassFilter hpf;
-	KorgHPF korg;
-	float signalInput = 0;
-	float signalOutput = 0;
+	std::array<HighPassFilter, MaxVoices> hpf{};
+	std::array<KorgHPF, MaxVoices> korg{};
 	float cutoffOffset = 0;
-	float cutoffCV = 0;
 };
 
 } // namespace MetaModule

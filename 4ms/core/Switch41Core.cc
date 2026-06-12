@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Switch41_info.hh"
 #include "processors/tools/clockPhase.h"
 #include "util/math.hh"
@@ -7,7 +7,10 @@
 namespace MetaModule
 {
 
-class Switch41Core : public CoreProcessor {
+// Polyphonic: the output channel count is the highest channel count of the
+// four signal inputs (each input's highest channel feeds its upper voices).
+// The Clock, Reset, and CV controls are mono and switch all voices together.
+class Switch41Core : public PolyCoreProcessor<Switch41Info::NumInJacks, Switch41Info::NumOutJacks> {
 	using Info = Switch41Info;
 	using ThisCore = Switch41Core;
 
@@ -18,9 +21,12 @@ public:
 		if (bypassed)
 			return;
 
+		cp.updateClock(ins[Info::InputClock].values[0]);
+		cp.updateReset(ins[Info::InputReset].values[0]);
 		cp.update();
 		stepNum = cp.getCount() % 4;
 
+		float cvInput = MathTools::constrain(ins[Info::InputCv].values[0] / CvRangeVolts, 0.0f, 1.0f);
 		float position = cvInput * 3.0f;
 		float fade = position - (int)position;
 
@@ -50,6 +56,26 @@ public:
 				scanLevels[3] = 1.0f;
 				break;
 		}
+
+		// Output channel count: the widest of the four signal inputs
+		unsigned nv = 1;
+		for (unsigned i = 0; i < 4; i++)
+			nv = std::max<unsigned>(nv, ins[Info::InputCh__1_In + i].chans);
+		nv = std::min(nv, MaxVoices);
+
+		auto &out = outs[Info::OutputOut];
+		out.chans = nv;
+
+		for (unsigned v = 0; v < nv; v++) {
+			float output = 0.0f;
+			if (cvMode) {
+				for (unsigned i = 0; i < 4; i++)
+					output += ins[Info::InputCh__1_In + i].or_last(v) * scanLevels[i];
+			} else {
+				output = ins[Info::InputCh__1_In + stepNum].or_last(v);
+			}
+			out.values[v] = output;
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -59,55 +85,23 @@ public:
 		return 0;
 	}
 
-	void set_input(int input_id, float val) override {
-		if (bypassed)
-			return;
-
-		if (input_id == Info::InputClock) {
-			cp.updateClock(val);
-		} else if (input_id == Info::InputReset) {
-			cp.updateReset(val);
-		} else if (input_id == Info::InputCv) {
-			cvInput = MathTools::constrain(val / CvRangeVolts, 0.0f, 1.0f);
-		} else if (input_id >= Info::InputCh__1_In && input_id <= Info::InputCh__4_In) {
-			auto inputNum = input_id - Info::InputCh__1_In;
-			signalInputs[inputNum] = val;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		if (bypassed)
-			return 0;
-
-		if (output_id != Info::OutputOut)
-			return 0;
-
-		float output = 0.0f;
-		if (cvMode) {
-			for (int i = 0; i < 4; i++) {
-				output += signalInputs[i] * scanLevels[i];
-			}
-		} else {
-			output = signalInputs[stepNum];
-		}
-		return output;
-	}
-
 	void set_samplerate(float sr) override {
 	}
 
 	float get_led_brightness(int led_id) const override {
 		return 0.f;
 	}
+
 	void mark_input_unpatched(const int input_id) override {
-		if (input_id == Info::InputCv) {
+		PolyCoreProcessor::mark_input_unpatched(input_id);
+		if (input_id == Info::InputCv)
 			cvMode = false;
-		}
 	}
+
 	void mark_input_patched(const int input_id) override {
-		if (input_id == Info::InputCv) {
+		PolyCoreProcessor::mark_input_patched(input_id);
+		if (input_id == Info::InputCv)
 			cvMode = true;
-		}
 	}
 
 	// Boilerplate to auto-register in ModuleFactory
@@ -118,8 +112,6 @@ public:
 
 private:
 	int stepNum = 0;
-	float signalInputs[4] = {0, 0, 0, 0};
-	float cvInput = 0.0f;
 	float scanLevels[4] = {0, 0, 0, 0};
 	bool cvMode = false;
 	ClockPhase cp;

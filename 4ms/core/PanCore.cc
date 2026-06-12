@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/Pan_info.hh"
 
 #include "util/math.hh"
@@ -7,7 +7,9 @@
 namespace MetaModule
 {
 
-class PanCore : public CoreProcessor {
+// Polyphonic: voice count follows the Audio In jack; both outputs carry one
+// channel per voice. The Pan CV's highest channel feeds all upper voices.
+class PanCore : public PolyCoreProcessor<PanInfo::NumInJacks, PanInfo::NumOutJacks> {
 	using Info = PanInfo;
 	using ThisCore = PanCore;
 
@@ -15,15 +17,28 @@ public:
 	PanCore() = default;
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputAudio_In);
+		auto &in = ins[Info::InputAudio_In];
+		auto &left = outs[Info::OutputCh__1_Out];
+		auto &right = outs[Info::OutputCh__2_Out];
+		left.chans = nv;
+		right.chans = nv;
+
 		if (bypassed) {
-			leftOut = signalInput;
-			rightOut = signalInput;
+			left.values = in.values;
+			right.values = in.values;
 			return;
 		}
 
-		float finalPan = MathTools::constrain(panPosition + panCV, 0.0f, 1.0f);
-		leftOut = signalInput * (1.0f - finalPan);
-		rightOut = signalInput * finalPan;
+		alignas(16) std::array<float, MaxVoices> panCV;
+		ins[Info::InputPan_Cv_In].expand(panCV, 1.0f / CvRangeVolts);
+
+		MM_NO_LOOP_DEPS
+		for (unsigned v = 0; v < MaxVoices; v++) {
+			float finalPan = MathTools::constrain(panPosition + panCV[v], 0.0f, 1.0f);
+			left.values[v] = in.values[v] * (1.0f - finalPan);
+			right.values[v] = in.values[v] * finalPan;
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -35,27 +50,6 @@ public:
 		if (param_id == Info::KnobPan)
 			return panPosition;
 		return 0;
-	}
-
-	void set_input(int input_id, float val) override {
-		switch (input_id) {
-			case Info::InputAudio_In:
-				signalInput = val;
-				break;
-			case Info::InputPan_Cv_In:
-				panCV = val / CvRangeVolts;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		switch (output_id) {
-			case Info::OutputCh__1_Out:
-				return leftOut;
-
-			case Info::OutputCh__2_Out:
-				return rightOut;
-		}
-		return 0.f;
 	}
 
 	void set_samplerate(float sr) override {
@@ -73,10 +67,6 @@ public:
 
 private:
 	float panPosition = 0;
-	float signalInput = 0;
-	float leftOut = 0;
-	float rightOut = 0;
-	float panCV = 0;
 };
 
 } // namespace MetaModule

@@ -1,5 +1,5 @@
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 #include "info/StMix_info.hh"
 
 #include "util/math.hh"
@@ -7,7 +7,10 @@
 namespace MetaModule
 {
 
-class StMixCore : public CoreProcessor {
+// Polyphonic: the output channel count is the highest channel count of all
+// patched inputs (each input's highest channel feeds its upper voices). A
+// channel's Right input normals to its Left input when unpatched.
+class StMixCore : public PolyCoreProcessor<StMixInfo::NumInJacks, StMixInfo::NumOutJacks> {
 	using Info = StMixInfo;
 	using ThisCore = StMixCore;
 
@@ -15,30 +18,54 @@ public:
 	StMixCore() = default;
 
 	void update() override {
+		auto &left = outs[Info::OutputLeft_Out];
+		auto &right = outs[Info::OutputRight_Out];
+
+		// Input jacks interleave Left/Right per mixer channel:
+		static_assert(Info::InputCh__1_Left_In + 1 == Info::InputCh__1_Right_In);
+		static_assert(Info::InputCh__1_Left_In + 2 == Info::InputCh__2_Left_In);
+		static_assert(Info::InputCh__1_Left_In + 6 == Info::InputCh__4_Left_In);
+
+		unsigned nv = 1;
+		for (auto &jack : ins)
+			nv = std::max<unsigned>(nv, jack.chans);
+		nv = std::min(nv, MaxVoices);
+		left.chans = nv;
+		right.chans = nv;
+
 		if (bypassed) {
-			leftOut = 0;
-			rightOut = 0;
+			left.values = {};
+			right.values = {};
 			return;
 		}
 
-		float tempLeft = 0;
-		float tempRight = 0;
-		for (int i = 0; i < 4; i++) {
-			float leftLevel;
-			float rightLevel;
-			if (pan[i] >= 0.5f) {
-				leftLevel = level[i] * MathTools::map_value(pan[i], 0.5f, 1.0f, 1.0f, 0.0f);
-				rightLevel = level[i];
-			} else {
-				leftLevel = level[i];
-				rightLevel = level[i] * MathTools::map_value(pan[i], 0.0f, 0.5f, 0.0f, 1.0f);
-			}
-			tempLeft += leftInputs[i] * leftLevel;
-			tempRight += rightInputs[i] * rightLevel;
-		}
+		for (unsigned v = 0; v < nv; v++) {
+			float tempLeft = 0;
+			float tempRight = 0;
+			for (int i = 0; i < 4; i++) {
+				float leftLevel;
+				float rightLevel;
+				if (pan[i] >= 0.5f) {
+					leftLevel = level[i] * MathTools::map_value(pan[i], 0.5f, 1.0f, 1.0f, 0.0f);
+					rightLevel = level[i];
+				} else {
+					leftLevel = level[i];
+					rightLevel = level[i] * MathTools::map_value(pan[i], 0.0f, 0.5f, 0.0f, 1.0f);
+				}
 
-		leftOut = tempLeft;
-		rightOut = tempRight;
+				auto &leftIn = ins[Info::InputCh__1_Left_In + 2 * i];
+				auto &rightIn = ins[Info::InputCh__1_Right_In + 2 * i];
+				float leftVal = leftIn.or_last(v);
+				// Right input normals to the Left input when unpatched
+				float rightVal = rightIn.is_patched() ? rightIn.or_last(v) : leftVal;
+
+				tempLeft += leftVal * leftLevel;
+				tempRight += rightVal * rightLevel;
+			}
+
+			left.values[v] = tempLeft;
+			right.values[v] = tempRight;
+		}
 	}
 
 	void set_param(int param_id, float val) override {
@@ -92,94 +119,11 @@ public:
 		return 0;
 	}
 
-	void set_input(int input_id, float val) override {
-		switch (input_id) {
-			case Info::InputCh__1_Left_In:
-				leftInputs[0] = val;
-				if (!rightConnected[0])
-					rightInputs[0] = val;
-				break;
-			case Info::InputCh__2_Left_In:
-				leftInputs[1] = val;
-				if (!rightConnected[0])
-					rightInputs[1] = val;
-				break;
-			case Info::InputCh__3_Left_In:
-				leftInputs[2] = val;
-				if (!rightConnected[0])
-					rightInputs[2] = val;
-				break;
-			case Info::InputCh__4_Left_In:
-				leftInputs[3] = val;
-				if (!rightConnected[0])
-					rightInputs[3] = val;
-				break;
-			case Info::InputCh__1_Right_In:
-				if (rightConnected[0])
-					rightInputs[0] = val;
-				break;
-			case Info::InputCh__2_Right_In:
-				if (rightConnected[1])
-					rightInputs[1] = val;
-				break;
-			case Info::InputCh__3_Right_In:
-				if (rightConnected[2])
-					rightInputs[2] = val;
-				break;
-			case Info::InputCh__4_Right_In:
-				if (rightConnected[3])
-					rightInputs[3] = val;
-				break;
-		}
-	}
-
-	float get_output(int output_id) const override {
-		if (output_id == Info::OutputLeft_Out)
-			return leftOut;
-		if (output_id == Info::OutputRight_Out)
-			return rightOut;
-		return 0.f;
-	}
-
 	void set_samplerate(float sr) override {
 	}
 
 	float get_led_brightness(int led_id) const override {
 		return 0.f;
-	}
-
-	void mark_input_unpatched(const int input_id) override {
-		switch (input_id) {
-			case Info::InputCh__1_Right_In:
-				rightConnected[0] = false;
-				break;
-			case Info::InputCh__2_Right_In:
-				rightConnected[1] = false;
-				break;
-			case Info::InputCh__3_Right_In:
-				rightConnected[2] = false;
-				break;
-			case Info::InputCh__4_Right_In:
-				rightConnected[3] = false;
-				break;
-		}
-	}
-
-	void mark_input_patched(const int input_id) override {
-		switch (input_id) {
-			case Info::InputCh__1_Right_In:
-				rightConnected[0] = true;
-				break;
-			case Info::InputCh__2_Right_In:
-				rightConnected[1] = true;
-				break;
-			case Info::InputCh__3_Right_In:
-				rightConnected[2] = true;
-				break;
-			case Info::InputCh__4_Right_In:
-				rightConnected[3] = true;
-				break;
-		}
 	}
 
 	// Boilerplate to auto-register in ModuleFactory
@@ -189,13 +133,8 @@ public:
 	// clang-format on
 
 private:
-	float leftInputs[4]{0, 0, 0.0};
-	float rightInputs[4]{0, 0, 0.0};
 	float level[4]{1.f, 1.f, 1.f, 1.f};
 	float pan[4]{0.5f, 0.5f, 0.5f, 0.5f};
-	float leftOut = 0;
-	float rightOut = 0;
-	bool rightConnected[4]{false, false, false, false};
 };
 
 } // namespace MetaModule
