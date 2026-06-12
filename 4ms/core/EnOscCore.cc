@@ -1,3 +1,6 @@
+// Uncomment to print a CPU breakdown every ~2s on hardware (see enosc/profile.hh):
+// #define ENOSC_PROFILE 1
+
 #include "CoreModules/CoreHelper.hh"
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
@@ -5,7 +8,12 @@
 
 #include "enosc/easiglib/dsp.hh"
 using namespace easiglib;
+#include "enosc/profile.hh"
 #include "enosc/ui.hh"
+
+#ifdef ENOSC_PROFILE
+#include <cstdio>
+#endif
 
 namespace MetaModule
 {
@@ -25,27 +33,49 @@ public:
 		if (bypassed) {
 			return;
 		}
+		ENOSC_PROF_SCOPE(total);
 
 		if (ui_update_ctr++ > ui_update_throttle) {
 			ui_update_ctr = 0;
+			ENOSC_PROF_SCOPE(led_update);
 			enosc.Update(); //LED update
 		}
 
 		if (ui_poll_ctr++ > ui_poll_throttle) {
 			ui_poll_ctr = 0;
+			ENOSC_PROF_SCOPE(control_poll);
 			enosc.Poll();
 		}
 
 		if (ui_process_ctr++ > ui_process_throttle) {
 			ui_process_ctr = 0;
+			ENOSC_PROF_SCOPE(ui_events);
 			enosc.Process(); //EventHandler::Process
 		}
 
 		// SampleRate / BlockRate (6kHz for 48k)
 		if (++block_ctr >= EnOsc::kBlockSize) {
 			block_ctr = 0;
+			ENOSC_PROF_SCOPE(audio_block);
 			enosc.osc().Process(out_block_);
 		}
+
+#ifdef ENOSC_PROFILE
+		if (++prof_ctr >= 2 * 48000) {
+			prof_ctr = 0;
+			auto &b = EnOsc::Prof::buckets;
+			auto pct = [&](uint32_t t) {
+				return b.total ? (t * 100 + b.total / 2) / b.total : 0;
+			};
+			printf("EnOsc: total=%lu ticks/2s | poll %lu%% events %lu%% led %lu%% | audio %lu%%\n",
+				   (unsigned long)b.total,
+				   (unsigned long)pct(b.control_poll),
+				   (unsigned long)pct(b.ui_events),
+				   (unsigned long)pct(b.led_update),
+				   (unsigned long)pct(b.audio_block));
+			b = {};
+		}
+#endif
 	}
 
 	// DOWN=0 / MID=0.5 / UP=1.0
@@ -327,6 +357,10 @@ private:
 	unsigned ui_poll_ctr = ui_poll_throttle;
 
 	unsigned block_ctr = EnOsc::kBlockSize;
+
+#ifdef ENOSC_PROFILE
+	unsigned prof_ctr = 0;
+#endif
 };
 
 } // namespace MetaModule
