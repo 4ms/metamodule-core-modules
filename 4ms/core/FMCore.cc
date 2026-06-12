@@ -2,15 +2,32 @@
 #include "CoreModules/moduleFactory.hh"
 #include "info/FM_info.hh"
 
-#include "processors/twoOpFMOscillator.h"
+#include "processors/twoOpFMOscillatorPoly.h"
 #include "util/math.hh"
+
+#include <algorithm>
+#include <array>
+#include <memory>
 
 namespace MetaModule
 {
 
-class FMCore : public CoreProcessor {
+// Polyphonic two-operator FM oscillator.
+// The number of voices follows the poly channel count of the V/Oct Carrier
+// input (one voice if unpatched or mono). The other CV inputs (V/Oct
+// Modulator, Index, Shape, Mix) map onto voices per-channel, with their
+// highest channel feeding all the upper voices.
+//
+// The DSP runs all 4 voices through fixed-size aligned loops so the compiler
+// auto-vectorizes them with NEON (see twoOpFMOscillatorPoly.h).
+class FMCore : public CoreProcessorPoly {
 	using Info = FMInfo;
 	using ThisCore = FMCore;
+
+	static constexpr unsigned MaxVoices = MaxPolyChannels;
+	static_assert(TwoOpFMPoly::MaxVoices >= MaxVoices);
+
+	static constexpr float CvScale = 1.0f / CvRangeVolts;
 
 public:
 	FMCore() {
@@ -18,24 +35,70 @@ public:
 	}
 
 	void update(void) override {
+		const unsigned num_voices = std::clamp<unsigned>(carrierChans, 1, MaxVoices);
+		outChans = num_voices;
+
 		if (bypassed) {
-			mainOutput = 0;
+			audioOut = {};
 			return;
 		}
 
-		fm.set_frequency(0, basePitch * MathTools::setPitchMultiple(pitchInput));
-		if (secondPitchConnected == false) {
-			fm.set_frequency(1, basePitch * ratioFine * ratioCoarse);
-		} else {
-			fm.set_frequency(1, basePitch * MathTools::setPitchMultiple(secondPitchInput));
+		// Pitch multiples use a table lookup, so only recompute them when a CV changes
+		for (unsigned v = 0; v < MaxVoices; v++) {
+			float cv = carrierIn[carrierChans ? std::min<unsigned>(v, carrierChans - 1) : 0] * CvScale;
+			if (cv != lastCarrierCV[v]) {
+				lastCarrierCV[v] = cv;
+				carrierMult[v] = MathTools::setPitchMultiple(cv);
+			}
 		}
-		totalIndex = MathTools::constrain(indexCV * indexAmount + indexKnob, 0.0f, 1.0f);
-		float totalShape = MathTools::constrain(shapeCV * shapeAmount + shapeKnob, 0.0f, 1.0f);
-		fm.shape = totalShape;
-		fm.modAmount = totalIndex;
-		float finalMix = MathTools::constrain(mixCV + mix, 0.0f, 1.0f);
-		fm.mix = finalMix;
-		mainOutput = fm.update();
+
+		if (modChans) {
+			for (unsigned v = 0; v < MaxVoices; v++) {
+				float cv = modIn[std::min<unsigned>(v, modChans - 1)] * CvScale;
+				if (cv != lastModCV[v]) {
+					lastModCV[v] = cv;
+					modMult[v] = MathTools::setPitchMultiple(cv);
+				}
+			}
+		}
+
+		// Expand CV inputs to per-voice arrays (highest channel feeds upward)
+		alignas(16) std::array<float, MaxVoices> indexCV;
+		alignas(16) std::array<float, MaxVoices> shapeCV;
+		alignas(16) std::array<float, MaxVoices> mixCV;
+		expand(indexIn, indexChans, indexCV);
+		expand(shapeIn, shapeChans, shapeCV);
+		expand(mixIn, mixChans, mixCV);
+
+		// Per-voice controls (fixed-size loops: auto-vectorizable)
+		for (unsigned v = 0; v < MaxVoices; v++)
+			fm.carrierFreq[v] = basePitch * carrierMult[v];
+
+		if (modChans) {
+			for (unsigned v = 0; v < MaxVoices; v++)
+				fm.modFreq[v] = basePitch * modMult[v];
+		} else {
+			const float modFreq = basePitch * ratioFine * ratioCoarse;
+			for (unsigned v = 0; v < MaxVoices; v++)
+				fm.modFreq[v] = modFreq;
+		}
+
+		for (unsigned v = 0; v < MaxVoices; v++)
+			fm.modAmount[v] = MathTools::constrain(indexCV[v] * indexAmount + indexKnob, 0.0f, 1.0f);
+
+		for (unsigned v = 0; v < MaxVoices; v++)
+			fm.shape[v] = MathTools::constrain(shapeCV[v] * shapeAmount + shapeKnob, 0.0f, 1.0f);
+
+		for (unsigned v = 0; v < MaxVoices; v++)
+			fm.mix[v] = MathTools::constrain(mixCV[v] + mix, 0.0f, 1.0f);
+
+		fm.update();
+
+		const float *__restrict fmOut = std::assume_aligned<16>(fm.out.data());
+		float *__restrict audioOut_ = std::assume_aligned<16>(audioOut.data());
+		MM_NO_LOOP_DEPS
+		for (unsigned v = 0; v < MaxVoices; v++)
+			audioOut_[v] = fmOut[v] * MaxOutputVolts;
 	}
 
 	void set_param(int param_id, float val) override {
@@ -99,31 +162,75 @@ public:
 		return 0;
 	}
 
+	// Mono sources write channel 0; poly sources write the buffers directly
 	void set_input(int input_id, float val) override {
-		val = val / cvRangeVolts;
 		switch (input_id) {
 			case Info::InputIndex_Cv_In:
-				indexCV = val;
+				indexIn[0] = val;
 				break;
 			case Info::InputV_Oct_Carrier:
-				pitchInput = val;
+				carrierIn[0] = val;
 				break;
 			case Info::InputShape_Cv_In:
-				shapeCV = val;
+				shapeIn[0] = val;
 				break;
 			case Info::InputMix_Cv_In:
-				mixCV = val;
+				mixIn[0] = val;
 				break;
 			case Info::InputV_Oct_Modulator:
-				secondPitchInput = val;
+				modIn[0] = val;
 				break;
 		}
 	}
 
 	float get_output(int output_id) const override {
 		if (output_id == Info::OutputAudio_Out)
-			return mainOutput * maxOutputVolts;
+			return audioOut[0];
 		return 0.f;
+	}
+
+	PolyPortBuffer get_poly_input_buffer(int input_id) override {
+		switch (input_id) {
+			case Info::InputV_Oct_Carrier:
+				return {carrierIn.data(), &carrierChans};
+			case Info::InputV_Oct_Modulator:
+				return {modIn.data(), &modChans};
+			case Info::InputMix_Cv_In:
+				return {mixIn.data(), &mixChans};
+			case Info::InputIndex_Cv_In:
+				return {indexIn.data(), &indexChans};
+			case Info::InputShape_Cv_In:
+				return {shapeIn.data(), &shapeChans};
+		}
+		return {};
+	}
+
+	PolyPortBuffer get_poly_output_buffer(int output_id) override {
+		if (output_id == Info::OutputAudio_Out)
+			return {audioOut.data(), &outChans};
+		return {};
+	}
+
+	void mark_all_inputs_unpatched() override {
+		for (int input_id = 0; input_id < Info::NumInJacks; input_id++)
+			mark_input_unpatched(input_id);
+	}
+
+	void mark_input_unpatched(int input_id) override {
+		if (auto *jack = jack_for(input_id)) {
+			*jack->chans = 0;
+			*jack->values = {};
+		}
+	}
+
+	void mark_input_patched(int input_id) override {
+		// 0 -> 1 channel; a poly source will then raise the count itself
+		if (auto *jack = jack_for(input_id)) {
+			if (*jack->chans == 0) {
+				*jack->chans = 1;
+				*jack->values = {};
+			}
+		}
 	}
 
 	void set_samplerate(float sr) override {
@@ -134,16 +241,6 @@ public:
 		return 0.f;
 	}
 
-	void mark_input_unpatched(int input_id) override {
-		if (input_id == Info::InputV_Oct_Modulator)
-			secondPitchConnected = false;
-	}
-
-	void mark_input_patched(int input_id) override {
-		if (input_id == Info::InputV_Oct_Modulator)
-			secondPitchConnected = true;
-	}
-
 	// Boilerplate to auto-register in ModuleFactory
 	// clang-format off
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
@@ -151,26 +248,75 @@ public:
 	// clang-format on
 
 private:
-	TwoOpFM fm;
+	static void expand(std::array<float, MaxVoices> const &in, uint8_t chans, std::array<float, MaxVoices> &out) {
+		if (chans == 0) {
+			out = {};
+		} else {
+			for (unsigned v = 0; v < MaxVoices; v++)
+				out[v] = in[std::min<unsigned>(v, chans - 1)] * CvScale;
+		}
+	}
+
+	struct JackRef {
+		std::array<float, MaxVoices> *values;
+		uint8_t *chans;
+	};
+
+	JackRef *jack_for(int input_id) {
+		static_assert(Info::NumInJacks == 5);
+		switch (input_id) {
+			case Info::InputV_Oct_Carrier:
+				return &jacks[0];
+			case Info::InputV_Oct_Modulator:
+				return &jacks[1];
+			case Info::InputMix_Cv_In:
+				return &jacks[2];
+			case Info::InputIndex_Cv_In:
+				return &jacks[3];
+			case Info::InputShape_Cv_In:
+				return &jacks[4];
+		}
+		return nullptr;
+	}
+
+	// Poly port storage:
+	alignas(16) std::array<float, MaxVoices> carrierIn{};
+	alignas(16) std::array<float, MaxVoices> modIn{};
+	alignas(16) std::array<float, MaxVoices> mixIn{};
+	alignas(16) std::array<float, MaxVoices> indexIn{};
+	alignas(16) std::array<float, MaxVoices> shapeIn{};
+	alignas(16) std::array<float, MaxVoices> audioOut{};
+	uint8_t carrierChans = 0;
+	uint8_t modChans = 0;
+	uint8_t mixChans = 0;
+	uint8_t indexChans = 0;
+	uint8_t shapeChans = 0;
+	uint8_t outChans = 1;
+
+	std::array<JackRef, 5> jacks{{
+		{&carrierIn, &carrierChans},
+		{&modIn, &modChans},
+		{&mixIn, &mixChans},
+		{&indexIn, &indexChans},
+		{&shapeIn, &shapeChans},
+	}};
+
+	// Per-voice pitch caches (recomputed only when a CV changes):
+	alignas(16) std::array<float, MaxVoices> carrierMult{1.f, 1.f, 1.f, 1.f};
+	alignas(16) std::array<float, MaxVoices> modMult{1.f, 1.f, 1.f, 1.f};
+	std::array<float, MaxVoices> lastCarrierCV{};
+	std::array<float, MaxVoices> lastModCV{};
+
+	TwoOpFMPoly fm;
+
 	float ratioCoarse = 1;
 	float ratioFine = 1;
 	float mix = 0;
-	float mixCV = 0;
 	float basePitch = 0;
-	float mainOutput;
 	float indexKnob = 0;
-	float secondPitchInput = 0;
-	bool secondPitchConnected = false;
-	float indexCV = 0;
 	float shapeKnob = 0;
-	float shapeCV = 0;
-	float totalIndex = 0;
-	float pitchInput = 0;
 	float shapeAmount = 0;
 	float indexAmount = 0;
-
-	static constexpr float cvRangeVolts = 5.0f;
-	static constexpr float maxOutputVolts = 8.0f;
 
 	const std::array<float, 8> ratioTable = {0.125f, 0.25f, 0.5f, 1, 2, 4, 8, 16};
 };
