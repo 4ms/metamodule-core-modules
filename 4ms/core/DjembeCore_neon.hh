@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreModules/4ms/info/Djembe_info.hh"
-#include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/poly_core_processor.hh"
 
 #include "gcem/include/gcem.hpp"
 #include "iirneon.hh"
@@ -11,151 +11,202 @@
 namespace MetaModule
 {
 
-class DjembeCoreNeon : public CoreProcessor {
+// Polyphonic: voice count follows the Trigger input; each voice runs the
+// hand-vectorized NEON filter bank (so CPU scales with the number of active
+// voices, and a mono patch costs the same as the original). The four CV
+// inputs map per voice, with their highest channels feeding all upper voices.
+// Strike parameters and filter coefficients are recomputed per voice only
+// when an input or knob actually changes.
+class DjembeCoreNeon : public PolyCoreProcessor<DjembeInfo::NumInJacks, DjembeInfo::NumOutJacks> {
 	using Info = DjembeInfo;
 	using ThisCore = DjembeCoreNeon;
 
 	float SAMPLERATE = 48000;
 
+	// Sentinel that forces the initial CV-derived calculations
+	static constexpr float UninitVolts = -1e9f;
+
+	struct Voice {
+		ParallelBPIIR iirs[5];
+
+		int32_t noise{};
+		float noise_hp[2]{};
+		float noise_hp_lp[2]{};
+		float fVecTrig{};
+		int iRec4{};
+		bool flipper{};
+		float slowFreq = 500.f;
+
+		// CV-derived values, recomputed when the raw CV volts change:
+		float freqCV = 1.0f;
+		float gainCV = 0;
+		float sharpCV = 0;
+		float strikeCV = 0;
+		float lastPitchV = UninitVolts;
+		float lastGainV = UninitVolts;
+		float lastSharpV = UninitVolts;
+		float lastStrikeV = UninitVolts;
+		bool paramsNeedUpdating = true;
+		bool freqNeedsUpdating = true;
+
+		// Per-voice strike model coefficients:
+		float fSlowGainStrike{};
+		float fSlowStrike1{};
+		float fSlowStrike2{};
+		float fSlowStrike3{};
+		float fSlowStrike4{};
+		float fSlowStrike5{};
+		float fSlowStrike6{};
+		float fSlowStrike7{};
+		float fSlowStrike8{};
+		float adEnvRate{};
+	};
+
 public:
 	DjembeCoreNeon() {
-
 		init_coef();
 
-		noise = 0;
-		fVecTrig = 0;
-		iRec4 = 0;
-
-		for (int i = 0; i < 2; i++) {
-			noise_hp[i] = 0.0f;	   //3
-			noise_hp_lp[i] = 0.0f; //3
+		for (auto &voice : voices) {
+			for (int iir_group = 0; iir_group < 5; iir_group++) {
+				float n = iir_group * 4;
+				float __attribute__((aligned(16))) weights[4] = {
+					1.f / ((n + 1) * (n + 1)),
+					1.f / ((n + 2) * (n + 2)),
+					1.f / ((n + 3) * (n + 3)),
+					1.f / ((n + 4) * (n + 4)),
+				};
+				voice.iirs[iir_group].set_outmix(weights);
+			}
 		}
-
-		for (int iir_group = 0; iir_group < 5; iir_group++) {
-			iirs[iir_group].set_consts(&(iir_consts[iir_group * 4]));
-		}
-
-		for (int iir_group = 0; iir_group < 5; iir_group++) {
-			float n = iir_group * 4;
-			float __attribute__((aligned(16))) weights[4] = {
-				1.f / ((n + 1) * (n + 1)),
-				1.f / ((n + 2) * (n + 2)),
-				1.f / ((n + 3) * (n + 3)),
-				1.f / ((n + 4) * (n + 4)),
-			};
-			iirs[iir_group].set_outmix(weights);
-		}
-
-		// UI
-		gainCV = 0.0f;
-		gainKnob = 1.0f;
-		strikeCV = 0.0f;
-		strikeKnob = float(0.29999999999999999f);
-		sharpCV = 0.0f;
-		sharpnessKnob = 0.5f;
-		trigIn = 0.0f;
-		freqCV = 1.0f;
-		freqKnob = float(60.0f);
-
-		paramsNeedUpdating = true;
-		freqNeedsUpdating = true;
 	}
 
 	void update() override {
+		const unsigned nv = num_voices(Info::InputTrigger_In);
+		auto &out = outs[0];
+		out.chans = nv;
+
 		if (bypassed) {
-			signalOut = 0;
+			out.values = {};
 			return;
 		}
 
-		//1038us
-		if (paramsNeedUpdating) {
-			update_params();
-			paramsNeedUpdating = false;
+		auto &trig = ins[Info::InputTrigger_In];
+
+		for (unsigned v = 0; v < nv; v++) {
+			auto &vc = voices[v];
+
+			// Per-voice CVs (highest channel feeds upward), recomputed on change.
+			// Note: the CV jack and knob index mapping follows the original code
+			// (index 1 adjusts gain, index 2 adjusts sharpness).
+			if (float volts = ins[0].or_last(v); volts != vc.lastPitchV) {
+				vc.lastPitchV = volts;
+				vc.freqCV = exp5Table.interp(MathTools::constrain(volts / CvRangeVolts, 0.f, 1.0f));
+				vc.freqNeedsUpdating = true;
+			}
+			if (float volts = ins[1].or_last(v); volts != vc.lastGainV) {
+				vc.lastGainV = volts;
+				vc.gainCV = volts / CvRangeVolts;
+				vc.paramsNeedUpdating = true;
+			}
+			if (float volts = ins[2].or_last(v); volts != vc.lastSharpV) {
+				vc.lastSharpV = volts;
+				vc.sharpCV = volts / CvRangeVolts;
+				vc.paramsNeedUpdating = true;
+			}
+			if (float volts = ins[3].or_last(v); volts != vc.lastStrikeV) {
+				vc.lastStrikeV = volts;
+				vc.strikeCV = volts / CvRangeVolts;
+				vc.paramsNeedUpdating = true;
+			}
+
+			if (vc.paramsNeedUpdating) {
+				update_params(vc);
+				vc.paramsNeedUpdating = false;
+			}
+			if (vc.freqNeedsUpdating) {
+				calc_freq(vc);
+				vc.freqNeedsUpdating = false;
+			}
+
+			const float trigIn = trig.values[v] > 0.f ? 1.f : 0.f;
+
+			const auto slot = vc.flipper;
+			vc.flipper = !vc.flipper;
+			const auto prev = vc.flipper;
+
+			// StrikeModel:
+			// signed integer overflow is OK here:
+			const int32_t tnoise = (1103515245 * vc.noise) + 12345;
+			const auto tnoise_hp =
+				(4.65661287e-10f * float(tnoise)) -
+				(vc.fSlowStrike1 * ((vc.fSlowStrike3 * vc.noise_hp[prev]) + (vc.fSlowStrike4 * vc.noise_hp[slot])));
+
+			const auto tnoise_hp_lp = (vc.fSlowStrike1 * (((vc.fSlowStrike2 * tnoise_hp) +
+														   (vc.fSlowStrike5 * vc.noise_hp[slot])) +
+														  (vc.fSlowStrike2 * vc.noise_hp[prev]))) -
+									  (vc.fSlowStrike6 * ((vc.fSlowStrike7 * vc.noise_hp_lp[prev]) +
+														  (vc.fSlowStrike8 * vc.noise_hp_lp[slot])));
+			const auto tfVecTrig = trigIn;
+			const auto tiRec4 = ((vc.iRec4 + (vc.iRec4 > 0)) * (trigIn <= vc.fVecTrig)) + (trigIn > vc.fVecTrig);
+			float fTemp0 = vc.adEnvRate * float(tiRec4);
+			auto adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
+			float noiseBurst =
+				vc.fSlowGainStrike * (vc.noise_hp_lp[prev] + (tnoise_hp_lp + (2.0f * vc.noise_hp_lp[slot]))) * adEnv;
+
+			vc.noise = tnoise;
+			vc.noise_hp[prev] = tnoise_hp;
+			vc.noise_hp_lp[prev] = tnoise_hp_lp;
+			vc.fVecTrig = tfVecTrig;
+			vc.iRec4 = tiRec4;
+
+			//IIRs:
+			float signalOut = 0.f;
+			signalOut += vc.iirs[0].calc_4iir(noiseBurst);
+			signalOut += vc.iirs[1].calc_4iir(noiseBurst);
+			signalOut += vc.iirs[2].calc_4iir(noiseBurst);
+			signalOut += vc.iirs[3].calc_4iir(noiseBurst);
+			signalOut += vc.iirs[4].calc_4iir(noiseBurst);
+
+			out.values[v] = signalOut * (outputScalingVolts / algorithmScale);
 		}
-		if (freqNeedsUpdating) {
-			calc_freq();
-			freqNeedsUpdating = false;
-		}
-
-		const auto slot = flipper;
-		flipper = !flipper;
-		const auto prev = flipper;
-
-		// 90ns:
-		// StrikeModel:
-		// signed integer overflow is OK here:
-		const int32_t tnoise = (1103515245 * noise) + 12345;
-		const auto tnoise_hp = (4.65661287e-10f * float(tnoise)) -
-							   (fSlowStrike1 * ((fSlowStrike3 * noise_hp[prev]) + (fSlowStrike4 * noise_hp[slot])));
-
-		const auto tnoise_hp_lp =
-			(fSlowStrike1 *
-			 (((fSlowStrike2 * tnoise_hp) + (fSlowStrike5 * noise_hp[slot])) + (fSlowStrike2 * noise_hp[prev]))) -
-			(fSlowStrike6 * ((fSlowStrike7 * noise_hp_lp[prev]) + (fSlowStrike8 * noise_hp_lp[slot])));
-		const auto tfVecTrig = trigIn;
-		const auto tiRec4 = ((iRec4 + (iRec4 > 0)) * (trigIn <= fVecTrig)) + (trigIn > fVecTrig);
-		float fTemp0 = adEnvRate * float(tiRec4);
-		auto adEnv = MathTools::max<float>(0.0f, MathTools::min<float>(fTemp0, (2.0f - fTemp0)));
-		float noiseBurst = fSlowGainStrike * (noise_hp_lp[prev] + (tnoise_hp_lp + (2.0f * noise_hp_lp[slot]))) * adEnv;
-
-		noise = tnoise;
-		noise_hp[prev] = tnoise_hp;
-		noise_hp_lp[prev] = tnoise_hp_lp;
-		fVecTrig = tfVecTrig;
-		iRec4 = tiRec4;
-		//IIRs:
-		//440ns vs. 500ns non-neon = 10% faster
-		// Debug::Pin1::high();
-		signalOut = 0.f;
-		signalOut += iirs[0].calc_4iir(noiseBurst);
-		signalOut += iirs[1].calc_4iir(noiseBurst);
-		signalOut += iirs[2].calc_4iir(noiseBurst);
-		signalOut += iirs[3].calc_4iir(noiseBurst);
-		signalOut += iirs[4].calc_4iir(noiseBurst);
-		// Debug::Pin1::low();
 	}
 
-	void update_params() {
-		//460ns to set_freq_coef
+	void update_params(Voice &vc) {
 		//if strike:
-		float strike0 = MathTools::min<float>(strikeCV + strikeKnob, 1.0f);
+		float strike0 = MathTools::min<float>(vc.strikeCV + strikeKnob, 1.0f);
 		float strike1 = MathTools::tan_close(fConst1 * ((15000.0f * strike0) + 500.0f));
 		float strike2 = (1.0f / strike1);
 		float strike3 = (((strike2 + 1.41421354f) / strike1) + 1.0f);
 
 		//if gain || strike:
-		fSlowGainStrike = MathTools::min<float>(gainCV + gainKnob, 1.0f) / strike3;
+		vc.fSlowGainStrike = MathTools::min<float>(vc.gainCV + gainKnob, 1.0f) / strike3;
 
 		//if strike:
 		float strike4 = MathTools::tan_close(fConst1 * ((500.0f * strike0) + 40.0f));
 		float strike5 = (1.0f / strike4);
-		fSlowStrike1 = (1.0f / (((strike5 + 1.41421354f) / strike4) + 1.0f));
+		vc.fSlowStrike1 = (1.0f / (((strike5 + 1.41421354f) / strike4) + 1.0f));
 		float strike6 = (strike4 * strike4);
-		fSlowStrike2 = (1.0f / strike6);
-		fSlowStrike3 = (((strike5 + -1.41421354f) / strike4) + 1.0f);
-		fSlowStrike4 = (2.0f * (1.0f - fSlowStrike2));
-		fSlowStrike5 = (0.0f - (2.0f / strike6));
-		fSlowStrike6 = (1.0f / strike3);
-		fSlowStrike7 = (((strike2 + -1.41421354f) / strike1) + 1.0f);
-		fSlowStrike8 = (2.0f * (1.0f - (1.0f / (strike1 * strike1))));
+		vc.fSlowStrike2 = (1.0f / strike6);
+		vc.fSlowStrike3 = (((strike5 + -1.41421354f) / strike4) + 1.0f);
+		vc.fSlowStrike4 = (2.0f * (1.0f - vc.fSlowStrike2));
+		vc.fSlowStrike5 = (0.0f - (2.0f / strike6));
+		vc.fSlowStrike6 = (1.0f / strike3);
+		vc.fSlowStrike7 = (((strike2 + -1.41421354f) / strike1) + 1.0f);
+		vc.fSlowStrike8 = (2.0f * (1.0f - (1.0f / (strike1 * strike1))));
 
 		//if sharp:
-		adEnvRate =
-			1.0f / MathTools::max<float>(1.0f, (fConst2 * MathTools::min<float>(sharpCV + sharpnessKnob, 1.0f)));
-
-		//640ns
-		// if freq
-		// set_freq_coef(freqCV * freqKnob);
+		vc.adEnvRate =
+			1.0f / MathTools::max<float>(1.0f, (fConst2 * MathTools::min<float>(vc.sharpCV + sharpnessKnob, 1.0f)));
 	}
 
-	void calc_freq() {
-		float freq = freqCV * freqKnob * samplerateAdjust;
-		slowFreq = 0.01f * freq + 0.99f * slowFreq;
+	void calc_freq(Voice &vc) {
+		float freq = vc.freqCV * freqKnob * samplerateAdjust;
+		vc.slowFreq = 0.01f * freq + 0.99f * vc.slowFreq;
 
-		set_freq_coef(slowFreq);
+		set_freq_coef(vc, vc.slowFreq);
 	}
 
-	void set_freq_coef(float freq) {
+	void set_freq_coef(Voice &vc, float freq) {
 		// Coef: a1
 		for (int iir_group = 0; iir_group < 5; iir_group++) {
 			float __attribute__((aligned(16))) slows[4];
@@ -163,7 +214,7 @@ public:
 				int n = i + iir_group * 4;
 				slows[i] = iir_slow_consts[n] * MathTools::cos_close((fConst5 * (freq + 200.f * n)));
 			}
-			iirs[iir_group].set_slows(slows);
+			vc.iirs[iir_group].set_slows(slows);
 		}
 	}
 
@@ -171,22 +222,26 @@ public:
 		switch (param_id) {
 			case 0:
 				freqKnob = MathTools::map_value(val, 0.f, 1.f, 20.f, 500.f);
-				freqNeedsUpdating = true;
+				for (auto &voice : voices)
+					voice.freqNeedsUpdating = true;
 				break;
 
 			case 1:
 				gainKnob = val;
-				paramsNeedUpdating = true;
+				for (auto &voice : voices)
+					voice.paramsNeedUpdating = true;
 				break;
 
 			case 2:
 				sharpnessKnob = val;
-				paramsNeedUpdating = true;
+				for (auto &voice : voices)
+					voice.paramsNeedUpdating = true;
 				break;
 
 			case 3:
 				strikeKnob = val;
-				paramsNeedUpdating = true;
+				for (auto &voice : voices)
+					voice.paramsNeedUpdating = true;
 				break;
 		}
 	}
@@ -195,7 +250,6 @@ public:
 		switch (param_id) {
 			case 0:
 				return MathTools::map_value(freqKnob, 20.f, 500.f, 0.f, 1.f);
-				break;
 
 			case 1:
 				return gainKnob;
@@ -214,82 +268,23 @@ public:
 			SAMPLERATE = sr;
 			samplerateAdjust = 48000.f / sr;
 			init_coef();
-			paramsNeedUpdating = true;
-			freqNeedsUpdating = true;
+			for (auto &voice : voices) {
+				voice.paramsNeedUpdating = true;
+				voice.freqNeedsUpdating = true;
+			}
 		}
-	}
-
-	void set_input(const int input_id, const float v) override {
-		float val = v / CvRangeVolts;
-
-		switch (input_id) {
-			case 0:
-				freqCV = exp5Table.interp(MathTools::constrain(val, 0.f, 1.0f));
-				freqNeedsUpdating = true;
-				break;
-
-			case 1:
-				gainCV = val;
-				paramsNeedUpdating = true;
-				break;
-
-			case 2:
-				sharpCV = val;
-				paramsNeedUpdating = true;
-				break;
-
-			case 3:
-				strikeCV = val;
-				paramsNeedUpdating = true;
-				break;
-
-			case 4:
-				trigIn = val > 0.f ? 1.f : 0.f;
-				paramsNeedUpdating = true;
-				break;
-		}
-	}
-
-	float get_output(const int output_id) const override {
-		constexpr float algorithmScale = 8.f;
-		return signalOut * (outputScalingVolts / algorithmScale);
 	}
 
 private:
-	bool paramsNeedUpdating = false;
-	bool freqNeedsUpdating = false;
-	float signalOut = 0;
+	static constexpr unsigned NumVoices = MaxVoices;
+	std::array<Voice, NumVoices> voices{};
+
 	float samplerateAdjust = 1.f;
-	float slowFreq = 500.f;
 
-	ParallelBPIIR iirs[5];
-
-	float gainCV;
-	float gainKnob;
-	float strikeCV;
-	float strikeKnob;
-	int32_t noise{};
-	float noise_hp[2]{};
-	float noise_hp_lp[2]{};
-	float sharpCV;
-	float sharpnessKnob;
-	float trigIn;
-	float fVecTrig{};
-	int iRec4{};
-	float freqCV;
-	float freqKnob;
-	bool flipper{};
-
-	float fSlowGainStrike{};
-	float fSlowStrike1{};
-	float fSlowStrike2{};
-	float fSlowStrike3{};
-	float fSlowStrike4{};
-	float fSlowStrike5{};
-	float fSlowStrike6{};
-	float fSlowStrike7{};
-	float fSlowStrike8{};
-	float adEnvRate{};
+	float gainKnob = 1.0f;
+	float strikeKnob = 0.3f;
+	float sharpnessKnob = 0.5f;
+	float freqKnob = 60.0f;
 
 	float fConst1{};
 	float fConst2{};
@@ -364,15 +359,15 @@ private:
 		iir_slow_consts[19] = (0.0f - (2.0f * fConst61));
 		iir_consts[19] = (fConst61 * fConst61);
 
-		for (int iir_group = 0; iir_group < 5; iir_group++) {
-			iirs[iir_group].set_consts(&(iir_consts[iir_group * 4]));
+		for (auto &voice : voices) {
+			for (int iir_group = 0; iir_group < 5; iir_group++) {
+				voice.iirs[iir_group].set_consts(&(iir_consts[iir_group * 4]));
+			}
 		}
-
-		float freq = freqCV * freqKnob * samplerateAdjust;
-		set_freq_coef(freq);
 	}
 
 	static constexpr float outputScalingVolts = 5.f;
+	static constexpr float algorithmScale = 8.f;
 
 public:
 	// Boilerplate to auto-register in ModuleFactory
