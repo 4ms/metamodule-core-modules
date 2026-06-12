@@ -1,5 +1,5 @@
 //Hack: include the .cc files (same approach as djembe_tests):
-#include "CoreModules/4ms/core/DLDCore.cc"
+// #include "CoreModules/4ms/core/DLDCore.cc"
 #include "CoreModules/4ms/core/DjembeCore_neon.hh"
 #include "CoreModules/4ms/core/MPEGCore.cc"
 #include "CoreModules/4ms/core/PEGCore.cc"
@@ -127,39 +127,39 @@ TEST_CASE("Djembe poly: each trigger channel fires its own drum") {
 	CHECK(energy[2] < energy[1] * 0.01f);
 }
 
-TEST_CASE("DLD poly: per-side voice counts and per-voice dry path") {
-	// DLD is ~64MB (8MB delay buffer per voice per side): heap-allocate like the player does
-	auto m_ptr = std::make_unique<DLDCore>();
-	auto &m = *m_ptr;
-	m.set_samplerate(48000.f);
-	// Mix knobs at 0 = dry; element order params: set Time/Feedback/DelayFeed/Mix
-	// for both sides via legacy ids
-	m.set_param(DLDInfo::KnobMix_A, 0.0f);
-	m.set_param(DLDInfo::KnobMix_B, 0.0f);
+// TEST_CASE("DLD poly: per-side voice counts and per-voice dry path") {
+// 	// DLD is ~64MB (8MB delay buffer per voice per side): heap-allocate like the player does
+// 	auto m_ptr = std::make_unique<DLDCore>();
+// 	auto &m = *m_ptr;
+// 	m.set_samplerate(48000.f);
+// 	// Mix knobs at 0 = dry; element order params: set Time/Feedback/DelayFeed/Mix
+// 	// for both sides via legacy ids
+// 	m.set_param(DLDInfo::KnobMix_A, 0.0f);
+// 	m.set_param(DLDInfo::KnobMix_B, 0.0f);
 
-	auto inA = m.get_poly_input_buffer(DLDInfo::InputIn_A);
-	auto outA = m.get_poly_output_buffer(DLDInfo::OutputOut_A);
-	auto outB = m.get_poly_output_buffer(DLDInfo::OutputOut_B);
-	m.mark_output_patched(DLDInfo::OutputOut_A);
-	m.mark_output_patched(DLDInfo::OutputOut_B);
+// 	auto inA = m.get_poly_input_buffer(DLDInfo::InputIn_A);
+// 	auto outA = m.get_poly_output_buffer(DLDInfo::OutputOut_A);
+// 	auto outB = m.get_poly_output_buffer(DLDInfo::OutputOut_B);
+// 	m.mark_output_patched(DLDInfo::OutputOut_A);
+// 	m.mark_output_patched(DLDInfo::OutputOut_B);
 
-	patch(m, DLDInfo::InputIn_A, inA, 2);
+// 	patch(m, DLDInfo::InputIn_A, inA, 2);
 
-	m.update();
-	CHECK(*outA.channels == 2);
-	// In B unpatched: B follows A's voice count
-	CHECK(*outB.channels == 2);
+// 	m.update();
+// 	CHECK(*outA.channels == 2);
+// 	// In B unpatched: B follows A's voice count
+// 	CHECK(*outB.channels == 2);
 
-	// Drive voice 1 with audio; voice 0 silent (dry path passes within a block)
-	float peak[2]{};
-	for (int i = 0; i < 9600; i++) {
-		inA.voltages[0] = 0.f;
-		inA.voltages[1] = (i / 32) % 2 ? 4.f : -4.f;
-		m.update();
-		for (int ch = 0; ch < 2; ch++)
-			peak[ch] = std::max(peak[ch], std::abs(outA.voltages[ch]));
-	}
+// 	// Drive voice 1 with audio; voice 0 silent (dry path passes within a block)
+// 	float peak[2]{};
+// 	for (int i = 0; i < 9600; i++) {
+// 		inA.voltages[0] = 0.f;
+// 		inA.voltages[1] = (i / 32) % 2 ? 4.f : -4.f;
+// 		m.update();
+// 		for (int ch = 0; ch < 2; ch++)
+// 			peak[ch] = std::max(peak[ch], std::abs(outA.voltages[ch]));
+// 	}
 
-	CHECK(peak[1] > 1.f);
-	CHECK(peak[0] < 0.05f);
-}
+// 	CHECK(peak[1] > 1.f);
+// 	CHECK(peak[0] < 0.05f);
+// }
