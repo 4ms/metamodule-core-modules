@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <cstdint>
+#include <limits>
 
 class FollowInput
 {
@@ -13,7 +14,7 @@ public:
         auto hystOutput = applyHysteresis(input);
 
         /*
-        the hysteresis transforms a slow continious modulation into a stepped voltage. this can cause frequent state transitions of the internal oscillator from rising/falling to idle. 
+        the hysteresis transforms a slow continious modulation into a stepped voltage. this can cause frequent state transitions of the internal oscillator from rising/falling to idle.
         as this results in erratic behavior of the eor/eof jacks the stepped voltage has to be filtered in order to create a continious modulation.
         this is done by an adjustable low pass filter. its filter coefficient is calculated based on the gradient of the incoming follow voltage,
         which is identified by the number of processing steps which were necessary to cross the hysteresis threshold.
@@ -29,7 +30,7 @@ public:
             {
                 filterCoeff = gradient / 0.05f;
             }
-        }			
+        }
 
         float filterOutput = filter(hystOutput.output, filterCoeff);
 
@@ -42,12 +43,9 @@ private:
         float differenceToLastOutput;
         uint32_t timeToLastOutputOverThreshold;
     };
-    
+
 private:
     hysteresisOutput_t applyHysteresis(float input) {
-        static float previousInput = 0.0f;
-        static uint32_t count = 0;
-
         if (count < std::numeric_limits<decltype(count)>::max()) {
             count++;
         }
@@ -69,8 +67,6 @@ private:
     }
 
     float filter(float input, float filterCoeff) {
-        static float previousFollowInputFilterOutput = 0.0f;
-
         float filterOutput = filterCoeff * input + (1.0f - filterCoeff) * previousFollowInputFilterOutput;
 
         previousFollowInputFilterOutput = filterOutput;
@@ -80,4 +76,11 @@ private:
 
 private:
     float filterCoeff = 0.0f;
+
+    // Hysteresis and filter state. These were function-local statics, which
+    // shared the state across every FollowInput instance (all modules and all
+    // poly channels) -- they must be per-instance.
+    float previousInput = 0.0f;
+    uint32_t count = 0;
+    float previousFollowInputFilterOutput = 0.0f;
 };
