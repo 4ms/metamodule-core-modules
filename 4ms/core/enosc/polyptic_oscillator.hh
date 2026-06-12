@@ -199,6 +199,10 @@ public:
 			modulation_needs_jump = true;
 		}
 
+		// Pairs at i >= numOsc get exactly zero amplitude and only feed mod
+		// blocks that no audible pair reads, so skip them: CPU scales with
+		// numOsc. Their state freezes while inactive; re-activating slews in
+		// from stale values (accepted difference vs. always-running).
 		const int active_pairs = std::min(numOsc, kMaxNumOsc);
 
 		for (int i = 0; i < active_pairs; ++i) {
