@@ -22,7 +22,10 @@ struct OnePoleLp {
 	}
 
 private:
-	f state_;
+	// must not start as garbage: a huge "frequency" here flows through
+	// Antialias into unbounded table indices (e.g. cheby) before the
+	// freeze slew opens up
+	f state_ = 0_f;
 };
 
 struct OnePoleHp : OnePoleLp {
