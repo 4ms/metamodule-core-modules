@@ -1,16 +1,19 @@
-#include "info/SHEV_info.hh"
-#include "CoreModules/SmartCoreProcessor.hh"
+#include "CoreModules/SmartCoreProcessorPoly.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "info/SHEV_info.hh"
 
-#include "CoreModules/4ms/core/envvca/SSI2162.h"
-#include "CoreModules/4ms/core/envvca/TriangleOscillator.h"
-#include "CoreModules/4ms/core/envvca/Tables.h"
 #include "CoreModules/4ms/core/envvca/FollowInput.h"
+#include "CoreModules/4ms/core/envvca/SSI2162.h"
+#include "CoreModules/4ms/core/envvca/Tables.h"
+#include "CoreModules/4ms/core/envvca/TriangleOscillator.h"
 #include "CoreModules/4ms/core/helpers/EdgeDetector.h"
-#include "CoreModules/4ms/core/helpers/circuit_elements.h"
 #include "CoreModules/4ms/core/helpers/FlipFlop.h"
+#include "CoreModules/4ms/core/helpers/circuit_elements.h"
 #include "CoreModules/4ms/core/helpers/quantization.h"
 
+#include <algorithm>
+#include <array>
+#include <optional>
 
 namespace MetaModule
 {
@@ -20,175 +23,170 @@ struct LogTableRange {
 	static constexpr float max = 5.0f;
 };
 
-constinit auto LogTableSHEV =
-	Mapping::LookupTable_t<50>::generate<LogTableRange>([](auto voltage) {
-		return gcem::log(29.6f * voltage + 1.0f);
-	});
+constinit auto LogTableSHEV = Mapping::LookupTable_t<50>::generate<LogTableRange>([](auto voltage) {
+	return gcem::log(29.6f * voltage + 1.0f);
+});
 
 struct ExpTableRange {
 	static constexpr float min = 0.0f;
 	static constexpr float max = 5.0f;
 };
 
-constinit auto ExpTableSHEV =
-	Mapping::LookupTable_t<50>::generate<ExpTableRange>([](auto voltage) {
-		return (gcem::exp(voltage) - 1.0f) / 29.682631f;
-	});
+constinit auto ExpTableSHEV = Mapping::LookupTable_t<50>::generate<ExpTableRange>([](auto voltage) {
+	return (gcem::exp(voltage) - 1.0f) / 29.682631f;
+});
 
+static float SHEVProcessCVOffset(float slider, auto range) {
+	// Slider plus resistor in parallel to tweak curve
+	const float SliderImpedance = 100e3f;
+	auto offset = 5.0f * VoltageDivider(slider * SliderImpedance + 17.4e3f,
+										0 + ParallelCircuit(100e3f, (1.0f - slider) * SliderImpedance));
 
-class SHEVCore : public SmartCoreProcessor<SHEVInfo> {
+	// Select one of three bias voltages
+	auto BiasFromRange = [](auto range) -> float {
+		if (range == Toggle3pos::State_t::UP) {
+			return -12.0f * VoltageDivider(1e3f, 10e3f);
+		} else if (range == Toggle3pos::State_t::DOWN) {
+			return 12.0f * VoltageDivider(1e3f, 8.2e3f);
+		} else {
+			// middle position, and fail-safe default
+			return 0.0f;
+		}
+	};
+
+	auto bias = BiasFromRange(range);
+
+	return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
+}
+
+// Polyphonic Shaped Dual EnvVCA. Each side (A/B) has two independently-
+// polyphonic signal paths, like the ENVVCA: its Trig In sets the envelope
+// channel count (Env Out, Lin 5V Out, and EOR/EOF Out), and its Audio In sets
+// the audio channel count. Each audio channel is controlled by the (shaped)
+// envelope with the same channel number, with the highest envelope channel
+// controlling all upper audio channels. CV inputs (Time CV, Shape CV, Follow,
+// VCA CV) map onto channels the same way. Or Out carries the per-channel max
+// of both sides' envelopes.
+class SHEVCore : public SmartCoreProcessorPoly<SHEVInfo> {
 	using Info = SHEVInfo;
 	using ThisCore = SHEVCore;
 	using enum Info::Elem;
 
+	static constexpr unsigned MaxChans = MaxPolyChannels;
+
 public:
 	template<Info::Elem EL>
-	void setOutput(auto val)
-	{
-		return SmartCoreProcessor<Info>::setOutput<EL>(val);
+	void setOutput(float val, unsigned chan = 0) {
+		SmartCoreProcessorPoly<Info>::setOutput<EL>(val, chan);
 	}
 
 	template<Info::Elem EL>
-	auto getInput()
-	{
-		return SmartCoreProcessor<Info>::getInput<EL>();
+	std::optional<float> getInput(unsigned chan = 0) {
+		return SmartCoreProcessorPoly<Info>::getInput<EL>(chan);
+	}
+
+	template<Info::Elem EL>
+	unsigned numChannels() {
+		return SmartCoreProcessorPoly<Info>::numChannels<EL>();
+	}
+
+	template<Info::Elem EL>
+	bool isPatched() {
+		return SmartCoreProcessorPoly<Info>::isPatched<EL>();
+	}
+
+	template<Info::Elem EL>
+	void setChannels(unsigned chans) {
+		SmartCoreProcessorPoly<Info>::setChannels<EL>(chans);
+	}
+
+	// Read an input channel, reusing the input's highest channel when it has
+	// fewer channels than requested. Returns 0 if unpatched.
+	template<Info::Elem EL>
+	float getInputOrLast(unsigned chan) {
+		const auto chans = numChannels<EL>();
+		if (chans == 0)
+			return 0.f;
+		return getInput<EL>(std::min(chan, chans - 1)).value_or(0.f);
 	}
 
 	template<Info::Elem EL, typename VAL>
-	void setLED(const VAL &value)
-	{
-		return SmartCoreProcessor<Info>::setLED<EL>(value);
+	void setLED(const VAL &value) {
+		SmartCoreProcessorPoly<Info>::setLED<EL>(value);
 	}
 
 	template<Info::Elem EL>
-	auto getState()
-	{
-		return SmartCoreProcessor<Info>::getState<EL>();
+	auto getState() {
+		return SmartCoreProcessorPoly<Info>::getState<EL>();
 	}
 
 private:
-	template <class Mapping>
-	class Channel
-	{
-		SSI2162 vca;
-		TriangleOscillator osc;
+	template<class Mapping>
+	class Channel {
+		static_assert(MaxChans == 4, "FlipFlop initializer below assumes 4 channels");
 
-		FlipFlop triggerDetector;
-		EdgeDetector triggerEdgeDetector;
+		std::array<SSI2162, MaxChans> vca{};
+		std::array<TriangleOscillator, MaxChans> osc{};
 
-		FollowInput followInput;
+		std::array<FlipFlop, MaxChans> triggerDetector{{{1.f, 2.f}, {1.f, 2.f}, {1.f, 2.f}, {1.f, 2.f}}};
+		std::array<EdgeDetector, MaxChans> triggerEdgeDetector{};
 
-		float cycleLED;
-		float riseCV;
-		float fallCV;
-		float rScaleLEDs = 0.f;
-		float fScaleLEDs = 0.f;
-		float envOut;
-		enum TriggerMode_t {CYCLE, ASR, AR};
-		TriggerMode_t triggerMode;
+		std::array<FollowInput, MaxChans> followInput{};
+
+		std::array<float, MaxChans> envOut{};
+		std::array<float, MaxChans> shapedEnv{};
+		unsigned envChans = 1;
+
+		enum TriggerMode_t { CYCLE, ASR, AR };
+
+		float cycleLED = -1.f;
 
 		float timeStepInS = 1.f / 48000.f;
 
-		SHEVCore* parent;
-
-		static constexpr float followInputHysteresisInV = 0.01f;
-		float previousFollowInputValue;
-
-		static constexpr float followInputFilterCoeff = 0.01f;
-		float previousFollowInputFilterOutput;
+		SHEVCore *parent;
 
 	public:
-		Channel(SHEVCore* parent_)
-			: triggerDetector(1.0f, 2.0f), parent(parent_){
+		Channel(SHEVCore *parent_)
+			: parent(parent_) {
 		}
 
-		void update(auto input) {
-			auto [riseCV, fallCV] = getRiseAndFallCV();
-
-			osc.setRiseTimeInS(VoltageToTime(riseCV));
-			osc.setFallTimeInS(VoltageToTime(fallCV));
-
-			runOscillator();
-
-			auto shapedEnv = shapeEnvelope(osc.getOutput());
-
-			displayEnvelope(shapedEnv, osc.getOutput(), osc.getSlopeState());
-
-			if(auto vcaCV = parent->getInput<Mapping::VcaCvIn>(); vcaCV) {
-				runAudioPath(*vcaCV, input);
-			} else {
-				runAudioPath(shapedEnv, input);
-			}		
-			
+		unsigned numEnvChans() const {
+			return envChans;
 		}
 
-		void runAudioPath(float triangleWave, auto input) {
-			triangleWave = InvertingAmpWithBias(triangleWave, 100e3f, 100e3f, 1.94f);
-
-			constexpr float VCAInputImpendance = 5e3f;
-			triangleWave = triangleWave * VoltageDivider(VCAInputImpendance, 2.7e3f);
-
-			// This value influences the maximum gain a lot
-			// Tweaked manually to achieve approximately max 0dB
-			constexpr float SchottkyForwardVoltage = 0.22f;
-			constexpr float MaxGainInV = 5.0f + SchottkyForwardVoltage;
-			constexpr float MinGainInV = VoltageDivider(47e3f, 1e6f) * 5.0f - SchottkyForwardVoltage;
-
-			triangleWave = std::clamp(triangleWave, MinGainInV, MaxGainInV);
-
-			vca.setScaling(triangleWave);
-
-			if (input) {
-				auto output = vca.process(*input);
-				parent->setOutput<Mapping::AudioOut>(output);
-			} else {
-				parent->setOutput<Mapping::AudioOut>(0.f);
-			}
+		// Envelope output (after level/offset), highest channel feeding upward
+		float getEnvOut(unsigned chan) const {
+			return envOut[std::min(chan, envChans - 1)];
 		}
 
-		auto shapeEnvelope(float val)
-		{
-			auto shapeControl = parent->getState<Mapping::ShapeSlider>();
-
-			if(auto shapeCV = parent->getInput<Mapping::ShapeCVIn>(); shapeCV) {
-				shapeControl += (parent->getState<Mapping::ShapeKnob>() * 2.0f - 1.0f) * *shapeCV / 10.0f;
-				shapeControl = std::clamp(shapeControl, 0.0f, 1.0f);
-			}
-			parent->setLED<Mapping::ShapeLight>(FullColor_t{shapeControl});
-
-			float shapedEnv;
-
-			if(shapeControl > 0.5f) {
-				auto mixFactor = 2.0f * shapeControl - 1.0f;
-				shapedEnv = (1.0f - mixFactor) * val + mixFactor * LogTableSHEV.lookup(val);
-			} else {
-				auto mixFactor = 2.0f * shapeControl;
-				shapedEnv = (1.0f - mixFactor) * ExpTableSHEV.lookup(val) + mixFactor * val;
-			}
-
-			return shapedEnv;
+		TriangleOscillator::SlopeState_t getOscillatorSlopeState(unsigned chan) const {
+			return osc[std::min(chan, envChans - 1)].getSlopeState();
 		}
 
-		void displayEnvelope(float shapedEnv, float val, TriangleOscillator::SlopeState_t slopeState) {
-			parent->setLED<Mapping::RiseSlider>(slopeState == TriangleOscillator::SlopeState_t::RISING ? val / 8.f : 0);
-			parent->setLED<Mapping::FallSlider>(slopeState == TriangleOscillator::SlopeState_t::FALLING ? val / 8.f : 0);
-			parent->setLED<Mapping::ShapeSlider>(val / 8.f);
+		void update(unsigned audioChans, auto getAudioIn) {
+			envChans = std::max(parent->numChannels<Mapping::TrigIn>(), 1u);
+			parent->setChannels<Mapping::EnvOut>(envChans);
+			parent->setChannels<Mapping::Lin5VOut>(envChans);
 
-			envOut = shapedEnv / VoltageDivider(100e3f, 100e3f);
-			envOut *= parent->getState<Mapping::LevelKnob>() * 2.0f - 1.0f;
-			envOut += parent->getState<Mapping::OffsetKnob>() * 20.0f - 10.0f;
-			parent->setOutput<Mapping::EnvOut>(envOut);
-			parent->setOutput<Mapping::Lin5VOut>(val);
-			parent->setLED<Mapping::EnvLedLight>(BipolarColor_t{envOut / 8.f});
+			runEnvelopes();
+			runAudioPath(audioChans, getAudioIn);
 		}
 
-		auto getEnvOut() {
-			return envOut;
-		}
+		void runEnvelopes() {
+			// Channel-independent terms:
+			const auto riseOffset = SHEVProcessCVOffset(parent->getState<Mapping::RiseSlider>(),
+														parent->getState<Mapping::SlowMedFastRiseSwitch>());
+			const auto fallOffset = SHEVProcessCVOffset(parent->getState<Mapping::FallSlider>(),
+														parent->getState<Mapping::SlowMedFastFallSwitch>());
+			const auto riseCvKnob = parent->getState<Mapping::RiseKnob>();
+			const auto fallCvKnob = parent->getState<Mapping::FallKnob>();
+			const auto levelScale = parent->getState<Mapping::LevelKnob>() * 2.0f - 1.0f;
+			const auto offsetVolts = parent->getState<Mapping::OffsetKnob>() * 20.0f - 10.0f;
+			const bool buttonCycling = parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN;
+			const bool followPatched = parent->isPatched<Mapping::FollowIn>();
 
-		void runOscillator() {		
-			auto toggleState = parent->getState<Mapping::CycleArAsrSwitch>();
-
+			const auto toggleState = parent->getState<Mapping::CycleArAsrSwitch>();
+			TriggerMode_t triggerMode;
 			if (toggleState == Toggle3pos::State_t::UP) {
 				triggerMode = TriggerMode_t::CYCLE;
 			} else if (toggleState == Toggle3pos::State_t::DOWN) {
@@ -197,111 +195,137 @@ private:
 				triggerMode = TriggerMode_t::AR;
 			}
 
-			auto triggerInputValue = parent->getInput<Mapping::TrigIn>().value_or(0.f);
+			const auto shapeSlider = parent->getState<Mapping::ShapeSlider>();
+			const auto shapeCvAmount = parent->getState<Mapping::ShapeKnob>() * 2.0f - 1.0f;
+			const bool shapeCvPatched = parent->isPatched<Mapping::ShapeCVIn>();
 
-			bool isCycling;
+			for (unsigned ch = 0; ch < envChans; ch++) {
+				// Scale down CV input and apply attenuverter knobs
+				const auto scaledTimeCV = parent->getInputOrLast<Mapping::TimeCvIn>(ch) * -100e3f / 137e3f;
+				const auto rScale = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, riseCvKnob * scaledTimeCV);
+				const auto fScale = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, fallCvKnob * scaledTimeCV);
 
-			if(triggerMode == TriggerMode_t::CYCLE) {
-				isCycling = (parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN) ^ CVToBool(triggerInputValue);
-			} else {
-				isCycling = (parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN);
-			};
+				// Sum with static value from fader + range switch
+				auto riseCV = -rScale - riseOffset;
+				auto fallCV = -fScale - fallOffset;
 
-			osc.setCycling(isCycling);
+				// Apply rise time limit and scale down
+				constexpr float DiodeDropInV = 1.0f;
+				const float ClippingVoltage = 5.0f * VoltageDivider(100e3f, 2e3f) + DiodeDropInV;
+				riseCV = riseCV * VoltageDivider(2.2e3f + 33e3f, 16.9e3f);
+				riseCV = std::min(riseCV, ClippingVoltage);
+				riseCV = riseCV * VoltageDivider(2.2e3f, 33e3f);
 
-			if (cycleLED != isCycling) {
-				cycleLED = isCycling;
-				parent->setLED<Mapping::CycleButton>(cycleLED);
-			}
+				// Scale down falling CV without additional limiting
+				fallCV = fallCV * VoltageDivider(2.2e3f, 10e3f + 40.2e3f);
 
-			if (triggerEdgeDetector(triggerDetector(triggerInputValue))) {
-				osc.doRetrigger();
-			}
+				osc[ch].setRiseTimeInS(VoltageToTime(riseCV));
+				osc[ch].setFallTimeInS(VoltageToTime(fallCV));
 
-			if(triggerMode == TriggerMode_t::ASR && triggerDetector(triggerInputValue)) {
-				osc.holdMax(true);
-			} else {
-				osc.holdMax(false);
-			}
+				// Trigger and cycle handling per trigger mode:
+				const auto triggerInputValue = parent->getInput<Mapping::TrigIn>(ch).value_or(0.f);
 
-			if (auto inputFollowValue = parent->getInput<Mapping::FollowIn>(); inputFollowValue) {
-				osc.setTargetVoltage(followInput.process(*inputFollowValue));
-			}
+				bool isCycling;
+				if (triggerMode == TriggerMode_t::CYCLE) {
+					isCycling = buttonCycling ^ CVToBool(triggerInputValue);
+				} else {
+					isCycling = buttonCycling;
+				}
+				osc[ch].setCycling(isCycling);
 
-			osc.proceed(timeStepInS);
-		}
+				const bool trigHigh = triggerDetector[ch](triggerInputValue);
+				if (triggerEdgeDetector[ch](trigHigh)) {
+					osc[ch].doRetrigger();
+				}
 
-		std::pair<float, float> getRiseAndFallCV() {
-			auto ProcessCVOffset = [](auto slider, auto range) -> float {
-				// Slider plus resistor in parallel to tweak curve
-				const float SliderImpedance = 100e3f;
-				auto offset = 5.0f * VoltageDivider(slider * SliderImpedance + 17.4e3f,
-													0 + ParallelCircuit(100e3f, (1.0f - slider) * SliderImpedance));
+				osc[ch].holdMax(triggerMode == TriggerMode_t::ASR && trigHigh);
 
-				// Select one of three bias voltages
-				auto BiasFromRange = [](auto range) -> float {
-					if (range == Toggle3pos::State_t::UP) {
-						return -12.0f * VoltageDivider(1e3f, 10e3f);
-					} else if (range == Toggle3pos::State_t::DOWN) {
-						return 12.0f * VoltageDivider(1e3f, 8.2e3f);
-					} else {
-						// middle position, and fail-safe default
-						return 0.0f;
+				if (followPatched) {
+					osc[ch].setTargetVoltage(followInput[ch].process(parent->getInputOrLast<Mapping::FollowIn>(ch)));
+				}
+
+				osc[ch].proceed(timeStepInS);
+
+				const auto envV = osc[ch].getOutput();
+				const auto slopeState = osc[ch].getSlopeState();
+
+				// Shape the envelope (Shape CV can be poly):
+				auto shapeControl = shapeSlider;
+				if (shapeCvPatched) {
+					shapeControl += shapeCvAmount * parent->getInputOrLast<Mapping::ShapeCVIn>(ch) / 10.0f;
+					shapeControl = std::clamp(shapeControl, 0.0f, 1.0f);
+				}
+
+				float shaped;
+				if (shapeControl > 0.5f) {
+					auto mixFactor = 2.0f * shapeControl - 1.0f;
+					shaped = (1.0f - mixFactor) * envV + mixFactor * LogTableSHEV.lookup(envV);
+				} else {
+					auto mixFactor = 2.0f * shapeControl;
+					shaped = (1.0f - mixFactor) * ExpTableSHEV.lookup(envV) + mixFactor * envV;
+				}
+				shapedEnv[ch] = shaped;
+
+				auto e = shaped / VoltageDivider(100e3f, 100e3f);
+				e = e * levelScale + offsetVolts;
+				envOut[ch] = e;
+				parent->setOutput<Mapping::EnvOut>(e, ch);
+				parent->setOutput<Mapping::Lin5VOut>(envV, ch);
+
+				// Panel LEDs show the first channel
+				if (ch == 0) {
+					parent->setLED<Mapping::RiseLedLight>(BipolarColor_t{-rScale / 10.f});
+					parent->setLED<Mapping::FallLedLight>(BipolarColor_t{-fScale / 10.f});
+					parent->setLED<Mapping::RiseSlider>(
+						slopeState == TriangleOscillator::SlopeState_t::RISING ? envV / 8.f : 0);
+					parent->setLED<Mapping::FallSlider>(
+						slopeState == TriangleOscillator::SlopeState_t::FALLING ? envV / 8.f : 0);
+					parent->setLED<Mapping::ShapeSlider>(envV / 8.f);
+					parent->setLED<Mapping::ShapeLight>(FullColor_t{shapeControl});
+					parent->setLED<Mapping::EnvLedLight>(BipolarColor_t{e / 8.f});
+					if (cycleLED != isCycling) {
+						cycleLED = isCycling;
+						parent->setLED<Mapping::CycleButton>(cycleLED);
 					}
-				};
-
-				auto bias = BiasFromRange(range);
-
-				return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
-			};
-
-			auto timeCVValue = parent->getInput<Mapping::TimeCvIn>().value_or(0.f);
-			// scale down cv input
-			const auto scaledTimeCV = timeCVValue * -100e3f / 137e3f;
-
-			// apply attenuverter knobs
-			rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::RiseKnob>() * scaledTimeCV);
-			fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, parent->getState<Mapping::FallKnob>() * scaledTimeCV);
-
-			// sum with static value from fader + range switch
-			auto riseRange = parent->getState<Mapping::SlowMedFastRiseSwitch>();
-			auto fallRange = parent->getState<Mapping::SlowMedFastFallSwitch>();
-			riseCV = -rScaleLEDs - ProcessCVOffset(parent->getState<Mapping::RiseSlider>(), riseRange);
-			fallCV = -fScaleLEDs - ProcessCVOffset(parent->getState<Mapping::FallSlider>(), fallRange);
-
-			// TODO: LEDs only need to be updated ~60Hz instead of 48kHz
-			parent->setLED<Mapping::RiseLedLight>(BipolarColor_t{-rScaleLEDs / 10.f});
-			parent->setLED<Mapping::FallLedLight>(BipolarColor_t{-fScaleLEDs / 10.f});
-
-			// TODO: low pass filter
-
-			// apply rise time limit and scale down
-			constexpr float DiodeDropInV = 1.0f;
-			const float ClippingVoltage = 5.0f * VoltageDivider(100e3f, 2e3f) + DiodeDropInV;
-			riseCV = riseCV * VoltageDivider(2.2e3f + 33e3f, 16.9e3f);
-			riseCV = std::min(riseCV, ClippingVoltage);
-			riseCV = riseCV * VoltageDivider(2.2e3f, 33e3f);
-
-			// scale down falling CV without additional limiting
-			fallCV = fallCV * VoltageDivider(2.2e3f, 10e3f + 40.2e3f);
-
-			return {riseCV, fallCV};
+				}
+			}
 		}
 
-		TriangleOscillator::SlopeState_t getOscillatorSlopeState()
-		{
-			return osc.getSlopeState();
+		void runAudioPath(unsigned audioChans, auto getAudioIn) {
+			parent->setChannels<Mapping::AudioOut>(audioChans);
+
+			const bool vcaCvPatched = parent->isPatched<Mapping::VcaCvIn>();
+
+			for (unsigned ch = 0; ch < audioChans; ch++) {
+				auto triangleWave = vcaCvPatched ? parent->getInputOrLast<Mapping::VcaCvIn>(ch) :
+												   shapedEnv[std::min(ch, envChans - 1)];
+
+				triangleWave = InvertingAmpWithBias(triangleWave, 100e3f, 100e3f, 1.94f);
+
+				constexpr float VCAInputImpendance = 5e3f;
+				triangleWave = triangleWave * VoltageDivider(VCAInputImpendance, 2.7e3f);
+
+				// This value influences the maximum gain a lot
+				// Tweaked manually to achieve approximately max 0dB
+				constexpr float SchottkyForwardVoltage = 0.22f;
+				constexpr float MaxGainInV = 5.0f + SchottkyForwardVoltage;
+				constexpr float MinGainInV = VoltageDivider(47e3f, 1e6f) * 5.0f - SchottkyForwardVoltage;
+
+				triangleWave = std::clamp(triangleWave, MinGainInV, MaxGainInV);
+
+				vca[ch].setScaling(triangleWave);
+
+				parent->setOutput<Mapping::AudioOut>(vca[ch].process(getAudioIn(ch)), ch);
+			}
 		}
 
 		void set_samplerate(float sr) {
 			timeStepInS = 1.0f / sr;
 		}
-
 	};
 
 private:
-	struct MappingA
-	{
+	struct MappingA {
 		const static Info::Elem AudioIn = AudioAIn;
 		const static Info::Elem AudioOut = OutAOut;
 		const static Info::Elem RiseSlider = RiseASlider;
@@ -329,8 +353,7 @@ private:
 		const static Info::Elem ShapeLight = ShapeALight;
 	};
 
-	struct MappingB
-	{
+	struct MappingB {
 		const static Info::Elem AudioIn = AudioBIn;
 		const static Info::Elem AudioOut = OutBOut;
 		const static Info::Elem RiseSlider = RiseBSlider;
@@ -361,52 +384,58 @@ private:
 	Channel<MappingA> channelA;
 	Channel<MappingB> channelB;
 
-friend Channel<MappingA>;
-friend Channel<MappingB>;
+	friend Channel<MappingA>;
+	friend Channel<MappingB>;
 
 public:
 	SHEVCore()
-		: channelA(this), channelB(this){
+		: channelA(this)
+		, channelB(this) {
 	}
 
 	void update() override {
-
 		if (bypassed) {
 			handle_bypass();
 			return;
 		}
 
-		auto inputA = getInput<MappingA::AudioIn>();
-		channelA.update(inputA);
-		
-		if(auto inputB = getInput<MappingB::AudioIn>(); inputB) {
-			channelB.update(inputB);
+		const auto audioInA = [this](unsigned ch) { return getInput<MappingA::AudioIn>(ch).value_or(0.f); };
+		const unsigned audioChansA = std::max(numChannels<MappingA::AudioIn>(), 1u);
+		channelA.update(audioChansA, audioInA);
+
+		// Audio In B is normalled to Audio In A
+		if (isPatched<MappingB::AudioIn>()) {
+			channelB.update(std::max(numChannels<MappingB::AudioIn>(), 1u),
+							[this](unsigned ch) { return getInput<MappingB::AudioIn>(ch).value_or(0.f); });
 		} else {
-			channelB.update(inputA);
+			channelB.update(audioChansA, audioInA);
 		}
-		
+
 		displayOscillatorState();
 
-		setOutput<OrOut>(std::max(channelA.getEnvOut(), channelB.getEnvOut()));
+		// Or Out: per-channel max of both sides' envelope outputs
+		const unsigned orChans = std::max(channelA.numEnvChans(), channelB.numEnvChans());
+		setChannels<OrOut>(orChans);
+		for (unsigned ch = 0; ch < orChans; ch++)
+			setOutput<OrOut>(std::max(channelA.getEnvOut(ch), channelB.getEnvOut(ch)), ch);
 	}
 
-	void displayOscillatorState()
-	{
-		if(auto slopeStateA = channelA.getOscillatorSlopeState(); slopeStateA == TriangleOscillator::SlopeState_t::FALLING) {
-			setOutput<EorAOut>(8.f);
-			setLED<EorALight>(true);
-		} else {
-			setOutput<EorAOut>(0);
-			setLED<EorALight>(false);
+	void displayOscillatorState() {
+		const auto chansA = channelA.numEnvChans();
+		setChannels<EorAOut>(chansA);
+		for (unsigned ch = 0; ch < chansA; ch++) {
+			const bool eor = channelA.getOscillatorSlopeState(ch) == TriangleOscillator::SlopeState_t::FALLING;
+			setOutput<EorAOut>(eor ? 8.f : 0.f, ch);
 		}
+		setLED<EorALight>(channelA.getOscillatorSlopeState(0) == TriangleOscillator::SlopeState_t::FALLING);
 
-		if(auto slopeStateB = channelB.getOscillatorSlopeState(); slopeStateB != TriangleOscillator::SlopeState_t::FALLING) {
-			setOutput<EofBOut>(8.f);
-			setLED<EofBLight>(true);
-		} else {
-			setOutput<EofBOut>(0);
-			setLED<EofBLight>(false);
+		const auto chansB = channelB.numEnvChans();
+		setChannels<EofBOut>(chansB);
+		for (unsigned ch = 0; ch < chansB; ch++) {
+			const bool eof = channelB.getOscillatorSlopeState(ch) != TriangleOscillator::SlopeState_t::FALLING;
+			setOutput<EofBOut>(eof ? 8.f : 0.f, ch);
 		}
+		setLED<EofBLight>(channelB.getOscillatorSlopeState(0) != TriangleOscillator::SlopeState_t::FALLING);
 	}
 
 	void set_samplerate(float sr) override {
@@ -419,8 +448,6 @@ public:
 	static std::unique_ptr<CoreProcessor> create() { return std::make_unique<ThisCore>(); }
 	static inline bool s_registered = ModuleFactory::registerModuleType(Info::slug, create, ModuleInfoView::makeView<Info>(), Info::png_filename);
 	// clang-format on
-
-
 };
 
 } // namespace MetaModule
