@@ -92,6 +92,8 @@ const Scenario scenarios[] = {
 	// cross-FM routing modes (ONE and THREE; TWO is covered above)
 	{.name = "mod_one", .twist_sw = SW_MID, .warp_sw = SW_MID, .mod_sw = SW_UP, .cross_fm_k = 0.5f},
 	{.name = "mod_three", .twist_sw = SW_MID, .warp_sw = SW_MID, .mod_sw = SW_DOWN, .cross_fm_k = 0.5f},
+	// mode TWO with the cross-FM knob at zero (guards any future inert-chain fast path)
+	{.name = "mod_two_off", .twist_sw = SW_MID, .warp_sw = SW_MID, .cross_fm_k = 0.f},
 
 	// reduced oscillator counts (numOsc skip must not change these)
 	{.name = "numosc_4", .num_osc = 0.2f},
