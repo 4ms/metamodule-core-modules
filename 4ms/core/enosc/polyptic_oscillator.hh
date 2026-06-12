@@ -199,7 +199,9 @@ public:
 			modulation_needs_jump = true;
 		}
 
-		for (int i = 0; i < kMaxNumOsc; ++i) {
+		const int active_pairs = std::min(numOsc, kMaxNumOsc);
+
+		for (int i = 0; i < active_pairs; ++i) {
 			FrequencyPair p = frequency.next(); // 3%
 			f amp = amplitude.next();
 			Buffer<f, block_size> &out = pick_split(stereo_mode, i, numOsc) ? out1 : out2;
