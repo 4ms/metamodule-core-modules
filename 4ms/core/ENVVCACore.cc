@@ -1,5 +1,5 @@
 #include "CoreModules/4ms/info/ENVVCA_info.hh"
-#include "CoreModules/SmartCoreProcessor.hh"
+#include "CoreModules/SmartCoreProcessorPoly.hh"
 #include "CoreModules/moduleFactory.hh"
 
 #include "CoreModules/4ms/core/envvca/FollowInput.h"
@@ -11,18 +11,28 @@
 #include "CoreModules/4ms/core/helpers/circuit_elements.h"
 #include "CoreModules/4ms/core/helpers/quantization.h"
 
+#include <algorithm>
+#include <array>
+
 namespace MetaModule
 {
 
-class ENVVCACore : public SmartCoreProcessor<ENVVCAInfo> {
+// Polyphonic EnvVCA with two independently-polyphonic signal paths:
+//  - Trigger In -> Env Out (+ EOR Out): one envelope per Trigger In channel
+//  - Audio In -> Audio Out: one VCA channel per Audio In channel
+// Each audio channel is controlled by the envelope with the same channel
+// number; if there are fewer envelopes than audio channels, the highest
+// envelope channel controls all the upper audio channels. The CV inputs
+// (Time CV, Cycle, Follow) map onto envelope channels the same way.
+class ENVVCACore : public SmartCoreProcessorPoly<ENVVCAInfo> {
 	using Info = ENVVCAInfo;
 	using ThisCore = ENVVCACore;
 	using enum Info::Elem;
 
+	static constexpr unsigned MaxChans = MaxPolyChannels;
+
 public:
-	ENVVCACore()
-		: triggerDetector(1.0f, 2.0f) {
-	}
+	ENVVCACore() = default;
 
 	void update() override {
 		if (bypassed) {
@@ -30,156 +40,114 @@ public:
 			return;
 		}
 
-		auto [riseCV, fallCV] = getRiseAndFallCV();
+		const unsigned envChans = std::max(numChannels<TriggerIn>(), 1u);
+		const unsigned audioChans = std::max(numChannels<AudioIn>(), 1u);
+		setChannels<EnvOut>(envChans);
+		setChannels<EorOut>(envChans);
+		setChannels<AudioOut>(audioChans);
 
-		// Convert voltage to time without dealing with details of transistor core
-		auto VoltageToTime = [](float voltage) -> float {
-			auto frequency = VoltageToFrequencyTable.lookup(voltage);
-
-			// limit to valid frequency range
-			frequency = std::clamp(frequency, 1.0f / (60 * 3), 20e3f);
-
-			// convert to period length
-			auto time = 1.0f / frequency;
-
-			return time;
-		};
-
-		osc.setRiseTimeInS(VoltageToTime(riseCV));
-		osc.setFallTimeInS(VoltageToTime(fallCV));
-
-		runOscillator();
-
-		displayOscillatorState(osc.getSlopeState());
-
-		displayEnvelope(osc.getOutput(), osc.getSlopeState());
-		runAudioPath(osc.getOutput());
+		runEnvelopes(envChans);
+		runAudioPath(envChans, audioChans);
 	}
 
-	void runAudioPath(float triangleWave) {
-		triangleWave = InvertingAmpWithBias(triangleWave, 100e3f, 100e3f, 1.94f);
+	void runEnvelopes(unsigned envChans) {
+		// Channel-independent terms:
+		const auto riseOffset = ProcessCVOffset(getState<RiseSlider>(), getState<RiseRangeSwitch>());
+		const auto fallOffset = ProcessCVOffset(getState<FallSlider>(), getState<FallRangeSwitch>());
+		const auto riseCvKnob = getState<RiseCvKnob>();
+		const auto fallCvKnob = getState<FallCvKnob>();
+		const auto envLevel = getState<EnvLevelSlider>();
+		const bool buttonCycling = getState<CycleButton>() == LatchingButton::State_t::DOWN;
+		const bool followPatched = isPatched<FollowIn>();
 
-		constexpr float VCAInputImpendance = 5e3f;
-		triangleWave = triangleWave * VoltageDivider(VCAInputImpendance, 2.7e3f);
+		for (unsigned ch = 0; ch < envChans; ch++) {
+			// Scale down CV input and apply attenuverter knobs
+			const auto scaledTimeCV = getInputOrLast<TimeCvIn>(ch) * -100e3f / 137e3f;
+			const auto rScale = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, riseCvKnob * scaledTimeCV);
+			const auto fScale = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, fallCvKnob * scaledTimeCV);
 
-		// This value influences the maximum gain a lot
-		// Tweaked manually to achieve approximately max 0dB
-		constexpr float SchottkyForwardVoltage = 0.22f;
-		constexpr float MaxGainInV = 5.0f + SchottkyForwardVoltage;
-		constexpr float MinGainInV = VoltageDivider(47e3f, 1e6f) * 5.0f - SchottkyForwardVoltage;
+			// Sum with static value from fader + range switch
+			auto riseCV = -rScale - riseOffset;
+			auto fallCV = -fScale - fallOffset;
 
-		triangleWave = std::clamp(triangleWave, MinGainInV, MaxGainInV);
+			// Apply rise time limit and scale down
+			constexpr float DiodeDropInV = 1.0f;
+			const float ClippingVoltage = 5.0f * VoltageDivider(100e3f, 2e3f) + DiodeDropInV;
+			riseCV = riseCV * VoltageDivider(2.2e3f + 33e3f, 16.9e3f);
+			riseCV = std::min(riseCV, ClippingVoltage);
+			riseCV = riseCV * VoltageDivider(2.2e3f, 33e3f);
 
-		vca.setScaling(triangleWave);
+			// Scale down falling CV without additional limiting
+			fallCV = fallCV * VoltageDivider(2.2e3f, 10e3f + 40.2e3f);
+
+			osc[ch].setRiseTimeInS(VoltageToTime(riseCV));
+			osc[ch].setFallTimeInS(VoltageToTime(fallCV));
+
+			// Cycle, Follow, and Trigger (mapped per envelope channel):
+			const bool isCycling = buttonCycling ^ CVToBool(getInputOrLast<CycleIn>(ch));
+			osc[ch].setCycling(isCycling);
+
+			if (followPatched) {
+				osc[ch].setTargetVoltage(followInput[ch].process(getInputOrLast<FollowIn>(ch)));
+			}
+
+			if (triggerEdgeDetector[ch](triggerDetector[ch](getInput<TriggerIn>(ch).value_or(0.f)))) {
+				osc[ch].doRetrigger();
+			}
+
+			osc[ch].proceed(timeStepInS);
+
+			const auto envV = osc[ch].getOutput();
+			const auto slopeState = osc[ch].getSlopeState();
+			const bool falling = slopeState == TriangleOscillator::SlopeState_t::FALLING;
+
+			setOutput<EorOut>(falling ? 8.f : 0.f, ch);
+
+			const auto envOutV = envV / VoltageDivider(100e3f, 100e3f) * envLevel;
+			setOutput<EnvOut>(envOutV, ch);
+
+			// Panel LEDs show the first channel
+			if (ch == 0) {
+				setLED<RiseLight>(BipolarColor_t{-rScale / 7.5f});
+				setLED<FallLight>(BipolarColor_t{-fScale / 7.5f});
+				setLED<RiseSlider>(slopeState == TriangleOscillator::SlopeState_t::RISING ? envV / 8.f : 0);
+				setLED<FallSlider>(falling ? envV / 8.f : 0);
+				setLED<EnvLevelSlider>(envOutV / 8.f);
+				setLED<EorLight>(falling);
+				if (cycleLED != isCycling) {
+					cycleLED = isCycling;
+					setLED<CycleButton>(cycleLED);
+				}
+			}
+		}
+	}
+
+	void runAudioPath(unsigned envChans, unsigned audioChans) {
+		// One VCA gain per envelope channel (upper audio channels reuse the highest)
+		for (unsigned ch = 0; ch < std::min(envChans, audioChans); ch++) {
+			auto triangleWave = InvertingAmpWithBias(osc[ch].getOutput(), 100e3f, 100e3f, 1.94f);
+
+			constexpr float VCAInputImpendance = 5e3f;
+			triangleWave = triangleWave * VoltageDivider(VCAInputImpendance, 2.7e3f);
+
+			// This value influences the maximum gain a lot
+			// Tweaked manually to achieve approximately max 0dB
+			constexpr float SchottkyForwardVoltage = 0.22f;
+			constexpr float MaxGainInV = 5.0f + SchottkyForwardVoltage;
+			constexpr float MinGainInV = VoltageDivider(47e3f, 1e6f) * 5.0f - SchottkyForwardVoltage;
+
+			triangleWave = std::clamp(triangleWave, MinGainInV, MaxGainInV);
+
+			vca[ch].setScaling(triangleWave);
+		}
 
 		// Ignoring input impedance and inverting 400kHz lowpass
-
-		if (auto input = getInput<AudioIn>(); input) {
-			auto output = vca.process(*input);
-			setOutput<AudioOut>(output);
-		} else {
-			setOutput<AudioOut>(0.f);
+		for (unsigned ch = 0; ch < audioChans; ch++) {
+			auto &channelVca = vca[std::min(ch, envChans - 1)];
+			auto input = getInput<AudioIn>(ch).value_or(0.f);
+			setOutput<AudioOut>(channelVca.process(input), ch);
 		}
-
 		// Ignoring output impedance and inverting 400kHz lowpass
-	}
-
-	void displayEnvelope(float val, TriangleOscillator::SlopeState_t slopeState) {
-		setLED<RiseSlider>(slopeState == TriangleOscillator::SlopeState_t::RISING ? val / 8.f : 0);
-		setLED<FallSlider>(slopeState == TriangleOscillator::SlopeState_t::FALLING ? val / 8.f : 0);
-		val = val / VoltageDivider(100e3f, 100e3f);
-		val *= getState<EnvLevelSlider>();
-		setOutput<EnvOut>(val);
-		setLED<EnvLevelSlider>(val / 8.f);
-	}
-
-	void displayOscillatorState(TriangleOscillator::SlopeState_t slopeState) {
-		if (slopeState == TriangleOscillator::SlopeState_t::FALLING) {
-			setOutput<EorOut>(8.f);
-			setLED<EorLight>(true);
-		} else {
-			setOutput<EorOut>(0);
-			setLED<EorLight>(false);
-		}
-	}
-
-	void runOscillator() {
-		bool isCycling =
-			(getState<CycleButton>() == LatchingButton::State_t::DOWN) ^ CVToBool(getInput<CycleIn>().value_or(0.0f));
-
-		osc.setCycling(isCycling);
-		if (cycleLED != isCycling) {
-			cycleLED = isCycling;
-			setLED<CycleButton>(cycleLED);
-		}
-
-		if (auto inputFollowValue = getInput<FollowIn>(); inputFollowValue) {
-			osc.setTargetVoltage(followInput.process(*inputFollowValue));
-		}
-
-		auto triggerInputValue = getInput<TriggerIn>().value_or(0.f);
-		if (triggerEdgeDetector(triggerDetector(triggerInputValue))) {
-			osc.doRetrigger();
-		}
-
-		osc.proceed(timeStepInS);
-	}
-
-	std::pair<float, float> getRiseAndFallCV() {
-		auto ProcessCVOffset = [](auto slider, auto range) -> float {
-			// Slider plus resistor in parallel to tweak curve
-			const float SliderImpedance = 100e3f;
-			auto offset = 5.0f * VoltageDivider(slider * SliderImpedance + 17.4e3f,
-												0 + ParallelCircuit(100e3f, (1.0f - slider) * SliderImpedance));
-
-			// Select one of three bias voltages
-			auto BiasFromRange = [](auto range) -> float {
-				if (range == Toggle3pos::State_t::UP) {
-					return -12.0f * VoltageDivider(1e3f, 10e3f);
-				} else if (range == Toggle3pos::State_t::DOWN) {
-					return 12.0f * VoltageDivider(1e3f, 8.2e3f);
-				} else {
-					// middle position, and fail-safe default
-					return 0.0f;
-				}
-			};
-
-			auto bias = BiasFromRange(range);
-
-			return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
-		};
-
-		auto timeCVValue = getInput<TimeCvIn>().value_or(0.f);
-		// scale down cv input
-		const auto scaledTimeCV = timeCVValue * -100e3f / 137e3f;
-
-		// apply attenuverter knobs
-		rScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<RiseCvKnob>() * scaledTimeCV);
-		fScaleLEDs = InvertingAmpWithBias(scaledTimeCV, 100e3f, 100e3f, getState<FallCvKnob>() * scaledTimeCV);
-
-		// sum with static value from fader + range switch
-		auto riseRange = getState<RiseRangeSwitch>();
-		auto fallRange = getState<FallRangeSwitch>();
-		riseCV = -rScaleLEDs - ProcessCVOffset(getState<RiseSlider>(), riseRange);
-		fallCV = -fScaleLEDs - ProcessCVOffset(getState<FallSlider>(), fallRange);
-
-		// TODO: LEDs only need to be updated ~60Hz instead of 48kHz
-		setLED<RiseLight>(BipolarColor_t{-rScaleLEDs / 7.5f});
-		setLED<FallLight>(BipolarColor_t{-fScaleLEDs / 7.5f});
-
-		// TODO: low pass filter
-
-		// apply rise time limit and scale down
-		constexpr float DiodeDropInV = 1.0f;
-		const float ClippingVoltage = 5.0f * VoltageDivider(100e3f, 2e3f) + DiodeDropInV;
-		riseCV = riseCV * VoltageDivider(2.2e3f + 33e3f, 16.9e3f);
-		riseCV = std::min(riseCV, ClippingVoltage);
-		riseCV = riseCV * VoltageDivider(2.2e3f, 33e3f);
-
-		// scale down falling CV without additional limiting
-		fallCV = fallCV * VoltageDivider(2.2e3f, 10e3f + 40.2e3f);
-
-		return {riseCV, fallCV};
 	}
 
 	void set_samplerate(float sr) override {
@@ -193,22 +161,50 @@ public:
 	// clang-format on
 
 private:
-	// temporary results that are buffered
-	float cycleLED;
-	float riseCV;
-	float fallCV;
-	float rScaleLEDs = 0.f;
-	float fScaleLEDs = 0.f;
+	// Read an input channel, reusing the input's highest channel when it has
+	// fewer channels than the envelope path. Returns 0 if unpatched.
+	template<Info::Elem EL>
+	float getInputOrLast(unsigned chan) {
+		const auto chans = numChannels<EL>();
+		if (chans == 0)
+			return 0.f;
+		return getInput<EL>(std::min(chan, chans - 1)).value_or(0.f);
+	}
 
-	FlipFlop triggerDetector;
-	EdgeDetector triggerEdgeDetector;
-	FollowInput followInput;
+	static float ProcessCVOffset(float slider, auto range) {
+		// Slider plus resistor in parallel to tweak curve
+		const float SliderImpedance = 100e3f;
+		auto offset = 5.0f * VoltageDivider(slider * SliderImpedance + 17.4e3f,
+											0 + ParallelCircuit(100e3f, (1.0f - slider) * SliderImpedance));
+
+		// Select one of three bias voltages
+		auto BiasFromRange = [](auto range) -> float {
+			if (range == Toggle3pos::State_t::UP) {
+				return -12.0f * VoltageDivider(1e3f, 10e3f);
+			} else if (range == Toggle3pos::State_t::DOWN) {
+				return 12.0f * VoltageDivider(1e3f, 8.2e3f);
+			} else {
+				// middle position, and fail-safe default
+				return 0.0f;
+			}
+		};
+
+		auto bias = BiasFromRange(range);
+
+		return InvertingAmpWithBias(offset, 100e3f, 100e3f, bias);
+	}
 
 private:
-	SSI2162 vca;
-	TriangleOscillator osc;
+	float cycleLED = -1.f;
 
-private:
+	static_assert(MaxChans == 4, "FlipFlop initializer below assumes 4 channels");
+	std::array<FlipFlop, MaxChans> triggerDetector{{{1.f, 2.f}, {1.f, 2.f}, {1.f, 2.f}, {1.f, 2.f}}};
+	std::array<EdgeDetector, MaxChans> triggerEdgeDetector{};
+	std::array<FollowInput, MaxChans> followInput{};
+
+	std::array<TriangleOscillator, MaxChans> osc{};
+	std::array<SSI2162, MaxChans> vca{};
+
 	float timeStepInS = 1.f / 48000.f;
 };
 
