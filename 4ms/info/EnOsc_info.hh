@@ -46,7 +46,7 @@ struct EnOscInfo : ModuleInfoBase {
 		AltParamChoiceLabeled{{{to_mm<72>(61.77), to_mm<72>(208.21), Center, "FreezeSplit", ""}, 3, 0}, {"Even/Odd", "Low/High", "Root/Others"}},
 		AltParamChoiceLabeled{{{to_mm<72>(168.87), to_mm<72>(208.21), Center, "StereoSplit", ""}, 3, 0}, {"Even/Odd", "Low/High", "Root/Others"}},
 		AltParamContinuous{{to_mm<72>(32.72), to_mm<72>(144.14), Center, "Crossfade", ""}, 0.5f},
-		AltParamChoice{{to_mm<72>(115.27), to_mm<72>(61.62), Center, "NumOsc", ""}, 16, 15},
+		AltParamChoice{{to_mm<72>(115.27), to_mm<72>(61.62), Center, "NumOsc", ""}, 32, 15},
 		AltParamContinuous{{to_mm<72>(176.96), to_mm<72>(78.07), Center, "FineTune", ""}, 0.5f},
 }};
 

@@ -68,7 +68,7 @@ struct Scenario {
 	float freeze_split = 0.5f; // LOW_HIGH
 	float stereo_split = 0.f;  // ALTERNATE
 	float crossfade = 0.4f;
-	float num_osc = 1.f; // round(v*15)+1 => 16
+	float num_osc = 15.f / 31.f; // round(v*31)+1 => 16
 	float fine_tune = 0.5f;
 
 	// input jack voltages
@@ -96,8 +96,8 @@ const Scenario scenarios[] = {
 	{.name = "mod_two_off", .twist_sw = SW_MID, .warp_sw = SW_MID, .cross_fm_k = 0.f},
 
 	// reduced oscillator counts (numOsc skip must not change these)
-	{.name = "numosc_4", .num_osc = 0.2f},
-	{.name = "numosc_7_lowhigh", .num_osc = 0.4f, .stereo_split = 0.5f},
+	{.name = "numosc_4", .num_osc = 3.f / 31.f},
+	{.name = "numosc_7_lowhigh", .num_osc = 6.f / 31.f, .stereo_split = 0.5f},
 
 	// lowest/rest stereo split with freeze latched on
 	{.name = "lowest_rest_freeze", .twist_sw = SW_MID, .warp_sw = SW_UP, .stereo_split = 1.f, .freeze_gate = true},

@@ -64,7 +64,11 @@ public:
 
 		f sum = amplitudes.sum();
 		f atten = 0.5_f / sum;
-		atten *= 1_f + Data::normalization_factors.interpolate_from_index(sum.max(f(kMaxNumOsc)));
+		// Originally interpolate_from_index(sum.max(16)): index >= 16 on a
+		// 17-entry table always read [16] (and one element past the end with
+		// weight 0, or garbage for scales larger than 16 notes). Use the last
+		// entry directly, which is the same value without the overrun.
+		atten *= 1_f + Data::normalization_factors[Data::normalization_factors.size() - 1];
 
 		for (auto [o1, o2] : zip(out1, out2)) {
 			o2 = o1 = o1 * atten;
@@ -89,25 +93,29 @@ class Oscillators : Nocopy {
 		return mode == ALTERNATE ? !(i & 1) : mode == LOW_HIGH ? i < numOsc / 2 : i == 0;
 	}
 
+	// [base] is the first pair index of the current poly channel; the cross-FM
+	// routing operates within one channel's pairs ([i] is channel-local).
+	// Distinct channels use distinct block ranges, so there is no cross-talk:
+	// mode ONE/THREE use blocks[base], mode TWO uses blocks[base+1 .. base+n].
 	inline std::tuple<Buffer<u0_16, block_size> &, Buffer<u0_16, block_size> &>
-	pick_modulation_blocks(ModulationMode mode, int i, int numOsc) {
+	pick_modulation_blocks(ModulationMode mode, int base, int i, int numOsc) {
 		if (mode == ONE) { //Up
 			if (i == 0) {
-				return std::forward_as_tuple(dummy_block_, modulation_blocks_[0]);
+				return std::forward_as_tuple(dummy_block_, modulation_blocks_[base]);
 			} else {
-				return std::forward_as_tuple(modulation_blocks_[0], dummy_block_);
+				return std::forward_as_tuple(modulation_blocks_[base], dummy_block_);
 			}
 		} else if (mode == TWO) { //All
 			if (i == 0) {
-				return std::forward_as_tuple(dummy_block_, modulation_blocks_[i + 1]);
+				return std::forward_as_tuple(dummy_block_, modulation_blocks_[base + i + 1]);
 			} else {
-				return std::forward_as_tuple(modulation_blocks_[i], modulation_blocks_[i + 1]);
+				return std::forward_as_tuple(modulation_blocks_[base + i], modulation_blocks_[base + i + 1]);
 			}
 		} else { // mode == THREE //Down
 			if (i == numOsc - 1) {
-				return std::forward_as_tuple(dummy_block_, modulation_blocks_[0]);
+				return std::forward_as_tuple(dummy_block_, modulation_blocks_[base]);
 			} else {
-				return std::forward_as_tuple(modulation_blocks_[0], dummy_block_);
+				return std::forward_as_tuple(modulation_blocks_[base], dummy_block_);
 			}
 		}
 	}
@@ -157,18 +165,15 @@ class Oscillators : Nocopy {
 	};
 
 public:
-	void
-	Process(Parameters const &params, Scale const &scale, Buffer<f, block_size> &out1, Buffer<f, block_size> &out2) {
-		out1.fill(0_f);
-		out2.fill(0_f);
+	// outs1/outs2 are per-poly-channel mix buffers; channels 0..poly_chans-1
+	// are written, the rest are left untouched.
+	void Process(Parameters const &params,
+				 Scale const &scale,
+				 Buffer<f, block_size> (&outs1)[kMaxPolyChans],
+				 Buffer<f, block_size> (&outs2)[kMaxPolyChans]) {
 
-		int numOsc = params.alt.numOsc;
-
-		AmplitudeAccumulator amplitude{params.balance, f(numOsc)};
-		FrequencyAccumulator frequency{
-			scale, params.root, params.pitch, params.spread, params.detune, params.sample_rate};
-
-		lowest_pitch_ = frequency.next_pitch();
+		int const chans = std::clamp(params.poly_chans, 1, kMaxPolyChans);
+		int const numOsc = std::min(params.alt.numOsc, kMaxNumOsc);
 
 		TwistMode twist_mode = params.twist.mode;
 		WarpMode warp_mode = params.warp.mode;
@@ -199,56 +204,87 @@ public:
 			modulation_needs_jump = true;
 		}
 
-		// Pairs at i >= numOsc get exactly zero amplitude and only feed mod
-		// blocks that no audible pair reads, so skip them: CPU scales with
-		// numOsc. Their state freezes while inactive; re-activating slews in
-		// from stale values (accepted difference vs. always-running).
-		const int active_pairs = std::min(numOsc, kMaxNumOsc);
+		// numOsc is the total pair count, split roughly equally among the
+		// poly channels (earlier channels take the remainder). Per channel:
+		// the amplitude roll-off restarts at the channel's base voice, and
+		// the base voice tracks the channel's own pitch/root CV.
+		// Pairs beyond the total get exactly zero amplitude and only feed mod
+		// blocks that no audible pair reads, so they are skipped entirely:
+		// CPU scales with numOsc. A skipped pair's state freezes; when it
+		// re-activates it slews in from stale values (accepted difference
+		// vs. always-running).
+		int base = 0; // first pair index of the current channel
+		for (int c = 0; c < chans; c++) {
+			Buffer<f, block_size> &out1 = outs1[c];
+			Buffer<f, block_size> &out2 = outs2[c];
+			out1.fill(0_f);
+			out2.fill(0_f);
 
-		for (int i = 0; i < active_pairs; ++i) {
-			FrequencyPair p = frequency.next(); // 3%
-			f amp = amplitude.next();
-			Buffer<f, block_size> &out = pick_split(stereo_mode, i, numOsc) ? out1 : out2;
-			auto [mod_in, mod_out] = pick_modulation_blocks(modulation_mode, i, numOsc);
-			dummy_block_.fill(0._u0_16);
-			bool frozen = (pick_split(freeze_mode, i, numOsc) && frozen_) || temp_frozen_;
-			oscs_[i].Process(twist_mode,
-							 twist_needs_jump,
-							 warp_mode,
-							 warp_needs_jump,
-							 p,
-							 frozen,
-							 crossfade_factor,
-							 twist,
-							 warp,
-							 modulation,
-							 modulation_needs_jump,
-							 amp,
-							 mod_in,
-							 mod_out,
-							 out);
+			int const n_c = numOsc / chans + (c < numOsc % chans ? 1 : 0);
+			if (n_c == 0)
+				continue; // fewer pairs than channels: this channel is silent
+
+			AmplitudeAccumulator amplitude{params.balance, f(n_c)};
+			FrequencyAccumulator frequency{scale,
+										   params.root_chan[c],
+										   params.pitch_chan[c],
+										   params.spread,
+										   params.detune,
+										   params.sample_rate};
+
+			if (c == 0)
+				lowest_pitch_ = frequency.next_pitch(); // learn mode tracks channel 0
+
+			for (int i = 0; i < n_c; ++i) {
+				FrequencyPair p = frequency.next(); // 3%
+				f amp = amplitude.next();
+				Buffer<f, block_size> &out = pick_split(stereo_mode, i, n_c) ? out1 : out2;
+				auto [mod_in, mod_out] = pick_modulation_blocks(modulation_mode, base, i, n_c);
+				dummy_block_.fill(0._u0_16);
+				bool frozen = (pick_split(freeze_mode, i, n_c) && frozen_) || temp_frozen_;
+				oscs_[base + i].Process(twist_mode,
+										twist_needs_jump,
+										warp_mode,
+										warp_needs_jump,
+										p,
+										frozen,
+										crossfade_factor,
+										twist,
+										warp,
+										modulation,
+										modulation_needs_jump,
+										amp,
+										mod_in,
+										mod_out,
+										out);
+			}
+
+			f atten1, atten2;
+
+			f atten = 1_f / amplitude.sum();
+			f balance = params.balance <= 1_f ? params.balance : 1_f / params.balance;
+			// the table stops at 16 entries-per-channel; the curve is nearly
+			// flat there, so clamp for the >16-pairs-on-one-channel case
+			int const norm_idx = std::min(n_c, int(Data::normalization_factors.size()) - 1);
+			atten *= 0.5_f + (0.5_f + Data::normalization_factors[norm_idx]) * balance;
+
+			atten1 = atten2 = atten;
+
+			if (stereo_mode == LOWEST_REST) {
+				// adjust attenuation to not clip the output
+				atten1 = 0.7_f;
+				atten2 = 0.6_f * atten;
+			}
+
+			for (auto [o1, o2] : zip(out1, out2)) {
+				o1 *= atten1;
+				o2 *= atten2;
+			}
+
+			base += n_c;
 		}
 
 		temp_frozen_ = false;
-
-		f atten1, atten2;
-
-		f atten = 1_f / amplitude.sum();
-		f balance = params.balance <= 1_f ? params.balance : 1_f / params.balance;
-		atten *= 0.5_f + (0.5_f + Data::normalization_factors[numOsc]) * balance;
-
-		atten1 = atten2 = atten;
-
-		if (stereo_mode == LOWEST_REST) {
-			// adjust attenuation to not clip the output
-			atten1 = 0.7_f;
-			atten2 = 0.6_f * atten;
-		}
-
-		for (auto [o1, o2] : zip(out1, out2)) {
-			o1 *= atten1;
-			o2 *= atten2;
-		}
 	}
 
 	void set_freeze(bool frozen) {
@@ -271,7 +307,7 @@ class PolypticOscillator : public Oscillators<block_size>, PreListenOscillators<
 	Quantizer quantizer_;
 	PreScale pre_scale_;
 	Scale *current_scale_;
-	DCBlocker dc_blocker1_, dc_blocker2_;
+	DCBlocker dc_blocker1_[kMaxPolyChans], dc_blocker2_[kMaxPolyChans];
 
 	bool learn_ = false;
 	bool pre_listen_ = false;
@@ -346,14 +382,23 @@ public:
 		quantizer_.Save();
 	}
 
-	void Process(Buffer<Frame, block_size> &out) {
-		Buffer<f, block_size> out1;
-		Buffer<f, block_size> out2;
+	// out[c] receives poly channel c; channels 0..params.poly_chans-1 are
+	// written, the rest are left untouched.
+	void Process(Buffer<Frame, block_size> (&out)[kMaxPolyChans]) {
+		Buffer<f, block_size> out1[kMaxPolyChans];
+		Buffer<f, block_size> out2[kMaxPolyChans];
+
+		int const chans = std::clamp(params_.poly_chans, 1, kMaxPolyChans);
 
 		if (pre_listen_) {
 			if (follow_new_note_)
 				change_last_note(params_.new_note + manual_learn_offset_, params_.fine_tune);
-			PreListenOscillators<block_size>::Process(params_, pre_scale_, out1, out2);
+			// pre-listen (learn mode) renders on channel 0; others are silent
+			PreListenOscillators<block_size>::Process(params_, pre_scale_, out1[0], out2[0]);
+			for (int c = 1; c < chans; c++) {
+				out1[c].fill(0_f);
+				out2[c].fill(0_f);
+			}
 		} else {
 			if (previous_scale_index != params_.scale.value) {
 				Oscillators<block_size>::set_temporary_freeze();
@@ -363,11 +408,13 @@ public:
 			Oscillators<block_size>::Process(params_, *current_scale_, out1, out2);
 		}
 
-		for (auto [o1, o2, o] : zip(out1, out2, out)) {
-			o1 = dc_blocker1_.process(o1);
-			o2 = dc_blocker2_.process(o2);
-			o.l = s9_23::inclusive(o1.clip());
-			o.r = s9_23::inclusive(o2.clip());
+		for (int c = 0; c < chans; c++) {
+			for (auto [o1, o2, o] : zip(out1[c], out2[c], out[c])) {
+				o1 = dc_blocker1_[c].process(o1);
+				o2 = dc_blocker2_[c].process(o2);
+				o.l = s9_23::inclusive(o1.clip());
+				o.r = s9_23::inclusive(o2.clip());
+			}
 		}
 	}
 };

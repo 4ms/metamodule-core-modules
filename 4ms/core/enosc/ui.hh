@@ -355,8 +355,11 @@ public:
 	float get_potcv(AdcInput chan) const {
 		return control_.get_potcv(chan);
 	}
-	void set_pitchroot_cv(SpiAdcInput chan, float val) {
-		control_.set_pitchroot_cv(chan, val);
+	void set_pitchroot_cv(SpiAdcInput input, int poly_chan, float val) {
+		control_.set_pitchroot_cv(input, poly_chan, val);
+	}
+	void set_poly_chans(int chans) {
+		params_.poly_chans = chans;
 	}
 	auto &switches() {
 		return switches_;

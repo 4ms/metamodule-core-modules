@@ -104,17 +104,17 @@ inline f twist<CRUSH>(f freq, f amount) {
 }
 
 template<>
-f warp<FOLD>(f freq, f amount) {
+inline f warp<FOLD>(f freq, f amount) {
 	return (amount * (1_f - 8_f * freq).max(0_f).square().square()).max(0.004_f);
 }
 
 template<>
-f warp<CHEBY>(f freq, f amount) {
+inline f warp<CHEBY>(f freq, f amount) {
 	return amount * (1_f - 6_f * freq).max(0_f);
 }
 
 template<>
-f warp<SEGMENT>(f freq, f amount) {
+inline f warp<SEGMENT>(f freq, f amount) {
 	return amount * (1_f - 4_f * freq).cube().max(0_f);
 }
 }; // namespace Antialias

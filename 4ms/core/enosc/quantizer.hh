@@ -8,7 +8,9 @@ namespace EnOsc {
 
 constexpr const int kScaleNr = 10;
 constexpr const int kBankNr = 3;
-constexpr const int kMaxScaleSize = 2 * kMaxNumOsc;
+// learned-scale capacity; historically 2 * kMaxNumOsc when kMaxNumOsc was 16,
+// kept at 32 when kMaxNumOsc grew for polyphony (scale learning is unrelated)
+constexpr const int kMaxScaleSize = 32;
 constexpr const f kScaleUnicityThreshold = 0.1_f;
 
 struct PitchPair {
