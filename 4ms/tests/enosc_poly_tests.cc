@@ -62,7 +62,7 @@ struct EnOscUnderTest {
 		core->set_param(CH::param_idx<Elem::FreezesplitAltParam>, 0.5f);
 		core->set_param(CH::param_idx<Elem::StereosplitAltParam>, 0.f);
 		core->set_param(CH::param_idx<Elem::CrossfadeAltParam>, 0.4f);
-		set_num_osc(16);
+		set_num_osc_per_voice(16);
 		core->set_param(CH::param_idx<Elem::FinetuneAltParam>, 0.5f);
 
 		pitch = core->get_poly_input_buffer(Info::InputPitch_1V_Oct);
@@ -75,8 +75,10 @@ struct EnOscUnderTest {
 		core->~EnOscCore();
 	}
 
-	void set_num_osc(int n) {
-		core->set_param(CH::param_idx<Elem::NumoscAltParam>, float(n - 1) / 31.f);
+	// NumOsc AltParam is oscillator pairs *per voice* [1..16]; the engine total
+	// is per_voice * voices, capped at kMaxNumOsc, split among the channels.
+	void set_num_osc_per_voice(int n) {
+		core->set_param(CH::param_idx<Elem::NumoscAltParam>, float(n - 1) / 15.f);
 	}
 
 	void run(unsigned samples) {
@@ -155,7 +157,7 @@ TEST_CASE("EnOsc poly: output channels follow max of pitch/root jack channels") 
 
 TEST_CASE("EnOsc poly: each channel's base voice tracks its pitch CV (1V/oct)") {
 	EnOscUnderTest t;
-	t.set_num_osc(4); // one pair per channel
+	t.set_num_osc_per_voice(1); // one pair per channel (x4 channels => 4 total)
 
 	t.core->mark_input_patched(Info::InputPitch_1V_Oct);
 	*t.pitch.channels = 4;
@@ -183,7 +185,7 @@ TEST_CASE("EnOsc poly: amplitude roll-off restarts at each channel's base voice"
 	// strong roll-off: with 4 pairs per channel, if the roll-off did NOT
 	// reset per channel, the last channel would be ~balance^12 quieter
 	t.core->set_param(CH::param_idx<Elem::BalanceKnob>, 0.25f);
-	t.set_num_osc(16);
+	t.set_num_osc_per_voice(4); // 4 pairs per channel (x4 channels => 16 total)
 
 	t.core->mark_input_patched(Info::InputPitch_1V_Oct);
 	*t.pitch.channels = 4;

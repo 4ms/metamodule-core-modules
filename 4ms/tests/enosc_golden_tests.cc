@@ -68,7 +68,7 @@ struct Scenario {
 	float freeze_split = 0.5f; // LOW_HIGH
 	float stereo_split = 0.f;  // ALTERNATE
 	float crossfade = 0.4f;
-	float num_osc = 15.f / 31.f; // round(v*31)+1 => 16
+	float num_osc = 1.f; // per voice: round(v*15)+1 => 16 (mono => 16 total)
 	float fine_tune = 0.5f;
 
 	// input jack voltages
@@ -95,9 +95,10 @@ const Scenario scenarios[] = {
 	// mode TWO with the cross-FM knob at zero (guards any future inert-chain fast path)
 	{.name = "mod_two_off", .twist_sw = SW_MID, .warp_sw = SW_MID, .cross_fm_k = 0.f},
 
-	// reduced oscillator counts (numOsc skip must not change these)
-	{.name = "numosc_4", .num_osc = 3.f / 31.f},
-	{.name = "numosc_7_lowhigh", .num_osc = 6.f / 31.f, .stereo_split = 0.5f},
+	// reduced oscillator counts (numOsc skip must not change these);
+	// mono, so per-voice == total: round(v*15)+1 => 4 and 7
+	{.name = "numosc_4", .num_osc = 3.f / 15.f},
+	{.name = "numosc_7_lowhigh", .num_osc = 6.f / 15.f, .stereo_split = 0.5f},
 
 	// lowest/rest stereo split with freeze latched on
 	{.name = "lowest_rest_freeze", .twist_sw = SW_MID, .warp_sw = SW_UP, .stereo_split = 1.f, .freeze_gate = true},
@@ -264,5 +265,90 @@ TEST_CASE("EnOsc golden master") {
 					actual_path.string());
 		}
 		CHECK_LE(st.max_abs, tolerance);
+	}
+}
+
+// Real pre-poly patches must load to the oscillator count they had before
+// polyphony. Pre-poly, the NumOsc AltParam mapped its stored value v via
+// round(v*15)+1 (git 1851456^); the per-voice revert restores that exact
+// mapping, and since every released patch drives EnOsc mono, the engine total
+// equals the per-voice count -- so these saved values reproduce the original
+// oscillator count. (16-osc-mono *audio* is proven bit-exact by the golden
+// master above; this guards the patch-load path and the value mapping.)
+TEST_CASE("EnOsc: pre-poly patches load to their original oscillator count") {
+	// A saved patch references AltParams by numeric param_id; prove NumOsc is
+	// param 18 so a real patch's "param_id: 18" provably reaches NumoscAltParam.
+	static_assert(CH::param_idx<Elem::FreezesplitAltParam> == 15);
+	static_assert(CH::param_idx<Elem::StereosplitAltParam> == 16);
+	static_assert(CH::param_idx<Elem::CrossfadeAltParam> == 17);
+	static_assert(CH::param_idx<Elem::NumoscAltParam> == 18);
+	static_assert(CH::param_idx<Elem::FinetuneAltParam> == 19);
+
+	struct Knob {
+		int param_id;
+		float value;
+	};
+
+	// Apply a patch's saved static_knobs to a fresh module exactly as
+	// PatchPlayer does (set_param by numeric param_id), warm up, and report the
+	// loaded NumOsc value and whether the output stayed finite & audible.
+	auto load = [](std::vector<Knob> const &knobs, float &numosc_out, bool &audible_out) {
+		static std::vector<std::byte> storage;
+		storage.assign(sizeof(EnOscCore), std::byte{});
+		easiglib::Random::seed(0xE105C0DE);
+		auto *core = new (storage.data()) EnOscCore();
+
+		core->set_samplerate(kSampleRate);
+		core->mark_all_inputs_unpatched();
+		for (auto const &k : knobs)
+			core->set_param(k.param_id, k.value);
+
+		for (unsigned i = 0; i < kWarmupSamples; i++)
+			core->update();
+
+		double sumsq = 0.;
+		constexpr unsigned frames = 4096;
+		for (unsigned i = 0; i < frames; i++) {
+			core->update();
+			float a = core->get_output(Info::OutputOut_A);
+			float b = core->get_output(Info::OutputOut_B);
+			sumsq += double(a) * double(a) + double(b) * double(b);
+		}
+		numosc_out = core->get_param(CH::param_idx<Elem::NumoscAltParam>);
+		// audible and bounded (a NaN/blowup fails both comparisons; the build's
+		// finite-math flags make std::isfinite unusable, hence the range check)
+		double rms = std::sqrt(sumsq / (2.0 * frames));
+		audible_out = rms > 0.01 && rms < 100.0;
+		core->~EnOscCore();
+	};
+
+	// Inverse of get_param's (n-1)/15: recover the loaded oscillator count.
+	auto loaded_osc = [](float numosc_param) { return int(std::lround(numosc_param * 15.f)) + 1; };
+
+	SUBCASE("Ensemble Wash.yml module 1 (2025): NumOsc 1.0 => 16 oscillators") {
+		// Full saved EnOsc state, verbatim from patches/default/Ensemble Wash.yml
+		const std::vector<Knob> mod1 = {
+			{0, 0.369879f}, {1, 0.181672f}, {2, 0.0990964f}, {3, 0.5f}, {4, 0.625677f},
+			{5, 0.f},		{6, 0.f},		{7, 0.155754f},	  {8, 0.f},	 {9, 1.f},
+			{10, 1.f},		{11, 0.f},		{12, 1.f},		  {13, 0.f}, {14, 0.f},
+			{15, 0.f},		{16, 0.f},		{17, 0.5f},		  {18, 1.f}, {19, 0.5f},
+		};
+		float numosc = 0.f;
+		bool audible = false;
+		load(mod1, numosc, audible);
+
+		CHECK(loaded_osc(numosc) == 16); // pre-poly: round(1.0*15)+1
+		CHECK(audible);
+	}
+
+	SUBCASE("DualEnvEnosc.yml module 3 (2024): off-grid NumOsc 0.498 => 8 oscillators") {
+		// Isolates the NumOsc mapping for a stored value that is *off* the 1/15
+		// choice grid; pre-poly: round(0.498*15)+1 = round(7.47)+1 = 8.
+		const std::vector<Knob> numosc_only = {{18, 0.498f}};
+		float numosc = 0.f;
+		bool audible = false;
+		load(numosc_only, numosc, audible);
+
+		CHECK(loaded_osc(numosc) == 8);
 	}
 }
