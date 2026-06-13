@@ -22,8 +22,10 @@ namespace MetaModule
 {
 
 // Polyphonic Ensemble Oscillator. The poly channel count follows the higher
-// of the Pitch and Root CV jacks' channel counts; the numOsc oscillator pairs
-// (up to 32, default 16) are split roughly equally among the channels. Each
+// of the Pitch and Root CV jacks' channel counts. The NumOsc AltParam sets the
+// oscillator pairs *per voice* (1..16, matching the 16-osc hardware); the total
+// (per-voice * voices, capped at kMaxNumOsc=32) is split roughly equally among
+// the channels. Mono therefore reproduces pre-polyphony patches exactly. Each
 // channel's first ("base") pair tracks that channel's pitch/root CV, and the
 // Balance amplitude roll-off restarts at each channel's base pair.
 class EnOscCore : public CoreProcessorPoly, CoreHelper<EnOscInfo> {
@@ -73,6 +75,10 @@ public:
 			// the higher of the two CV jacks' poly counts sets the voice count
 			poly_chans = std::clamp<unsigned>(std::max(pitch_chans, root_chans), 1, MaxPolyChannels);
 			enosc.set_poly_chans(poly_chans);
+			// Total pairs = per-voice count * voices, capped at the hardware
+			// budget. Mono -> 16 (identical to pre-poly patches); the engine
+			// splits this total roughly equally among the poly channels.
+			enosc.set_num_osc(std::min<int>(num_osc_per_voice_ * (int)poly_chans, EnOsc::kMaxNumOsc));
 			out_a_chans = poly_chans;
 			out_b_chans = poly_chans;
 			enosc.osc().Process(out_block_);
@@ -182,7 +188,9 @@ public:
 				break;
 
 			case param_index<Elem::NumoscAltParam>():
-				enosc.set_num_osc(std::round(val * 31.f) + 1);
+				// Oscillators per voice [1..16]; the engine-wide total is
+				// derived from this and the live voice count in update().
+				num_osc_per_voice_ = std::round(val * 15.f) + 1;
 				break;
 
 			case param_index<Elem::FinetuneAltParam>():
@@ -244,7 +252,9 @@ public:
 				return enosc.get_crossfade();
 
 			case param_index<Elem::NumoscAltParam>():
-				return (enosc.get_num_osc() - 1) / 31.f;
+				// Per-voice count, independent of the live voice count so the
+				// saved/displayed value round-trips regardless of polyphony.
+				return (num_osc_per_voice_ - 1) / 15.f;
 
 			case param_index<Elem::FinetuneAltParam>():
 				return enosc.get_fine_tune();
@@ -440,6 +450,7 @@ private:
 	uint8_t out_a_chans = 1;
 	uint8_t out_b_chans = 1;
 	unsigned poly_chans = 1;
+	int num_osc_per_voice_ = 16; // NumOsc AltParam: oscillator pairs per voice [1..16]
 
 	float sample_rate_ = 48000.f;
 
