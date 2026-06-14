@@ -4,6 +4,7 @@ add_library(CoreModules STATIC
    # FIXME: hub_medium is removed by linker
   # hub/hub_medium.cc
   moduleFactory.cc
+  register_module.cc
 )
 
 target_link_libraries(CoreModules PRIVATE metamodule::core-interface cpputil)

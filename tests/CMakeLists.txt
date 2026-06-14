@@ -7,6 +7,7 @@ FILE(GLOB TEST_SOURCES *.cc *.cpp)
 add_executable(runtests
 	${TEST_SOURCES}
 	../moduleFactory.cc
+	../register_module.cc
 )
 
 

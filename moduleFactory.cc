@@ -339,16 +339,6 @@ void ModuleFactory::registerBrandAlias(std::string_view brand_name, std::string_
 	}
 }
 
-bool register_module(std::string_view brand_name,
-					 std::string_view typeslug,
-					 ModuleFactory::CreateModuleFunc funcCreate,
-					 ModuleInfoView const &info,
-					 std::string_view faceplate_filename) {
-
-	return ModuleFactory::registerModuleType(brand_name, typeslug, funcCreate, info, faceplate_filename);
-}
-
-
 void ModuleFactory::setModuleDescription(std::string_view combined_slug, std::string_view description) {
 	if (auto mod = find_module(combined_slug)) {
 		mod->description = std::string(description);
