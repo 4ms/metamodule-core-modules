@@ -15,7 +15,8 @@ constexpr struct Frame {
 constexpr int kUiUpdateRate = 200; // Hz
 constexpr int kSampleRate = 48000; // Hz
 constexpr int kBlockSize = 32;
-constexpr int kMaxNumOsc = 16;
+constexpr int kMaxNumOsc = 32;	 // total pairs, shared across poly channels
+constexpr int kMaxPolyChans = 4; // == CoreProcessor::MaxPolyChannels
 
 enum TwistMode { FEEDBACK, PULSAR, CRUSH };
 enum WarpMode { FOLD, CHEBY, SEGMENT };
@@ -79,6 +80,13 @@ struct Parameters {
 	AltParameters default_alt = {kMaxNumOsc, ALTERNATE, LOW_HIGH, 0.125_f, {}};
 
 	f new_note, fine_tune;
+
+	// Polyphony: oscillator pairs are split roughly equally among channels;
+	// each channel's first ("base") pair tracks that channel's pitch/root.
+	// Channel 0 values equal the mono pitch/root fields.
+	int poly_chans = 1;
+	f pitch_chan[kMaxPolyChans];
+	f root_chan[kMaxPolyChans];
 
 	f sample_rate = f(kSampleRate);
 };

@@ -1,3 +1,6 @@
+// Uncomment to print a CPU breakdown every ~2s on hardware (see enosc/profile.hh):
+// #define ENOSC_PROFILE 1
+
 #include "CoreModules/CoreHelper.hh"
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
@@ -5,14 +8,31 @@
 
 #include "enosc/easiglib/dsp.hh"
 using namespace easiglib;
+#include "enosc/profile.hh"
 #include "enosc/ui.hh"
+
+#include <algorithm>
+#include <array>
+
+#ifdef ENOSC_PROFILE
+#include <cstdio>
+#endif
 
 namespace MetaModule
 {
 
-class EnOscCore : public CoreProcessor, CoreHelper<EnOscInfo> {
+// Polyphonic Ensemble Oscillator. The poly channel count follows the higher
+// of the Pitch and Root CV jacks' channel counts. The NumOsc AltParam sets the
+// oscillator pairs *per voice* (1..16, matching the 16-osc hardware); the total
+// (per-voice * voices, capped at kMaxNumOsc=32) is split roughly equally among
+// the channels. Mono therefore reproduces pre-polyphony patches exactly. Each
+// channel's first ("base") pair tracks that channel's pitch/root CV, and the
+// Balance amplitude roll-off restarts at each channel's base pair.
+class EnOscCore : public CoreProcessorPoly, CoreHelper<EnOscInfo> {
 	using Info = EnOscInfo;
 	using ThisCore = EnOscCore;
+
+	static_assert(MaxPolyChannels == EnOsc::kMaxPolyChans);
 
 	enum { kUiUpdateRate = 60 };
 	enum { kUiProcessRate = 20 };
@@ -23,29 +43,69 @@ public:
 
 	void update() override {
 		if (bypassed) {
+			out_a = {};
+			out_b = {};
 			return;
 		}
+		ENOSC_PROF_SCOPE(total);
 
 		if (ui_update_ctr++ > ui_update_throttle) {
 			ui_update_ctr = 0;
+			ENOSC_PROF_SCOPE(led_update);
 			enosc.Update(); //LED update
 		}
 
 		if (ui_poll_ctr++ > ui_poll_throttle) {
 			ui_poll_ctr = 0;
+			ENOSC_PROF_SCOPE(control_poll);
+			push_poly_cvs();
 			enosc.Poll();
 		}
 
 		if (ui_process_ctr++ > ui_process_throttle) {
 			ui_process_ctr = 0;
+			ENOSC_PROF_SCOPE(ui_events);
 			enosc.Process(); //EventHandler::Process
 		}
 
 		// SampleRate / BlockRate (6kHz for 48k)
 		if (++block_ctr >= EnOsc::kBlockSize) {
 			block_ctr = 0;
+			ENOSC_PROF_SCOPE(audio_block);
+			// the higher of the two CV jacks' poly counts sets the voice count
+			poly_chans = std::clamp<unsigned>(std::max(pitch_chans, root_chans), 1, MaxPolyChannels);
+			enosc.set_poly_chans(poly_chans);
+			// Total pairs = per-voice count * voices, capped at the hardware
+			// budget. Mono -> 16 (identical to pre-poly patches); the engine
+			// splits this total roughly equally among the poly channels.
+			enosc.set_num_osc(std::min<int>(num_osc_per_voice_ * (int)poly_chans, EnOsc::kMaxNumOsc));
+			out_a_chans = poly_chans;
+			out_b_chans = poly_chans;
 			enosc.osc().Process(out_block_);
 		}
+
+		// feed the poly output buffers (mono cables read via get_output())
+		for (unsigned c = 0; c < poly_chans; c++) {
+			out_a[c] = frame_to_volts(out_block_[c][block_ctr].l);
+			out_b[c] = frame_to_volts(out_block_[c][block_ctr].r);
+		}
+
+#ifdef ENOSC_PROFILE
+		if (++prof_ctr >= 2 * 48000) {
+			prof_ctr = 0;
+			auto &b = EnOsc::Prof::buckets;
+			auto pct = [&](uint32_t t) {
+				return b.total ? (t * 100 + b.total / 2) / b.total : 0;
+			};
+			printf("EnOsc: total=%lu ticks/2s | poll %lu%% events %lu%% led %lu%% | audio %lu%%\n",
+				   (unsigned long)b.total,
+				   (unsigned long)pct(b.control_poll),
+				   (unsigned long)pct(b.ui_events),
+				   (unsigned long)pct(b.led_update),
+				   (unsigned long)pct(b.audio_block));
+			b = {};
+		}
+#endif
 	}
 
 	// DOWN=0 / MID=0.5 / UP=1.0
@@ -128,7 +188,9 @@ public:
 				break;
 
 			case param_index<Elem::NumoscAltParam>():
-				enosc.set_num_osc(std::round(val * 15.f) + 1);
+				// Oscillators per voice [1..16]; the engine-wide total is
+				// derived from this and the live voice count in update().
+				num_osc_per_voice_ = std::round(val * 15.f) + 1;
 				break;
 
 			case param_index<Elem::FinetuneAltParam>():
@@ -190,7 +252,9 @@ public:
 				return enosc.get_crossfade();
 
 			case param_index<Elem::NumoscAltParam>():
-				return (enosc.get_num_osc() - 1) / 15.f;
+				// Per-voice count, independent of the live voice count so the
+				// saved/displayed value round-trips regardless of polyphony.
+				return (num_osc_per_voice_ - 1) / 15.f;
 
 			case param_index<Elem::FinetuneAltParam>():
 				return enosc.get_fine_tune();
@@ -202,17 +266,9 @@ public:
 
 	void set_input(int input_id, float cv) override {
 		using AdcInput = EnOsc::AdcInput;
-		using SpiAdcInput = EnOsc::SpiAdcInput;
 
 		auto cv_to_val = [](float cv) {
 			float val = cv / 5.f; // -5V to +5V => -1..1
-			val *= -0.5f;		  // -1..1 => 0.5..-0.5
-			val += 0.5f;		  // => 1..0
-			return val;
-		};
-
-		auto pitchcv_to_val = [](float cv) {
-			float val = cv / 8.f; // -8V to +8V => -1..1
 			val *= -0.5f;		  // -1..1 => 0.5..-0.5
 			val += 0.5f;		  // => 1..0
 			return val;
@@ -229,10 +285,12 @@ public:
 				enosc.set_potcv(AdcInput::CV_MOD, cv_to_val(cv));
 				break;
 			case Info::InputPitch_1V_Oct:
-				enosc.set_pitchroot_cv(SpiAdcInput::CV_PITCH, pitchcv_to_val(cv));
+				// mono sources write channel 0; poly sources write the
+				// buffer directly (see get_poly_input_buffer)
+				pitch_cv_volts[0] = cv;
 				break;
 			case Info::InputRoot_1V_Oct:
-				enosc.set_pitchroot_cv(SpiAdcInput::CV_ROOT, pitchcv_to_val(cv));
+				root_cv_volts[0] = cv;
 				break;
 			case Info::InputScale_Cv:
 				enosc.set_potcv(AdcInput::CV_SCALE, cv_to_val(cv));
@@ -259,11 +317,9 @@ public:
 		if (bypassed)
 			return 0;
 
-		s9_23 sample = output_id == 0 ? out_block_[block_ctr].l : out_block_[block_ctr].r;
-
-		//hardware EnOssc is about 4.5Vpp for one osc, we make it 2x as loud to match other virtual VCOs
-		auto s = f::inclusive(sample).repr() * 9.f;
-		return s;
+		// mono cables read poly channel 0
+		s9_23 sample = output_id == 0 ? out_block_[0][block_ctr].l : out_block_[0][block_ctr].r;
+		return frame_to_volts(sample);
 	}
 
 	void set_samplerate(float sr) override {
@@ -294,14 +350,59 @@ public:
 
 	void mark_all_inputs_unpatched() override {
 		for (unsigned i = 0; i < Info::NumInJacks; i++)
-			set_input(i, 0.f);
+			mark_input_unpatched(i);
 	}
 
 	void mark_input_unpatched(const int input_id) override {
+		switch (input_id) {
+			case Info::InputPitch_1V_Oct:
+				pitch_chans = 0;
+				pitch_cv_volts = {};
+				break;
+			case Info::InputRoot_1V_Oct:
+				root_chans = 0;
+				root_cv_volts = {};
+				break;
+		}
 		set_input(input_id, 0.f);
 	}
 
 	void mark_input_patched(const int input_id) override {
+		// 0 -> 1 channel; a poly source will then raise the count itself
+		switch (input_id) {
+			case Info::InputPitch_1V_Oct:
+				if (pitch_chans == 0) {
+					pitch_chans = 1;
+					pitch_cv_volts = {};
+				}
+				break;
+			case Info::InputRoot_1V_Oct:
+				if (root_chans == 0) {
+					root_chans = 1;
+					root_cv_volts = {};
+				}
+				break;
+		}
+	}
+
+	PolyPortBuffer get_poly_input_buffer(int input_id) override {
+		switch (input_id) {
+			case Info::InputPitch_1V_Oct:
+				return {pitch_cv_volts.data(), &pitch_chans};
+			case Info::InputRoot_1V_Oct:
+				return {root_cv_volts.data(), &root_chans};
+		}
+		return {};
+	}
+
+	PolyPortBuffer get_poly_output_buffer(int output_id) override {
+		switch (output_id) {
+			case Info::OutputOut_A:
+				return {out_a.data(), &out_a_chans};
+			case Info::OutputOut_B:
+				return {out_b.data(), &out_b_chans};
+		}
+		return {};
 	}
 
 	// Boilerplate to auto-register in ModuleFactory
@@ -311,9 +412,45 @@ public:
 	// clang-format on
 
 private:
+	//hardware EnOsc is about 4.5Vpp for one osc, we make it 2x as loud to match other virtual VCOs
+	static float frame_to_volts(s9_23 sample) {
+		return f::inclusive(sample).repr() * 9.f;
+	}
+
+	// Convert the per-channel CV voltages to the conditioners' input range
+	// and push them into the control model. A jack with fewer channels than
+	// the voice count repeats its highest channel.
+	void push_poly_cvs() {
+		auto pitchcv_to_val = [](float cv) {
+			float val = cv / 8.f; // -8V to +8V => -1..1
+			val *= -0.5f;		  // -1..1 => 0.5..-0.5
+			val += 0.5f;		  // => 1..0
+			return val;
+		};
+		using SpiAdcInput = EnOsc::SpiAdcInput;
+		for (unsigned c = 0; c < MaxPolyChannels; c++) {
+			unsigned pc = pitch_chans ? std::min<unsigned>(c, pitch_chans - 1) : 0;
+			unsigned rc = root_chans ? std::min<unsigned>(c, root_chans - 1) : 0;
+			enosc.set_pitchroot_cv(SpiAdcInput::CV_PITCH, c, pitchcv_to_val(pitch_cv_volts[pc]));
+			enosc.set_pitchroot_cv(SpiAdcInput::CV_ROOT, c, pitchcv_to_val(root_cv_volts[rc]));
+		}
+	}
+
 	EnOsc::Ui<kUiUpdateRate, EnOsc::kBlockSize> enosc;
-	Buffer<EnOsc::Frame, EnOsc::kBlockSize> out_block_;
+	Buffer<EnOsc::Frame, EnOsc::kBlockSize> out_block_[EnOsc::kMaxPolyChans];
 	EnOsc::DynamicData dydata;
+
+	// poly port storage (player reads/writes these directly)
+	std::array<float, MaxPolyChannels> pitch_cv_volts{};
+	std::array<float, MaxPolyChannels> root_cv_volts{};
+	std::array<float, MaxPolyChannels> out_a{};
+	std::array<float, MaxPolyChannels> out_b{};
+	uint8_t pitch_chans = 0;
+	uint8_t root_chans = 0;
+	uint8_t out_a_chans = 1;
+	uint8_t out_b_chans = 1;
+	unsigned poly_chans = 1;
+	int num_osc_per_voice_ = 16; // NumOsc AltParam: oscillator pairs per voice [1..16]
 
 	float sample_rate_ = 48000.f;
 
@@ -327,6 +464,10 @@ private:
 	unsigned ui_poll_ctr = ui_poll_throttle;
 
 	unsigned block_ctr = EnOsc::kBlockSize;
+
+#ifdef ENOSC_PROFILE
+	unsigned prof_ctr = 0;
+#endif
 };
 
 } // namespace MetaModule

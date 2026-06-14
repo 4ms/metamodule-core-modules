@@ -19,7 +19,7 @@ const f kFineTuneRange = 4_f;
 const f kSpreadRange = 12_f;
 const f kPotMoveThreshold = 0.01_f;
 
-template<int CHAN, class FILTER>
+template<class FILTER>
 class ExtCVConditioner {
 	f &offset_;
 	f nominal_offset_;
@@ -27,20 +27,24 @@ class ExtCVConditioner {
 	f nominal_slope_;
 	FILTER lp_;
 	SpiAdc &spi_adc_;
+	int input_;
+	int poly_chan_;
 
 	f last_raw_reading_;
 
 public:
-	ExtCVConditioner(f &o, f &s, SpiAdc &spi_adc)
+	ExtCVConditioner(f &o, f &s, SpiAdc &spi_adc, int input, int poly_chan)
 		: offset_(o)
 		, nominal_offset_(o)
 		, slope_(s)
 		, nominal_slope_(s)
-		, spi_adc_(spi_adc) {
+		, spi_adc_(spi_adc)
+		, input_(input)
+		, poly_chan_(poly_chan) {
 	}
 
 	void Process() {
-		u0_16 x = spi_adc_.get(CHAN);
+		u0_16 x = spi_adc_.get(input_, poly_chan_);
 		lp_.Process(x);
 	}
 
@@ -324,18 +328,27 @@ class Control : public EventSource<Event> {
 
 	PotCVCombiner<PotConditioner<POT_DETUNE, Law::LINEAR, NoFilter>, NoCVInput, QuadraticOnePoleLp<1>> detune_{adc_};
 
-	ExtCVConditioner<CV_PITCH, Average<4, 4>> pitch_cv_{
-		calibration_data_.pitch_offset, calibration_data_.pitch_slope, spi_adc_};
+	// one conditioner per poly channel; channel 0 is the mono path
+	ExtCVConditioner<Average<4, 4>> pitch_cv_[kMaxPolyChans] = {
+		{calibration_data_.pitch_offset, calibration_data_.pitch_slope, spi_adc_, CV_PITCH, 0},
+		{calibration_data_.pitch_offset, calibration_data_.pitch_slope, spi_adc_, CV_PITCH, 1},
+		{calibration_data_.pitch_offset, calibration_data_.pitch_slope, spi_adc_, CV_PITCH, 2},
+		{calibration_data_.pitch_offset, calibration_data_.pitch_slope, spi_adc_, CV_PITCH, 3},
+	};
 
-	ExtCVConditioner<CV_ROOT, Average<4, 2>> root_cv_{
-		calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_};
+	ExtCVConditioner<Average<4, 2>> root_cv_[kMaxPolyChans] = {
+		{calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_, CV_ROOT, 0},
+		{calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_, CV_ROOT, 1},
+		{calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_, CV_ROOT, 2},
+		{calibration_data_.root_offset, calibration_data_.root_slope, spi_adc_, CV_ROOT, 3},
+	};
 
-	HysteresisFilter<1, 10> root_post_filter_;
+	HysteresisFilter<1, 10> root_post_filter_[kMaxPolyChans];
 
 	Parameters &params_;
 	PolypticOscillator<block_size> &osc_;
 
-	easiglib::Sampler<f> pitch_cv_sampler_;
+	easiglib::Sampler<f> pitch_cv_sampler_[kMaxPolyChans];
 
 	uint8_t ext_cv_chan;
 
@@ -347,12 +360,13 @@ public:
 	}
 
 	void ProcessSpiAdcInput() {
+		// same alternation cadence per jack as the hardware's mux had
 		if (ext_cv_chan) {
-			pitch_cv_.Process();
-			pitch_cv_.switch_channel();
+			for (auto &cv : pitch_cv_)
+				cv.Process();
 		} else {
-			root_cv_.Process();
-			root_cv_.switch_channel();
+			for (auto &cv : root_cv_)
+				cv.Process();
 		}
 		ext_cv_chan = !ext_cv_chan;
 	}
@@ -378,7 +392,9 @@ public:
 		{
 			f detune = detune_.Process(put);
 			detune = (detune * detune) * (detune * detune);
-			detune *= 10_f / f(kMaxNumOsc);
+			// 16 = original kMaxNumOsc; fixed so the knob feel didn't change
+			// when kMaxNumOsc grew to 32 for polyphony
+			detune *= 10_f / 16_f;
 			params_.detune = detune;
 		}
 
@@ -480,7 +496,8 @@ public:
 		{
 			auto spread = spread_.Process(put);
 
-			spread *= 10_f / f(kMaxNumOsc);
+			// 16 = original kMaxNumOsc (see DETUNE above)
+			spread *= 10_f / 16_f;
 			params_.spread = spread * kSpreadRange;
 
 			params_.alt.numOsc = num_osc_raw;
@@ -511,13 +528,16 @@ public:
 
 			pitch *= kPitchPotRange;		 // 0..range
 			pitch -= kPitchPotRange * 0.5_f; // -range/2..range/2
-			f pitch_cv = pitch_cv_.last();
-
-			pitch_cv = pitch_cv_sampler_.Process(pitch_cv);
-			pitch += pitch_cv;
 
 			params_.fine_tune = fine_tune_raw > 0_f ? (fine_tune_raw - 0.5_f) * kFineTuneRange : 0_f;
-			params_.pitch = pitch + params_.fine_tune;
+
+			// pot, fine tune and sampler-hold are global; the CV is per channel
+			for (int c = 0; c < kMaxPolyChans; c++) {
+				f pitch_cv = pitch_cv_[c].last();
+				pitch_cv = pitch_cv_sampler_[c].Process(pitch_cv);
+				params_.pitch_chan[c] = (pitch + pitch_cv) + params_.fine_tune;
+			}
+			params_.pitch = params_.pitch_chan[0];
 		}
 
 		// ROOT
@@ -527,29 +547,34 @@ public:
 			// TODO: handle manually dialing in notes?
 
 			root *= kRootPotRange;
-			root += root_post_filter_.Process(root_cv_.last());
 
-			params_.root = root.max(0_f);
+			for (int c = 0; c < kMaxPolyChans; c++) {
+				f r = root + root_post_filter_[c].Process(root_cv_[c].last());
+				params_.root_chan[c] = r.max(0_f);
+			}
+			params_.root = params_.root_chan[0];
 
 			if (new_note > 0_f) {
 				new_note *= kRootPotRange;
 				//Root CV is allowed to modify manually learned notes
 				//so that if a keyboard/seq is patched into the jack,
 				//the learn'ed pitches are consistant.
-				new_note += root_cv_.last();
+				new_note += root_cv_[0].last();
 				params_.new_note = new_note.max(0_f);
 			}
 		}
 	}
 
 	f pitch_cv() {
-		return pitch_cv_.last();
+		return pitch_cv_[0].last(); // learn mode tracks channel 0
 	}
 	void hold_pitch_cv() {
-		pitch_cv_sampler_.hold();
+		for (auto &s : pitch_cv_sampler_)
+			s.hold();
 	}
 	void release_pitch_cv() {
-		pitch_cv_sampler_.release();
+		for (auto &s : pitch_cv_sampler_)
+			s.release();
 	}
 
 	void spread_pot_alternate_function() {
@@ -654,8 +679,8 @@ public:
 		return adc_.get_unsigned(chan) / 65535.f;
 	}
 
-	void set_pitchroot_cv(SpiAdcInput chan, float val) {
-		spi_adc_.set(chan, u0_16::inclusive(f(val).clip(0._f, 1._f)));
+	void set_pitchroot_cv(SpiAdcInput input, int poly_chan, float val) {
+		spi_adc_.set(input, poly_chan, u0_16::inclusive(f(val).clip(0._f, 1._f)));
 	}
 
 	void set_gate(Gate gatenum, bool val) {

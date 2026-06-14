@@ -11,6 +11,10 @@ struct Random {
 	static uint32_t state() {
 		return state_;
 	}
+	// for deterministic tests (Phasor draws its initial phase from here)
+	static void seed(uint32_t s) {
+		state_ = s;
+	}
 	static uint32_t Word() {
 		state_ = state_ * 1664525L + 1013904223L;
 		return state();
@@ -98,7 +102,7 @@ template<int N, int R>
 class PdmFilter : CicDecimator<N, R> {
 
 	const int16_t setbits[256] = {
-#define S(n) (int16_t)((2 * (n)-8) << 11)
+#define S(n) (int16_t)((2 * (n) - 8) << 11)
 #define B2(n) S(n), S(n + 1), S(n + 1), S(n + 2)
 #define B4(n) B2(n), B2(n + 1), B2(n + 1), B2(n + 2)
 #define B6(n) B4(n), B4(n + 1), B4(n + 1), B4(n + 2)
