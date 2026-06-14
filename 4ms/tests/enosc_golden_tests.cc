@@ -217,6 +217,11 @@ DiffStats compare(std::vector<float> const &golden, std::vector<float> const &ac
 
 } // namespace
 
+// Grouped into the "enosc-golden" test suite so it can be skipped by default
+// (it runs ~30s). The tests Makefile excludes this suite from the normal run
+// and runs it on demand via: make enosc-golden-check
+TEST_SUITE("enosc-golden") {
+
 TEST_CASE("EnOsc golden master") {
 	const bool generate = std::getenv("ENOSC_GOLDEN_GENERATE") != nullptr;
 
@@ -267,6 +272,8 @@ TEST_CASE("EnOsc golden master") {
 		CHECK_LE(st.max_abs, tolerance);
 	}
 }
+
+} // TEST_SUITE("enosc-golden")
 
 // Real pre-poly patches must load to the oscillator count they had before
 // polyphony. Pre-poly, the NumOsc AltParam mapped its stored value v via
