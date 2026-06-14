@@ -28,6 +28,7 @@ add_executable(runtests
 	../core/mpeg/envelope_calcs.cc
 	../core/peg/envelope_calcs.cc
 	../core/looping-delay/src/calibration_storage.cc
+	../../register_module.cc
 )
 
 target_compile_features(runtests PUBLIC cxx_std_23)
