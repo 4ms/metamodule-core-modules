@@ -5,8 +5,9 @@
 // refactors of the oscillator core (NEON/SoA, numOsc skip, polyphony) can be
 // verified not to change the sound.
 //
-// To (re)generate the golden files after an *intentional* sound change:
-//   ENOSC_GOLDEN_GENERATE=1 build/runtests -tc='*EnOsc golden*'
+// To (re)generate the golden files after an *intentional* sound change
+// (--no-skip is required because the suite is skip()-marked, see below):
+//   ENOSC_GOLDEN_GENERATE=1 build/runtests --no-skip -tc='*EnOsc golden*'
 //
 // Golden files are raw float32 LE, stereo interleaved, 48kHz. Listen with:
 //   ffplay -f f32le -ar 48000 -ch_layout stereo enosc_golden/<name>.raw
@@ -217,10 +218,12 @@ DiffStats compare(std::vector<float> const &golden, std::vector<float> const &ac
 
 } // namespace
 
-// Grouped into the "enosc-golden" test suite so it can be skipped by default
-// (it runs ~30s). The tests Makefile excludes this suite from the normal run
-// and runs it on demand via: make enosc-golden-check
-TEST_SUITE("enosc-golden") {
+// Marked with doctest's skip() decorator so this ~30s suite is NEVER run by
+// default -- not by `make all`, not by CI, not even when runtests is invoked
+// directly with no args. A skip()-marked test stays skipped even if a -ts/-tc
+// filter selects it; the only way to run it is to pass --no-skip explicitly.
+// A developer opts in via: make enosc-golden-check
+TEST_SUITE("enosc-golden" * doctest::skip()) {
 
 	TEST_CASE("EnOsc golden master") {
 		const bool generate = std::getenv("ENOSC_GOLDEN_GENERATE") != nullptr;
@@ -248,7 +251,7 @@ TEST_SUITE("enosc-golden") {
 			std::vector<float> golden;
 			REQUIRE_MESSAGE(
 				read_file(path, golden),
-				"Missing golden file. Generate with: ENOSC_GOLDEN_GENERATE=1 runtests -tc='*EnOsc golden*'");
+				"Missing golden file. Generate with: ENOSC_GOLDEN_GENERATE=1 runtests --no-skip -tc='*EnOsc golden*'");
 			REQUIRE(golden.size() == actual.size());
 
 			auto st = compare(golden, actual);

@@ -2,9 +2,11 @@ BUILDDIR := build
 
 TMPFILE := $(BUILDDIR)/runtests.out
 
-# The EnOsc golden-master regression tests are slow (~30s), so they're grouped
-# into the "enosc-golden" doctest suite and excluded from the default run.
-# Run them on demand with: make enosc-golden-check
+# The EnOsc golden-master regression tests are slow (~30s) and are marked with
+# doctest's skip() decorator (see enosc_golden_tests.cc), so doctest never runs
+# them by default -- not from `make all`, not from CI, not even when runtests is
+# invoked directly. Opt in explicitly (runtests --no-skip) via the dedicated
+# target below: make enosc-golden-check
 GOLDEN_SUITE := enosc-golden
 
 $(BUILDDIR):
@@ -12,12 +14,13 @@ $(BUILDDIR):
 
 all: $(BUILDDIR)
 	@cmake --build $(BUILDDIR)
-	@$(BUILDDIR)/runtests --out=$(TMPFILE) -tse=$(GOLDEN_SUITE) && echo "[√] Unit tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
+	@$(BUILDDIR)/runtests --out=$(TMPFILE) && echo "[√] Unit tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
 
-# Run only the slow EnOsc golden-master regression tests.
+# Explicitly run the slow, skip()-marked EnOsc golden-master regression tests.
+# --no-skip is what un-gates them; -ts then narrows the run to just that suite.
 enosc-golden-check: $(BUILDDIR)
 	@cmake --build $(BUILDDIR)
-	@$(BUILDDIR)/runtests --out=$(TMPFILE) -ts=$(GOLDEN_SUITE) && echo "[√] EnOsc golden tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
+	@$(BUILDDIR)/runtests --out=$(TMPFILE) --no-skip -ts=$(GOLDEN_SUITE) && echo "[√] EnOsc golden tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
 
 clean:
 	rm -rf $(BUILDDIR)
