@@ -14,9 +14,9 @@
 // <name>.actual.raw for A/B listening.
 
 // Hack: include the .cc files directly (same approach as kpls/djembe tests):
+#include "CoreModules/4ms/core/EnOscCore.cc"
 #include "CoreModules/4ms/core/enosc/data.cc"
 #include "CoreModules/4ms/core/enosc/dynamic_data.cc"
-#include "CoreModules/4ms/core/EnOscCore.cc"
 
 #include "doctest.h"
 
@@ -98,7 +98,7 @@ const Scenario scenarios[] = {
 	// reduced oscillator counts (numOsc skip must not change these);
 	// mono, so per-voice == total: round(v*15)+1 => 4 and 7
 	{.name = "numosc_4", .num_osc = 3.f / 15.f},
-	{.name = "numosc_7_lowhigh", .num_osc = 6.f / 15.f, .stereo_split = 0.5f},
+	{.name = "numosc_7_lowhigh", .stereo_split = 0.5f, .num_osc = 6.f / 15.f},
 
 	// lowest/rest stereo split with freeze latched on
 	{.name = "lowest_rest_freeze", .twist_sw = SW_MID, .warp_sw = SW_UP, .stereo_split = 1.f, .freeze_gate = true},
@@ -222,56 +222,57 @@ DiffStats compare(std::vector<float> const &golden, std::vector<float> const &ac
 // and runs it on demand via: make enosc-golden-check
 TEST_SUITE("enosc-golden") {
 
-TEST_CASE("EnOsc golden master") {
-	const bool generate = std::getenv("ENOSC_GOLDEN_GENERATE") != nullptr;
+	TEST_CASE("EnOsc golden master") {
+		const bool generate = std::getenv("ENOSC_GOLDEN_GENERATE") != nullptr;
 
-	// Max absolute sample difference allowed vs golden (output is ~±9V full
-	// scale). 0 = bit-exact; loosen deliberately if a refactor is *supposed*
-	// to differ at float rounding level (and verify by ear first).
-	const float tolerance = 0.f;
+		// Max absolute sample difference allowed vs golden (output is ~±9V full
+		// scale). 0 = bit-exact; loosen deliberately if a refactor is *supposed*
+		// to differ at float rounding level (and verify by ear first).
+		const float tolerance = 0.f;
 
-	auto dir = golden_dir();
-	if (generate)
-		std::filesystem::create_directories(dir);
+		auto dir = golden_dir();
+		if (generate)
+			std::filesystem::create_directories(dir);
 
-	for (auto const &s : scenarios) {
-		CAPTURE(std::string(s.name));
-		auto actual = run_scenario(s);
-		auto path = dir / (std::string(s.name) + ".raw");
+		for (auto const &s : scenarios) {
+			CAPTURE(std::string(s.name));
+			auto actual = run_scenario(s);
+			auto path = dir / (std::string(s.name) + ".raw");
 
-		if (generate) {
-			write_file(path, actual);
-			MESSAGE("generated ", path.string());
-			continue;
+			if (generate) {
+				write_file(path, actual);
+				MESSAGE("generated ", path.string());
+				continue;
+			}
+
+			std::vector<float> golden;
+			REQUIRE_MESSAGE(
+				read_file(path, golden),
+				"Missing golden file. Generate with: ENOSC_GOLDEN_GENERATE=1 runtests -tc='*EnOsc golden*'");
+			REQUIRE(golden.size() == actual.size());
+
+			auto st = compare(golden, actual);
+			if (st.max_abs > tolerance) {
+				auto actual_path = dir / (std::string(s.name) + ".actual.raw");
+				write_file(actual_path, actual);
+				MESSAGE("scenario '",
+						s.name,
+						"': max|diff|=",
+						st.max_abs,
+						" rms=",
+						st.rms,
+						" num_diffs=",
+						st.num_diffs,
+						"/",
+						actual.size(),
+						" first at sample ",
+						st.first_idx / 2,
+						" -- wrote ",
+						actual_path.string());
+			}
+			CHECK_LE(st.max_abs, tolerance);
 		}
-
-		std::vector<float> golden;
-		REQUIRE_MESSAGE(read_file(path, golden),
-						"Missing golden file. Generate with: ENOSC_GOLDEN_GENERATE=1 runtests -tc='*EnOsc golden*'");
-		REQUIRE(golden.size() == actual.size());
-
-		auto st = compare(golden, actual);
-		if (st.max_abs > tolerance) {
-			auto actual_path = dir / (std::string(s.name) + ".actual.raw");
-			write_file(actual_path, actual);
-			MESSAGE("scenario '",
-					s.name,
-					"': max|diff|=",
-					st.max_abs,
-					" rms=",
-					st.rms,
-					" num_diffs=",
-					st.num_diffs,
-					"/",
-					actual.size(),
-					" first at sample ",
-					st.first_idx / 2,
-					" -- wrote ",
-					actual_path.string());
-		}
-		CHECK_LE(st.max_abs, tolerance);
 	}
-}
 
 } // TEST_SUITE("enosc-golden")
 
@@ -330,15 +331,16 @@ TEST_CASE("EnOsc: pre-poly patches load to their original oscillator count") {
 	};
 
 	// Inverse of get_param's (n-1)/15: recover the loaded oscillator count.
-	auto loaded_osc = [](float numosc_param) { return int(std::lround(numosc_param * 15.f)) + 1; };
+	auto loaded_osc = [](float numosc_param) {
+		return int(std::lround(numosc_param * 15.f)) + 1;
+	};
 
 	SUBCASE("Ensemble Wash.yml module 1 (2025): NumOsc 1.0 => 16 oscillators") {
 		// Full saved EnOsc state, verbatim from patches/default/Ensemble Wash.yml
 		const std::vector<Knob> mod1 = {
-			{0, 0.369879f}, {1, 0.181672f}, {2, 0.0990964f}, {3, 0.5f}, {4, 0.625677f},
-			{5, 0.f},		{6, 0.f},		{7, 0.155754f},	  {8, 0.f},	 {9, 1.f},
-			{10, 1.f},		{11, 0.f},		{12, 1.f},		  {13, 0.f}, {14, 0.f},
-			{15, 0.f},		{16, 0.f},		{17, 0.5f},		  {18, 1.f}, {19, 0.5f},
+			{0, 0.369879f}, {1, 0.181672f}, {2, 0.0990964f}, {3, 0.5f},	 {4, 0.625677f}, {5, 0.f},	 {6, 0.f},
+			{7, 0.155754f}, {8, 0.f},		{9, 1.f},		 {10, 1.f},	 {11, 0.f},		 {12, 1.f},	 {13, 0.f},
+			{14, 0.f},		{15, 0.f},		{16, 0.f},		 {17, 0.5f}, {18, 1.f},		 {19, 0.5f},
 		};
 		float numosc = 0.f;
 		bool audible = false;
