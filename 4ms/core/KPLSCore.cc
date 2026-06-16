@@ -55,8 +55,16 @@ public:
 			float env = envs[v].update(gate / CvRangeVolts);
 
 			if (v < num_voices) {
-				auto pitchCV = MathTools::constrain(voctIn[v] / CvRangeVolts, 0.0f, 1.0f);
-				auto freq = basePitch * exp5Table.interp(pitchCV);
+				// The pitch->multiple table lookup depends only on the raw V/Oct
+				// volts, so recompute it only when that input actually changes (it
+				// otherwise runs every sample). basePitch (knob) is folded in
+				// cheaply afterwards, so a knob move is still picked up at once.
+				if (voctIn[v] != lastVoctIn[v]) {
+					lastVoctIn[v] = voctIn[v];
+					auto pitchCV = MathTools::constrain(voctIn[v] / CvRangeVolts, 0.0f, 1.0f);
+					pitchMult[v] = exp5Table.interp(pitchCV);
+				}
+				auto freq = basePitch * pitchMult[v];
 				if (freq != voiceFreq[v]) {
 					voiceFreq[v] = freq;
 					k.set_frequency(v, freq);
@@ -204,6 +212,11 @@ private:
 
 	float basePitch = 20;
 	std::array<float, MaxVoices> voiceFreq{};
+	// Cache for the per-voice pitch lookup (recomputed only when V/Oct changes).
+	// lastVoctIn is seeded with a sentinel no real input can equal, so the first
+	// update() always computes pitchMult.
+	std::array<float, MaxVoices> lastVoctIn{-1e9f, -1e9f, -1e9f, -1e9f};
+	std::array<float, MaxVoices> pitchMult{};
 	std::array<uint32_t, MaxVoices> noiseState{0x12345678u, 0x9abcdef0u, 0xfedcba98u, 0x76543210u};
 
 	Karplus k;
