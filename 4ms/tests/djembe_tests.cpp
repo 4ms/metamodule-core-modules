@@ -4,6 +4,7 @@
 #include "CoreModules/4ms/core/DjembeCore_neon.hh"
 #include "CoreModules/4ms/info/Djembe_info.hh"
 #include "doctest.h"
+#include <array>
 #include <iostream>
 #include <stdint.h>
 
@@ -111,4 +112,64 @@ TEST_CASE("Soft-neon matches non-neon output") {
 	for (int i = 0; i < BufferSize; i++) {
 		CHECK(no_outsig[i] == doctest::Approx(ne_outsig[i]));
 	}
+}
+
+// Regression for the pitch-drift bug: the slowFreq glide must advance every
+// sample until it reaches the target, not only when the Pitch CV changes.
+// If it only steps on Pitch-CV edges, a clock patched into Pitch CV slowly
+// drifts the pitch toward the average of its two levels (audible even though
+// the CV voltage itself is unchanged). Here two voices run for an identical
+// number of samples (so their noise generators stay in lockstep): one is fed a
+// clock on Pitch CV then held at a level, the other is held at that level the
+// whole time. After both settle they are struck identically, so the entire
+// ring-down must match -- it only does if the earlier clock left no lasting
+// pitch offset.
+TEST_CASE("Djembe: clock on Pitch CV does not drift the pitch") {
+	using namespace MetaModule;
+
+	constexpr int ClockSamples = 6000; // long enough for the buggy drift to build
+	constexpr int HalfPeriod = 50;	   // ~480 Hz clock at 48k -> many edges
+	constexpr int Settle = 4000;	   // > glide convergence time
+	constexpr int Capture = 400;
+	constexpr float HoldVolts = 1.0f;  // level both voices end up holding
+	constexpr float ClockHiVolts = 3.5f;
+
+	auto run = [](bool withClock) {
+		DjembeCoreNeon dj;
+		dj.mark_input_patched(0); // Pitch CV must be patched for or_last() to read it
+		dj.set_param(0, 0.2f);	  // pitch knob
+		dj.set_param(1, 0.5f);	  // gain
+		dj.set_param(2, 1.0f);	  // sharpness
+		dj.set_param(3, 0.3f);	  // strike
+
+		auto step = [&](float pitchV, float trigV) {
+			dj.set_input(0, pitchV);
+			dj.set_input(4, trigV);
+			dj.update();
+		};
+
+		// Phase 1: clock on Pitch CV (or steady hold) -- same number of updates either way
+		for (int i = 0; i < ClockSamples; i++) {
+			float v = (withClock && ((i / HalfPeriod) % 2)) ? ClockHiVolts : HoldVolts;
+			step(v, 0.f);
+		}
+		// Phase 2: hold at the level so the glide converges (fixed) / freezes (buggy)
+		for (int i = 0; i < Settle; i++)
+			step(HoldVolts, 0.f);
+
+		// Phase 3: strike once and capture the ring-down
+		std::array<float, Capture> out{};
+		step(HoldVolts, 1.f); // rising edge on Trigger
+		for (int i = 0; i < Capture; i++) {
+			step(HoldVolts, 0.f);
+			out[i] = dj.get_output(0);
+		}
+		return out;
+	};
+
+	auto ref = run(false);
+	auto tst = run(true);
+
+	for (int i = 0; i < Capture; i++)
+		CHECK(tst[i] == doctest::Approx(ref[i]));
 }

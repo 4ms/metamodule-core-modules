@@ -124,8 +124,7 @@ public:
 				vc.paramsNeedUpdating = false;
 			}
 			if (vc.freqNeedsUpdating) {
-				calc_freq(vc);
-				vc.freqNeedsUpdating = false;
+				vc.freqNeedsUpdating = calc_freq(vc);
 			}
 
 			const float trigIn = trig.values[v] > 0.f ? 1.f : 0.f;
@@ -141,11 +140,11 @@ public:
 				(4.65661287e-10f * float(tnoise)) -
 				(vc.fSlowStrike1 * ((vc.fSlowStrike3 * vc.noise_hp[prev]) + (vc.fSlowStrike4 * vc.noise_hp[slot])));
 
-			const auto tnoise_hp_lp = (vc.fSlowStrike1 * (((vc.fSlowStrike2 * tnoise_hp) +
-														   (vc.fSlowStrike5 * vc.noise_hp[slot])) +
-														  (vc.fSlowStrike2 * vc.noise_hp[prev]))) -
-									  (vc.fSlowStrike6 * ((vc.fSlowStrike7 * vc.noise_hp_lp[prev]) +
-														  (vc.fSlowStrike8 * vc.noise_hp_lp[slot])));
+			const auto tnoise_hp_lp =
+				(vc.fSlowStrike1 * (((vc.fSlowStrike2 * tnoise_hp) + (vc.fSlowStrike5 * vc.noise_hp[slot])) +
+									(vc.fSlowStrike2 * vc.noise_hp[prev]))) -
+				(vc.fSlowStrike6 *
+				 ((vc.fSlowStrike7 * vc.noise_hp_lp[prev]) + (vc.fSlowStrike8 * vc.noise_hp_lp[slot])));
 			const auto tfVecTrig = trigIn;
 			const auto tiRec4 = ((vc.iRec4 + (vc.iRec4 > 0)) * (trigIn <= vc.fVecTrig)) + (trigIn > vc.fVecTrig);
 			float fTemp0 = vc.adEnvRate * float(tiRec4);
@@ -199,11 +198,22 @@ public:
 			1.0f / MathTools::max<float>(1.0f, (fConst2 * MathTools::min<float>(vc.sharpCV + sharpnessKnob, 1.0f)));
 	}
 
-	void calc_freq(Voice &vc) {
+	// Returns true while still gliding toward the target pitch, false once reached.
+	bool calc_freq(Voice &vc) {
 		float freq = vc.freqCV * freqKnob * samplerateAdjust;
-		vc.slowFreq = 0.01f * freq + 0.99f * vc.slowFreq;
+		float diff = freq - vc.slowFreq;
+		float adiff = diff < 0.f ? -diff : diff;
 
+		// Snap and finish once within ~0.1% of target (sub-cent, inaudible).
+		if (adiff <= 1e-3f * freq + 1e-4f) {
+			vc.slowFreq = freq;
+			set_freq_coef(vc, vc.slowFreq);
+			return false;
+		}
+
+		vc.slowFreq = 0.01f * freq + 0.99f * vc.slowFreq;
 		set_freq_coef(vc, vc.slowFreq);
+		return true;
 	}
 
 	void set_freq_coef(Voice &vc, float freq) {

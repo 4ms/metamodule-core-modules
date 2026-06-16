@@ -81,8 +81,7 @@ public:
 		}
 
 		if (freqNeedUpdating) {
-			calc_freq();
-			freqNeedUpdating = false;
+			freqNeedUpdating = calc_freq();
 		}
 
 		const auto slot = flipper;
@@ -222,9 +221,14 @@ public:
 		slowTrig = trigIn > 0.f ? 1.f : 0.f;
 	}
 
-	void calc_freq() {
+	// Returns true while still gliding toward the target pitch, false once reached.
+	bool calc_freq() {
 		float freq = freqCV * freqKnob * samplerateAdjust;
-		slowFreq = 0.01f * freq + 0.99f * slowFreq;
+		float diff = freq - slowFreq;
+		float adiff = diff < 0.f ? -diff : diff;
+		// Snap and finish once within ~0.1% of target (sub-cent, inaudible).
+		bool gliding = adiff > 1e-3f * freq + 1e-4f;
+		slowFreq = gliding ? (0.01f * freq + 0.99f * slowFreq) : freq;
 
 		// Coef: a1
 		fSlow19202122.v[0] = (fConst4 * MathTools::cos_close((fConst5 * slowFreq)));
@@ -247,6 +251,8 @@ public:
 		fSlow35363738.v[1] = (fConst56 * MathTools::cos_close((fConst5 * (slowFreq + 3400.0f))));
 		fSlow35363738.v[2] = (fConst59 * MathTools::cos_close((fConst5 * (slowFreq + 3600.0f))));
 		fSlow35363738.v[3] = (fConst62 * MathTools::cos_close((fConst5 * (slowFreq + 3800.0f))));
+
+		return gliding;
 	}
 
 	void set_param(int param_id, float val) override {
