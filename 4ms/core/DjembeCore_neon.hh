@@ -158,13 +158,17 @@ public:
 			vc.fVecTrig = tfVecTrig;
 			vc.iRec4 = tiRec4;
 
-			//IIRs:
-			float signalOut = 0.f;
-			signalOut += vc.iirs[0].calc_4iir(noiseBurst);
-			signalOut += vc.iirs[1].calc_4iir(noiseBurst);
-			signalOut += vc.iirs[2].calc_4iir(noiseBurst);
-			signalOut += vc.iirs[3].calc_4iir(noiseBurst);
-			signalOut += vc.iirs[4].calc_4iir(noiseBurst);
+			//IIRs: accumulate all five 4-wide filter banks in one NEON register
+			// and reduce once. Reducing each bank to a scalar separately (as the
+			// previous += calc_4iir() did) costs five NEON->ARM transfers per
+			// voice, which stall the in-order Cortex-A7.
+			float32x4_t iirAcc = vc.iirs[0].calc_4iir_vec(noiseBurst);
+			iirAcc = vaddq_f32(iirAcc, vc.iirs[1].calc_4iir_vec(noiseBurst));
+			iirAcc = vaddq_f32(iirAcc, vc.iirs[2].calc_4iir_vec(noiseBurst));
+			iirAcc = vaddq_f32(iirAcc, vc.iirs[3].calc_4iir_vec(noiseBurst));
+			iirAcc = vaddq_f32(iirAcc, vc.iirs[4].calc_4iir_vec(noiseBurst));
+			float32x2_t iirSum = vpadd_f32(vget_low_f32(iirAcc), vget_high_f32(iirAcc));
+			float signalOut = vget_lane_f32(iirSum, 0) + vget_lane_f32(iirSum, 1);
 
 			out.values[v] = signalOut * (outputScalingVolts / algorithmScale);
 		}

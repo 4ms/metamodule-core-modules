@@ -44,7 +44,11 @@ public:
 		fSlow19202122 = vld1q_f32(slows);
 	}
 
-	float calc_4iir(float in) {
+	// Compute the four parallel IIRs and return their weighted outputs as a
+	// 4-wide vector, without the horizontal reduction. A caller summing several
+	// banks can accumulate these vectors and reduce once at the end -- each
+	// reduction is a NEON->ARM transfer that stalls the in-order Cortex-A7.
+	float32x4_t calc_4iir_vec(float in) {
 		float32x4_t __attribute__((aligned(16))) fRec0567_0;
 		fRec0567_0 = vmulq_f32(fSlow19202122, fRec0567_1);
 		fRec0567_0 = vmlaq_f32(fRec0567_0, fConst691215, fRec0567_2);
@@ -54,7 +58,6 @@ public:
 
 		float32x4_t __attribute__((aligned(16))) diff0567_02 = vsubq_f32(fRec0567_0, fRec0567_2);
 		float32x4_t __attribute__((aligned(16))) outvec = vmulq_f32(diff0567_02, outmixWeights);
-		float32x2_t __attribute__((aligned(16))) sum_tmp1 = vpadd_f32(vget_low_f32(outvec), vget_high_f32(outvec));
 
 		// Todo:
 		// We need to do this:
@@ -101,6 +104,15 @@ public:
 		// asm("vmov %0, %1\n\t" : "=r"(fRec0567_2) : "r"(fRec0567_1));
 		// asm("vmov %0, %1\n\t" : "=r"(fRec0567_1) : "r"(fRec0567_0));
 
+		return outvec;
+	}
+
+	// Reduce one filter bank to a scalar: the sum of its four weighted outputs.
+	// Kept for single-bank callers; callers summing several banks should
+	// accumulate calc_4iir_vec() results and reduce once at the end.
+	float calc_4iir(float in) {
+		float32x4_t outvec = calc_4iir_vec(in);
+		float32x2_t sum_tmp1 = vpadd_f32(vget_low_f32(outvec), vget_high_f32(outvec));
 		return vget_lane_f32(sum_tmp1, 0) + vget_lane_f32(sum_tmp1, 1);
 	}
 };
