@@ -59,50 +59,13 @@ public:
 		float32x4_t __attribute__((aligned(16))) diff0567_02 = vsubq_f32(fRec0567_0, fRec0567_2);
 		float32x4_t __attribute__((aligned(16))) outvec = vmulq_f32(diff0567_02, outmixWeights);
 
-		// Todo:
-		// We need to do this:
-		// fRec0567_2 = fRec0567_1;
-		// fRec0567_1 = fRec0567_0;
-		// But it compiles to a no-op (same assembly if we remove those lines)
-		// There is no vmovq_f32(), so we need another solution.
-		// What we want is a vst1q_f32(fRec0567_1, {address where fRec0567_2 was loaded from});
-		// e.g: VSTR Q0, [R0, #16]
-
-		// This works, at the expense of a pipeline delay, (but only for one of the max/movs)
-		// std::cout << "fSlow19 = " << fSlow19202122.v[0] << "\t";
-		// std::cout << "fConst6 = " << fConst691215.v[0] << "\t";
-		// std::cout << "fRec0[0] = " << fRec0567_0.v[0] << "\t";
-		// std::cout << "fRec0[1] = " << fRec0567_1.v[0] << "\t";
-		// std::cout << "fRec0[2] = " << fRec0567_2.v[0] << "\t";
-
-		// fRec0567_2[0] = fRec0567_1[0];
-		// fRec0567_2[1] = fRec0567_1[1];
-		// fRec0567_2[2] = fRec0567_1[2];
-		// fRec0567_2[3] = fRec0567_1[3];
-
-		// fRec0567_1[0] = fRec0567_0[0];
-		// fRec0567_1[1] = fRec0567_0[1];
-		// fRec0567_1[2] = fRec0567_0[2];
-		// fRec0567_1[3] = fRec0567_0[3];
-
-		fRec0567_2 = vmaxq_f32(fRec0567_1, fRec0567_1);
-		fRec0567_1 = vmaxq_f32(fRec0567_0, fRec0567_0);
-
-		// Doesn't generate a store:
-		// float rec_1[4] = {vgetq_lane_f32(fRec0567_1, 0),
-		// 				  vgetq_lane_f32(fRec0567_1, 1),
-		// 				  vgetq_lane_f32(fRec0567_1, 2),
-		// 				  vgetq_lane_f32(fRec0567_1, 3)};
-		// vst1q_f32(rec_1, fRec0567_2);
-		// float rec_0[4] = {vgetq_lane_f32(fRec0567_0, 0),
-		// 				  vgetq_lane_f32(fRec0567_0, 1),
-		// 				  vgetq_lane_f32(fRec0567_0, 2),
-		// 				  vgetq_lane_f32(fRec0567_0, 3)};
-		// vst1q_f32(rec_0, fRec0567_1);
-
-		// Won't compile:
-		// asm("vmov %0, %1\n\t" : "=r"(fRec0567_2) : "r"(fRec0567_1));
-		// asm("vmov %0, %1\n\t" : "=r"(fRec0567_1) : "r"(fRec0567_0));
+		// Shift the filter state: fRec[n-2] <- fRec[n-1] <- fRec[n]. An older compiler
+		// elided these plain member assignments (they emitted no code), so this was
+		// written as fRecX = vmaxq_f32(fRecY, fRecY) to force the moves. GCC 14 compiles
+		// the assignments correctly -- the emitted state stores match the old vmax form
+		// exactly (verified in the .s), with the redundant vmax ALU ops gone.
+		fRec0567_2 = fRec0567_1;
+		fRec0567_1 = fRec0567_0;
 
 		return outvec;
 	}
