@@ -60,6 +60,12 @@ class DjembeCoreNeon : public PolyCoreProcessor<DjembeInfo::NumInJacks, DjembeIn
 		float fSlowStrike7{};
 		float fSlowStrike8{};
 		float adEnvRate{};
+
+		// Voice-activity gating: a struck Djembe voice always rings down to
+		// silence, so once it has (and no strike is in progress) the IIR banks
+		// can be skipped until the next strike. peakEnv follows the output.
+		bool active = false;
+		float peakEnv = 0.f;
 	};
 
 public:
@@ -158,19 +164,37 @@ public:
 			vc.fVecTrig = tfVecTrig;
 			vc.iRec4 = tiRec4;
 
-			//IIRs: accumulate all five 4-wide filter banks in one NEON register
-			// and reduce once. Reducing each bank to a scalar separately (as the
-			// previous += calc_4iir() did) costs five NEON->ARM transfers per
-			// voice, which stall the in-order Cortex-A7.
-			float32x4_t iirAcc = vc.iirs[0].calc_4iir_vec(noiseBurst);
-			iirAcc = vaddq_f32(iirAcc, vc.iirs[1].calc_4iir_vec(noiseBurst));
-			iirAcc = vaddq_f32(iirAcc, vc.iirs[2].calc_4iir_vec(noiseBurst));
-			iirAcc = vaddq_f32(iirAcc, vc.iirs[3].calc_4iir_vec(noiseBurst));
-			iirAcc = vaddq_f32(iirAcc, vc.iirs[4].calc_4iir_vec(noiseBurst));
-			float32x2_t iirSum = vpadd_f32(vget_low_f32(iirAcc), vget_high_f32(iirAcc));
-			float signalOut = vget_lane_f32(iirSum, 0) + vget_lane_f32(iirSum, 1);
+			// IIR banks (the bulk of the per-voice cost) only need to run while
+			// the voice is excited or still ringing. A struck resonator always
+			// decays, so once the strike envelope is done and the output has
+			// fallen silent the banks are skipped until the next strike. The cheap
+			// StrikeModel above keeps running regardless, so the noise excitation
+			// stays continuous (no audible seam on the next strike).
+			if (vc.active || adEnv > 0.f) {
+				vc.active = true;
 
-			out.values[v] = signalOut * (outputScalingVolts / algorithmScale);
+				// Accumulate all five 4-wide filter banks in one NEON register and
+				// reduce once. Reducing each bank to a scalar separately costs five
+				// NEON->ARM transfers per voice, which stall the in-order Cortex-A7.
+				float32x4_t iirAcc = vc.iirs[0].calc_4iir_vec(noiseBurst);
+				iirAcc = vaddq_f32(iirAcc, vc.iirs[1].calc_4iir_vec(noiseBurst));
+				iirAcc = vaddq_f32(iirAcc, vc.iirs[2].calc_4iir_vec(noiseBurst));
+				iirAcc = vaddq_f32(iirAcc, vc.iirs[3].calc_4iir_vec(noiseBurst));
+				iirAcc = vaddq_f32(iirAcc, vc.iirs[4].calc_4iir_vec(noiseBurst));
+				float32x2_t iirSum = vpadd_f32(vget_low_f32(iirAcc), vget_high_f32(iirAcc));
+				float signalOut = vget_lane_f32(iirSum, 0) + vget_lane_f32(iirSum, 1);
+
+				out.values[v] = signalOut * (outputScalingVolts / algorithmScale);
+
+				// Follow the output envelope; retire the voice once it has rung
+				// down below ~-98 dB and the strike envelope is finished.
+				const float aOut = signalOut < 0.f ? -signalOut : signalOut;
+				vc.peakEnv = aOut > vc.peakEnv * kEnvDecay ? aOut : vc.peakEnv * kEnvDecay;
+				if (vc.peakEnv < kSilenceThresh && adEnv == 0.f)
+					vc.active = false;
+			} else {
+				out.values[v] = 0.f;
+			}
 		}
 	}
 
@@ -382,6 +406,13 @@ private:
 
 	static constexpr float outputScalingVolts = 5.f;
 	static constexpr float algorithmScale = 8.f;
+
+	// Voice-gating thresholds, on the pre-scale IIR sum (full scale ~8): retire a
+	// voice once its output envelope falls below ~-98 dB of full scale. kEnvDecay
+	// is the peak-follower release (~42 ms), slow enough to bridge the audio
+	// zero-crossings of the lowest drum tones.
+	static constexpr float kSilenceThresh = 1e-4f;
+	static constexpr float kEnvDecay = 0.9995f;
 
 public:
 	// Boilerplate to auto-register in ModuleFactory

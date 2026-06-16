@@ -5,6 +5,7 @@
 #include "CoreModules/4ms/info/Djembe_info.hh"
 #include "doctest.h"
 #include <array>
+#include <cmath>
 #include <iostream>
 #include <stdint.h>
 
@@ -172,4 +173,46 @@ TEST_CASE("Djembe: clock on Pitch CV does not drift the pitch") {
 
 	for (int i = 0; i < Capture; i++)
 		CHECK(tst[i] == doctest::Approx(ref[i]));
+}
+
+// Voice-activity gating: once a struck voice rings out it is retired -- the IIR
+// banks are skipped and the output is gated to exactly 0 -- and the next strike
+// must re-fire it. One mono voice: strike, let it fully ring out (output reaches
+// exactly 0), then strike again and confirm it sounds again.
+TEST_CASE("Djembe: a retired voice re-fires on the next strike") {
+	using namespace MetaModule;
+
+	DjembeCoreNeon dj;
+	dj.set_param(0, 0.2f); // pitch
+	dj.set_param(1, 0.5f); // gain
+	dj.set_param(2, 1.0f); // sharpness
+	dj.set_param(3, 0.3f); // strike
+	auto out = dj.get_poly_output_buffer(DjembeInfo::OutputAudio_Out);
+
+	auto strike_energy = [&]() {
+		dj.set_input(4, 1.f); // rising edge on Trigger
+		dj.update();
+		float e = std::abs(out.voltages[0]);
+		for (int i = 0; i < 3000; i++) {
+			dj.set_input(4, 0.f);
+			dj.update();
+			e += std::abs(out.voltages[0]);
+		}
+		return e;
+	};
+
+	const float e1 = strike_energy();
+	CHECK(e1 > 0.01f); // first strike makes sound
+
+	// Long silence: the voice rings out and retires. The gated path writes a
+	// literal 0, so once retired the output is *exactly* zero (a non-gated
+	// implementation would still have a tiny non-zero ring-out tail here).
+	for (int i = 0; i < 96000; i++) {
+		dj.set_input(4, 0.f);
+		dj.update();
+	}
+	CHECK(out.voltages[0] == 0.f);
+
+	const float e2 = strike_energy();
+	CHECK(e2 > 0.01f); // re-fires after being retired
 }
