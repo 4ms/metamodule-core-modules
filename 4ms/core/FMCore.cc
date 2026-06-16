@@ -75,12 +75,13 @@ public:
 			fm.carrierFreq[v] = basePitch * carrierMult[v];
 
 		if (modChans) {
+			// Mod 1V/oct is patched:
 			for (unsigned v = 0; v < MaxVoices; v++)
 				fm.modFreq[v] = basePitch * modMult[v];
 		} else {
-			const float modFreq = basePitch * ratioFine * ratioCoarse;
+			// Mod 1V/oct not patched:
 			for (unsigned v = 0; v < MaxVoices; v++)
-				fm.modFreq[v] = modFreq;
+				fm.modFreq[v] = fm.carrierFreq[v] * ratioFine * ratioCoarse;
 		}
 
 		for (unsigned v = 0; v < MaxVoices; v++)
