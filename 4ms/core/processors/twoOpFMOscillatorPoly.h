@@ -41,7 +41,7 @@ public:
 	// Per-voice output, written by update():
 	alignas(16) std::array<float, MaxVoices> out{};
 
-	void update() {
+	void update(unsigned num_voices) {
 		// The build uses -mno-unaligned-access, so without the alignment hints
 		// the vectorizer emits runtime alignment checks with scalar fallback
 		// copies of every loop ("loop versioned for vectorization"); __restrict
@@ -68,11 +68,13 @@ public:
 		for (unsigned v = 0; v < MaxVoices; v++)
 			phaccu1_[v] += static_cast<uint32_t>(modFreq_[v] * inv_samplerate);
 
-		// Sine table lookups: scalar (NEON has no gather)
-		alignas(16) std::array<float, MaxVoices> sinOut0;
-		for (unsigned v = 0; v < MaxVoices; v++)
+		// Sine table lookups: scalar (NEON has no gather), so only do the active
+		// voices. Inactive lanes are zero-filled (sinOut0) or keep their previous
+		// value (sinOut1_); either way their out_[] is past outChans and ignored.
+		alignas(16) std::array<float, MaxVoices> sinOut0{};
+		for (unsigned v = 0; v < num_voices; v++)
 			sinOut1_[v] = sinTable[(phaccu1_[v] + HalfMax) >> 21];
-		for (unsigned v = 0; v < MaxVoices; v++)
+		for (unsigned v = 0; v < num_voices; v++)
 			sinOut0[v] = sinTable[phaccu0_[v] >> 21];
 
 		for (unsigned v = 0; v < MaxVoices; v++)

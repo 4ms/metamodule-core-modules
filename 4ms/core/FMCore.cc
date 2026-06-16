@@ -62,14 +62,6 @@ public:
 			}
 		}
 
-		// Expand CV inputs to per-voice arrays (highest channel feeds upward)
-		alignas(16) std::array<float, MaxVoices> indexCV;
-		alignas(16) std::array<float, MaxVoices> shapeCV;
-		alignas(16) std::array<float, MaxVoices> mixCV;
-		expand(indexIn, indexChans, indexCV);
-		expand(shapeIn, shapeChans, shapeCV);
-		expand(mixIn, mixChans, mixCV);
-
 		// Per-voice controls (fixed-size loops: auto-vectorizable)
 		for (unsigned v = 0; v < MaxVoices; v++)
 			fm.carrierFreq[v] = basePitch * carrierMult[v];
@@ -84,16 +76,40 @@ public:
 				fm.modFreq[v] = fm.carrierFreq[v] * ratioFine * ratioCoarse;
 		}
 
-		for (unsigned v = 0; v < MaxVoices; v++)
-			fm.modAmount[v] = MathTools::constrain(indexCV[v] * indexAmount + indexKnob, 0.0f, 1.0f);
+		// Index/Shape/Mix are constant while their CV jack is unpatched, so when
+		// unpatched they are recomputed only after a knob or patch change dirties
+		// them. A patched jack may carry audio-rate CV, so it is recomputed every
+		// sample (expand maps the highest channel up to all voices).
+		if (indexChans) {
+			alignas(16) std::array<float, MaxVoices> indexCV;
+			expand(indexIn, indexChans, indexCV);
+			for (unsigned v = 0; v < MaxVoices; v++)
+				fm.modAmount[v] = MathTools::constrain(indexCV[v] * indexAmount + indexKnob, 0.0f, 1.0f);
+		} else if (controlsDirty) {
+			fm.modAmount.fill(MathTools::constrain(indexKnob, 0.0f, 1.0f));
+		}
 
-		for (unsigned v = 0; v < MaxVoices; v++)
-			fm.shape[v] = MathTools::constrain(shapeCV[v] * shapeAmount + shapeKnob, 0.0f, 1.0f);
+		if (shapeChans) {
+			alignas(16) std::array<float, MaxVoices> shapeCV;
+			expand(shapeIn, shapeChans, shapeCV);
+			for (unsigned v = 0; v < MaxVoices; v++)
+				fm.shape[v] = MathTools::constrain(shapeCV[v] * shapeAmount + shapeKnob, 0.0f, 1.0f);
+		} else if (controlsDirty) {
+			fm.shape.fill(MathTools::constrain(shapeKnob, 0.0f, 1.0f));
+		}
 
-		for (unsigned v = 0; v < MaxVoices; v++)
-			fm.mix[v] = MathTools::constrain(mixCV[v] + mix, 0.0f, 1.0f);
+		if (mixChans) {
+			alignas(16) std::array<float, MaxVoices> mixCV;
+			expand(mixIn, mixChans, mixCV);
+			for (unsigned v = 0; v < MaxVoices; v++)
+				fm.mix[v] = MathTools::constrain(mixCV[v] + mix, 0.0f, 1.0f);
+		} else if (controlsDirty) {
+			fm.mix.fill(MathTools::constrain(mix, 0.0f, 1.0f));
+		}
 
-		fm.update();
+		controlsDirty = false;
+
+		fm.update(num_voices);
 
 		const float *__restrict fmOut = std::assume_aligned<16>(fm.out.data());
 		float *__restrict audioOut_ = std::assume_aligned<16>(audioOut.data());
@@ -103,6 +119,7 @@ public:
 	}
 
 	void set_param(int param_id, float val) override {
+		controlsDirty = true; // knob change may alter an unpatched control
 		switch (param_id) {
 			case Info::KnobPitch:
 				basePitch = 20.0f * exp5Table.interp(val);
@@ -221,6 +238,7 @@ public:
 		if (auto *jack = jack_for(input_id)) {
 			*jack->chans = 0;
 			*jack->values = {};
+			controlsDirty = true; // patch change may alter an unpatched control
 		}
 	}
 
@@ -230,6 +248,7 @@ public:
 			if (*jack->chans == 0) {
 				*jack->chans = 1;
 				*jack->values = {};
+				controlsDirty = true; // patch change may alter an unpatched control
 			}
 		}
 	}
@@ -318,6 +337,10 @@ private:
 	float shapeKnob = 0;
 	float shapeAmount = 0;
 	float indexAmount = 0;
+
+	// Set when a knob or patch change may have altered an unpatched Index/Shape/
+	// Mix control, so update() recomputes those once instead of every sample.
+	bool controlsDirty = true;
 
 	const std::array<float, 8> ratioTable = {0.125f, 0.25f, 0.5f, 1, 2, 4, 8, 16};
 };
