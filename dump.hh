@@ -15,12 +15,14 @@ struct DumpModuleInfo {
 		for (unsigned i = 0; auto &el : info.elements) {
 			auto base = MetaModule::base_element(el);
 			auto count = ElementCount::count(el);
+			auto index = info.indices[i];
 
 			printf("[%d] ", i);
 			printf("type=%zu ", el.index());
 			printf("xy=%f,%f ", base.x_mm, base.y_mm);
 			printf("\"%.*s\" ", (int)base.short_name.size(), base.short_name.data());
 			printf("p:%zu i:%zu o:%zu l:%zu ", count.num_params, count.num_inputs, count.num_outputs, count.num_lights);
+			printf("p:%zu i:%zu o:%zu l:%zu ", index.param_idx, index.input_idx, index.output_idx, index.light_idx);
 			printf("\n");
 			i++;
 		}
