@@ -27,4 +27,16 @@ struct SwitchTallVert : SlideSwitch {
 	}
 };
 
+// Small dynamic text label (one short string), used by Keyboard to show the
+// voice number currently assigned to each key.
+struct VoiceNumberLabel : DynamicTextDisplay {
+	constexpr VoiceNumberLabel(BaseElement b)
+		: DynamicTextDisplay{{{b}}} {
+		text = "";
+		font = "Default_12";
+		color = Colors565::White;
+		wrap_mode = WrapMode::Clip;
+	}
+};
+
 } // namespace MetaModule
