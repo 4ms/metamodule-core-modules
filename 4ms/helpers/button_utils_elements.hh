@@ -21,7 +21,7 @@ struct SwitchTallVert : SlideSwitch {
 							 std::array<std::string_view, 8> names = {},
 							 unsigned default_pos = 0)
 		: SlideSwitch{{{b, "4ms/comp/switch_tall_vert_x.png"}, num_positions, default_pos},
-					  "4ms/comp/switch_tall_vert_handle_x.png",
+					  "4ms/comp/switch_tall_vert_handle.png",
 					  SlideSwitch::Ascend::UpLeft,
 					  names} {
 	}
