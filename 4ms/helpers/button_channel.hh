@@ -2,16 +2,13 @@
 #include <algorithm>
 #include <cmath>
 
-// Shared push-button channel logic for the Button Utilities modules
-// (Octopush, SoloPush). This is the pure-DSP portion of the original VCV
-// plugin.hpp ButtonUtils namespace, with no Rack dependencies.
+// Shared push-button channel logic for the Octopush and SoloPush
 
 namespace MetaModule::ButtonUtils
 {
 
 enum BehaviorMode { Gate = 0, Toggle = 1, Trigger = 2 };
 
-// Range switch positions: 1V, 5V, 10V
 inline constexpr float RangeScales[] = {1.f, 5.f, 10.f};
 
 struct ButtonChannel {

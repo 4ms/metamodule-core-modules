@@ -16,11 +16,9 @@ struct OctopushInfo : ModuleInfoBase {
 
 	using enum Coords;
 
-	// Coordinates are in mm (taken directly from the VCV panel, which used mm2px).
 	// Elements are grouped by control type so that channel N can be addressed as
 	// (first-of-group + N) at compile time in the processor.
 	static constexpr std::array<Element, 74> Elements{{
-		// Ch 1-8 Polarity (Toggle2pos), y = 34.819
 		Toggle2pos{{8.0, 34.819, Center, "Ch. 1 Polarity", ""}, {"Unipolar", "Bipolar"}, Toggle2pos::State_t::DOWN},
 		Toggle2pos{{25.026, 34.819, Center, "Ch. 2 Polarity", ""}, {"Unipolar", "Bipolar"}, Toggle2pos::State_t::DOWN},
 		Toggle2pos{{42.049, 34.819, Center, "Ch. 3 Polarity", ""}, {"Unipolar", "Bipolar"}, Toggle2pos::State_t::DOWN},
@@ -30,7 +28,6 @@ struct OctopushInfo : ModuleInfoBase {
 		Toggle2pos{{110.14, 34.819, Center, "Ch. 7 Polarity", ""}, {"Unipolar", "Bipolar"}, Toggle2pos::State_t::DOWN},
 		Toggle2pos{{127.163, 34.819, Center, "Ch. 8 Polarity", ""}, {"Unipolar", "Bipolar"}, Toggle2pos::State_t::DOWN},
 
-		// Ch 1-8 Range (Toggle3pos), y = 52.438
 		Toggle3pos{{8.0, 52.438, Center, "Ch. 1 Range", ""}, {"1V", "5V", "10V"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{25.026, 52.438, Center, "Ch. 2 Range", ""}, {"1V", "5V", "10V"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{42.049, 52.438, Center, "Ch. 3 Range", ""}, {"1V", "5V", "10V"}, Toggle3pos::State_t::CENTER},
@@ -40,7 +37,6 @@ struct OctopushInfo : ModuleInfoBase {
 		Toggle3pos{{110.14, 52.438, Center, "Ch. 7 Range", ""}, {"1V", "5V", "10V"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{127.163, 52.438, Center, "Ch. 8 Range", ""}, {"1V", "5V", "10V"}, Toggle3pos::State_t::CENTER},
 
-		// Ch 1-8 Amplitude (Knob9mm), y = 67.404
 		Knob9mm{{8.0, 67.404, Center, "Ch. 1 Amplitude", ""}, 1.0f, 0.0f, 100.0f, "%"},
 		Knob9mm{{25.026, 67.404, Center, "Ch. 2 Amplitude", ""}, 1.0f, 0.0f, 100.0f, "%"},
 		Knob9mm{{42.049, 67.404, Center, "Ch. 3 Amplitude", ""}, 1.0f, 0.0f, 100.0f, "%"},
@@ -50,7 +46,6 @@ struct OctopushInfo : ModuleInfoBase {
 		Knob9mm{{110.14, 67.404, Center, "Ch. 7 Amplitude", ""}, 1.0f, 0.0f, 100.0f, "%"},
 		Knob9mm{{127.163, 67.404, Center, "Ch. 8 Amplitude", ""}, 1.0f, 0.0f, 100.0f, "%"},
 
-		// Ch 1-8 Behavior (Toggle3pos), y = 101.5
 		Toggle3pos{{8.0, 101.5, Center, "Ch. 1 Behavior", ""}, {"Gate", "Toggle", "Trig"}, Toggle3pos::State_t::DOWN},
 		Toggle3pos{{25.026, 101.5, Center, "Ch. 2 Behavior", ""}, {"Gate", "Toggle", "Trig"}, Toggle3pos::State_t::DOWN},
 		Toggle3pos{{42.049, 101.5, Center, "Ch. 3 Behavior", ""}, {"Gate", "Toggle", "Trig"}, Toggle3pos::State_t::DOWN},
@@ -60,7 +55,6 @@ struct OctopushInfo : ModuleInfoBase {
 		Toggle3pos{{110.14, 101.5, Center, "Ch. 7 Behavior", ""}, {"Gate", "Toggle", "Trig"}, Toggle3pos::State_t::DOWN},
 		Toggle3pos{{127.163, 101.5, Center, "Ch. 8 Behavior", ""}, {"Gate", "Toggle", "Trig"}, Toggle3pos::State_t::DOWN},
 
-		// Ch 1-8 Push (WhiteMomentary7mm), y = 115.357
 		WhiteMomentary7mm{{8.0, 115.357, Center, "Ch. 1 Button", ""}},
 		WhiteMomentary7mm{{25.026, 115.357, Center, "Ch. 2 Button", ""}},
 		WhiteMomentary7mm{{42.049, 115.357, Center, "Ch. 3 Button", ""}},
@@ -70,7 +64,6 @@ struct OctopushInfo : ModuleInfoBase {
 		WhiteMomentary7mm{{110.14, 115.357, Center, "Ch. 7 Button", ""}},
 		WhiteMomentary7mm{{127.163, 115.357, Center, "Ch. 8 Button", ""}},
 
-		// Ch 1-8 Voltage Out, y = 16.565
 		AnalogJackOutput4ms{{8.0, 16.565, Center, "Ch. 1 Voltage", ""}},
 		AnalogJackOutput4ms{{25.026, 16.565, Center, "Ch. 2 Voltage", ""}},
 		AnalogJackOutput4ms{{42.049, 16.565, Center, "Ch. 3 Voltage", ""}},
@@ -80,7 +73,6 @@ struct OctopushInfo : ModuleInfoBase {
 		AnalogJackOutput4ms{{110.14, 16.565, Center, "Ch. 7 Voltage", ""}},
 		AnalogJackOutput4ms{{127.163, 16.565, Center, "Ch. 8 Voltage", ""}},
 
-		// Ch 1-8 Logic Out, y = 82.034
 		GateJackOutput4ms{{8.0, 82.034, Center, "Ch. 1 Logic", ""}},
 		GateJackOutput4ms{{25.026, 82.034, Center, "Ch. 2 Logic", ""}},
 		GateJackOutput4ms{{42.049, 82.034, Center, "Ch. 3 Logic", ""}},
@@ -90,7 +82,6 @@ struct OctopushInfo : ModuleInfoBase {
 		GateJackOutput4ms{{110.14, 82.034, Center, "Ch. 7 Logic", ""}},
 		GateJackOutput4ms{{127.163, 82.034, Center, "Ch. 8 Logic", ""}},
 
-		// Ch 1-8 voltage LED (red/green), y = 8.485
 		RedGreenLight{{8.0, 8.485, Center, "Ch. 1", ""}},
 		RedGreenLight{{25.026, 8.485, Center, "Ch. 2", ""}},
 		RedGreenLight{{42.049, 8.485, Center, "Ch. 3", ""}},
@@ -100,7 +91,6 @@ struct OctopushInfo : ModuleInfoBase {
 		RedGreenLight{{110.14, 8.485, Center, "Ch. 7", ""}},
 		RedGreenLight{{127.163, 8.485, Center, "Ch. 8", ""}},
 
-		// Mixer section (x = 143.332)
 		Knob9mm{{143.332, 25.923, Center, "Mixer Offset", ""}, 0.5f, -5.0f, 5.0f, "V"},
 		RedGreenLight{{143.332, 17.546, Center, "Offset", ""}},
 		AnalogJackOutput4ms{{143.332, 46.853, Center, "Mixer Sum", ""}},

@@ -1,5 +1,6 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/math_lut.hh"
 #include "info/FadeIn_info.hh"
 
 #include <cmath>
@@ -47,7 +48,7 @@ public:
 		}
 
 		if (isActive) {
-			// Knobs report a raw 0..1 value; map to the panel's display ranges.
+			// Knobs report a raw 0..1 value; map to 0.5 .. 10.0
 			const float fadeTime = 0.5f + getState<FadeTimeKnob>() * (10.f - 0.5f);
 			const float shape = getState<ShapeKnob>() * 2.f - 1.f;
 
@@ -59,7 +60,7 @@ public:
 
 			const float t = fadeProgress;
 			const float linear = t;
-			const float logarithmic = std::log(1.f + t * 9.f) / std::log(10.f);
+			const float logarithmic = Log10_1_10(1.f + t * 9.f);
 			const float shaped = linear + (logarithmic - linear) * shape;
 			currentGain = shaped;
 		}

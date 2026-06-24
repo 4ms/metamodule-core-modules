@@ -33,7 +33,7 @@ public:
 		float sumVoltage = getState<MixerOffsetKnob>() * 10.f - 5.f;
 		const float offsetVoltage = sumVoltage;
 
-		[&]<unsigned... Ch>(std::integer_sequence<unsigned, Ch...>) {
+		[&]<unsigned... Ch>(auto) {
 			((sumVoltage += processChannel<Ch>()), ...);
 		}(std::make_integer_sequence<unsigned, NumChans>{});
 
@@ -70,7 +70,9 @@ private:
 	// Process one channel; returns its (mixer-bound) voltage output.
 	template<unsigned Ch>
 	float processChannel() {
-		constexpr auto el = [](Info::Elem first) constexpr { return static_cast<Info::Elem>(static_cast<int>(first) + Ch); };
+		constexpr auto el = [](Info::Elem first) constexpr {
+			return static_cast<Info::Elem>(static_cast<int>(first) + Ch);
+		};
 		constexpr Info::Elem polarityEl = el(Ch1Polarity);
 		constexpr Info::Elem rangeEl = el(Ch1Range);
 		constexpr Info::Elem ampEl = el(Ch1Amplitude);

@@ -24,10 +24,10 @@ public:
 		}
 
 		const bool buttonPressed = getState<PushButton>() == MomentaryButton::State_t::PRESSED;
-		const int mode = (int)getState<BehaviorSwitch>();
+		const int mode = getState<BehaviorSwitch>();
 		const bool polarity = getState<PolaritySwitch>() != 0;
 		const float amplitude = getState<AmplitudeKnob>();
-		const int range = (int)getState<RangeSwitch>();
+		const int range = getState<RangeSwitch>();
 		const float scale = ButtonUtils::RangeScales[range];
 
 		auto out = channel.process(buttonPressed, mode, polarity, amplitude, scale, timeStepInS);

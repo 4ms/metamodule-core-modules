@@ -1,5 +1,6 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
+#include "helpers/math_lut.hh"
 #include "info/FadeOut_info.hh"
 
 #include <cmath>
@@ -59,7 +60,7 @@ public:
 
 			const float t = fadeProgress;
 			const float linear = t;
-			const float logarithmic = std::log(1.f + t * 9.f) / std::log(10.f);
+			const float logarithmic = Log10_1_10(1.f + t * 9.f);
 			const float shaped = linear + (logarithmic - linear) * shape;
 			currentGain = 1.f - shaped;
 		}

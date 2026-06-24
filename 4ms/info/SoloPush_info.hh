@@ -16,7 +16,6 @@ struct SoloPushInfo : ModuleInfoBase {
 
 	using enum Coords;
 
-	// Coordinates are in mm (taken directly from the VCV panel, which used mm2px).
 	static constexpr std::array<Element, 8> Elements{{
 		Toggle2pos{{10.16, 35.812, Center, "Polarity", ""}, {"Unipolar", "Bipolar"}, Toggle2pos::State_t::DOWN},
 		Toggle3pos{{10.16, 53.431, Center, "Range", ""}, {"1V", "5V", "10V"}, Toggle3pos::State_t::CENTER},

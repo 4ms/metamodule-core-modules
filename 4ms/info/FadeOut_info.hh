@@ -15,13 +15,10 @@ struct FadeOutInfo : ModuleInfoBase {
 
 	using enum Coords;
 
-	// Coordinates are in mm (taken directly from the VCV panel, which used mm2px).
 	static constexpr std::array<Element, 12> Elements{{
-		// Momentary buttons with a white LED (VCV: LEDBezel + LEDBezelLight<WhiteLight>)
 		WhiteMomentary7mm{{8.536, 11.528, Center, "Fade Out", ""}},
 		WhiteMomentary7mm{{21.892, 11.528, Center, "Reset", ""}},
 
-		// Knobs. Display range/units only; the processor reads the raw 0..1 value.
 		// Fade Time default 2s -> normalized (2-0.5)/(10-0.5) = 0.1579
 		Davies1900hBlackKnob{{15.24, 34.941, Center, "Fade Time", ""}, 0.15789f, 0.5f, 10.0f, "s"},
 		// Shape default 0% -> normalized 0.5
