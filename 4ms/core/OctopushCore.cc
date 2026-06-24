@@ -33,9 +33,9 @@ public:
 		float sumVoltage = getState<MixerOffsetKnob>() * 10.f - 5.f;
 		const float offsetVoltage = sumVoltage;
 
-		[&]<unsigned... Ch>(auto) {
+		[&]<auto... Ch>(auto) {
 			((sumVoltage += processChannel<Ch>()), ...);
-		}(std::make_integer_sequence<unsigned, NumChans>{});
+		}(std::make_index_sequence<NumChans>{});
 
 		sumVoltage = std::clamp(sumVoltage, -10.f, 10.f);
 		setOutput<SumOut>(sumVoltage);
