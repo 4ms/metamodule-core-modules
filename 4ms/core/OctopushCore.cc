@@ -1,7 +1,7 @@
 #include "CoreModules/SmartCoreProcessor.hh"
 #include "CoreModules/moduleFactory.hh"
 #include "helpers/button_channel.hh"
-#include "info/Octopush_info.hh"
+#include "info/OctoPush_info.hh"
 
 #include <algorithm>
 #include <array>
@@ -13,15 +13,15 @@ namespace MetaModule
 // Eight independent push-button voltage sources (see SoloPush) plus a mixer:
 // the eight channel voltages are summed with a manual offset to produce Sum,
 // Inverse Sum, and split Positive / Negative outputs.
-class OctopushCore : public SmartCoreProcessor<OctopushInfo> {
-	using Info = OctopushInfo;
-	using ThisCore = OctopushCore;
+class OctoPushCore : public SmartCoreProcessor<OctoPushInfo> {
+	using Info = OctoPushInfo;
+	using ThisCore = OctoPushCore;
 	using enum Info::Elem;
 
 	static constexpr unsigned NumChans = 8;
 
 public:
-	OctopushCore() = default;
+	OctoPushCore() = default;
 
 	void update() override {
 		if (bypassed) {
@@ -33,7 +33,7 @@ public:
 		float sumVoltage = getState<MixerOffsetKnob>() * 10.f - 5.f;
 		const float offsetVoltage = sumVoltage;
 
-		[&]<auto... Ch>(auto) {
+		[&]<auto... Ch>(std::index_sequence<Ch...>) {
 			((sumVoltage += processChannel<Ch>()), ...);
 		}(std::make_index_sequence<NumChans>{});
 

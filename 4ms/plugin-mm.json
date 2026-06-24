@@ -192,6 +192,26 @@
 	{
 		"slug": "Verb",
 		"name": "Verb"
+	},
+	{
+		"slug": "OctoPush",
+		"name": "Octo Push"
+	},
+	{
+		"slug": "SoloPush",
+		"name": "Solo Push"
+	},
+	{
+		"slug": "Keyboard",
+		"name": "Keyboard"
+	},
+	{
+		"slug": "FadeIn",
+		"name": "Fade In"
+	},
+	{
+		"slug": "FadeOut",
+		"name": "Fade Out"
 	}
 	]
 }

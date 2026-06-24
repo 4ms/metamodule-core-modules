@@ -7,12 +7,12 @@
 
 namespace MetaModule
 {
-struct OctopushInfo : ModuleInfoBase {
-	static constexpr std::string_view slug{"Octopush"};
-	static constexpr std::string_view description{"Octopush"};
+struct OctoPushInfo : ModuleInfoBase {
+	static constexpr std::string_view slug{"OctoPush"};
+	static constexpr std::string_view description{"OctoPush"};
 	static constexpr uint32_t width_hp = 30;
-	static constexpr std::string_view svg_filename{"res/modules/Octopush_artwork.svg"};
-	static constexpr std::string_view png_filename{"4ms/fp/Octopush.png"};
+	static constexpr std::string_view svg_filename{"res/modules/OctoPush_artwork.svg"};
+	static constexpr std::string_view png_filename{"4ms/fp/OctoPush.png"};
 
 	using enum Coords;
 
