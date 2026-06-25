@@ -135,14 +135,14 @@ public:
 			return 0;
 		for (int v = 0; v < currentNumVoices; v++) {
 			if (voices[v].note == key) {
-				char buf[8];
-				int n = std::snprintf(buf, sizeof(buf), "%d", v + 1);
+				char buf[4];
+				auto n = std::snprintf(buf, sizeof(buf), "%d", v + 1);
 				if (n < 0)
-					return 0;
+					return 0; // buffer overflow
 				return copy_text(std::string_view(buf, (size_t)n), text);
 			}
 		}
-		return 0;
+		return copy_text("", text);
 	}
 
 	void set_samplerate(float sr) override {
