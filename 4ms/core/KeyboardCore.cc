@@ -142,7 +142,7 @@ public:
 				return copy_text(std::string_view(buf, (size_t)n), text);
 			}
 		}
-		return copy_text("", text);
+		return copy_text(" ", text);
 	}
 
 	void set_samplerate(float sr) override {
