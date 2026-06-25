@@ -33,7 +33,7 @@ struct VoiceNumberLabel : DynamicTextDisplay {
 	constexpr VoiceNumberLabel(BaseElement b)
 		: DynamicTextDisplay{{{b}}} {
 		text = "";
-		font = "Default_12";
+		font = "Default_10";
 		color = Colors565::White;
 		wrap_mode = WrapMode::Clip;
 	}

@@ -256,7 +256,6 @@ private:
 		}
 	}
 
-	// ── Voice state ────────────────────────────────────────────────────
 	struct Voice {
 		int note = -1; // 0-11, -1 = free
 		bool gateHigh = false;
@@ -369,7 +368,6 @@ private:
 		}
 	}
 
-	// ── State ──────────────────────────────────────────────────────────
 	std::array<Voice, MaxVoices> voices{};
 	int rrIndex = 0;
 	uint64_t globalTimestamp = 0;

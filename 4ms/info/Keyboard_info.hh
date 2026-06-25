@@ -78,19 +78,18 @@ struct KeyboardInfo : ModuleInfoBase {
 		RedLight{{89.357, 83.752, Center, "CV 8", ""}},
 
 		// 12 voice-number labels, x-aligned with each key, in the gap below the
-		// lower button row (~30.4 mm) and above the switches (~51 mm).
-		VoiceNumberLabel{{19.034, 39.0, Center, "Voice 1", "", 5.0, 4.0}},
-		VoiceNumberLabel{{24.358, 39.0, Center, "Voice 2", "", 5.0, 4.0}},
-		VoiceNumberLabel{{29.682, 39.0, Center, "Voice 3", "", 5.0, 4.0}},
-		VoiceNumberLabel{{35.006, 39.0, Center, "Voice 4", "", 5.0, 4.0}},
-		VoiceNumberLabel{{40.330, 39.0, Center, "Voice 5", "", 5.0, 4.0}},
-		VoiceNumberLabel{{50.978, 39.0, Center, "Voice 6", "", 5.0, 4.0}},
-		VoiceNumberLabel{{56.302, 39.0, Center, "Voice 7", "", 5.0, 4.0}},
-		VoiceNumberLabel{{61.626, 39.0, Center, "Voice 8", "", 5.0, 4.0}},
-		VoiceNumberLabel{{66.950, 39.0, Center, "Voice 9", "", 5.0, 4.0}},
-		VoiceNumberLabel{{72.274, 39.0, Center, "Voice 10", "", 5.0, 4.0}},
-		VoiceNumberLabel{{77.598, 39.0, Center, "Voice 11", "", 5.0, 4.0}},
-		VoiceNumberLabel{{82.922, 39.0, Center, "Voice 12", "", 5.0, 4.0}},
+		VoiceNumberLabel{{19.034, 38.0, Center, "Voice 1", "", 5.0, 4.0}},
+		VoiceNumberLabel{{24.358, 38.0, Center, "Voice 2", "", 5.0, 4.0}},
+		VoiceNumberLabel{{29.682, 38.0, Center, "Voice 3", "", 5.0, 4.0}},
+		VoiceNumberLabel{{35.006, 38.0, Center, "Voice 4", "", 5.0, 4.0}},
+		VoiceNumberLabel{{40.330, 38.0, Center, "Voice 5", "", 5.0, 4.0}},
+		VoiceNumberLabel{{50.978, 38.0, Center, "Voice 6", "", 5.0, 4.0}},
+		VoiceNumberLabel{{56.302, 38.0, Center, "Voice 7", "", 5.0, 4.0}},
+		VoiceNumberLabel{{61.626, 38.0, Center, "Voice 8", "", 5.0, 4.0}},
+		VoiceNumberLabel{{66.950, 38.0, Center, "Voice 9", "", 5.0, 4.0}},
+		VoiceNumberLabel{{72.274, 38.0, Center, "Voice 10", "", 5.0, 4.0}},
+		VoiceNumberLabel{{77.598, 38.0, Center, "Voice 11", "", 5.0, 4.0}},
+		VoiceNumberLabel{{82.922, 38.0, Center, "Voice 12", "", 5.0, 4.0}},
 	}};
 
 	enum class Elem {
