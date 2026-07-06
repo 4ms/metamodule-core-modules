@@ -335,7 +335,7 @@ void ModuleFactory::registerBrandAlias(std::string_view brand_name, std::string_
 	} else {
 		// Create a new alias entry
 		pr_dbg("Found new BrandAlias{\"%s\", \"%s\"},\n", brand_name.data(), alias.data());
-		brand_aliases().emplace_back(std::string(brand_name), std::string(alias));
+		brand_aliases().push_back(BrandAlias{std::string(brand_name), std::string(alias)});
 	}
 }
 

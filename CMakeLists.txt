@@ -7,6 +7,8 @@ add_library(CoreModules STATIC
   register_module.cc
 )
 
+target_compile_features(CoreModules PUBLIC cxx_std_23)
+
 target_link_libraries(CoreModules PRIVATE metamodule::core-interface cpputil)
 
 target_include_directories(CoreModules
