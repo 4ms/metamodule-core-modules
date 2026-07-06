@@ -89,7 +89,7 @@ public:
 				if (stream.frames_available() > 0) {
 					resampler.process([this] { return stream.pop_sample(); }, chan_out);
 
-					waveform.draw_sample(chan_out[0]);
+					waveform.draw_sample(std::span<const float>(chan_out.data(), stream.num_channels()));
 					waveform.set_cursor_position((float)current_frame / stream.total_frames());
 
 					err_message = "";
@@ -154,6 +154,7 @@ public:
 					auto sr = stream.wav_sample_rate();
 					resampler.set_sample_rate_in_out(sr ? sr : sample_rate, sample_rate);
 					resampler.set_num_channels(stream.num_channels());
+					waveform.set_num_channels(stream.num_channels());
 					resampler.flush();
 					err_message.clear();
 					display_sample_name();
