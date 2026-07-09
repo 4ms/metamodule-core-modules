@@ -13,6 +13,19 @@
 #include "console/pr_dbg.hh"
 #endif
 
+#if defined(TESTPROJECT) || defined(VCVRACK)
+namespace MetaModule
+{
+// Non-firmware builds don't track allocation failures: no-op stand-in
+struct AllocContext {
+	AllocContext(std::string_view, std::string_view) {
+	}
+};
+} // namespace MetaModule
+#else
+#include "system/alloc_diag.hh"
+#endif
+
 namespace MetaModule
 {
 
@@ -161,8 +174,12 @@ static ModuleRegistry *find_module(std::string_view combined_slug) {
 
 std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_slug) {
 	if (auto module = find_module(combined_slug)) {
-		if (auto f_create = module->creation_func)
+		if (auto f_create = module->creation_func) {
+			// Name this module in the allocation-failure report if its
+			// constructor runs out of memory
+			AllocContext ctx{"creating module", combined_slug};
 			return f_create();
+		}
 	}
 
 	return nullptr;

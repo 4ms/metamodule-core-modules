@@ -12,6 +12,7 @@ target_link_libraries(CoreModules PRIVATE metamodule::core-interface cpputil)
 target_include_directories(CoreModules
   PUBLIC
   ../ #so libs that link to this can do #include "CoreModules/moduleFactory.hh"
+  ${FWDIR} #for system/alloc_diag.hh
   ${FWDIR}/src
   ${FWDIR}/src/console
 )
