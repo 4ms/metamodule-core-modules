@@ -186,7 +186,11 @@ std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_s
 			// still-live allocations is safe here because the module pointer
 			// was never returned -- nothing it allocated can have escaped.
 			AllocRescue rescue;
-			if (setjmp(rescue.jump_buf()) != 0) {
+			if (setjmp(rescue.jump_buf()) == 0) {
+				rescue.arm();
+				AllocContext ctx{"creating module", combined_slug};
+				return f_create();
+			} else {
 				auto freed = rescue.free_survivors();
 				pr_err("%s creating module %.*s: rolled back (freed %zu bytes)\n",
 					   rescue.was_oom() ? "Out of memory" : "Fatal error",
@@ -195,12 +199,6 @@ std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_s
 					   freed);
 				return nullptr;
 			}
-			rescue.arm();
-
-			// Name this module in the allocation-failure report if its
-			// constructor runs out of memory
-			AllocContext ctx{"creating module", combined_slug};
-			return f_create();
 #endif
 		}
 	}
