@@ -24,6 +24,8 @@ struct AllocContext {
 } // namespace MetaModule
 #else
 #include "system/alloc_diag.hh"
+#include "system/alloc_rescue.hh"
+#include <csetjmp>
 #endif
 
 namespace MetaModule
@@ -175,10 +177,31 @@ static ModuleRegistry *find_module(std::string_view combined_slug) {
 std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_slug) {
 	if (auto module = find_module(combined_slug)) {
 		if (auto f_create = module->creation_func) {
+#if defined(TESTPROJECT) || defined(VCVRACK)
+			return f_create();
+#else
+			// Recovery point if the module's constructor runs out of memory:
+			// roll back and return nullptr, which every caller already treats
+			// as "module unavailable". Freeing all of the constructor's
+			// still-live allocations is safe here because the module pointer
+			// was never returned -- nothing it allocated can have escaped.
+			AllocRescue rescue;
+			if (setjmp(rescue.jump_buf()) != 0) {
+				auto freed = rescue.free_survivors();
+				pr_err("%s creating module %.*s: rolled back (freed %zu bytes)\n",
+					   rescue.was_oom() ? "Out of memory" : "Fatal error",
+					   (int)combined_slug.size(),
+					   combined_slug.data(),
+					   freed);
+				return nullptr;
+			}
+			rescue.arm();
+
 			// Name this module in the allocation-failure report if its
 			// constructor runs out of memory
 			AllocContext ctx{"creating module", combined_slug};
 			return f_create();
+#endif
 		}
 	}
 
