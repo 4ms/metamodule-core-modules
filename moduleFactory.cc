@@ -182,21 +182,23 @@ std::unique_ptr<CoreProcessor> ModuleFactory::create(std::string_view combined_s
 #else
 			// Recovery point if the module's constructor runs out of memory:
 			// roll back and return nullptr, which every caller already treats
-			// as "module unavailable". Freeing all of the constructor's
-			// still-live allocations is safe here because the module pointer
-			// was never returned -- nothing it allocated can have escaped.
+			// as "module unavailable". The constructor's live allocations are
+			// deliberately leaked, not freed: constructors can share state
+			// across instances (caches, static buffers), and freeing blocks
+			// that escaped there corrupts the surviving instances. The leak
+			// lands in the plugin arena, reclaimed wholesale on patch unload
+			// (stage 2) or reboot.
 			AllocRescue rescue;
 			if (setjmp(rescue.jump_buf()) == 0) {
 				rescue.arm();
 				AllocContext ctx{"creating module", combined_slug};
 				return f_create();
 			} else {
-				auto freed = rescue.free_survivors();
-				pr_err("%s creating module %.*s: rolled back (freed %zu bytes)\n",
+				pr_err("%s creating module %.*s: rolled back, leaked %zu bytes\n",
 					   rescue.was_oom() ? "Out of memory" : "Fatal error",
 					   (int)combined_slug.size(),
 					   combined_slug.data(),
-					   freed);
+					   rescue.leaked_bytes());
 				return nullptr;
 			}
 #endif
