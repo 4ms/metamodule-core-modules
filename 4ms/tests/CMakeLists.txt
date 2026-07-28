@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.22)
 
 project(CoreModules-4ms-tests)
 
+# The DSP under test is ~10x slower unoptimized. -ffp-contract=off keeps
+# IEEE-exact per-operation float semantics so the EnOsc golden-master outputs
+# stay bit-identical no matter the optimization level.
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+endif()
+add_compile_options(-ffp-contract=off)
+
 FILE(GLOB TEST_SOURCES *.cc *.cpp)
 
 add_executable(runtests
