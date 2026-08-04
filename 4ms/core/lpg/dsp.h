@@ -112,7 +112,7 @@ inline float SoftClip(float x) {
   }
 }
 
-#ifdef TEST
+#if defined(TEST) || defined(TESTPROJECT)
   inline int32_t Clip16(int32_t x) {
     if (x < -32768) {
       return -32768;
