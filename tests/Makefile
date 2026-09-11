@@ -7,7 +7,7 @@ $(BUILDDIR):
 
 all: $(BUILDDIR)
 	@cmake --build $(BUILDDIR)
-	@$(BUILDDIR)/runtests --out=$(TMPFILE) && echo "[√] Unit tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
+	@$(BUILDDIR)/runtests --out=$(TMPFILE) && echo "[√] Unit tests passed: CoreModules" || cat $(TMPFILE)
 
 clean:
 	rm -rf $(BUILDDIR)

@@ -14,13 +14,13 @@ $(BUILDDIR):
 
 all: $(BUILDDIR)
 	@cmake --build $(BUILDDIR)
-	@$(BUILDDIR)/runtests --out=$(TMPFILE) && echo "[√] Unit tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
+	@$(BUILDDIR)/runtests --out=$(TMPFILE) && echo "[√] Unit tests passed: CoreModules/4ms" || cat $(TMPFILE)
 
 # Explicitly run the slow, skip()-marked EnOsc golden-master regression tests.
 # --no-skip is what un-gates them; -ts then narrows the run to just that suite.
 enosc-golden-check: $(BUILDDIR)
 	@cmake --build $(BUILDDIR)
-	@$(BUILDDIR)/runtests --out=$(TMPFILE) --no-skip -ts=$(GOLDEN_SUITE) && echo "[√] EnOsc golden tests passed: $(notdir $(PWD))" || cat $(TMPFILE)
+	@$(BUILDDIR)/runtests --out=$(TMPFILE) --no-skip -ts=$(GOLDEN_SUITE) && echo "[√] EnOsc golden tests passed: CoreModules/4ms" || cat $(TMPFILE)
 
 clean:
 	rm -rf $(BUILDDIR)
