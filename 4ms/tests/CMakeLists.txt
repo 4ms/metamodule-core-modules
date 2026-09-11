@@ -12,6 +12,9 @@ add_compile_options(-ffp-contract=off)
 
 FILE(GLOB TEST_SOURCES *.cc *.cpp)
 
+# Standalone copy of DjembeCore for inspecting autovectorization
+list(FILTER TEST_SOURCES EXCLUDE REGEX "Djembe-autovec-selfcontained\\.cc$")
+
 add_executable(runtests
 	${TEST_SOURCES}
 	../../moduleFactory.cc
