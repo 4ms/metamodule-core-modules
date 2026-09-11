@@ -62,14 +62,10 @@ struct KeyboardInfo : ModuleInfoBase {
 		GateJackOutput4ms{{89.357, 102.8, Center, "Gate 8", ""}},
 
 		// Sum / poly outputs
-		// GateJackOutput4ms{{23.259, 117.429, Center, "Gate Sum", ""}},
-		// GateJackOutput4ms{{34.276, 117.506, Center, "Gate Sum as Trigger", ""}},
-		// GateJackOutput4ms{{67.324, 117.506, Center, "Gate Poly", ""}},
-		// AnalogJackOutput4ms{{78.341, 117.506, Center, "CV Poly", ""}},
-		AnalogJackOutput4ms{{to_mm<25>(23.259), to_mm<25>(115.448), Center, "Gate Poly 1-4", ""}},
-		AnalogJackOutput4ms{{to_mm<25>(34.276), to_mm<25>(115.448), Center, "CV Poly 1-4", ""}},
-		AnalogJackOutput4ms{{to_mm<25>(67.324), to_mm<25>(115.448), Center, "Gate Poly 5-8", ""}},
-		AnalogJackOutput4ms{{to_mm<25>(78.341), to_mm<25>(115.448), Center, "CV Poly 5-8", ""}},
+		GateJackOutput4ms{{23.259, 115.448, Center, "Gate Poly 1-4", ""}},
+		AnalogJackOutput4ms{{34.276, 115.448, Center, "CV Poly 1-4", ""}},
+		GateJackOutput4ms{{67.324, 115.448, Center, "Gate Poly 5-8", ""}},
+		AnalogJackOutput4ms{{78.341, 115.448, Center, "CV Poly 5-8", ""}},
 
 		// 8 CV activity LEDs (red), y ~ 83.7
 		RedLight{{12.243, 83.736, Center, "CV 1", ""}},

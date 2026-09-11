@@ -14,14 +14,15 @@ namespace MetaModule
 {
 
 // Polyphonic note keyboard: 12 momentary keys feed a voice allocator that
-// drives 8 mono CV/Gate pairs plus polyphonic CV/Gate cables. Keys behave as
-// Gate / Trig / Latch; voices are assigned by First Available / Round Robin /
-// Random and stolen by the selected Note Priority. Each key's RGB LED shows
-// blue when its note holds a voice, red when it was dropped (no free voice).
+// drives 8 mono CV/Gate jacks plus 2 polyphonic CV/Gate jacks.
+// Keys can be Gate / Trig / Latch.
+// Voices are assigned by First Available / Round Robin / Random and stolen by the selected Note Priority
+// Each key's light shows blue when its note holds a voice, red when it was dropped
 //
-// Note: MetaModule poly cables carry up to MaxPolyChannels (4) channels, so the
-// CV Poly / Gate Poly outputs expose only the first 4 voices; the 8 mono CV /
-// Gate jacks always cover all voices.
+// MetaModule poly cables carry up to MaxPolyChannels (4) channels, so the
+// CV Poly / Gate Poly outputs expose the first 4 voices,
+// CV Poly 2 / Gate Poly 2 outputs expose the second 4 voices,
+// and the 8 mono CV / Gate jacks always cover all voices.
 class KeyboardCore : public SmartCoreProcessorPoly<KeyboardInfo> {
 	using Info = KeyboardInfo;
 	using ThisCore = KeyboardCore;
@@ -33,6 +34,8 @@ class KeyboardCore : public SmartCoreProcessorPoly<KeyboardInfo> {
 	enum KeyBehavior { Gate = 0, Trig = 1, Latch = 2 };
 	enum NotePriority { OldestNote = 0, NewestNote = 1, LowestNote = 2, HighestNote = 3, IgnoreNewNotes = 4 };
 	enum VoiceAlloc { FirstAvailable = 0, RoundRobin = 1, Random = 2 };
+
+	static_assert((MaxPolyChannels * 2) >= MaxVoices, "Not enough poly voices for Keyboard's two sets of poly jacks");
 
 public:
 	KeyboardCore() = default;
@@ -116,7 +119,6 @@ public:
 			setChannels<CvPoly2>(polyChansJack2);
 			setChannels<GatePoly2>(polyChansJack2);
 			for (int polychan = 0; polychan < polyChansJack2; polychan++) {
-				// v is jack's poly channel 0..3, v2 is voice number 4..7
 				auto voice_idx = polychan + MaxPolyChannels;
 				setOutput<CvPoly2>(voices[voice_idx].cv, polychan);
 				setOutput<GatePoly2>(voices[voice_idx].gateHigh ? 5.f : 0.f, polychan);
