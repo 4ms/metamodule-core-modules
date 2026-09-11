@@ -28,6 +28,8 @@ struct ModuleRegistry {
 	// Metadata from plugin.json
 	std::string description;
 	std::vector<std::string> tags;
+	// Native module context menu (optional)
+	ContextMenuHandlers context_menu;
 };
 
 struct BrandRegistry {
@@ -180,6 +182,31 @@ std::string_view ModuleFactory::getModuleFaceplate(std::string_view combined_slu
 		return module->faceplate;
 	else
 		return "";
+}
+
+bool ModuleFactory::registerContextMenu(std::string_view brand_name,
+										std::string_view module_slug,
+										ContextMenuHandlers handlers) {
+	auto brand_reg = brand_registry(brand_name);
+	if (brand_reg == registry().end() || !brand_reg->modules.contains(std::string(module_slug))) {
+		pr_err("Cannot register context menu: module %.*s:%.*s is not registered\n",
+			   (int)brand_name.size(),
+			   brand_name.data(),
+			   (int)module_slug.size(),
+			   module_slug.data());
+		return false;
+	}
+
+	brand_reg->modules[std::string(module_slug)].context_menu = std::move(handlers);
+	return true;
+}
+
+ContextMenuHandlers const *ModuleFactory::getContextMenu(std::string_view combined_slug) {
+	if (auto module = find_module(combined_slug)) {
+		if (module->context_menu.get_items && module->context_menu.on_change)
+			return &module->context_menu;
+	}
+	return nullptr;
 }
 
 std::string_view ModuleFactory::getModuleDisplayName(std::string_view combined_slug) {
