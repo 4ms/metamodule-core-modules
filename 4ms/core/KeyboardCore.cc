@@ -78,10 +78,10 @@ public:
 		}
 		prevNumVoices = numVoices;
 
-		// 1) Read each key into noteActive[] according to the behavior mode.
+		// Read each key into noteActive[] according to the behavior mode.
 		unroll<NumKeys>([&]<unsigned i>() { readKey<i>(mode); });
 
-		// 2) Edge-detect note on/off and run the voice allocator.
+		// Edge-detect note on/off and run the voice allocator.
 		for (int i = 0; i < NumKeys; i++) {
 			const bool noteOn = noteActive[i] && !notePrevActive[i];
 			const bool noteOff = !noteActive[i] && notePrevActive[i];
@@ -93,39 +93,34 @@ public:
 				handleNoteOff(i, numVoices);
 		}
 
-		// 3) Update each key's RGB LED.
+		// Update each key's RGB LED.
 		unroll<NumKeys>([&]<unsigned i>() { writeKeyLED<i>(mode, numVoices); });
 
-		// 4) Mono CV/Gate outputs + activity LEDs, one per voice slot.
+		// Mono CV/Gate outputs + activity LEDs, one per voice slot.
 		unroll<MaxVoices>([&]<unsigned v>() { writeVoiceOut<v>(numVoices); });
 
-		// 5) Polyphonic CV/Gate cables (capped at MaxPolyChannels).
-		const int polyChans = std::min(numVoices, (int)MaxPolyChannels);
-		setChannels<CvPoly>(polyChans);
-		setChannels<GatePoly>(polyChans);
-		for (int v = 0; v < polyChans; v++) {
-			setOutput<CvPoly>(voices[v].cv, v);
-			setOutput<GatePoly>(voices[v].gateHigh ? 5.f : 0.f, v);
+		// Polyphonic CV/Gate cables: voices 1-4 on CvPoly and GatePoly jacks
+		{
+			const int polyChans = std::min(numVoices, (int)MaxPolyChannels);
+			setChannels<CvPoly>(polyChans);
+			setChannels<GatePoly>(polyChans);
+			for (int v = 0; v < polyChans; v++) {
+				setOutput<CvPoly>(voices[v].cv, v);
+				setOutput<GatePoly>(voices[v].gateHigh ? 5.f : 0.f, v);
+			}
 		}
 
-		// 6) Gate Sum (any key held) and its trigger.
-		bool anyButtonPressed = false;
-		for (int i = 0; i < NumKeys; i++)
-			if (prevButtonState[i]) {
-				anyButtonPressed = true;
-				break;
+		if constexpr ((MaxVoices > MaxPolyChannels) && ((MaxPolyChannels * 2) >= MaxVoices)) {
+			// Put voices 5-8 on poly jacks CvPoly2 and GatePoly2
+			const int polyChansJack2 = std::clamp<int>(numVoices - (int)MaxPolyChannels, 0, MaxPolyChannels);
+			setChannels<CvPoly2>(polyChansJack2);
+			setChannels<GatePoly2>(polyChansJack2);
+			for (int polychan = 0; polychan < polyChansJack2; polychan++) {
+				// v is jack's poly channel 0..3, v2 is voice number 4..7
+				auto voice_idx = polychan + MaxPolyChannels;
+				setOutput<CvPoly2>(voices[voice_idx].cv, polychan);
+				setOutput<GatePoly2>(voices[voice_idx].gateHigh ? 5.f : 0.f, polychan);
 			}
-		setOutput<GateSum>(anyButtonPressed ? 5.f : 0.f);
-
-		if (anyButtonPressed && !prevGateSumHigh)
-			trigSumRemaining = 0.005f;
-		prevGateSumHigh = anyButtonPressed;
-
-		if (trigSumRemaining > 0.f) {
-			trigSumRemaining -= timeStepInS;
-			setOutput<TrigSum>(5.f);
-		} else {
-			setOutput<TrigSum>(0.f);
 		}
 	}
 
@@ -379,9 +374,6 @@ private:
 	std::array<bool, NumKeys> trigWasVoiced{};
 	std::array<bool, NumKeys> noteActive{};
 	std::array<bool, NumKeys> notePrevActive{};
-
-	bool prevGateSumHigh = false;
-	float trigSumRemaining = 0.f;
 
 	int prevBehaviorMode = -1;
 	int prevNumVoices = -1;

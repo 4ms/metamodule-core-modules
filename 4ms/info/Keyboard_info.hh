@@ -62,10 +62,14 @@ struct KeyboardInfo : ModuleInfoBase {
 		GateJackOutput4ms{{89.357, 102.8, Center, "Gate 8", ""}},
 
 		// Sum / poly outputs
-		GateJackOutput4ms{{23.259, 117.429, Center, "Gate Sum", ""}},
-		GateJackOutput4ms{{34.276, 117.506, Center, "Gate Sum as Trigger", ""}},
-		GateJackOutput4ms{{67.324, 117.506, Center, "Gate Poly", ""}},
-		AnalogJackOutput4ms{{78.341, 117.506, Center, "CV Poly", ""}},
+		// GateJackOutput4ms{{23.259, 117.429, Center, "Gate Sum", ""}},
+		// GateJackOutput4ms{{34.276, 117.506, Center, "Gate Sum as Trigger", ""}},
+		// GateJackOutput4ms{{67.324, 117.506, Center, "Gate Poly", ""}},
+		// AnalogJackOutput4ms{{78.341, 117.506, Center, "CV Poly", ""}},
+		AnalogJackOutput4ms{{to_mm<25>(23.259), to_mm<25>(115.448), Center, "Gate Poly 1-4", ""}},
+		AnalogJackOutput4ms{{to_mm<25>(34.276), to_mm<25>(115.448), Center, "CV Poly 1-4", ""}},
+		AnalogJackOutput4ms{{to_mm<25>(67.324), to_mm<25>(115.448), Center, "Gate Poly 5-8", ""}},
+		AnalogJackOutput4ms{{to_mm<25>(78.341), to_mm<25>(115.448), Center, "CV Poly 5-8", ""}},
 
 		// 8 CV activity LEDs (red), y ~ 83.7
 		RedLight{{12.243, 83.736, Center, "CV 1", ""}},
@@ -97,7 +101,7 @@ struct KeyboardInfo : ModuleInfoBase {
 		BehaviorSwitch, OctaveSwitch, NumVoicesSwitch, NotePrioritySwitch, VoiceAllocSwitch,
 		CvOut1, CvOut2, CvOut3, CvOut4, CvOut5, CvOut6, CvOut7, CvOut8,
 		GateOut1, GateOut2, GateOut3, GateOut4, GateOut5, GateOut6, GateOut7, GateOut8,
-		GateSum, TrigSum, GatePoly, CvPoly,
+		GatePoly, CvPoly, GatePoly2, CvPoly2,
 		CvLight1, CvLight2, CvLight3, CvLight4, CvLight5, CvLight6, CvLight7, CvLight8,
 		VoiceLabel1, VoiceLabel2, VoiceLabel3, VoiceLabel4, VoiceLabel5, VoiceLabel6,
 		VoiceLabel7, VoiceLabel8, VoiceLabel9, VoiceLabel10, VoiceLabel11, VoiceLabel12,
