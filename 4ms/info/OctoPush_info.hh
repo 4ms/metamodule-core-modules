@@ -64,6 +64,8 @@ struct OctoPushInfo : ModuleInfoBase {
 		WhiteMomentary7mm{{110.14, 115.357, Center, "Ch. 7 Button", ""}},
 		WhiteMomentary7mm{{127.163, 115.357, Center, "Ch. 8 Button", ""}},
 
+		Knob9mm{{143.332, 25.923, Center, "Mixer Offset", ""}, 0.5f, -5.0f, 5.0f, "V"},
+
 		AnalogJackOutput4ms{{8.0, 16.565, Center, "Ch. 1 Voltage", ""}},
 		AnalogJackOutput4ms{{25.026, 16.565, Center, "Ch. 2 Voltage", ""}},
 		AnalogJackOutput4ms{{42.049, 16.565, Center, "Ch. 3 Voltage", ""}},
@@ -91,7 +93,6 @@ struct OctoPushInfo : ModuleInfoBase {
 		RedGreenLight{{110.14, 8.485, Center, "Ch. 7", ""}},
 		RedGreenLight{{127.163, 8.485, Center, "Ch. 8", ""}},
 
-		Knob9mm{{143.332, 25.923, Center, "Mixer Offset", ""}, 0.5f, -5.0f, 5.0f, "V"},
 		RedGreenLight{{143.332, 17.546, Center, "Offset", ""}},
 		AnalogJackOutput4ms{{143.332, 46.853, Center, "Mixer Sum", ""}},
 		RedGreenLight{{143.332, 40.12, Center, "Sum", ""}},
@@ -109,10 +110,10 @@ struct OctoPushInfo : ModuleInfoBase {
 		Ch1Amplitude, Ch2Amplitude, Ch3Amplitude, Ch4Amplitude, Ch5Amplitude, Ch6Amplitude, Ch7Amplitude, Ch8Amplitude,
 		Ch1Behavior, Ch2Behavior, Ch3Behavior, Ch4Behavior, Ch5Behavior, Ch6Behavior, Ch7Behavior, Ch8Behavior,
 		Ch1Push, Ch2Push, Ch3Push, Ch4Push, Ch5Push, Ch6Push, Ch7Push, Ch8Push,
+		MixerOffsetKnob,
 		Ch1VoltageOut, Ch2VoltageOut, Ch3VoltageOut, Ch4VoltageOut, Ch5VoltageOut, Ch6VoltageOut, Ch7VoltageOut, Ch8VoltageOut,
 		Ch1LogicOut, Ch2LogicOut, Ch3LogicOut, Ch4LogicOut, Ch5LogicOut, Ch6LogicOut, Ch7LogicOut, Ch8LogicOut,
 		Ch1Rgb, Ch2Rgb, Ch3Rgb, Ch4Rgb, Ch5Rgb, Ch6Rgb, Ch7Rgb, Ch8Rgb,
-		MixerOffsetKnob,
 		OffsetLight,
 		SumOut,
 		SumLight,
