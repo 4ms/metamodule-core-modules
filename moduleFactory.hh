@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreModules/CoreProcessor.hh"
+#include "CoreModules/context_menu.hh"
 #include "CoreModules/elements/element_info_view.hh"
 #include <functional>
 #include <memory>
@@ -33,6 +34,12 @@ public:
 
 	static ModuleInfoView &getModuleInfo(std::string_view combined_slug);
 	static std::string_view getModuleFaceplate(std::string_view combined_slug);
+
+	// Context menu for native modules. Module must already be registered.
+	static bool
+	registerContextMenu(std::string_view brand_name, std::string_view module_slug, ContextMenuHandlers handlers);
+	// Returns nullptr if the module has no context menu
+	static ContextMenuHandlers const *getContextMenu(std::string_view combined_slug);
 
 	// Returns true if slug is valid and registered.
 	static bool isValidSlug(std::string_view combined_slug);

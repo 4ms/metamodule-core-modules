@@ -14,4 +14,8 @@ bool register_module(std::string_view brand_name,
 	return ModuleFactory::registerModuleType(brand_name, typeslug, funcCreate, info, faceplate_filename);
 }
 
+bool register_context_menu(std::string_view brand_slug, std::string_view module_slug, ContextMenuHandlers handlers) {
+	return ModuleFactory::registerContextMenu(brand_slug, module_slug, std::move(handlers));
+}
+
 } // namespace MetaModule
