@@ -1,5 +1,6 @@
 #include "CoreModules/moduleFactory.hh"
 #include "util/string_compare.hh"
+#include <algorithm>
 #include <list>
 #include <map>
 
@@ -30,6 +31,8 @@ struct ModuleRegistry {
 	std::vector<std::string> tags;
 	// Native module context menu (optional)
 	ContextMenuHandlers context_menu;
+	// Element groups for the module view's element list (optional)
+	std::vector<ElementGroup> element_groups;
 };
 
 struct BrandRegistry {
@@ -207,6 +210,32 @@ ContextMenuHandlers const *ModuleFactory::getContextMenu(std::string_view combin
 			return &module->context_menu;
 	}
 	return nullptr;
+}
+
+bool ModuleFactory::setElementGroups(std::string_view brand_name,
+									 std::string_view module_slug,
+									 std::vector<ElementGroup> groups) {
+	auto brand_reg = brand_registry(brand_name);
+	if (brand_reg == registry().end() || !brand_reg->modules.contains(std::string(module_slug))) {
+		pr_err("Cannot set element groups: module %.*s:%.*s is not registered\n",
+			   (int)brand_name.size(),
+			   brand_name.data(),
+			   (int)module_slug.size(),
+			   module_slug.data());
+		return false;
+	}
+
+	std::erase_if(groups, [](ElementGroup const &group) { return group.name.empty() || group.members.empty(); });
+
+	brand_reg->modules[std::string(module_slug)].element_groups = std::move(groups);
+	return true;
+}
+
+std::span<const ElementGroup> ModuleFactory::getElementGroups(std::string_view combined_slug) {
+	if (auto module = find_module(combined_slug))
+		return module->element_groups;
+
+	return {};
 }
 
 std::string_view ModuleFactory::getModuleDisplayName(std::string_view combined_slug) {
