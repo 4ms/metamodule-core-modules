@@ -50,6 +50,13 @@ public:
 	// Empty if the module has no element groups
 	static std::span<const ElementGroup> getElementGroups(std::string_view combined_slug);
 
+	// Order of the top level of the module view's element list, from plugin-mm.json: group
+	// names and element references. Items not listed follow in their default order.
+	static bool
+	setElementOrder(std::string_view brand_name, std::string_view module_slug, std::vector<ElementRef> order);
+	// Empty if the module has no custom order
+	static std::span<const ElementRef> getElementOrder(std::string_view combined_slug);
+
 	// Returns true if slug is valid and registered.
 	static bool isValidSlug(std::string_view combined_slug);
 	static bool isValidBrandModule(std::string_view brand, std::string_view module_name);
