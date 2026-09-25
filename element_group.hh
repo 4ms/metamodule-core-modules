@@ -71,4 +71,10 @@ struct ElementGroup {
 	std::vector<ElementRef> members;
 };
 
+// A name to show for an element in the module view's element list, instead of its own name
+struct ElementName {
+	ElementRef element;
+	std::string name;
+};
+
 } // namespace MetaModule

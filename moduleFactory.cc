@@ -31,9 +31,10 @@ struct ModuleRegistry {
 	std::vector<std::string> tags;
 	// Native module context menu (optional)
 	ContextMenuHandlers context_menu;
-	// Element groups and top-level order for the module view's element list (optional)
+	// Element groups, top-level order, and custom names for the module view's element list (optional)
 	std::vector<ElementGroup> element_groups;
 	std::vector<ElementRef> element_order;
+	std::vector<ElementName> element_names;
 };
 
 struct BrandRegistry {
@@ -259,6 +260,32 @@ bool ModuleFactory::setElementOrder(std::string_view brand_name,
 std::span<const ElementRef> ModuleFactory::getElementOrder(std::string_view combined_slug) {
 	if (auto module = find_module(combined_slug))
 		return module->element_order;
+
+	return {};
+}
+
+bool ModuleFactory::setElementNames(std::string_view brand_name,
+									std::string_view module_slug,
+									std::vector<ElementName> names) {
+	auto brand_reg = brand_registry(brand_name);
+	if (brand_reg == registry().end() || !brand_reg->modules.contains(std::string(module_slug))) {
+		pr_err("Cannot set element names: module %.*s:%.*s is not registered\n",
+			   (int)brand_name.size(),
+			   brand_name.data(),
+			   (int)module_slug.size(),
+			   module_slug.data());
+		return false;
+	}
+
+	std::erase_if(names, [](ElementName const &name) { return name.name.empty(); });
+
+	brand_reg->modules[std::string(module_slug)].element_names = std::move(names);
+	return true;
+}
+
+std::span<const ElementName> ModuleFactory::getElementNames(std::string_view combined_slug) {
+	if (auto module = find_module(combined_slug))
+		return module->element_names;
 
 	return {};
 }

@@ -42,20 +42,20 @@ public:
 	// Returns nullptr if the module has no context menu
 	static ContextMenuHandlers const *getContextMenu(std::string_view combined_slug);
 
-	// Element groups for the module view's element list, from the plugin's
-	// plugin-mm.json. Module must already be registered.
-	// Replaces any groups the module already had.
+	// Element groups for the module view's element list
 	static bool
 	setElementGroups(std::string_view brand_name, std::string_view module_slug, std::vector<ElementGroup> groups);
-	// Empty if the module has no element groups
 	static std::span<const ElementGroup> getElementGroups(std::string_view combined_slug);
 
-	// Order of the top level of the module view's element list, from plugin-mm.json: group
-	// names and element references. Items not listed follow in their default order.
+	// Order of the top level of the module view's element list
 	static bool
 	setElementOrder(std::string_view brand_name, std::string_view module_slug, std::vector<ElementRef> order);
-	// Empty if the module has no custom order
 	static std::span<const ElementRef> getElementOrder(std::string_view combined_slug);
+
+	// Custom names shown in the module view's element list
+	static bool
+	setElementNames(std::string_view brand_name, std::string_view module_slug, std::vector<ElementName> names);
+	static std::span<const ElementName> getElementNames(std::string_view combined_slug);
 
 	// Returns true if slug is valid and registered.
 	static bool isValidSlug(std::string_view combined_slug);
