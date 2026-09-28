@@ -64,6 +64,25 @@ struct ElementRef {
 
 		return {Kind::Name, 0, std::string(token)};
 	}
+
+	// For log messages: an ElementRef as it was written in plugin-mm.json
+	std::string describe() const {
+		switch (kind) {
+			case ElementRef::Kind::Name:
+				return name;
+			case ElementRef::Kind::ElementIdx:
+				return "elem:" + std::to_string(idx);
+			case ElementRef::Kind::Param:
+				return "param:" + std::to_string(idx);
+			case ElementRef::Kind::Input:
+				return "in:" + std::to_string(idx);
+			case ElementRef::Kind::Output:
+				return "out:" + std::to_string(idx);
+			case ElementRef::Kind::Light:
+				return "light:" + std::to_string(idx);
+		}
+		return "?";
+	}
 };
 
 struct ElementGroup {
