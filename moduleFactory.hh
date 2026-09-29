@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreModules/CoreProcessor.hh"
 #include "CoreModules/context_menu.hh"
+#include "CoreModules/element_group.hh"
 #include "CoreModules/elements/element_info_view.hh"
 #include <functional>
 #include <memory>
@@ -40,6 +41,21 @@ public:
 	registerContextMenu(std::string_view brand_name, std::string_view module_slug, ContextMenuHandlers handlers);
 	// Returns nullptr if the module has no context menu
 	static ContextMenuHandlers const *getContextMenu(std::string_view combined_slug);
+
+	// Element groups for the module view's element list
+	static bool
+	setElementGroups(std::string_view brand_name, std::string_view module_slug, std::vector<ElementGroup> groups);
+	static std::span<const ElementGroup> getElementGroups(std::string_view combined_slug);
+
+	// Order of the top level of the module view's element list
+	static bool
+	setElementOrder(std::string_view brand_name, std::string_view module_slug, std::vector<ElementRef> order);
+	static std::span<const ElementRef> getElementOrder(std::string_view combined_slug);
+
+	// Custom names shown in the module view's element list
+	static bool
+	setElementNames(std::string_view brand_name, std::string_view module_slug, std::vector<ElementName> names);
+	static std::span<const ElementName> getElementNames(std::string_view combined_slug);
 
 	// Returns true if slug is valid and registered.
 	static bool isValidSlug(std::string_view combined_slug);
