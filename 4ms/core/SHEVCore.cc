@@ -23,18 +23,16 @@ struct LogTableRange {
 	static constexpr float max = 5.0f;
 };
 
-constinit auto LogTableSHEV = Mapping::LookupTable_t<50>::generate<LogTableRange>([](auto voltage) {
-	return gcem::log(29.6f * voltage + 1.0f);
-});
+constinit auto LogTableSHEV =
+	Mapping::LookupTable_t<50>::generate<LogTableRange>([](auto voltage) { return gcem::log(29.6f * voltage + 1.0f); });
 
 struct ExpTableRange {
 	static constexpr float min = 0.0f;
 	static constexpr float max = 5.0f;
 };
 
-constinit auto ExpTableSHEV = Mapping::LookupTable_t<50>::generate<ExpTableRange>([](auto voltage) {
-	return (gcem::exp(voltage) - 1.0f) / 29.682631f;
-});
+constinit auto ExpTableSHEV = Mapping::LookupTable_t<50>::generate<ExpTableRange>(
+	[](auto voltage) { return (gcem::exp(voltage) - 1.0f) / 29.682631f; });
 
 static float SHEVProcessCVOffset(float slider, auto range) {
 	// Slider plus resistor in parallel to tweak curve
@@ -183,6 +181,7 @@ private:
 			const auto levelScale = parent->getState<Mapping::LevelKnob>() * 2.0f - 1.0f;
 			const auto offsetVolts = parent->getState<Mapping::OffsetKnob>() * 20.0f - 10.0f;
 			const bool buttonCycling = parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN;
+			const bool retrig = parent->getState<RetrigAltParam>() == 1;
 			const bool followPatched = parent->isPatched<Mapping::FollowIn>();
 
 			const auto toggleState = parent->getState<Mapping::CycleArAsrSwitch>();
@@ -235,7 +234,7 @@ private:
 
 				const bool trigHigh = triggerDetector[ch](triggerInputValue);
 				if (triggerEdgeDetector[ch](trigHigh)) {
-					osc[ch].doRetrigger();
+					osc[ch].doRetrigger(retrig);
 				}
 
 				osc[ch].holdMax(triggerMode == TriggerMode_t::ASR && trigHigh);
@@ -297,8 +296,8 @@ private:
 			const bool vcaCvPatched = parent->isPatched<Mapping::VcaCvIn>();
 
 			for (unsigned ch = 0; ch < audioChans; ch++) {
-				auto triangleWave = vcaCvPatched ? parent->getInputOrLast<Mapping::VcaCvIn>(ch) :
-												   shapedEnv[std::min(ch, envChans - 1)];
+				auto triangleWave =
+					vcaCvPatched ? parent->getInputOrLast<Mapping::VcaCvIn>(ch) : shapedEnv[std::min(ch, envChans - 1)];
 
 				triangleWave = InvertingAmpWithBias(triangleWave, 100e3f, 100e3f, 1.94f);
 
@@ -399,7 +398,9 @@ public:
 			return;
 		}
 
-		const auto audioInA = [this](unsigned ch) { return getInput<MappingA::AudioIn>(ch).value_or(0.f); };
+		const auto audioInA = [this](unsigned ch) {
+			return getInput<MappingA::AudioIn>(ch).value_or(0.f);
+		};
 		const unsigned audioChansA = std::max(numChannels<MappingA::AudioIn>(), 1u);
 		channelA.update(audioChansA, audioInA);
 

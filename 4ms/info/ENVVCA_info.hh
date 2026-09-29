@@ -15,7 +15,7 @@ struct ENVVCAInfo : ModuleInfoBase {
 
     using enum Coords;
 
-    static constexpr std::array<Element, 19> Elements{{
+    static constexpr std::array<Element, 20> Elements{{
 		Toggle3pos{{to_mm<72>(23.19), to_mm<72>(43.305), Center, "Rise Range", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{to_mm<72>(57.33), to_mm<72>(43.305), Center, "Fall Range", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		OrangeButton{{to_mm<72>(92.17), to_mm<72>(41.65), Center, "Cycle", ""}},
@@ -35,6 +35,7 @@ struct ENVVCAInfo : ModuleInfoBase {
 		RedBlueLight{{to_mm<72>(45.11), to_mm<72>(174.84), Center, "Rise Light", ""}},
 		RedBlueLight{{to_mm<72>(69.34), to_mm<72>(174.84), Center, "Fall Light", ""}},
 		OrangeLight{{to_mm<72>(106.41), to_mm<72>(256.6), Center, "EOR Light", ""}},
+		AltParamChoiceLabeled{{{to_mm<72>(22.3), to_mm<72>(227.06), Center, "ReTrig", ""}, 2, 0}, {"Off", "On"}},
 }};
 
     enum class Elem {
@@ -57,6 +58,7 @@ struct ENVVCAInfo : ModuleInfoBase {
         RiseLight,
         FallLight,
         EorLight,
+        RetrigAltParam,
     };
 
     // Legacy naming
@@ -100,6 +102,9 @@ struct ENVVCAInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+    enum {
+        AltParamRetrig, 
+    };
 
 };
 } // namespace MetaModule

@@ -2727,6 +2727,13 @@
        r="11.34"
        style="fill: #80ff80; stroke-width: 0px;" />
     <circle
+       id="ReTrigAltParam"
+       data-name="ReTrig@Off@On"
+       cx="23.09"
+       cy="232.82"
+       r="4"
+       style="fill: #808080;" />
+    <circle
        id="Time_CV_B"
        data-name="Time CV B"
        cx="171.86"

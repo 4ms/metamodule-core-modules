@@ -15,7 +15,7 @@ struct SHEVInfo : ModuleInfoBase {
 
     using enum Coords;
 
-    static constexpr std::array<Element, 55> Elements{{
+    static constexpr std::array<Element, 56> Elements{{
 		OrangeButton{{to_mm<72>(21.16), to_mm<72>(41.89), Center, "Cycle A", ""}},
 		Toggle3pos{{to_mm<72>(94.18), to_mm<72>(41.285), Center, "Rise A Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{to_mm<72>(127.06), to_mm<72>(41.275), Center, "Fall A Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
@@ -71,6 +71,7 @@ struct SHEVInfo : ModuleInfoBase {
 		RedBlueLight{{to_mm<72>(153.41), to_mm<72>(263.06), Center, "Env B Light", ""}},
 		OrangeLight{{to_mm<72>(50.99), to_mm<72>(275.79), Center, "EOR A", ""}},
 		OrangeLight{{to_mm<72>(236.01), to_mm<72>(275.79), Center, "EOF B Light", ""}},
+		AltParamChoiceLabeled{{{to_mm<72>(59.23), to_mm<72>(41.53), Center, "ReTrig", ""}, 2, 0}, {"Off", "On"}},
 }};
 
     enum class Elem {
@@ -129,6 +130,7 @@ struct SHEVInfo : ModuleInfoBase {
         EnvBLight,
         EorALight,
         EofBLight,
+        RetrigAltParam,
     };
 
     // Legacy naming
@@ -208,6 +210,9 @@ struct SHEVInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+    enum {
+        AltParamRetrig, 
+    };
 
 };
 } // namespace MetaModule

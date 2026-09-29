@@ -58,6 +58,7 @@ public:
 		const auto fallCvKnob = getState<FallCvKnob>();
 		const auto envLevel = getState<EnvLevelSlider>();
 		const bool buttonCycling = getState<CycleButton>() == LatchingButton::State_t::DOWN;
+		const bool retrig = getState<RetrigAltParam>() == 1;
 		const bool followPatched = isPatched<FollowIn>();
 
 		for (unsigned ch = 0; ch < envChans; ch++) {
@@ -92,7 +93,7 @@ public:
 			}
 
 			if (triggerEdgeDetector[ch](triggerDetector[ch](getInput<TriggerIn>(ch).value_or(0.f)))) {
-				osc[ch].doRetrigger();
+				osc[ch].doRetrigger(retrig);
 			}
 
 			osc[ch].proceed(timeStepInS);

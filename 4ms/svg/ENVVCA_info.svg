@@ -1417,6 +1417,13 @@
        style="fill: #80ff80"
        data-name="Trigger In" />
     <circle
+       id="ReTrigAltParam"
+       data-name="ReTrig@Off@On"
+       cx="22.3"
+       cy="227.06"
+       r="4"
+       style="fill: #808080;" />
+    <circle
        id="Time_CV"
        data-name="Time CV In"
        cx="57.25"

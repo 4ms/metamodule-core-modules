@@ -3137,6 +3137,13 @@
        r="11.34"
        style="fill: #80ff80; stroke-width: 0px;" />
     <circle
+       id="ReTrigAltParam"
+       data-name="ReTrig@Off@On"
+       cx="59.23"
+       cy="41.53"
+       r="4"
+       style="fill: #808080;" />
+    <circle
        id="Cycle_A"
        data-name="Cycle A"
        cx="21.16"

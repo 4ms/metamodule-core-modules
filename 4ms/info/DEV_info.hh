@@ -15,7 +15,7 @@ struct DEVInfo : ModuleInfoBase {
 
     using enum Coords;
 
-    static constexpr std::array<Element, 44> Elements{{
+    static constexpr std::array<Element, 45> Elements{{
 		Toggle3pos{{to_mm<72>(17.6), to_mm<72>(41.905), Center, "Rise A Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		Toggle3pos{{to_mm<72>(50.49), to_mm<72>(41.905), Center, "Fall A Switch", ""}, {"Fast", "Med", "Slow"}, Toggle3pos::State_t::CENTER},
 		OrangeButton{{to_mm<72>(82.8), to_mm<72>(41.64), Center, "Cycle A", ""}},
@@ -60,6 +60,7 @@ struct DEVInfo : ModuleInfoBase {
 		OrangeLight{{to_mm<72>(130.68), to_mm<72>(261.07), Center, "EOF Light", ""}},
 		RedBlueLight{{to_mm<72>(65.92), to_mm<72>(327.45), Center, "Env A Light", ""}},
 		RedBlueLight{{to_mm<72>(164.39), to_mm<72>(327.52), Center, "Env B Light", ""}},
+		AltParamChoiceLabeled{{{to_mm<72>(23.09), to_mm<72>(232.82), Center, "ReTrig", ""}, 2, 0}, {"Off", "On"}},
 }};
 
     enum class Elem {
@@ -107,6 +108,7 @@ struct DEVInfo : ModuleInfoBase {
         EofLight,
         EnvALight,
         EnvBLight,
+        RetrigAltParam,
     };
 
     // Legacy naming
@@ -175,6 +177,9 @@ struct DEVInfo : ModuleInfoBase {
         NumDiscreteLeds,
     };
     
+    enum {
+        AltParamRetrig, 
+    };
 
 };
 } // namespace MetaModule

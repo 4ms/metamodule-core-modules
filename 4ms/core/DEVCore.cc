@@ -160,6 +160,7 @@ private:
 			const auto levelScale = parent->getState<Mapping::LevelKnob>() * 2.0f - 1.0f;
 			const auto offsetVolts = parent->getState<Mapping::OffsetKnob>() * 20.0f - 10.0f;
 			const bool buttonCycling = parent->getState<Mapping::CycleButton>() == LatchingButton::State_t::DOWN;
+			const bool retrig = parent->getState<RetrigAltParam>() == 1;
 			const bool followPatched = parent->isPatched<Mapping::FollowIn>();
 
 			for (unsigned ch = 0; ch < envChans; ch++) {
@@ -185,8 +186,7 @@ private:
 				osc[ch].setRiseTimeInS(VoltageToTime(riseCV));
 				osc[ch].setFallTimeInS(VoltageToTime(fallCV));
 
-				const bool isCycling =
-					buttonCycling ^ CVToBool(parent->getInputOrLast<Mapping::CycleTrig>(ch));
+				const bool isCycling = buttonCycling ^ CVToBool(parent->getInputOrLast<Mapping::CycleTrig>(ch));
 				osc[ch].setCycling(isCycling);
 
 				if (followPatched) {
@@ -196,7 +196,7 @@ private:
 				}
 
 				if (triggerEdgeDetector[ch](triggerDetector[ch](parent->getInput<Mapping::TrigIn>(ch).value_or(0.f)))) {
-					osc[ch].doRetrigger();
+					osc[ch].doRetrigger(retrig);
 				}
 
 				osc[ch].proceed(timeStepInS);
@@ -324,7 +324,9 @@ public:
 			return;
 		}
 
-		const auto audioInA = [this](unsigned ch) { return getInput<MappingA::AudioIn>(ch).value_or(0.f); };
+		const auto audioInA = [this](unsigned ch) {
+			return getInput<MappingA::AudioIn>(ch).value_or(0.f);
+		};
 		const unsigned audioChansA = std::max(numChannels<MappingA::AudioIn>(), 1u);
 		channelA.update(audioChansA, audioInA);
 

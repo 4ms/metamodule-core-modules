@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdio>
 
 class TriangleOscillator
@@ -28,9 +29,12 @@ public:
         slopeFalling = (MinValInV - MaxValInV) / val;
     }
 
-    void doRetrigger()
+    // Starts a new rise from the current voltage.
+    // With resetToZero, the output first jumps to 0V (like the RETRIG jumper on hardware)
+    void doRetrigger(bool resetToZero = false)
     {
         retriggerPending = true;
+        resetPending = resetToZero;
     }
 
     void setTargetVoltage(float val)
@@ -49,6 +53,11 @@ public:
     {
 		if (retriggerPending)
 		{
+			if (resetPending)
+			{
+				outputInV = MinValInV;
+				resetPending = false;
+			}
 			slopeState = SlopeState_t::RISING;
             state = State_t::TRIGGERED;
 			retriggerPending = false;
@@ -144,6 +153,7 @@ private:
     SlopeState_t slopeState;
     bool cycling;
     bool retriggerPending;
+    bool resetPending = false;
     bool sustainMax;
     float targetVoltage;
 
