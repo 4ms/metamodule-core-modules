@@ -107,6 +107,15 @@ static auto brand_registry(std::string_view brand_name) {
 	return found;
 }
 
+static ModuleFactory::RegistrationObserver &registration_observer() {
+	static ModuleFactory::RegistrationObserver observer;
+	return observer;
+}
+
+void ModuleFactory::setRegistrationObserver(RegistrationObserver observer) {
+	registration_observer() = std::move(observer);
+}
+
 bool ModuleFactory::registerModuleType(std::string_view brand_name,
 									   std::string_view module_slug,
 									   CreateModuleFunc funcCreate,
@@ -120,6 +129,10 @@ bool ModuleFactory::registerModuleType(std::string_view brand_name,
 											   .info = info,
 											   .faceplate = std::string{faceplate_filename},
 											   .display_name = std::string(module_slug)};
+
+	if (auto const &observer = registration_observer())
+		observer(brand_name, module_slug);
+
 	return true;
 }
 

@@ -31,6 +31,12 @@ public:
 								   const ModuleInfoView &info,
 								   std::string_view faceplate_filename);
 
+	// Called after each module is registered, with the brand and module slug as passed to
+	// registerModuleType(). E.g. to find out which modules a plugin registers while it's loaded.
+	// Only one observer is set at a time: pass an empty function to remove it.
+	using RegistrationObserver = std::function<void(std::string_view brand_name, std::string_view module_slug)>;
+	static void setRegistrationObserver(RegistrationObserver observer);
+
 	static std::unique_ptr<CoreProcessor> create(std::string_view combined_slug);
 
 	static ModuleInfoView &getModuleInfo(std::string_view combined_slug);
